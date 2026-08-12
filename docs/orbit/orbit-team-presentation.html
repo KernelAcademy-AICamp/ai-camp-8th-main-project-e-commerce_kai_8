@@ -1,0 +1,3000 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="Orbit 개인화 티셔츠 탐색 제품의 팀 발표 자료"
+    />
+    <title>Orbit — Product thesis & validation</title>
+    <style>
+      :root {
+        color-scheme: light;
+        --paper: #f4f0e7;
+        --paper-deep: #e9e2d5;
+        --ink: #171713;
+        --ink-soft: #5d5b52;
+        --orange: #d14320;
+        --orange-dark: #c93416;
+        --acid: #dfff4f;
+        --lilac: #c9c1ff;
+        --sage: #b8c9b0;
+        --sky: #b8d9ea;
+        --white: #fffdf8;
+        --shell: rgba(23, 23, 19, 0.055);
+        --hairline: rgba(23, 23, 19, 0.11);
+        --serif: "Iowan Old Style", "Baskerville", "Times New Roman", serif;
+        --sans: "Avenir Next", "Pretendard", "Apple SD Gothic Neo", sans-serif;
+        --ease-heavy: cubic-bezier(0.32, 0.72, 0, 1);
+        --ease-snap: cubic-bezier(0.2, 0.9, 0.2, 1);
+        --safe-bottom: max(18px, env(safe-area-inset-bottom));
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        margin: 0;
+        min-height: 100%;
+        background: var(--paper-deep);
+        color: var(--ink);
+        font-family: var(--sans);
+        font-size: 16px;
+        line-height: 1.45;
+        overflow: hidden;
+      }
+
+      body::after {
+        position: fixed;
+        inset: 0;
+        z-index: 6;
+        pointer-events: none;
+        content: "";
+        opacity: 0.045;
+        background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.7'/%3E%3C/svg%3E");
+      }
+
+      button,
+      a {
+        font: inherit;
+      }
+
+      button {
+        color: inherit;
+      }
+
+      button:focus-visible,
+      a:focus-visible {
+        outline: 3px solid var(--orange);
+        outline-offset: 4px;
+      }
+
+      .sr-only {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        white-space: nowrap;
+        border: 0;
+      }
+
+      .deck {
+        position: relative;
+        min-height: 100dvh;
+        isolation: isolate;
+      }
+
+      .slide {
+        position: absolute;
+        inset: 0;
+        display: grid;
+        min-height: 100dvh;
+        padding: clamp(28px, 4vw, 72px) clamp(24px, 5vw, 96px)
+          clamp(92px, 9vh, 118px);
+        overflow: auto;
+        visibility: hidden;
+        opacity: 0;
+        transform: translate3d(5%, 0, 0) scale(0.985);
+        transition:
+          transform 760ms var(--ease-heavy),
+          opacity 520ms var(--ease-heavy),
+          visibility 0s 760ms;
+      }
+
+      .slide::before {
+        position: absolute;
+        inset: 0;
+        z-index: -2;
+        content: "";
+        background: var(--paper);
+      }
+
+      .slide[data-tone="ink"] {
+        color: var(--paper);
+      }
+
+      .slide[data-tone="ink"]::before {
+        background: var(--ink);
+      }
+
+      .slide.is-before {
+        transform: translate3d(-4%, 0, 0) scale(0.985);
+      }
+
+      .slide.is-active {
+        visibility: visible;
+        opacity: 1;
+        transform: translate3d(0, 0, 0) scale(1);
+        transition-delay: 0s;
+      }
+
+      .slide-inner {
+        display: grid;
+        align-self: center;
+        width: min(100%, 1500px);
+        min-height: min(78vh, 840px);
+        margin: auto;
+      }
+
+      .slide.is-active .reveal {
+        opacity: 1;
+        transform: translate3d(0, 0, 0);
+      }
+
+      .reveal {
+        opacity: 0;
+        transform: translate3d(0, 34px, 0);
+        transition:
+          transform 850ms var(--ease-heavy),
+          opacity 680ms var(--ease-heavy);
+      }
+
+      .reveal:nth-child(2) {
+        transition-delay: 90ms;
+      }
+
+      .reveal:nth-child(3) {
+        transition-delay: 160ms;
+      }
+
+      .reveal:nth-child(4) {
+        transition-delay: 230ms;
+      }
+
+      .eyebrow {
+        display: inline-flex;
+        align-items: center;
+        width: max-content;
+        min-height: 28px;
+        padding: 5px 12px 4px;
+        border-radius: 999px;
+        background: var(--ink);
+        color: var(--paper);
+        font-size: 10px;
+        font-weight: 700;
+        letter-spacing: 0.19em;
+        line-height: 1;
+        text-transform: uppercase;
+      }
+
+      [data-tone="ink"] .eyebrow {
+        background: var(--acid);
+        color: var(--ink);
+      }
+
+      .eyebrow.orange {
+        background: var(--orange);
+        color: var(--white);
+      }
+
+      h1,
+      h2,
+      h3,
+      p {
+        margin: 0;
+      }
+
+      .display {
+        max-width: 12ch;
+        font-family: var(--serif);
+        font-size: clamp(68px, 9vw, 154px);
+        font-style: italic;
+        font-weight: 500;
+        letter-spacing: -0.065em;
+        line-height: 0.82;
+      }
+
+      .slide-title {
+        max-width: 16ch;
+        font-family: var(--serif);
+        font-size: clamp(44px, 5.6vw, 92px);
+        font-weight: 500;
+        letter-spacing: -0.055em;
+        line-height: 0.98;
+        word-break: keep-all;
+      }
+
+      .slide-title strong,
+      .display strong {
+        color: var(--orange);
+        font-weight: inherit;
+      }
+
+      .kicker {
+        max-width: 36ch;
+        color: var(--ink-soft);
+        font-size: clamp(17px, 1.5vw, 25px);
+        font-weight: 500;
+        letter-spacing: -0.025em;
+        line-height: 1.45;
+        word-break: keep-all;
+      }
+
+      [data-tone="ink"] .kicker {
+        color: rgba(244, 240, 231, 0.68);
+      }
+
+      .mono {
+        font-family: "SFMono-Regular", "Menlo", monospace;
+        font-size: 11px;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+
+      .bezel {
+        padding: 7px;
+        border-radius: 34px;
+        background: var(--shell);
+        box-shadow: 0 0 0 1px var(--hairline);
+      }
+
+      .bezel > .core {
+        height: 100%;
+        overflow: hidden;
+        border-radius: 27px;
+        background: var(--white);
+        box-shadow:
+          inset 0 1px 0 rgba(255, 255, 255, 0.9),
+          0 24px 80px rgba(77, 60, 36, 0.1);
+      }
+
+      .dark-bezel {
+        background: rgba(255, 255, 255, 0.075);
+        box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.1);
+      }
+
+      .dark-bezel > .core {
+        background: #24241f;
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.09);
+      }
+
+      .hero-layout {
+        grid-template-columns: minmax(0, 0.92fr) minmax(460px, 0.72fr);
+        align-items: center;
+        gap: clamp(48px, 7vw, 120px);
+      }
+
+      .hero-copy {
+        display: grid;
+        align-content: center;
+        gap: 30px;
+        min-width: 0;
+      }
+
+      .hero-subtitle {
+        max-width: 26ch;
+        font-size: clamp(20px, 2vw, 32px);
+        font-weight: 600;
+        letter-spacing: -0.04em;
+        line-height: 1.32;
+        word-break: keep-all;
+      }
+
+      .hero-meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+
+      .meta-pill {
+        display: inline-flex;
+        align-items: center;
+        min-height: 38px;
+        padding: 8px 14px;
+        border-radius: 999px;
+        background: rgba(23, 23, 19, 0.06);
+        color: var(--ink-soft);
+        font-size: 12px;
+        font-weight: 700;
+      }
+
+      .hero-gallery {
+        position: relative;
+        height: min(73vh, 760px);
+        min-height: 560px;
+      }
+
+      .gallery-plate {
+        position: absolute;
+        inset: 0;
+        transform: rotate(2deg);
+      }
+
+      .gallery-plate .core {
+        padding: 11px;
+        background: #d9d2c3;
+      }
+
+      .mosaic {
+        display: grid;
+        height: 100%;
+        grid-template-columns: repeat(3, 1fr);
+        grid-auto-rows: minmax(0, 1fr);
+        gap: 8px;
+      }
+
+      .product-tile {
+        position: relative;
+        min-height: 0;
+        overflow: hidden;
+        border-radius: 18px;
+        background: #d6cebe;
+      }
+
+      .product-tile.tall {
+        grid-row: span 2;
+      }
+
+      .product-tile.wide {
+        grid-column: span 2;
+      }
+
+      .product-tile img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transform: scale(1.015);
+      }
+
+      .product-tile .price {
+        position: absolute;
+        right: 8px;
+        bottom: 8px;
+        min-height: 24px;
+        padding: 5px 8px 4px;
+        border-radius: 999px;
+        background: rgba(255, 253, 248, 0.92);
+        color: var(--ink);
+        font-size: 10px;
+        font-weight: 800;
+        letter-spacing: -0.03em;
+      }
+
+      .gallery-label {
+        position: absolute;
+        top: 26px;
+        left: -32px;
+        z-index: 2;
+        display: grid;
+        place-items: center;
+        width: 112px;
+        height: 112px;
+        border-radius: 50%;
+        background: var(--acid);
+        color: var(--ink);
+        font-family: var(--serif);
+        font-size: 19px;
+        font-style: italic;
+        line-height: 1.05;
+        text-align: center;
+        transform: rotate(-10deg);
+      }
+
+      .corner-index {
+        position: absolute;
+        top: clamp(18px, 2vw, 36px);
+        right: clamp(24px, 3vw, 52px);
+        z-index: 2;
+        color: var(--ink-soft);
+      }
+
+      [data-tone="ink"] .corner-index {
+        color: rgba(244, 240, 231, 0.42);
+      }
+
+      .section-head {
+        display: flex;
+        align-items: end;
+        justify-content: space-between;
+        gap: 32px;
+        margin-bottom: clamp(32px, 4vh, 56px);
+      }
+
+      .section-head > div {
+        display: grid;
+        gap: 18px;
+      }
+
+      .section-note {
+        max-width: 30ch;
+        color: var(--ink-soft);
+        font-size: 15px;
+        font-weight: 600;
+        line-height: 1.55;
+        word-break: keep-all;
+      }
+
+      [data-tone="ink"] .section-note {
+        color: rgba(244, 240, 231, 0.62);
+      }
+
+      .behavior-layout {
+        grid-template-rows: auto 1fr;
+      }
+
+      .behavior-grid {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 310px;
+        gap: 26px;
+      }
+
+      .loop-shell .core {
+        display: grid;
+        place-items: center;
+        padding: clamp(26px, 3vw, 48px);
+        background: #ebe5d9;
+      }
+
+      .behavior-loop {
+        display: grid;
+        width: 100%;
+        grid-template-columns: repeat(5, minmax(110px, 1fr));
+        align-items: center;
+        gap: 16px;
+      }
+
+      .loop-node {
+        position: relative;
+        display: grid;
+        align-content: space-between;
+        min-height: 220px;
+        padding: 22px;
+        border-radius: 26px;
+        background: var(--white);
+        box-shadow: inset 0 1px 0 #fff;
+      }
+
+      .loop-node::after {
+        position: absolute;
+        top: calc(50% - 15px);
+        right: -25px;
+        z-index: 2;
+        display: grid;
+        place-items: center;
+        width: 34px;
+        height: 34px;
+        border-radius: 50%;
+        background: var(--ink);
+        color: var(--paper);
+        content: "→";
+        font-size: 16px;
+      }
+
+      .loop-node:last-child::after {
+        content: "↻";
+        background: var(--orange);
+      }
+
+      .node-icon {
+        display: grid;
+        place-items: center;
+        width: 54px;
+        height: 54px;
+        border-radius: 18px;
+        background: var(--paper);
+      }
+
+      .node-icon svg {
+        width: 28px;
+        height: 28px;
+        fill: none;
+        stroke: currentColor;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+        stroke-width: 1.5;
+      }
+
+      .loop-node strong {
+        display: block;
+        margin-top: 28px;
+        font-size: clamp(17px, 1.4vw, 23px);
+        letter-spacing: -0.045em;
+        line-height: 1.2;
+        word-break: keep-all;
+      }
+
+      .loop-node small {
+        display: block;
+        margin-top: 8px;
+        color: var(--ink-soft);
+        font-size: 11px;
+        font-weight: 600;
+        line-height: 1.45;
+        word-break: keep-all;
+      }
+
+      .evidence-card .core {
+        display: grid;
+        align-content: space-between;
+        padding: 28px;
+        background: var(--orange);
+        color: var(--white);
+      }
+
+      .evidence-number {
+        font-family: var(--serif);
+        font-size: clamp(68px, 6.5vw, 100px);
+        font-style: italic;
+        letter-spacing: -0.08em;
+        line-height: 0.8;
+      }
+
+      .evidence-card p {
+        font-size: 18px;
+        font-weight: 700;
+        letter-spacing: -0.035em;
+        line-height: 1.35;
+        word-break: keep-all;
+      }
+
+      .evidence-card small {
+        color: rgba(255, 255, 255, 0.72);
+        font-size: 11px;
+        line-height: 1.45;
+      }
+
+      .opportunity-layout {
+        grid-template-rows: auto 1fr auto;
+      }
+
+      .compare-grid {
+        display: grid;
+        grid-template-columns: 1fr 84px 1fr;
+        align-items: stretch;
+        gap: 18px;
+      }
+
+      .compare-arrow {
+        display: grid;
+        place-items: center;
+        color: var(--orange);
+      }
+
+      .compare-arrow svg {
+        width: 58px;
+        height: 58px;
+        fill: none;
+        stroke: currentColor;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+        stroke-width: 1.2;
+      }
+
+      .compare-card .core {
+        display: grid;
+        grid-template-rows: auto 1fr auto;
+        min-height: 300px;
+        padding: 22px;
+      }
+
+      .compare-card.orbit .core {
+        background: var(--ink);
+        color: var(--paper);
+      }
+
+      .compare-label {
+        display: flex;
+        justify-content: space-between;
+        gap: 20px;
+        font-size: 12px;
+        font-weight: 800;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+      }
+
+      .rank-stack {
+        display: grid;
+        align-content: center;
+        gap: 7px;
+        margin: 12px 0;
+      }
+
+      .rank-row {
+        display: grid;
+        grid-template-columns: 42px 58px 1fr;
+        align-items: center;
+        gap: 12px;
+        padding: 6px;
+        border-radius: 20px;
+        background: var(--paper);
+      }
+
+      .rank-row b {
+        font-family: var(--serif);
+        font-size: 24px;
+        font-style: italic;
+        text-align: center;
+      }
+
+      .rank-thumb {
+        height: 46px;
+        overflow: hidden;
+        border-radius: 14px;
+        background: var(--paper-deep);
+      }
+
+      .rank-thumb img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+
+      .rank-copy span,
+      .rank-copy i {
+        display: block;
+        height: 8px;
+        border-radius: 999px;
+        background: #cfc7b9;
+      }
+
+      .rank-copy i {
+        width: 62%;
+        height: 6px;
+        margin-top: 7px;
+        background: #dfd8ca;
+      }
+
+      .taste-cloud {
+        position: relative;
+        display: grid;
+        place-items: center;
+        min-height: 230px;
+      }
+
+      .taste-center {
+        display: grid;
+        place-items: center;
+        width: 126px;
+        height: 126px;
+        border-radius: 50%;
+        background: var(--acid);
+        color: var(--ink);
+        font-family: var(--serif);
+        font-size: 25px;
+        font-style: italic;
+        text-align: center;
+      }
+
+      .taste-chip {
+        position: absolute;
+        display: grid;
+        place-items: center;
+        width: 78px;
+        height: 92px;
+        overflow: hidden;
+        border-radius: 20px;
+        background: #3a3a33;
+      }
+
+      .taste-chip img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+
+      .taste-chip:nth-child(2) {
+        transform: translate(-150px, -58px) rotate(-6deg);
+      }
+
+      .taste-chip:nth-child(3) {
+        transform: translate(148px, -64px) rotate(7deg);
+      }
+
+      .taste-chip:nth-child(4) {
+        transform: translate(-142px, 78px) rotate(5deg);
+      }
+
+      .taste-chip:nth-child(5) {
+        transform: translate(150px, 74px) rotate(-5deg);
+      }
+
+      .compare-footer {
+        font-size: clamp(18px, 1.5vw, 24px);
+        font-weight: 700;
+        letter-spacing: -0.035em;
+      }
+
+      .target-strip {
+        display: grid;
+        grid-template-columns: auto 1fr auto;
+        align-items: center;
+        gap: 22px;
+        margin-top: 16px;
+        padding: 14px 20px;
+        border-radius: 24px;
+        background: var(--lilac);
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.55);
+      }
+
+      .target-strip strong {
+        font-size: clamp(17px, 1.6vw, 26px);
+        letter-spacing: -0.045em;
+        line-height: 1.25;
+        word-break: keep-all;
+      }
+
+      .target-strip .target-tag {
+        padding: 8px 12px;
+        border-radius: 999px;
+        background: var(--ink);
+        color: var(--paper);
+        font-size: 11px;
+        font-weight: 800;
+        white-space: nowrap;
+      }
+
+      .product-layout {
+        grid-template-columns: minmax(0, 0.86fr) minmax(430px, 0.74fr);
+        align-items: center;
+        gap: clamp(44px, 6vw, 100px);
+      }
+
+      .product-copy {
+        display: grid;
+        align-content: center;
+        gap: 28px;
+        min-width: 0;
+      }
+
+      .formula {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 9px;
+      }
+
+      .formula span {
+        display: inline-flex;
+        align-items: center;
+        min-height: 40px;
+        padding: 8px 14px;
+        border-radius: 999px;
+        background: rgba(244, 240, 231, 0.09);
+        color: var(--paper);
+        font-size: 13px;
+        font-weight: 750;
+      }
+
+      .formula b {
+        color: var(--orange);
+        font-size: 18px;
+      }
+
+      .thesis {
+        max-width: 31ch;
+        color: rgba(244, 240, 231, 0.75);
+        font-size: clamp(18px, 1.7vw, 28px);
+        font-weight: 550;
+        letter-spacing: -0.035em;
+        line-height: 1.48;
+        word-break: keep-all;
+      }
+
+      .phone-wrap {
+        justify-self: center;
+        width: min(100%, 430px);
+        padding: 9px;
+        border-radius: 54px;
+        background: rgba(255, 255, 255, 0.09);
+        box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.13);
+        transform: rotate(1.8deg);
+      }
+
+      .phone {
+        position: relative;
+        height: min(74vh, 760px);
+        min-height: 580px;
+        overflow: hidden;
+        border-radius: 46px;
+        background: #e6dfd2;
+        box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.4);
+      }
+
+      .phone-top {
+        position: absolute;
+        inset: 0 0 auto;
+        z-index: 2;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        height: 64px;
+        padding: 0 20px;
+        background: rgba(244, 240, 231, 0.91);
+      }
+
+      .phone-brand {
+        font-family: var(--serif);
+        font-size: 23px;
+        font-style: italic;
+      }
+
+      .phone-actions {
+        display: flex;
+        gap: 7px;
+      }
+
+      .phone-actions span {
+        display: grid;
+        place-items: center;
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        background: var(--white);
+      }
+
+      .phone-actions svg {
+        width: 18px;
+        height: 18px;
+        fill: none;
+        stroke: currentColor;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+        stroke-width: 1.5;
+      }
+
+      .phone-feed {
+        display: grid;
+        height: 100%;
+        padding: 72px 8px 8px;
+        grid-template-columns: repeat(3, 1fr);
+        grid-auto-rows: 158px;
+        gap: 5px;
+        overflow: hidden;
+      }
+
+      .phone-feed .product-tile {
+        border-radius: 10px;
+      }
+
+      .phone-feed .product-tile:nth-child(4n + 1) {
+        grid-row: span 2;
+      }
+
+      .phone-feed .price {
+        right: 5px;
+        bottom: 5px;
+        font-size: 8px;
+      }
+
+      .sheet-preview {
+        position: absolute;
+        right: 14px;
+        bottom: 14px;
+        left: 14px;
+        z-index: 3;
+        display: grid;
+        grid-template-columns: 64px 1fr auto;
+        align-items: center;
+        gap: 12px;
+        padding: 12px;
+        border-radius: 25px;
+        background: rgba(255, 253, 248, 0.96);
+        color: var(--ink);
+        box-shadow: 0 16px 50px rgba(23, 23, 19, 0.16);
+      }
+
+      .sheet-preview img {
+        width: 64px;
+        height: 64px;
+        border-radius: 16px;
+        object-fit: cover;
+      }
+
+      .sheet-preview strong,
+      .sheet-preview small {
+        display: block;
+      }
+
+      .sheet-preview strong {
+        font-size: 12px;
+      }
+
+      .sheet-preview small {
+        margin-top: 5px;
+        color: var(--ink-soft);
+        font-size: 10px;
+      }
+
+      .sheet-button {
+        display: grid;
+        place-items: center;
+        width: 44px;
+        height: 44px;
+        border-radius: 50%;
+        background: var(--orange);
+        color: white;
+      }
+
+      .density-layout {
+        grid-template-rows: auto 1fr;
+      }
+
+      .density-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        align-items: end;
+        gap: clamp(18px, 2.5vw, 38px);
+      }
+
+      .mode-card {
+        display: grid;
+        grid-template-rows: 1fr auto;
+        gap: 18px;
+      }
+
+      .mode-phone {
+        height: min(54vh, 520px);
+        padding: 7px;
+        border-radius: 36px;
+        background: rgba(23, 23, 19, 0.065);
+        box-shadow: 0 0 0 1px var(--hairline);
+      }
+
+      .mode-screen {
+        display: grid;
+        height: 100%;
+        padding: 8px;
+        overflow: hidden;
+        border-radius: 29px;
+        background: #dcd4c6;
+        gap: 4px;
+      }
+
+      .mode-screen.five {
+        grid-template-columns: repeat(5, 1fr);
+        grid-auto-rows: 70px;
+      }
+
+      .mode-screen.three {
+        grid-template-columns: repeat(3, 1fr);
+        grid-auto-rows: 112px;
+      }
+
+      .mode-screen.two {
+        grid-template-columns: repeat(2, 1fr);
+        grid-auto-rows: 168px;
+      }
+
+      .mode-screen .product-tile {
+        border-radius: 8px;
+      }
+
+      .mode-screen.five .price {
+        display: none;
+      }
+
+      .mode-screen.two .price,
+      .mode-screen.three .price {
+        right: 4px;
+        bottom: 4px;
+        font-size: 7px;
+      }
+
+      .mode-caption {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 18px;
+      }
+
+      .mode-caption strong {
+        font-family: var(--serif);
+        font-size: clamp(32px, 3.4vw, 56px);
+        font-style: italic;
+        font-weight: 500;
+        letter-spacing: -0.06em;
+      }
+
+      .mode-caption span {
+        color: var(--ink-soft);
+        font-size: 12px;
+        font-weight: 750;
+        text-align: right;
+      }
+
+      .pinch-note {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        z-index: 2;
+        display: grid;
+        place-items: center;
+        width: 94px;
+        height: 94px;
+        border-radius: 50%;
+        background: var(--acid);
+        font-size: 12px;
+        font-weight: 850;
+        line-height: 1.2;
+        text-align: center;
+        transform: translate(-50%, -50%) rotate(-8deg);
+      }
+
+      .engine-layout {
+        grid-template-columns: minmax(0, 0.86fr) minmax(520px, 1.14fr);
+        align-items: center;
+        gap: clamp(40px, 5vw, 90px);
+      }
+
+      .engine-copy {
+        display: grid;
+        align-content: center;
+        gap: 26px;
+        min-width: 0;
+      }
+
+      .two-speed {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+      }
+
+      .speed-card {
+        padding: 18px;
+        border-radius: 24px;
+        background: rgba(244, 240, 231, 0.08);
+      }
+
+      .speed-card strong,
+      .speed-card small {
+        display: block;
+      }
+
+      .speed-card strong {
+        color: var(--acid);
+        font-size: 14px;
+      }
+
+      .speed-card small {
+        margin-top: 7px;
+        color: rgba(244, 240, 231, 0.58);
+        font-size: 11px;
+        line-height: 1.45;
+      }
+
+      .engine-visual {
+        position: relative;
+        display: grid;
+        place-items: center;
+        aspect-ratio: 1 / 0.82;
+      }
+
+      .orbit-ring {
+        position: absolute;
+        width: 78%;
+        aspect-ratio: 1;
+        border: 1px solid rgba(244, 240, 231, 0.16);
+        border-radius: 50%;
+      }
+
+      .orbit-ring.inner {
+        width: 48%;
+        border-color: rgba(223, 255, 79, 0.28);
+      }
+
+      .engine-core {
+        position: relative;
+        z-index: 2;
+        display: grid;
+        place-items: center;
+        width: 174px;
+        height: 174px;
+        border-radius: 50%;
+        background: var(--acid);
+        color: var(--ink);
+        text-align: center;
+      }
+
+      .engine-core strong {
+        font-family: var(--serif);
+        font-size: 29px;
+        font-style: italic;
+        font-weight: 500;
+        line-height: 1.05;
+      }
+
+      .engine-core small {
+        display: block;
+        margin-top: 6px;
+        font-size: 10px;
+        font-weight: 800;
+      }
+
+      .portfolio-chip {
+        position: absolute;
+        z-index: 3;
+        display: grid;
+        place-items: center;
+        width: 132px;
+        min-height: 62px;
+        padding: 10px 14px;
+        border-radius: 22px;
+        color: var(--ink);
+        font-size: 12px;
+        font-weight: 850;
+        line-height: 1.15;
+        text-align: center;
+      }
+
+      .portfolio-chip small {
+        display: block;
+        margin-top: 4px;
+        font-size: 8px;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+
+      .portfolio-chip:nth-of-type(4) {
+        top: 2%;
+        left: 35%;
+        background: var(--lilac);
+        transform: rotate(-2deg);
+      }
+
+      .portfolio-chip:nth-of-type(5) {
+        top: 22%;
+        right: 2%;
+        background: var(--sky);
+        transform: rotate(4deg);
+      }
+
+      .portfolio-chip:nth-of-type(6) {
+        right: 7%;
+        bottom: 6%;
+        background: var(--sage);
+        transform: rotate(-4deg);
+      }
+
+      .portfolio-chip:nth-of-type(7) {
+        bottom: 2%;
+        left: 17%;
+        background: var(--orange);
+        color: white;
+        transform: rotate(3deg);
+      }
+
+      .portfolio-chip:nth-of-type(8) {
+        top: 29%;
+        left: 0;
+        background: var(--white);
+        transform: rotate(-5deg);
+      }
+
+      .auto-label {
+        position: absolute;
+        right: 20%;
+        bottom: 34%;
+        z-index: 4;
+        padding: 7px 10px;
+        border-radius: 999px;
+        background: var(--ink);
+        color: var(--paper);
+        font-size: 9px;
+        font-weight: 850;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+
+      .signals-layout {
+        grid-template-rows: auto 1fr;
+      }
+
+      .signals-grid {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 0.72fr;
+        gap: 24px;
+      }
+
+      .signal-ladder .core {
+        display: grid;
+        align-content: center;
+        gap: 12px;
+        padding: 32px;
+        background: #ebe5d9;
+      }
+
+      .signal-step {
+        display: grid;
+        grid-template-columns: 52px 1fr auto;
+        align-items: center;
+        gap: 18px;
+        min-height: 72px;
+        padding: 12px 18px 12px 12px;
+        border-radius: 23px;
+        background: var(--white);
+        transform-origin: left center;
+      }
+
+      .signal-step:nth-child(1) {
+        width: 69%;
+      }
+
+      .signal-step:nth-child(2) {
+        width: 79%;
+      }
+
+      .signal-step:nth-child(3) {
+        width: 89%;
+      }
+
+      .signal-step:nth-child(4) {
+        width: 100%;
+        background: var(--orange);
+        color: white;
+      }
+
+      .signal-number {
+        display: grid;
+        place-items: center;
+        width: 48px;
+        height: 48px;
+        border-radius: 16px;
+        background: var(--paper);
+        color: var(--ink);
+        font-family: var(--serif);
+        font-size: 23px;
+        font-style: italic;
+      }
+
+      .signal-step strong {
+        font-size: clamp(15px, 1.25vw, 21px);
+        letter-spacing: -0.035em;
+      }
+
+      .signal-step small {
+        font-size: 9px;
+        font-weight: 800;
+        letter-spacing: 0.1em;
+        opacity: 0.58;
+        text-transform: uppercase;
+      }
+
+      .signal-notes {
+        display: grid;
+        grid-template-rows: 1fr 1fr;
+        gap: 24px;
+      }
+
+      .note-card .core {
+        display: grid;
+        align-content: center;
+        gap: 12px;
+        padding: 28px;
+      }
+
+      .note-card:first-child .core {
+        background: var(--lilac);
+      }
+
+      .note-card:last-child .core {
+        background: var(--acid);
+      }
+
+      .note-card strong {
+        max-width: 19ch;
+        font-family: var(--serif);
+        font-size: clamp(25px, 2.5vw, 42px);
+        font-style: italic;
+        font-weight: 500;
+        letter-spacing: -0.05em;
+        line-height: 1.05;
+        word-break: keep-all;
+      }
+
+      .note-card p {
+        color: rgba(23, 23, 19, 0.68);
+        font-size: 12px;
+        font-weight: 650;
+        line-height: 1.5;
+        word-break: keep-all;
+      }
+
+      .journey-layout {
+        grid-template-rows: auto 1fr;
+      }
+
+      .journey-track {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        align-items: stretch;
+        gap: 14px;
+      }
+
+      .journey-step {
+        position: relative;
+        display: grid;
+        grid-template-rows: auto 1fr auto;
+        min-height: 410px;
+        padding: 24px;
+        border-radius: 31px;
+        background: var(--white);
+        box-shadow: inset 0 1px 0 #fff;
+      }
+
+      .journey-step::after {
+        position: absolute;
+        top: 46px;
+        right: -22px;
+        z-index: 2;
+        display: grid;
+        place-items: center;
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        background: var(--ink);
+        color: var(--paper);
+        content: "→";
+      }
+
+      .journey-step:last-child::after {
+        display: none;
+      }
+
+      .journey-step.highlight {
+        background: var(--orange);
+        color: white;
+      }
+
+      .journey-index {
+        font-family: var(--serif);
+        font-size: 28px;
+        font-style: italic;
+      }
+
+      .journey-art {
+        display: grid;
+        place-items: center;
+        min-height: 190px;
+      }
+
+      .mini-feed {
+        display: grid;
+        width: 134px;
+        height: 170px;
+        padding: 5px;
+        grid-template-columns: repeat(3, 1fr);
+        grid-auto-rows: 48px;
+        gap: 3px;
+        border-radius: 22px;
+        background: var(--paper-deep);
+        transform: rotate(-3deg);
+      }
+
+      .mini-feed img {
+        width: 100%;
+        height: 100%;
+        border-radius: 5px;
+        object-fit: cover;
+      }
+
+      .signup-pill {
+        width: 186px;
+        padding: 18px;
+        border-radius: 26px;
+        background: var(--ink);
+        color: var(--paper);
+        font-size: 13px;
+        font-weight: 750;
+        line-height: 1.35;
+        text-align: center;
+        transform: rotate(3deg);
+      }
+
+      .profile-stack {
+        display: flex;
+        width: 180px;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 7px;
+      }
+
+      .profile-stack span {
+        padding: 8px 10px;
+        border-radius: 999px;
+        background: var(--paper);
+        color: var(--ink);
+        font-size: 10px;
+        font-weight: 800;
+      }
+
+      .personal-orbit {
+        position: relative;
+        display: grid;
+        place-items: center;
+        width: 160px;
+        height: 160px;
+        border: 1px solid rgba(23, 23, 19, 0.17);
+        border-radius: 50%;
+      }
+
+      .personal-orbit::before {
+        display: grid;
+        place-items: center;
+        width: 84px;
+        height: 84px;
+        border-radius: 50%;
+        background: var(--acid);
+        content: "MY\A ORBIT";
+        font-family: var(--serif);
+        font-size: 17px;
+        font-style: italic;
+        line-height: 1;
+        text-align: center;
+        white-space: pre;
+      }
+
+      .personal-orbit i {
+        position: absolute;
+        width: 24px;
+        height: 24px;
+        border-radius: 8px;
+        background: var(--orange);
+      }
+
+      .personal-orbit i:first-child {
+        top: 10px;
+        right: 24px;
+      }
+
+      .personal-orbit i:last-child {
+        bottom: 15px;
+        left: 12px;
+        background: var(--lilac);
+      }
+
+      .journey-step h3 {
+        font-size: 19px;
+        letter-spacing: -0.04em;
+      }
+
+      .journey-step p {
+        margin-top: 8px;
+        color: var(--ink-soft);
+        font-size: 11px;
+        font-weight: 600;
+        line-height: 1.45;
+        word-break: keep-all;
+      }
+
+      .journey-step.highlight p {
+        color: rgba(255, 255, 255, 0.72);
+      }
+
+      .phase-tag {
+        width: max-content;
+        margin-top: 12px;
+        padding: 6px 9px;
+        border-radius: 999px;
+        background: rgba(23, 23, 19, 0.08);
+        font-size: 9px;
+        font-weight: 850;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+      }
+
+      .highlight .phase-tag {
+        background: rgba(255, 255, 255, 0.16);
+      }
+
+      .competition-layout {
+        grid-template-rows: auto 1fr;
+      }
+
+      .matrix-shell .core {
+        padding: 12px;
+        background: #ebe5d9;
+      }
+
+      .matrix {
+        display: grid;
+        height: 100%;
+        grid-template-columns: minmax(160px, 1.2fr) repeat(4, minmax(130px, 1fr));
+        gap: 7px;
+      }
+
+      .matrix-cell {
+        display: grid;
+        place-items: center;
+        min-height: 70px;
+        padding: 10px;
+        border-radius: 18px;
+        background: var(--white);
+        font-size: 11px;
+        font-weight: 750;
+        line-height: 1.3;
+        text-align: center;
+        word-break: keep-all;
+      }
+
+      .matrix-cell.head {
+        min-height: 82px;
+        background: var(--ink);
+        color: var(--paper);
+        font-size: 12px;
+      }
+
+      .matrix-cell.row-head {
+        place-items: center start;
+        padding-left: 20px;
+        background: transparent;
+        font-size: 12px;
+        text-align: left;
+      }
+
+      .matrix-cell.orbit-head {
+        background: var(--orange);
+        color: white;
+      }
+
+      .matrix-cell.orbit-cell {
+        background: #ffd4c8;
+      }
+
+      .mark {
+        display: grid;
+        place-items: center;
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        background: var(--paper);
+        color: var(--ink);
+      }
+
+      .mark svg {
+        width: 15px;
+        height: 15px;
+        fill: none;
+        stroke: currentColor;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+        stroke-width: 1.8;
+      }
+
+      .mark.yes {
+        background: var(--acid);
+      }
+
+      .mark.partial {
+        background: var(--sky);
+      }
+
+      .matrix-note {
+        grid-column: 1 / -1;
+        min-height: 56px;
+        background: var(--lilac);
+        font-family: var(--serif);
+        font-size: clamp(17px, 1.5vw, 24px);
+        font-style: italic;
+        font-weight: 500;
+      }
+
+      .scope-layout {
+        grid-template-rows: auto 1fr auto;
+      }
+
+      .phase-grid {
+        display: grid;
+        grid-template-columns: 1.35fr 0.8fr 0.8fr;
+        gap: 20px;
+      }
+
+      .phase-card .core {
+        display: grid;
+        grid-template-rows: auto 1fr auto;
+        min-height: 390px;
+        padding: 28px;
+      }
+
+      .phase-card.now .core {
+        background: var(--orange);
+        color: white;
+      }
+
+      .phase-card.later .core {
+        background: #e3ddd2;
+      }
+
+      .phase-card header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 18px;
+      }
+
+      .phase-card h3 {
+        font-family: var(--serif);
+        font-size: clamp(30px, 3vw, 48px);
+        font-style: italic;
+        font-weight: 500;
+        letter-spacing: -0.05em;
+      }
+
+      .phase-card ul {
+        display: grid;
+        align-content: center;
+        gap: 13px;
+        margin: 24px 0;
+        padding: 0;
+        list-style: none;
+      }
+
+      .phase-card li {
+        display: grid;
+        grid-template-columns: 22px 1fr;
+        gap: 10px;
+        font-size: clamp(12px, 1.05vw, 16px);
+        font-weight: 700;
+        line-height: 1.35;
+        word-break: keep-all;
+      }
+
+      .phase-card li::before {
+        display: grid;
+        place-items: center;
+        width: 20px;
+        height: 20px;
+        border-radius: 7px;
+        background: var(--acid);
+        color: var(--ink);
+        content: "✓";
+        font-size: 10px;
+        font-weight: 900;
+      }
+
+      .phase-card.now li::before {
+        background: var(--white);
+      }
+
+      .phase-card footer {
+        color: var(--ink-soft);
+        font-size: 10px;
+        font-weight: 750;
+        line-height: 1.4;
+      }
+
+      .phase-card.now footer {
+        color: rgba(255, 255, 255, 0.7);
+      }
+
+      .non-goals {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 9px;
+        margin-top: 24px;
+      }
+
+      .non-goals strong {
+        margin-right: 4px;
+        font-size: 11px;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+      }
+
+      .non-goals span {
+        padding: 7px 11px;
+        border-radius: 999px;
+        background: rgba(23, 23, 19, 0.07);
+        color: var(--ink-soft);
+        font-size: 10px;
+        font-weight: 750;
+        text-decoration: line-through;
+      }
+
+      .experiment-layout {
+        grid-template-rows: auto 1fr auto;
+      }
+
+      .experiment-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr 0.8fr;
+        gap: 18px;
+      }
+
+      .experiment-card .core {
+        display: grid;
+        grid-template-rows: auto 1fr auto;
+        min-height: 330px;
+        padding: 26px;
+      }
+
+      .experiment-card.treatment .core {
+        background: var(--acid);
+      }
+
+      .experiment-card.metric .core {
+        background: var(--orange);
+        color: white;
+      }
+
+      .group-chip {
+        display: inline-flex;
+        align-items: center;
+        width: max-content;
+        min-height: 30px;
+        padding: 5px 10px;
+        border-radius: 999px;
+        background: var(--ink);
+        color: var(--paper);
+        font-size: 9px;
+        font-weight: 850;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+      }
+
+      .experiment-card h3 {
+        align-self: center;
+        max-width: 14ch;
+        font-family: var(--serif);
+        font-size: clamp(29px, 2.8vw, 46px);
+        font-style: italic;
+        font-weight: 500;
+        letter-spacing: -0.055em;
+        line-height: 1.05;
+        word-break: keep-all;
+      }
+
+      .experiment-card p {
+        color: var(--ink-soft);
+        font-size: 12px;
+        font-weight: 650;
+        line-height: 1.5;
+        word-break: keep-all;
+      }
+
+      .experiment-card.metric h3 {
+        font-size: clamp(46px, 5vw, 78px);
+        color: white;
+      }
+
+      .experiment-card.metric p {
+        color: rgba(255, 255, 255, 0.72);
+      }
+
+      .gate-track {
+        display: grid;
+        grid-template-columns: 1fr 46px 1fr 46px 1fr;
+        align-items: center;
+        margin-top: 24px;
+      }
+
+      .gate {
+        min-height: 70px;
+        padding: 14px 18px;
+        border-radius: 22px;
+        background: rgba(23, 23, 19, 0.07);
+      }
+
+      .gate strong,
+      .gate span {
+        display: block;
+      }
+
+      .gate strong {
+        font-size: 12px;
+      }
+
+      .gate span {
+        margin-top: 5px;
+        color: var(--ink-soft);
+        font-size: 10px;
+        font-weight: 650;
+      }
+
+      .gate-arrow {
+        text-align: center;
+      }
+
+      .closing-layout {
+        grid-template-columns: minmax(0, 1fr) minmax(420px, 0.72fr);
+        align-items: center;
+        gap: clamp(48px, 7vw, 120px);
+      }
+
+      .closing-copy {
+        display: grid;
+        align-content: center;
+        gap: 28px;
+        min-width: 0;
+      }
+
+      .closing-list {
+        display: grid;
+        gap: 12px;
+      }
+
+      .closing-item {
+        display: grid;
+        grid-template-columns: 46px 1fr;
+        align-items: center;
+        gap: 16px;
+        min-height: 72px;
+        padding: 12px 18px 12px 12px;
+        border-radius: 23px;
+        background: rgba(244, 240, 231, 0.08);
+      }
+
+      .closing-item span {
+        display: grid;
+        place-items: center;
+        width: 46px;
+        height: 46px;
+        border-radius: 15px;
+        background: var(--acid);
+        color: var(--ink);
+        font-family: var(--serif);
+        font-size: 21px;
+        font-style: italic;
+      }
+
+      .closing-item strong {
+        display: block;
+        font-size: 15px;
+      }
+
+      .closing-item small {
+        display: block;
+        margin-top: 3px;
+        color: rgba(244, 240, 231, 0.55);
+        font-size: 10px;
+        line-height: 1.35;
+      }
+
+      .closing-orbit {
+        position: relative;
+        display: grid;
+        place-items: center;
+        aspect-ratio: 1;
+      }
+
+      .closing-orbit::before,
+      .closing-orbit::after {
+        position: absolute;
+        border: 1px solid rgba(244, 240, 231, 0.14);
+        border-radius: 50%;
+        content: "";
+      }
+
+      .closing-orbit::before {
+        width: 90%;
+        height: 90%;
+      }
+
+      .closing-orbit::after {
+        width: 60%;
+        height: 60%;
+      }
+
+      .closing-mark {
+        position: relative;
+        z-index: 2;
+        display: grid;
+        place-items: center;
+        width: 230px;
+        height: 230px;
+        border-radius: 50%;
+        background: var(--orange);
+        color: white;
+        font-family: var(--serif);
+        font-size: 41px;
+        font-style: italic;
+        line-height: 0.95;
+        text-align: center;
+        transform: rotate(-5deg);
+      }
+
+      .orbit-dot {
+        position: absolute;
+        width: 54px;
+        height: 54px;
+        overflow: hidden;
+        border-radius: 18px;
+        background: var(--paper);
+      }
+
+      .orbit-dot img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+
+      .orbit-dot.one {
+        top: 4%;
+        left: 43%;
+      }
+
+      .orbit-dot.two {
+        right: 2%;
+        bottom: 31%;
+        width: 74px;
+        height: 74px;
+      }
+
+      .orbit-dot.three {
+        bottom: 4%;
+        left: 23%;
+        width: 64px;
+        height: 64px;
+      }
+
+      .source-line {
+        position: absolute;
+        right: clamp(24px, 4vw, 72px);
+        bottom: clamp(14px, 2vh, 22px);
+        z-index: 1;
+        color: var(--ink-soft);
+        font-size: 9px;
+        font-weight: 650;
+        letter-spacing: 0.02em;
+      }
+
+      [data-tone="ink"] .source-line {
+        color: rgba(244, 240, 231, 0.38);
+      }
+
+      .source-line a {
+        color: inherit;
+        text-decoration-color: currentColor;
+        text-underline-offset: 3px;
+      }
+
+      .deck-nav {
+        position: fixed;
+        bottom: var(--safe-bottom);
+        left: 50%;
+        z-index: 5;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 7px;
+        border: 1px solid rgba(255, 255, 255, 0.18);
+        border-radius: 999px;
+        background: rgba(23, 23, 19, 0.9);
+        color: var(--paper);
+        box-shadow: 0 16px 50px rgba(23, 23, 19, 0.18);
+        transform: translateX(-50%);
+      }
+
+      .nav-button {
+        display: grid;
+        place-items: center;
+        width: 46px;
+        height: 46px;
+        padding: 0;
+        border: 0;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.08);
+        color: var(--paper);
+        cursor: pointer;
+        transition:
+          transform 350ms var(--ease-heavy),
+          background-color 350ms var(--ease-heavy),
+          opacity 350ms var(--ease-heavy);
+      }
+
+      .nav-button:hover {
+        background: rgba(255, 255, 255, 0.16);
+        transform: translate3d(0, -2px, 0);
+      }
+
+      .nav-button:active {
+        transform: scale(0.94);
+      }
+
+      .nav-button[disabled] {
+        cursor: default;
+        opacity: 0.32;
+        transform: none;
+      }
+
+      .nav-button svg {
+        width: 19px;
+        height: 19px;
+        fill: none;
+        stroke: currentColor;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+        stroke-width: 1.5;
+      }
+
+      .counter {
+        display: flex;
+        align-items: baseline;
+        min-width: 74px;
+        justify-content: center;
+        gap: 5px;
+        font-family: "SFMono-Regular", "Menlo", monospace;
+        font-size: 12px;
+      }
+
+      .counter-total {
+        color: rgba(244, 240, 231, 0.42);
+        font-size: 9px;
+      }
+
+      .progress {
+        position: fixed;
+        inset: 0 0 auto;
+        z-index: 5;
+        height: 3px;
+        background: rgba(23, 23, 19, 0.08);
+      }
+
+      .progress-bar {
+        width: 100%;
+        height: 100%;
+        background: var(--orange);
+        transform-origin: left center;
+        transition: transform 720ms var(--ease-heavy);
+      }
+
+      .keyboard-hint {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        color: var(--ink-soft);
+        font-size: 10px;
+        font-weight: 700;
+      }
+
+      .key {
+        display: inline-grid;
+        place-items: center;
+        min-width: 28px;
+        height: 28px;
+        padding: 0 7px;
+        border-radius: 9px;
+        background: var(--white);
+        box-shadow: inset 0 -2px 0 rgba(23, 23, 19, 0.1);
+      }
+
+      @media (max-width: 1100px) {
+        .slide {
+          padding-right: 36px;
+          padding-left: 36px;
+        }
+
+        .hero-layout,
+        .product-layout,
+        .engine-layout,
+        .closing-layout {
+          grid-template-columns: minmax(0, 1fr) minmax(370px, 0.7fr);
+          gap: 36px;
+        }
+
+        .behavior-grid {
+          grid-template-columns: 1fr 240px;
+        }
+
+        .loop-node {
+          min-height: 190px;
+          padding: 16px;
+        }
+
+        .journey-step {
+          min-height: 360px;
+          padding: 18px;
+        }
+
+        .matrix-cell {
+          min-height: 58px;
+        }
+      }
+
+      @media (max-width: 767px) {
+        html,
+        body {
+          background: var(--paper);
+        }
+
+        .slide {
+          display: block;
+          padding: 48px 16px 112px;
+          overflow-x: hidden;
+          overflow-y: auto;
+        }
+
+        .slide-inner {
+          display: grid;
+          width: 100%;
+          max-width: 100%;
+          min-height: auto;
+        }
+
+        .corner-index,
+        .source-line,
+        .keyboard-hint {
+          display: none;
+        }
+
+        .hero-layout,
+        .product-layout,
+        .engine-layout,
+        .closing-layout {
+          grid-template-columns: minmax(0, 1fr);
+          gap: 34px;
+        }
+
+        .display {
+          font-size: clamp(70px, 25vw, 112px);
+        }
+
+        .slide-title {
+          font-size: clamp(40px, 11.5vw, 58px);
+          overflow-wrap: anywhere;
+          word-break: keep-all;
+        }
+
+        .hero-gallery {
+          height: 520px;
+          min-height: 0;
+        }
+
+        .gallery-label {
+          left: -4px;
+          width: 88px;
+          height: 88px;
+          font-size: 15px;
+        }
+
+        .section-head {
+          display: grid;
+          align-items: start;
+          gap: 16px;
+          margin-bottom: 28px;
+        }
+
+        .behavior-grid,
+        .compare-grid,
+        .density-grid,
+        .signals-grid,
+        .journey-track,
+        .phase-grid,
+        .experiment-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .behavior-loop {
+          grid-template-columns: 1fr;
+        }
+
+        .loop-node {
+          min-height: 150px;
+        }
+
+        .loop-node::after {
+          top: auto;
+          right: calc(50% - 17px);
+          bottom: -24px;
+          transform: rotate(90deg);
+        }
+
+        .evidence-card .core {
+          min-height: 280px;
+        }
+
+        .compare-arrow {
+          height: 50px;
+          transform: rotate(90deg);
+        }
+
+        .target-strip {
+          grid-template-columns: 1fr;
+        }
+
+        .phone-wrap {
+          justify-self: stretch;
+          width: 100%;
+          max-width: 100%;
+          transform: none;
+        }
+
+        .phone {
+          width: 100%;
+        }
+
+        .formula {
+          max-width: 100%;
+          gap: 7px;
+        }
+
+        .formula span {
+          min-height: 36px;
+          padding: 7px 10px;
+          font-size: 11px;
+        }
+
+        .formula b {
+          font-size: 15px;
+        }
+
+        .density-grid {
+          align-items: stretch;
+        }
+
+        .mode-phone {
+          height: 480px;
+        }
+
+        .pinch-note {
+          display: none;
+        }
+
+        .engine-visual {
+          min-height: 460px;
+        }
+
+        .signal-step,
+        .signal-step:nth-child(n) {
+          width: 100%;
+        }
+
+        .journey-step {
+          min-height: 330px;
+        }
+
+        .journey-step::after {
+          top: auto;
+          right: calc(50% - 16px);
+          bottom: -23px;
+          transform: rotate(90deg);
+        }
+
+        .matrix-shell {
+          overflow-x: auto;
+        }
+
+        .matrix {
+          min-width: 760px;
+        }
+
+        .phase-card .core,
+        .experiment-card .core {
+          min-height: 320px;
+        }
+
+        .gate-track {
+          grid-template-columns: 1fr;
+          gap: 8px;
+        }
+
+        .gate-arrow {
+          transform: rotate(90deg);
+        }
+
+        .closing-orbit {
+          min-height: 430px;
+        }
+
+        .deck-nav {
+          bottom: var(--safe-bottom);
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        *,
+        *::before,
+        *::after {
+          scroll-behavior: auto !important;
+          transition-duration: 0.01ms !important;
+          transition-delay: 0ms !important;
+          animation-duration: 0.01ms !important;
+          animation-iteration-count: 1 !important;
+        }
+      }
+
+      @media print {
+        @page {
+          size: 16in 9in;
+          margin: 0;
+        }
+
+        html,
+        body {
+          overflow: visible;
+          background: white;
+          print-color-adjust: exact;
+          -webkit-print-color-adjust: exact;
+        }
+
+        body::after,
+        .deck-nav,
+        .progress {
+          display: none !important;
+        }
+
+        .deck {
+          min-height: 0;
+        }
+
+        .slide,
+        .slide.is-before,
+        .slide.is-active {
+          position: relative;
+          display: grid;
+          width: 16in;
+          height: 9in;
+          max-height: 9in;
+          min-height: 9in;
+          padding: 0.48in 0.62in 0.7in;
+          break-after: page;
+          break-inside: avoid;
+          visibility: visible;
+          overflow: hidden;
+          opacity: 1;
+          transform: none;
+        }
+
+        .slide:last-child {
+          break-after: auto;
+        }
+
+        .slide-inner {
+          width: 100%;
+          height: 7.5in;
+          max-height: 7.5in;
+          min-height: 7.5in;
+        }
+
+        .reveal {
+          opacity: 1;
+          transform: none;
+        }
+
+        .source-line {
+          bottom: 0.42in;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="progress" aria-hidden="true">
+      <div class="progress-bar" id="progressBar"></div>
+    </div>
+
+    <main class="deck" id="deck" aria-label="Orbit 팀 발표 자료">
+      <section class="slide is-active" data-title="Cover" aria-labelledby="slide-1-title">
+        <span class="corner-index mono">01 / Product thesis</span>
+        <div class="slide-inner hero-layout">
+          <div class="hero-copy">
+            <span class="eyebrow orange reveal">Team briefing · 2026.08.12</span>
+            <h1 class="display reveal" id="slide-1-title">Or<strong>b</strong>it</h1>
+            <p class="hero-subtitle reveal">
+              남의 베스트에서<br />나의 취향으로.
+            </p>
+            <div class="hero-meta reveal">
+              <span class="meta-pill">개인화 무한 탐색</span>
+              <span class="meta-pill">T-shirt only</span>
+              <span class="meta-pill">Mobile PWA</span>
+            </div>
+            <div class="keyboard-hint reveal" aria-hidden="true">
+              <span class="key">→</span>
+              <span>키보드 또는 하단 버튼으로 이동</span>
+            </div>
+          </div>
+
+          <div class="hero-gallery reveal" aria-hidden="true">
+            <div class="gallery-label">infinite<br />discovery</div>
+            <div class="gallery-plate bezel">
+              <div class="core">
+                <div class="mosaic">
+                  <div class="product-tile tall">
+                    <img src="https://image.msscdn.net/images/goods_img/20250616/5187827/5187827_17504003447171_500.jpg" alt="" draggable="false" />
+                    <span class="price">39,900</span>
+                  </div>
+                  <div class="product-tile">
+                    <img src="https://image.msscdn.net/images/goods_img/20220801/2690691/2690691_17090175122341_500.jpg" alt="" draggable="false" />
+                  </div>
+                  <div class="product-tile tall">
+                    <img src="https://image.msscdn.net/images/goods_img/20250420/5045551/5045551_17459121286173_500.jpg" alt="" draggable="false" />
+                    <span class="price">52,000</span>
+                  </div>
+                  <div class="product-tile">
+                    <img src="https://image.msscdn.net/images/goods_img/20211110/2225772/2225772_17416566557348_500.jpg" alt="" draggable="false" />
+                    <span class="price">29,000</span>
+                  </div>
+                  <div class="product-tile wide">
+                    <img src="https://image.msscdn.net/images/goods_img/20250420/5045548/5045548_17459121863611_500.jpg" alt="" draggable="false" />
+                  </div>
+                  <div class="product-tile">
+                    <img src="https://image.msscdn.net/images/goods_img/20230207/3064786/3064786_16784413180227_500.jpg" alt="" draggable="false" />
+                    <span class="price">45,000</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <p class="source-line">Orbit Living PRD v0.2 · 임시명</p>
+      </section>
+
+      <section class="slide" data-title="Observation" aria-labelledby="slide-2-title">
+        <span class="corner-index mono">02 / Observation</span>
+        <div class="slide-inner behavior-layout">
+          <header class="section-head reveal">
+            <div>
+              <span class="eyebrow">Observed behavior</span>
+              <h2 class="slide-title" id="slide-2-title">이미 쇼핑은 <strong>습관</strong>이다.</h2>
+            </div>
+            <p class="section-note">
+              사용자는 불편을 호소하지 않았다. 목적 없이 훑고, 장바구니에 모으고,
+              나중에 돌아온다.
+            </p>
+          </header>
+
+          <div class="behavior-grid">
+            <div class="bezel loop-shell reveal">
+              <div class="core">
+                <div class="behavior-loop">
+                  <article class="loop-node">
+                    <span class="node-icon">
+                      <svg viewBox="0 0 32 32" aria-hidden="true"><path d="M9 11.5 16 7l7 4.5v10L16 26l-7-4.5z"/><path d="M16 7v19M9 11.5l7 4.5 7-4.5"/></svg>
+                    </span>
+                    <div><strong>느슨한 필요</strong><small>“옷은 하나 사야 하는데”</small></div>
+                  </article>
+                  <article class="loop-node">
+                    <span class="node-icon">
+                      <svg viewBox="0 0 32 32" aria-hidden="true"><path d="M8 8h16v16H8z"/><path d="M8 13h16M13 8v16"/></svg>
+                    </span>
+                    <div><strong>베스트 진입</strong><small>검색어 대신 익숙한 목록</small></div>
+                  </article>
+                  <article class="loop-node">
+                    <span class="node-icon">
+                      <svg viewBox="0 0 32 32" aria-hidden="true"><path d="M10 7v18M16 11v14M22 15v10"/><path d="m7 10 3-3 3 3M13 14l3-3 3 3M19 18l3-3 3 3"/></svg>
+                    </span>
+                    <div><strong>무지성 스크롤</strong><small>이미지를 전수조사하듯 훑기</small></div>
+                  </article>
+                  <article class="loop-node">
+                    <span class="node-icon">
+                      <svg viewBox="0 0 32 32" aria-hidden="true"><path d="M9 11h15l-2 9H11z"/><path d="m11 11-1-4H6M13 25h.01M21 25h.01"/></svg>
+                    </span>
+                    <div><strong>장바구니 보관</strong><small>결제 목록보다 호감 저장소</small></div>
+                  </article>
+                  <article class="loop-node">
+                    <span class="node-icon">
+                      <svg viewBox="0 0 32 32" aria-hidden="true"><path d="M8 16a8 8 0 1 0 2.34-5.66"/><path d="M8 7v7h7"/></svg>
+                    </span>
+                    <div><strong>재검토 · 구매</strong><small>나중에 돌아와 일부 선택</small></div>
+                  </article>
+                </div>
+              </div>
+            </div>
+
+            <aside class="bezel evidence-card reveal" aria-label="탐색적 인터뷰 근거">
+              <div class="core">
+                <span class="mono">Exploratory signal</span>
+                <strong class="evidence-number">≈70%</strong>
+                <p>검색 시작의 막막함 또는 습관적 베스트 탐색을 회고</p>
+                <small>인터뷰 5~10명 · 정확한 분모와 원문은 남아 있지 않음 · 시장 비율로 일반화하지 않음</small>
+              </div>
+            </aside>
+          </div>
+        </div>
+        <p class="source-line"><a href="foundation/problem-target-jtbd.md">기회·타깃·JTBD</a> · 탐색적 질적 단서</p>
+      </section>
+
+      <section class="slide" data-title="Opportunity" aria-labelledby="slide-3-title">
+        <span class="corner-index mono">03 / Opportunity</span>
+        <div class="slide-inner opportunity-layout">
+          <header class="section-head reveal">
+            <div>
+              <span class="eyebrow orange">Opportunity, not pain</span>
+              <h2 class="slide-title" id="slide-3-title">불편을 고치는 게 아니라<br /><strong>기준을 바꾼다.</strong></h2>
+            </div>
+            <p class="section-note">현재 방식은 충분히 작동한다. Orbit이 증명할 것은 더 개인적인 반복 방문 가치다.</p>
+          </header>
+
+          <div class="compare-grid reveal">
+            <article class="bezel compare-card">
+              <div class="core">
+                <div class="compare-label"><span>Musinsa Best</span><span>집단 기준</span></div>
+                <div class="rank-stack" aria-hidden="true">
+                  <div class="rank-row"><b>1</b><span class="rank-thumb"><img src="https://image.msscdn.net/images/goods_img/20220526/2584839/2584839_17790681796826_500.jpg" alt="" /></span><span class="rank-copy"><span></span><i></i></span></div>
+                  <div class="rank-row"><b>2</b><span class="rank-thumb"><img src="https://image.msscdn.net/images/goods_img/20210713/2028047/2028047_17548949921868_500.jpg" alt="" /></span><span class="rank-copy"><span></span><i></i></span></div>
+                  <div class="rank-row"><b>3</b><span class="rank-thumb"><img src="https://image.msscdn.net/images/goods_img/20200225/1321500/1321500_17744840164159_500.jpg" alt="" /></span><span class="rank-copy"><span></span><i></i></span></div>
+                </div>
+                <p class="compare-footer">누군가의 데이터로 정한 순위</p>
+              </div>
+            </article>
+
+            <div class="compare-arrow" aria-hidden="true">
+              <svg viewBox="0 0 64 64"><path d="M10 32h42M38 18l14 14-14 14"/></svg>
+            </div>
+
+            <article class="bezel compare-card orbit">
+              <div class="core">
+                <div class="compare-label"><span>Orbit</span><span>개인 기준</span></div>
+                <div class="taste-cloud" aria-hidden="true">
+                  <div class="taste-center">my<br />taste</div>
+                  <span class="taste-chip"><img src="https://image.msscdn.net/images/goods_img/20250616/5187827/5187827_17504003447171_500.jpg" alt="" /></span>
+                  <span class="taste-chip"><img src="https://image.msscdn.net/images/goods_img/20240311/3936789/3936789_17101176930689_500.jpg" alt="" /></span>
+                  <span class="taste-chip"><img src="https://image.msscdn.net/images/goods_img/20250912/5449070/5449070_17742366607956_500.jpg" alt="" /></span>
+                  <span class="taste-chip"><img src="https://image.msscdn.net/images/goods_img/20250305/4862599/4862599_17497775466720_500.jpg" alt="" /></span>
+                </div>
+                <p class="compare-footer">내 반복 행동으로 변하는 구성</p>
+              </div>
+            </article>
+          </div>
+
+          <div class="target-strip reveal">
+            <span class="target-tag">PRIMARY TARGET</span>
+            <strong>매주 무신사 베스트를 훑고, 장바구니에 담아두었다가 나중에 구매하는 사람</strong>
+            <span class="mono">behavior, not age</span>
+          </div>
+        </div>
+        <p class="source-line"><a href="living/prd.md#3-타깃과-jtbd">PRD §3 타깃과 JTBD</a></p>
+      </section>
+
+      <section class="slide" data-tone="ink" data-title="Product" aria-labelledby="slide-4-title">
+        <span class="corner-index mono">04 / Product</span>
+        <div class="slide-inner product-layout">
+          <div class="product-copy">
+            <span class="eyebrow reveal">Product thesis</span>
+            <h2 class="slide-title reveal" id="slide-4-title">사진첩처럼 훑을수록<br /><strong>나를 닮는 피드</strong></h2>
+            <p class="thesis reveal">실제 티셔츠 이미지와 가격만 보며, 끝없이 탐색한다. 장기 취향과 이번 세션의 방향이 노출 구성을 자동으로 바꾼다.</p>
+            <div class="formula reveal" aria-label="Orbit 제품 구성">
+              <span>검색어 없음</span><b>×</b><span>무한 모자이크</span><b>×</b><span>암묵적 학습</span><b>×</b><span>PWA</span>
+            </div>
+          </div>
+
+          <div class="phone-wrap reveal" aria-label="Orbit 3열 탐색 화면 개념도">
+            <div class="phone">
+              <div class="phone-top">
+                <span class="phone-brand">Orbit</span>
+                <span class="phone-actions" aria-hidden="true">
+                  <span><svg viewBox="0 0 24 24"><path d="M12 20s-7-4.2-7-9.2A3.8 3.8 0 0 1 12 8a3.8 3.8 0 0 1 7 2.8C19 15.8 12 20 12 20Z"/></svg></span>
+                  <span><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="3"/><path d="M6.5 19c.8-3.2 2.6-5 5.5-5s4.7 1.8 5.5 5"/></svg></span>
+                </span>
+              </div>
+              <div class="phone-feed" aria-hidden="true">
+                <div class="product-tile"><img src="https://image.msscdn.net/images/goods_img/20250616/5187827/5187827_17504003447171_500.jpg" alt="" /><span class="price">39,900</span></div>
+                <div class="product-tile"><img src="https://image.msscdn.net/images/goods_img/20220801/2690691/2690691_17090175122341_500.jpg" alt="" /><span class="price">29,000</span></div>
+                <div class="product-tile"><img src="https://image.msscdn.net/images/goods_img/20250420/5045551/5045551_17459121286173_500.jpg" alt="" /><span class="price">52,000</span></div>
+                <div class="product-tile"><img src="https://image.msscdn.net/images/goods_img/20211110/2225780/2225780_17452941308040_500.jpg" alt="" /><span class="price">31,500</span></div>
+                <div class="product-tile"><img src="https://image.msscdn.net/images/goods_img/20250420/5045548/5045548_17459121863611_500.jpg" alt="" /><span class="price">45,000</span></div>
+                <div class="product-tile"><img src="https://image.msscdn.net/images/goods_img/20230207/3064786/3064786_16784413180227_500.jpg" alt="" /><span class="price">38,000</span></div>
+                <div class="product-tile"><img src="https://image.msscdn.net/images/goods_img/20210713/2028047/2028047_17548949921868_500.jpg" alt="" /><span class="price">27,900</span></div>
+              </div>
+              <div class="sheet-preview">
+                <img src="https://image.msscdn.net/images/goods_img/20250616/5187827/5187827_17504003447171_500.jpg" alt="티셔츠 상품 예시" />
+                <span><strong>이 스타일로 계속 탐색</strong><small>피드 방향을 빠르게 전환</small></span>
+                <span class="sheet-button" aria-hidden="true">→</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <p class="source-line"><a href="living/prd.md#6-제품-경험">PRD §6 제품 경험</a> · 화면은 개념도</p>
+      </section>
+
+      <section class="slide" data-title="Interaction" aria-labelledby="slide-5-title">
+        <span class="corner-index mono">05 / Interaction</span>
+        <div class="pinch-note" aria-hidden="true">PINCH<br />TO SHIFT</div>
+        <div class="slide-inner density-layout">
+          <header class="section-head reveal">
+            <div>
+              <span class="eyebrow">Apple Photos mental model</span>
+              <h2 class="slide-title" id="slide-5-title">전수조사와 집중을<br /><strong>한 손짓</strong>으로.</h2>
+            </div>
+            <p class="section-note">밀도가 바뀌어도 보고 있던 상품과 스크롤 위치는 그대로 유지한다.</p>
+          </header>
+
+          <div class="density-grid reveal">
+            <article class="mode-card">
+              <div class="mode-phone"><div class="mode-screen five" data-demo-grid="5"></div></div>
+              <div class="mode-caption"><strong>5 columns</strong><span>이미지만<br />빠르게 훑기</span></div>
+            </article>
+            <article class="mode-card">
+              <div class="mode-phone"><div class="mode-screen three" data-demo-grid="3"></div></div>
+              <div class="mode-caption"><strong>3 columns</strong><span>기본값<br />이미지 + 가격</span></div>
+            </article>
+            <article class="mode-card">
+              <div class="mode-phone"><div class="mode-screen two" data-demo-grid="2"></div></div>
+              <div class="mode-caption"><strong>2 columns</strong><span>크게 보고<br />가격 비교</span></div>
+            </article>
+          </div>
+        </div>
+        <p class="source-line"><a href="living/decision-log.md">결정 O-05~O-08</a> · 핀치에는 명시적 대체 컨트롤 제공</p>
+      </section>
+
+      <section class="slide" data-tone="ink" data-title="Personalization" aria-labelledby="slide-6-title">
+        <span class="corner-index mono">06 / Personalization</span>
+        <div class="slide-inner engine-layout">
+          <div class="engine-copy">
+            <span class="eyebrow reveal">Adaptive mix</span>
+            <h2 class="slide-title reveal" id="slide-6-title">닮은 것만<br />보여주지 <strong>않는다.</strong></h2>
+            <p class="thesis reveal">익숙함과 새로움의 고정 비율은 없다. 반복 행동을 보며 구성을 자동 조절하되, 반대 제안을 완전히 지우지 않는다.</p>
+            <div class="two-speed reveal">
+              <div class="speed-card"><strong>장기 취향 · 천천히</strong><small>여러 세션의 반복 선택을 누적하고 한 번의 이례적 탐색에 덮이지 않는다.</small></div>
+              <div class="speed-card"><strong>세션 방향 · 빠르게</strong><small>‘이 스타일로 계속 탐색’ 이후 즉시 방향을 바꾸고 장기 취향은 소량 유지한다.</small></div>
+            </div>
+          </div>
+
+          <div class="engine-visual reveal" aria-label="추천 포트폴리오 다이어그램">
+            <div class="orbit-ring"></div>
+            <div class="orbit-ring inner"></div>
+            <div class="engine-core"><div><strong>behavior<br />mix</strong><small>AUTO ADJUST</small></div></div>
+            <div class="portfolio-chip">장기 취향<small>familiar</small></div>
+            <div class="portfolio-chip">현재 관심<small>session</small></div>
+            <div class="portfolio-chip">부분 일치<small>edge</small></div>
+            <div class="portfolio-chip">반대 제안<small>opposite</small></div>
+            <div class="portfolio-chip">시간적 새로움<small>freshness axis</small></div>
+            <span class="auto-label">No fixed ratio</span>
+          </div>
+        </div>
+        <p class="source-line"><a href="living/prd.md#7-개인화-원칙과-평가">PRD §7 개인화 원칙</a></p>
+      </section>
+
+      <section class="slide" data-title="Signals" aria-labelledby="slide-7-title">
+        <span class="corner-index mono">07 / Signals</span>
+        <div class="slide-inner signals-layout">
+          <header class="section-head reveal">
+            <div>
+              <span class="eyebrow orange">Implicit signals</span>
+              <h2 class="slide-title" id="slide-7-title">말하지 않아도,<br /><strong>반복은 말한다.</strong></h2>
+            </div>
+            <p class="section-note">모든 행동을 구매로 오해하지 않는다. 강도와 한계를 분리해 학습한다.</p>
+          </header>
+
+          <div class="signals-grid">
+            <div class="bezel signal-ladder reveal">
+              <div class="core">
+                <div class="signal-step"><span class="signal-number">01</span><strong>반복 탐색 경향</strong><small>weak</small></div>
+                <div class="signal-step"><span class="signal-number">02</span><strong>이 스타일로 계속 탐색</strong><small>explicit direction</small></div>
+                <div class="signal-step"><span class="signal-number">03</span><strong>찜</strong><small>strong preference</small></div>
+                <div class="signal-step"><span class="signal-number">04</span><strong>판매처 이동</strong><small>intent proxy</small></div>
+              </div>
+            </div>
+            <div class="signal-notes">
+              <article class="bezel note-card reveal"><div class="core"><strong>판매처 이동 ≠ 구매</strong><p>외부 결제를 알 수 없으므로 가장 강한 ‘구매 의도 대리 신호’로만 사용한다.</p></div></article>
+              <article class="bezel note-card reveal"><div class="core"><strong>노출 편향을 함께 기록</strong><p>카드 크기 · 화면 위치 · 열 수를 로그에 남겨 시각적 강조를 취향으로 오학습하지 않는다.</p></div></article>
+            </div>
+          </div>
+        </div>
+        <p class="source-line"><a href="living/prd.md#신호-강도">PRD §7 신호 강도</a></p>
+      </section>
+
+      <section class="slide" data-title="Journey" aria-labelledby="slide-8-title">
+        <span class="corner-index mono">08 / Journey</span>
+        <div class="slide-inner journey-layout">
+          <header class="section-head reveal">
+            <div>
+              <span class="eyebrow">Progressive relationship</span>
+              <h2 class="slide-title" id="slide-8-title">가치를 먼저.<br /><strong>가입은 나중에.</strong></h2>
+            </div>
+            <p class="section-note">비회원은 바로 탐색한다. 회원에게만 장기 개인화가 이어지고 푸시는 가치 확인 후 별도 실험한다.</p>
+          </header>
+
+          <div class="journey-track reveal">
+            <article class="journey-step">
+              <span class="journey-index">01</span>
+              <div class="journey-art"><div class="mini-feed" data-mini-feed></div></div>
+              <div><h3>비회원 즉시 탐색</h3><p>가입 없이 공통 다양성 피드와 현재 세션의 스타일 분기를 경험한다.</p><span class="phase-tag">No persistent profile</span></div>
+            </article>
+            <article class="journey-step">
+              <span class="journey-index">02</span>
+              <div class="journey-art"><div class="signup-pill">지금까지의 선택으로<br />나만의 Orbit 만들기 →</div></div>
+              <div><h3>가치 순간에 제안</h3><p>가입 전 임시 탐색 이력을 계정으로 승계한다. 정확한 노출 시점은 테스트한다.</p><span class="phase-tag">Progressive signup</span></div>
+            </article>
+            <article class="journey-step highlight">
+              <span class="journey-index">03</span>
+              <div class="journey-art"><div class="profile-stack"><span>연령대</span><span>성별</span><span>키</span><span>사이즈</span></div></div>
+              <div><h3>착용 가능성부터</h3><p>성별·키·사이즈는 강한 자격 조건, 연령대는 분석 세그먼트로 사용한다.</p><span class="phase-tag">Member only</span></div>
+            </article>
+            <article class="journey-step">
+              <span class="journey-index">04</span>
+              <div class="journey-art"><div class="personal-orbit"><i></i><i></i></div></div>
+              <div><h3>세션을 넘어 학습</h3><p>장기 취향이 다음 방문에 이어진다. 유기적 가치가 확인된 뒤 푸시를 더한다.</p><span class="phase-tag">Push = Phase 1</span></div>
+            </article>
+          </div>
+        </div>
+        <p class="source-line"><a href="living/prd.md#비회원-탐색">PRD §6 비회원·가입·회원 루프</a></p>
+      </section>
+
+      <section class="slide" data-title="Competition" aria-labelledby="slide-9-title">
+        <span class="corner-index mono">09 / Positioning</span>
+        <div class="slide-inner competition-layout">
+          <header class="section-head reveal">
+            <div>
+              <span class="eyebrow orange">Competitive alternatives</span>
+              <h2 class="slide-title" id="slide-9-title">새로운 기능보다<br /><strong>새로운 조합.</strong></h2>
+            </div>
+            <p class="section-note">무한 피드도, AI 추천도, 비주얼 탐색도 이미 존재한다. Orbit의 가설은 그 조합이 재방문을 만드는가다.</p>
+          </header>
+
+          <div class="bezel matrix-shell reveal">
+            <div class="core">
+              <div class="matrix" role="table" aria-label="경쟁 대안과 Orbit 비교">
+                <div class="matrix-cell head" role="columnheader">검증할 조합</div>
+                <div class="matrix-cell head" role="columnheader">무신사 베스트</div>
+                <div class="matrix-cell head" role="columnheader">Daydream · Lens</div>
+                <div class="matrix-cell head" role="columnheader">Pinterest · Cosmos</div>
+                <div class="matrix-cell head orbit-head" role="columnheader">Orbit</div>
+
+                <div class="matrix-cell row-head" role="rowheader">검색·대화 없이 즉시 탐색</div>
+                <div class="matrix-cell"><span class="mark yes">✓</span></div>
+                <div class="matrix-cell"><span class="mark">—</span></div>
+                <div class="matrix-cell"><span class="mark yes">✓</span></div>
+                <div class="matrix-cell orbit-cell"><span class="mark yes">✓</span></div>
+
+                <div class="matrix-cell row-head" role="rowheader">개인의 반복 행동에 적응</div>
+                <div class="matrix-cell"><span class="mark">—</span></div>
+                <div class="matrix-cell"><span class="mark partial">△</span></div>
+                <div class="matrix-cell"><span class="mark partial">△</span></div>
+                <div class="matrix-cell orbit-cell"><span class="mark yes">✓</span></div>
+
+                <div class="matrix-cell row-head" role="rowheader">장기 취향 + 세션 방향 분리</div>
+                <div class="matrix-cell"><span class="mark">—</span></div>
+                <div class="matrix-cell"><span class="mark">—</span></div>
+                <div class="matrix-cell"><span class="mark partial">△</span></div>
+                <div class="matrix-cell orbit-cell"><span class="mark yes">✓</span></div>
+
+                <div class="matrix-cell row-head" role="rowheader">유사 · 경계 · 반대 제안 공존</div>
+                <div class="matrix-cell"><span class="mark">—</span></div>
+                <div class="matrix-cell"><span class="mark">—</span></div>
+                <div class="matrix-cell"><span class="mark partial">△</span></div>
+                <div class="matrix-cell orbit-cell"><span class="mark yes">✓</span></div>
+
+                <div class="matrix-cell row-head" role="rowheader">실제 티셔츠 + 가격 + 판매처</div>
+                <div class="matrix-cell"><span class="mark yes">✓</span></div>
+                <div class="matrix-cell"><span class="mark yes">✓</span></div>
+                <div class="matrix-cell"><span class="mark partial">△</span></div>
+                <div class="matrix-cell orbit-cell"><span class="mark yes">✓</span></div>
+
+                <div class="matrix-cell matrix-note">차별점은 아직 우위가 아니다 — 같은 UI의 개인화 대조 실험으로 증명해야 한다.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <p class="source-line"><a href="foundation/competition.md">경쟁·대안 분석</a> · △는 서비스별 범위가 다른 부분 지원</p>
+      </section>
+
+      <section class="slide" data-title="Scope" aria-labelledby="slide-10-title">
+        <span class="corner-index mono">10 / Scope</span>
+        <div class="slide-inner scope-layout">
+          <header class="section-head reveal">
+            <div>
+              <span class="eyebrow">MVP boundary</span>
+              <h2 class="slide-title" id="slide-10-title">지금 만드는 것은<br /><strong>가치 검증기.</strong></h2>
+            </div>
+            <p class="section-note">약 22만 개 티셔츠 데이터는 출발 조건일 뿐이다. 실제 필드·링크·사이즈 커버리지는 먼저 감사한다.</p>
+          </header>
+
+          <div class="phase-grid reveal">
+            <article class="bezel phase-card now"><div class="core"><header><h3>Now · P0</h3><span class="mono">value test</span></header><ul><li>5·3·2열 무한 모자이크 PWA</li><li>탭 상세 · 찜 · 스타일 계속 탐색</li><li>비회원 세션 탐색 → 점진적 가입</li><li>회원 장기/세션 개인화 포트폴리오</li><li>상태 보존 · 판매처 연결 · 실험 계측</li></ul><footer>카탈로그: 무신사 티셔츠 한정 · 실제 데이터 사용성 Gate 0 확인</footer></div></article>
+            <article class="bezel phase-card later"><div class="core"><header><h3>After value · P1</h3></header><ul><li>개인화 신상품 푸시</li><li>알림 동의·빈도 조절</li><li>PWA 설치 안내 최적화</li><li>찜·가격 변화 알림 검증</li></ul><footer>D7 유기적 재방문 확인 후 증분 효과를 별도 측정</footer></div></article>
+            <article class="bezel phase-card later"><div class="core"><header><h3>Later · P2</h3></header><ul><li>관심 없음 · 취향 수정</li><li>티셔츠 외 카테고리</li><li>실제 구매 신호 연동 검토</li><li>수익 모델 검토</li></ul><footer>초기 개인화 가치가 없으면 확장하지 않음</footer></div></article>
+          </div>
+
+          <div class="non-goals reveal"><strong>Not now</strong><span>자연어 검색</span><span>자체 결제·배송</span><span>광고·스폰서</span><span>소셜 피드</span><span>브랜드 확정</span></div>
+        </div>
+        <p class="source-line"><a href="living/prd.md#8-mvp-범위와-요구사항">PRD §8 MVP 범위</a></p>
+      </section>
+
+      <section class="slide" data-title="Validation" aria-labelledby="slide-11-title">
+        <span class="corner-index mono">11 / Validation</span>
+        <div class="slide-inner experiment-layout">
+          <header class="section-head reveal">
+            <div>
+              <span class="eyebrow orange">The decisive test</span>
+              <h2 class="slide-title" id="slide-11-title">UI의 신기함과<br /><strong>개인화 가치</strong>를 분리한다.</h2>
+            </div>
+            <p class="section-note">결과를 보기 전에 표본, 최소 개선 폭, 유효 탐색과 가드레일 정의를 잠근다.</p>
+          </header>
+
+          <div class="experiment-grid reveal">
+            <article class="bezel experiment-card"><div class="core"><span class="group-chip">Control</span><h3>같은 모자이크 UI + 공통 다양성 + 세션 분기</h3><p>장기 행동 프로필 없이도 인터랙션 자체가 만드는 가치를 측정한다.</p></div></article>
+            <article class="bezel experiment-card treatment"><div class="core"><span class="group-chip">Treatment</span><h3>Control + 장기 반복 행동 기반 자동 개인화</h3><p>찜·판매처 이동·여러 세션 경향을 더해 개인화의 증분 가치를 본다.</p></div></article>
+            <article class="bezel experiment-card metric"><div class="core"><span class="group-chip">Primary</span><h3>D7</h3><p>푸시 없이 1~7일 안에 다시 열어 유효 탐색을 시작한 신규 회원 비율</p></div></article>
+          </div>
+
+          <div class="gate-track reveal" aria-label="검증 게이트">
+            <div class="gate"><strong>Gate 0 · Ready?</strong><span>데이터 감사 + 핵심 조작 5~8명 테스트</span></div><div class="gate-arrow">→</div>
+            <div class="gate"><strong>Gate 1 · Value?</strong><span>동일 UI 대조군 vs 개인화 실험군</span></div><div class="gate-arrow">→</div>
+            <div class="gate"><strong>Gate 2 · Retain?</strong><span>푸시 증분 효과 → 무신사 베스트 비교</span></div>
+          </div>
+        </div>
+        <p class="source-line"><a href="living/prd.md#11-검증과-출시-단계">PRD §11 검증과 출시 단계</a></p>
+      </section>
+
+      <section class="slide" data-tone="ink" data-title="Next" aria-labelledby="slide-12-title">
+        <span class="corner-index mono">12 / Alignment</span>
+        <div class="slide-inner closing-layout">
+          <div class="closing-copy">
+            <span class="eyebrow reveal">What we align today</span>
+            <h2 class="slide-title reveal" id="slide-12-title">우리가 먼저 만들 것은<br /><strong>우주가 아니라 증거.</strong></h2>
+            <div class="closing-list reveal">
+              <div class="closing-item"><span>01</span><div><strong>데이터 준비 기준</strong><small>22만 개의 숫자보다 이미지·가격·링크·성별·사이즈의 실제 사용 가능성</small></div></div>
+              <div class="closing-item"><span>02</span><div><strong>핵심 조작 프로토타입</strong><small>5·3·2열 밀도 전환, 초점 보존, 상세·찜·스타일 분기</small></div></div>
+              <div class="closing-item"><span>03</span><div><strong>실험 임계값</strong><small>D7 정의, 최소 표본과 개선 폭, 반복·다양성·오조작 가드레일</small></div></div>
+            </div>
+          </div>
+
+          <div class="closing-orbit reveal" aria-hidden="true">
+            <div class="closing-mark">Build<br />the test.</div>
+            <span class="orbit-dot one"><img src="https://image.msscdn.net/images/goods_img/20250616/5187827/5187827_17504003447171_500.jpg" alt="" /></span>
+            <span class="orbit-dot two"><img src="https://image.msscdn.net/images/goods_img/20250420/5045551/5045551_17459121286173_500.jpg" alt="" /></span>
+            <span class="orbit-dot three"><img src="https://image.msscdn.net/images/goods_img/20240311/3936789/3936789_17101176930689_500.jpg" alt="" /></span>
+          </div>
+        </div>
+        <p class="source-line">다음 산출물: 데이터 감사 기준 · 핵심 조작 프로토타입 · Gate 0/1 실험 계획</p>
+      </section>
+    </main>
+
+    <nav class="deck-nav" aria-label="슬라이드 탐색">
+      <button class="nav-button" id="prevButton" type="button" aria-label="이전 슬라이드">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m14.5 6-6 6 6 6" /></svg>
+      </button>
+      <div class="counter" aria-live="polite">
+        <span id="currentSlide">01</span><span class="counter-total">/ 12</span>
+      </div>
+      <button class="nav-button" id="nextButton" type="button" aria-label="다음 슬라이드">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9.5 6 6 6-6 6" /></svg>
+      </button>
+      <button class="nav-button" id="fullscreenButton" type="button" aria-label="전체 화면 전환">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8.5 4.5h-4v4M15.5 4.5h4v4M8.5 19.5h-4v-4M15.5 19.5h4v-4" /></svg>
+      </button>
+    </nav>
+
+    <p class="sr-only" id="liveRegion" aria-live="polite"></p>
+
+    <script>
+      (() => {
+        const slides = [...document.querySelectorAll(".slide")];
+        const deck = document.getElementById("deck");
+        const previous = document.getElementById("prevButton");
+        const next = document.getElementById("nextButton");
+        const fullscreen = document.getElementById("fullscreenButton");
+        const current = document.getElementById("currentSlide");
+        const progress = document.getElementById("progressBar");
+        const live = document.getElementById("liveRegion");
+        const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+        const productImages = [
+          "https://image.msscdn.net/images/goods_img/20250616/5187827/5187827_17504003447171_500.jpg",
+          "https://image.msscdn.net/images/goods_img/20220801/2690691/2690691_17090175122341_500.jpg",
+          "https://image.msscdn.net/images/goods_img/20250420/5045551/5045551_17459121286173_500.jpg",
+          "https://image.msscdn.net/images/goods_img/20211110/2225772/2225772_17416566557348_500.jpg",
+          "https://image.msscdn.net/images/goods_img/20211110/2225780/2225780_17452941308040_500.jpg",
+          "https://image.msscdn.net/images/goods_img/20250420/5045548/5045548_17459121863611_500.jpg",
+          "https://image.msscdn.net/images/goods_img/20220526/2584839/2584839_17790681796826_500.jpg",
+          "https://image.msscdn.net/images/goods_img/20230207/3064786/3064786_16784413180227_500.jpg",
+          "https://image.msscdn.net/images/goods_img/20210713/2028047/2028047_17548949921868_500.jpg",
+          "https://image.msscdn.net/images/goods_img/20200225/1321500/1321500_17744840164159_500.jpg",
+          "https://image.msscdn.net/images/goods_img/20240311/3936789/3936789_17101176930689_500.jpg",
+          "https://image.msscdn.net/images/goods_img/20250912/5449070/5449070_17742366607956_500.jpg"
+        ];
+
+        let index = Math.max(0, Math.min(slides.length - 1, Number(location.hash.slice(1)) - 1 || 0));
+        let touchStartX = 0;
+        let touchStartY = 0;
+
+        const tileMarkup = (image, showPrice = true, tileIndex = 0) => {
+          const price = showPrice ? `<span class="price">${["29,000", "39,900", "45,000", "52,000"][tileIndex % 4]}</span>` : "";
+          return `<div class="product-tile"><img src="${image}" alt="" loading="lazy" draggable="false" />${price}</div>`;
+        };
+
+        document.querySelectorAll("[data-demo-grid]").forEach((grid) => {
+          const columns = Number(grid.dataset.demoGrid);
+          const count = columns === 5 ? 35 : columns === 3 ? 18 : 10;
+          grid.innerHTML = Array.from({ length: count }, (_, tileIndex) =>
+            tileMarkup(productImages[tileIndex % productImages.length], columns !== 5, tileIndex)
+          ).join("");
+        });
+
+        document.querySelectorAll("[data-mini-feed]").forEach((grid) => {
+          grid.innerHTML = productImages.slice(0, 9).map((image) => `<img src="${image}" alt="" loading="lazy" draggable="false" />`).join("");
+        });
+
+        const update = (nextIndex, pushHash = true) => {
+          index = Math.max(0, Math.min(slides.length - 1, nextIndex));
+          slides.forEach((slide, slideIndex) => {
+            slide.classList.toggle("is-active", slideIndex === index);
+            slide.classList.toggle("is-before", slideIndex < index);
+            slide.setAttribute("aria-hidden", slideIndex === index ? "false" : "true");
+            if (slideIndex === index) slide.scrollTop = 0;
+          });
+
+          current.textContent = String(index + 1).padStart(2, "0");
+          progress.style.transform = `scaleX(${(index + 1) / slides.length})`;
+          previous.disabled = index === 0;
+          next.disabled = index === slides.length - 1;
+          live.textContent = `${index + 1}번 슬라이드, ${slides[index].dataset.title}`;
+          document.title = `${String(index + 1).padStart(2, "0")} · ${slides[index].dataset.title} — Orbit`;
+
+          if (pushHash) history.replaceState(null, "", `#${index + 1}`);
+        };
+
+        const goPrevious = () => update(index - 1);
+        const goNext = () => update(index + 1);
+
+        previous.addEventListener("click", goPrevious);
+        next.addEventListener("click", goNext);
+
+        fullscreen.addEventListener("click", async () => {
+          try {
+            if (document.fullscreenElement) await document.exitFullscreen();
+            else await document.documentElement.requestFullscreen();
+          } catch (_) {
+            live.textContent = "이 브라우저에서는 전체 화면을 사용할 수 없습니다.";
+          }
+        });
+
+        document.addEventListener("fullscreenchange", () => {
+          fullscreen.setAttribute("aria-label", document.fullscreenElement ? "전체 화면 종료" : "전체 화면 전환");
+        });
+
+        document.addEventListener("keydown", (event) => {
+          const targetIsInteractive = event.target instanceof HTMLElement && ["BUTTON", "A"].includes(event.target.tagName);
+          if (event.target instanceof HTMLElement && ["INPUT", "TEXTAREA", "SELECT"].includes(event.target.tagName)) return;
+          if (event.key === " " && targetIsInteractive) return;
+
+          if (["ArrowRight", "PageDown", " "].includes(event.key)) {
+            event.preventDefault();
+            goNext();
+          } else if (["ArrowLeft", "PageUp"].includes(event.key)) {
+            event.preventDefault();
+            goPrevious();
+          } else if (event.key === "Home") {
+            event.preventDefault();
+            update(0);
+          } else if (event.key === "End") {
+            event.preventDefault();
+            update(slides.length - 1);
+          }
+        });
+
+        deck.addEventListener("touchstart", (event) => {
+          touchStartX = event.changedTouches[0].clientX;
+          touchStartY = event.changedTouches[0].clientY;
+        }, { passive: true });
+
+        deck.addEventListener("touchend", (event) => {
+          const deltaX = event.changedTouches[0].clientX - touchStartX;
+          const deltaY = event.changedTouches[0].clientY - touchStartY;
+          if (Math.abs(deltaX) < 64 || Math.abs(deltaX) < Math.abs(deltaY) * 1.3) return;
+          if (deltaX < 0) goNext();
+          else goPrevious();
+        }, { passive: true });
+
+        window.addEventListener("hashchange", () => {
+          const hashIndex = Number(location.hash.slice(1)) - 1;
+          if (Number.isInteger(hashIndex)) update(hashIndex, false);
+        });
+
+        document.querySelectorAll("img").forEach((image) => {
+          image.addEventListener("error", () => {
+            image.style.opacity = "0";
+          });
+        });
+
+        if (reducedMotion) document.documentElement.dataset.reducedMotion = "true";
+        update(index, false);
+      })();
+    </script>
+  </body>
+</html>
