@@ -63,9 +63,11 @@ design/     # 디자인 시스템·시안
 - 비밀정보(비밀번호·API키·토큰·로그인 세션) 커밋 금지. `.env*`, `node_modules/`는 `.gitignore`로 제외.
 - API 키는 코드에 하드코딩하지 말고 환경변수(`.env.local`)로.
 
-### 배포·CI (미설정)
+### CI (배포는 미설정)
 
-CI, 자동 리뷰, 릴리즈 워크플로우, 배포 파이프라인은 아직 없다. 설정하면 이 섹션을 갱신한다.
+- **CI 게이트**: `develop`·`main` 대상 PR을 열면 자동으로 frontend(lint·typecheck·format·test·build)와 backend(pytest) 검사가 돈다. 초록불 후 squash 병합.
+- 브랜치 보호: `develop`·`main` 모두 force-push·삭제 차단. 병합 방식은 squash만 허용, 병합 시 작업 브랜치 자동 삭제.
+- Vercel preview·Release 워크플로우·Slack 알림은 아직 없다 — 첫 피드 프로토타입(Gate 0 테스트용 URL 필요 시점)에 도입 예정. 설정하면 이 섹션을 갱신한다.
 
 ---
 
