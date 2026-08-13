@@ -41,7 +41,7 @@ design/     # 디자인 시스템·시안
 
 - type: `feat` `fix` `docs` `data` `chore` `refactor` `test` `style` `perf`
 - 예:
-  - `feat: 모자이크 피드 핀치 밀도 전환 추가`
+  - `feat: 모자이크 피드 무한 스크롤 추가`
   - `data: 티셔츠 카탈로그 필수 필드 커버리지 감사`
   - `fix: 바텀 시트 닫을 때 스크롤 위치 복원 오류 수정`
   - `docs: PRD 지표 섹션 갱신`
