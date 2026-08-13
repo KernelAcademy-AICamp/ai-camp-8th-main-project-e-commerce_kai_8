@@ -4,9 +4,9 @@
 
 ## 프로젝트
 
-- **Orbit** — 개인화 무한 탐색 티셔츠 PWA (Discovery 단계, 임시명)
+- **eati** — 개인화 무한 탐색 티셔츠 PWA (Discovery 단계)
 - 검색어 없이 티셔츠 이미지를 습관적으로 훑는 사용자를 대상으로, 대중 베스트 목록 대신 사용할수록 개인 취향에 맞게 변하는 무한 모자이크 피드를 검증한다.
-- 기획 문서: [`docs/orbit/`](docs/orbit/) — 제품 정의는 [Living PRD](docs/orbit/living/prd.md), 결정 이력은 [결정 기록](docs/orbit/living/decision-log.md) 참고
+- 기획 문서: [`docs/eati/`](docs/eati/) — 제품 정의는 [Living PRD](docs/eati/living/prd.md), 결정 이력은 [결정 기록](docs/eati/living/decision-log.md) 참고
 - 상태: 제품 정의 합의 / 가치 검증 전 / **engineering-ready 아님** — 구현 전 Gate 0(데이터·상호작용 준비)을 통과해야 한다.
 
 ## 폴더 구조
@@ -14,7 +14,7 @@
 ```
 frontend/   # Next.js PWA (clean architecture + MVVM) — frontend/AGENTS.md 참고
 backend/    # 무신사 c_* 카탈로그 파이프라인 (Python) — backend/README.md 참고
-docs/       # 기획·산출물 문서 (orbit = 제품 discovery 문서)
+docs/       # 기획·산출물 문서 (eati = 제품 discovery 문서)
 design/     # 디자인 시스템·시안
 ```
 
