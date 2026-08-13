@@ -27,7 +27,7 @@ export function useDetailState() {
 
   const open = useCallback((product: Product, originRect: OriginRect | null) => {
     setDetail({ product, originRect, phase: "open" });
-    window.history.pushState({ eatiDetail: true }, "");
+    window.history.pushState({ aTeeDetail: true }, "");
   }, []);
 
   const requestClose = useCallback(() => {
