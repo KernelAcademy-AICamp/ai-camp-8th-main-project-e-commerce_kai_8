@@ -1,0 +1,14 @@
+# 가상환경·캐시
+venv/
+__pycache__/
+.pytest_cache/
+
+# 시크릿 (템플릿만 커밋)
+.env*
+!.env.example
+
+# 로컬 백업 (커밋 금지)
+backups/
+
+# Supabase CLI 로컬 상태
+supabase/.temp/

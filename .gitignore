@@ -1,0 +1,19 @@
+# ── 시크릿 — 위치 불문 차단 (팀 공유 템플릿만 허용) ──
+.env*
+!.env.example
+
+# ── 의존성·가상환경 (어느 폴더에 있든) ──
+node_modules/
+venv/
+.venv/
+
+# ── Python 캐시 ──
+__pycache__/
+.pytest_cache/
+*.pyc
+
+# ── OS 아티팩트 ──
+.DS_Store
+
+# ── 로컬 DB 백업 (커밋 금지) ──
+backups/
