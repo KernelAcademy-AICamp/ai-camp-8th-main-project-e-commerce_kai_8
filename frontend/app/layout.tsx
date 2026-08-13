@@ -3,7 +3,7 @@ import "./globals.css";
 import type { Metadata, Viewport } from "next";
 
 export const metadata: Metadata = {
-  title: "Orbit",
+  title: "eati",
   description: "취향으로 변하는 티셔츠 무한 탐색",
 };
 
