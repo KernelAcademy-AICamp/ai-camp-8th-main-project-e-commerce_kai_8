@@ -4,9 +4,9 @@
 
 ## 프로젝트
 
-- **eati** — 개인화 무한 탐색 티셔츠 PWA (Discovery 단계)
+- **aTee** — 개인화 무한 탐색 티셔츠 PWA (Discovery 단계)
 - 검색어 없이 티셔츠 이미지를 습관적으로 훑는 사용자를 대상으로, 대중 베스트 목록 대신 사용할수록 개인 취향에 맞게 변하는 무한 모자이크 피드를 검증한다.
-- 기획 문서: [`docs/eati/`](docs/eati/) — 제품 정의는 [Living PRD](docs/eati/living/prd.md), 결정 이력은 [결정 기록](docs/eati/living/decision-log.md) 참고
+- 기획 문서: [`docs/atee/`](docs/atee/) — 제품 정의는 [Living PRD](docs/atee/living/prd.md), 결정 이력은 [결정 기록](docs/atee/living/decision-log.md) 참고
 - 상태: 제품 정의 합의 / 가치 검증 전 / **engineering-ready 아님** — 구현 전 Gate 0(데이터·상호작용 준비)을 통과해야 한다.
 
 ## 폴더 구조
@@ -14,7 +14,7 @@
 ```
 frontend/   # Next.js PWA (clean architecture + MVVM) — frontend/AGENTS.md 참고
 backend/    # 무신사 c_* 카탈로그 파이프라인 (Python) — backend/README.md 참고
-docs/       # 기획·산출물 문서 (eati = 제품 discovery 문서)
+docs/       # 기획·산출물 문서 (aTee = 제품 discovery 문서)
 design/     # 디자인 시스템·시안
 ```
 
@@ -63,11 +63,13 @@ design/     # 디자인 시스템·시안
 - 비밀정보(비밀번호·API키·토큰·로그인 세션) 커밋 금지. `.env*`, `node_modules/`는 `.gitignore`로 제외.
 - API 키는 코드에 하드코딩하지 말고 환경변수(`.env.local`)로.
 
-### CI (배포는 미설정)
+### CI · 배포
 
 - **CI 게이트**: `develop`·`main` 대상 PR을 열면 자동으로 frontend(lint·typecheck·format·test·build)와 backend(pytest) 검사가 돈다. 초록불 후 squash 병합.
 - 브랜치 보호: `develop`·`main` 모두 force-push·삭제 차단. 병합 방식은 squash만 허용, 병합 시 작업 브랜치 자동 삭제.
-- Vercel preview·Release 워크플로우·Slack 알림은 아직 없다 — 첫 피드 프로토타입(Gate 0 테스트용 URL 필요 시점)에 도입 예정. 설정하면 이 섹션을 갱신한다.
+- **Vercel 배포**: repo가 Vercel에 Git 연동돼 있다(Root Directory=`frontend`). PR을 열면 preview URL이 자동 생성되고, `main`에 push되면 프로덕션이 자동 배포된다.
+- **릴리즈**: Actions 탭의 `Release` 워크플로우를 수동 실행(auto/patch/minor/major). Conventional Commits로 버전을 올리고 `frontend/CHANGELOG.md`·태그·GitHub Release를 만든 뒤 `develop`을 `main`으로 승격(merge)해 프로덕션 배포까지 이어진다. **릴리즈 봇의 main 직접 push는 "main 직접 push 금지" 규칙의 유일한 예외다.**
+- Slack 알림은 아직 없다 — 필요해지면 ecommerce repo의 `notify-slack.yml` 방식(Vercel `deployment_status` → 웹훅)을 이식한다.
 
 ---
 
