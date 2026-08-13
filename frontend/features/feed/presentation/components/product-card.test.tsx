@@ -16,6 +16,7 @@ const card: FeedCardViewData = {
     gender: null,
     width: 500,
     height: 600,
+    gallery: [],
   },
   priceLabel: "14,500원",
   width: 500,
@@ -29,6 +30,20 @@ describe("ProductCard", () => {
     render(<ProductCard card={card} />);
     expect(screen.getByRole("img", { name: "테스트 티셔츠" })).toBeDefined();
     expect(screen.getByText("14,500원")).toBeDefined();
+  });
+
+  it("카드를 탭하면 선택 콜백에 상품이 전달된다", () => {
+    let selected: string | null = null;
+    render(
+      <ProductCard
+        card={card}
+        onSelect={(picked) => {
+          selected = picked.product.title;
+        }}
+      />,
+    );
+    fireEvent.click(screen.getByRole("button"));
+    expect(selected).toBe("테스트 티셔츠");
   });
 
   it("이미지 로드 실패 시 빈 화면 대신 대체 표시를 그린다", () => {

@@ -11,6 +11,7 @@ interface SampleProductDto {
   gender: string | null;
   width: number;
   height: number;
+  gallery: string[];
 }
 
 const dtos: SampleProductDto[] = rawProducts;
@@ -25,5 +26,6 @@ export function loadSampleCatalog(): Product[] {
     gender: dto.gender,
     width: dto.width,
     height: dto.height,
+    gallery: dto.gallery,
   }));
 }

@@ -12,6 +12,7 @@ const product = (goodsNo: number): Product => ({
   gender: null,
   width: 500,
   height: 600,
+  gallery: [],
 });
 
 const catalog = [product(1), product(2), product(3)];
