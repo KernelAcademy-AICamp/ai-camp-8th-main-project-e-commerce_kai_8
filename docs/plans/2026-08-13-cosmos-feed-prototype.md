@@ -1,12 +1,12 @@
 # 계획 — Cosmos형 2열 masonry 무한 스크롤 피드 프로토타입
 
 > 상태: 확정 (2026-08-13 제품 책임자 승인, 지적 사항 없음) · 작성: 2026-08-13
-> 근거 결정: [결정 기록 O-22](../eati/living/decision-log.md) — 핀치 밀도 전환 폐기, 2열 고정 masonry 확정
-> 관련 문서: [Living PRD 0.3](../eati/living/prd.md) · [backend README](../../backend/README.md)
+> 근거 결정: [결정 기록 O-22](../aTee/living/decision-log.md) — 핀치 밀도 전환 폐기, 2열 고정 masonry 확정
+> 관련 문서: [Living PRD 0.3](../aTee/living/prd.md) · [backend README](../../backend/README.md)
 
 ## 배경 (이 repo를 모르는 사람을 위한 설명)
 
-eati는 검색 없이 티셔츠 이미지를 무한히 훑는 개인화 탐색 웹앱(PWA) 가설이다. 아직 구현 전이며, 구현 확대 전에 "Gate 0"(데이터·상호작용 준비)을 통과해야 한다. 이 계획은 Gate 0의 상호작용 축을 눈으로 확인하기 위한 **첫 프로토타입**을 다룬다.
+aTee는 검색 없이 티셔츠 이미지를 무한히 훑는 개인화 탐색 웹앱(PWA) 가설이다. 아직 구현 전이며, 구현 확대 전에 "Gate 0"(데이터·상호작용 준비)을 통과해야 한다. 이 계획은 Gate 0의 상호작용 축을 눈으로 확인하기 위한 **첫 프로토타입**을 다룬다.
 
 - 목표 경험: 참고 앱 Cosmos처럼 **다크 배경 + 2열 고정 masonry(카드 세로 길이 가변) + 이미지 우하단 가격 배지 + 무한 스크롤**.
 - 데이터: 무신사 티셔츠 약 22.6만 개가 Supabase(클라우드 Postgres)의 `c_goods` 테이블에 이미 적재돼 있다. 단, 보안 설정(RLS)상 앱에서 바로 읽을 수 없고 노출 수단을 정해야 한다.
