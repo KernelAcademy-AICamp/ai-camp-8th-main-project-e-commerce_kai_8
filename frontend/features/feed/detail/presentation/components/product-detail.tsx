@@ -5,13 +5,13 @@ import { useEffect, useMemo } from "react";
 
 import { buildSlides } from "@/features/feed/detail/domain/detail-slides";
 import { sellerUrl } from "@/features/feed/detail/domain/seller-link";
-import type { DetailState } from "@/features/feed/detail/presentation/view-model/use-detail-state";
+import type { DetailEntry } from "@/features/feed/detail/presentation/view-model/use-detail-state";
 import { useExpandTransition } from "@/features/feed/detail/presentation/view-model/use-expand-transition";
 import { useSlideIndex } from "@/features/feed/detail/presentation/view-model/use-slide-index";
 import { formatPrice } from "@/features/feed/domain/format-price";
 
 interface ProductDetailProps {
-  detail: DetailState;
+  entry: DetailEntry;
   onRequestClose: () => void;
   onClosed: () => void;
 }
@@ -26,12 +26,8 @@ function useBodyScrollLock() {
   }, []);
 }
 
-export function ProductDetail({
-  detail,
-  onRequestClose,
-  onClosed,
-}: ProductDetailProps) {
-  const { product, originRect, phase } = detail;
+export function ProductDetail({ entry, onRequestClose, onClosed }: ProductDetailProps) {
+  const { product, originRect, phase } = entry;
   const slides = useMemo(() => buildSlides(product), [product]);
   const { sliderRef, index, onScroll } = useSlideIndex();
   const { heroRef } = useExpandTransition(originRect, phase, index === 0, onClosed);

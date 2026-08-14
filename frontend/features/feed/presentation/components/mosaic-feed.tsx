@@ -7,7 +7,7 @@ import { useFeedViewModel } from "@/features/feed/presentation/view-model/use-fe
 
 export function MosaicFeed() {
   const { columns, sentinelRef } = useFeedViewModel();
-  const { detail, open, requestClose, finishClose } = useDetailState();
+  const { top, depth, open, requestClose, finishClose } = useDetailState();
 
   return (
     <div className="mx-auto max-w-md px-2 pt-2 pb-10">
@@ -31,9 +31,10 @@ export function MosaicFeed() {
       </div>
       <div ref={sentinelRef} aria-hidden className="h-px" />
 
-      {detail && (
+      {top && (
         <ProductDetail
-          detail={detail}
+          key={`detail-${String(depth)}-${String(top.product.goodsNo)}`}
+          entry={top}
           onRequestClose={requestClose}
           onClosed={finishClose}
         />
