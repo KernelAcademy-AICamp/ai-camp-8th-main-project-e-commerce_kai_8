@@ -73,5 +73,11 @@ jobs:
         run: |
           git fetch origin main
           git checkout main
-          git merge --no-ff develop -m "chore: release 승격 ${{ steps.ver.outputs.tag }}"
+          # main은 develop의 배포 스냅샷이다. 일반 merge는 main에 squash로 얹힌
+          # 과거 승격 커밋과 3-way 충돌을 일으킬 수 있어(v0.1.1 릴리즈 실패 사례),
+          # 머지 부모(main, develop)는 남기되 트리는 develop을 그대로 사용해
+          # 충돌을 원천 차단한다.
+          git merge --no-ff -s ours --no-commit develop
+          git read-tree -u --reset develop
+          git commit -m "chore: release 승격 ${{ steps.ver.outputs.tag }}"
           git push origin main
