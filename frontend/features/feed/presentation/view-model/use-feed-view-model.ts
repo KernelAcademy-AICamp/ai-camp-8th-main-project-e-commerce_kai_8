@@ -4,6 +4,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import { fetchFeedPage } from "@/features/feed/data/feed-api";
 import { getSessionSeed } from "@/features/feed/data/session-seed";
+import { deriveSeed } from "@/features/feed/domain/derive-seed";
 import { appendFeedPage, type FeedItem } from "@/features/feed/domain/feed-page";
 import { formatPrice } from "@/features/feed/domain/format-price";
 import { distributeToColumns } from "@/features/feed/domain/masonry";
@@ -21,8 +22,17 @@ export interface FeedCardViewData {
   height: number;
 }
 
-export function useFeedViewModel() {
-  const seed = useMemo(() => getSessionSeed(), []);
+export interface FeedOptions {
+  /** 지정하면 이 상품(goodsNo) 기준 파생 시드 피드가 되고, 해당 상품은 제외된다 */
+  exploreFrom?: number;
+}
+
+export function useFeedViewModel(options?: FeedOptions) {
+  const exploreFrom = options?.exploreFrom;
+  const seed = useMemo(() => {
+    const sessionSeed = getSessionSeed();
+    return exploreFrom == null ? sessionSeed : deriveSeed(sessionSeed, exploreFrom);
+  }, [exploreFrom]);
   const [items, setItems] = useState<FeedItem[]>([]);
   // 커서·중복 로드 방지는 렌더링과 무관한 진행 상태라 ref로 둔다
   const afterRef = useRef<number | null>(null);
@@ -37,7 +47,7 @@ export function useFeedViewModel() {
     fetchFeedPage(seed, afterRef.current, PAGE_SIZE)
       .then((products) => {
         setItems((prev) => {
-          const page = appendFeedPage(prev, products);
+          const page = appendFeedPage(prev, products, exploreFrom);
           afterRef.current = page.after ?? afterRef.current;
           exhaustedRef.current = page.exhausted;
           return page.items;
@@ -52,7 +62,7 @@ export function useFeedViewModel() {
       .finally(() => {
         loadingRef.current = false;
       });
-  }, [seed]);
+  }, [seed, exploreFrom]);
 
   const sentinelRef = useRef<HTMLDivElement | null>(null);
 

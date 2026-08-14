@@ -48,4 +48,19 @@ describe("appendFeedPage", () => {
     const keys = result.items.map((i) => i.feedKey);
     expect(new Set(keys).size).toBe(keys.length);
   });
+
+  it("제외 상품은 피드에 붙이지 않는다", () => {
+    const result = appendFeedPage([], [product(1), product(2)], 1);
+    expect(result.items.map((i) => i.product.goodsNo)).toEqual([2]);
+    // 커서는 필터와 무관하게 받은 페이지 끝까지 전진한다
+    expect(result.after).toBe(2);
+    expect(result.exhausted).toBe(false);
+  });
+
+  it("페이지 전체가 제외 상품이어도 커서는 전진하고 소진되지 않는다", () => {
+    const result = appendFeedPage([], [product(1)], 1);
+    expect(result.items).toHaveLength(0);
+    expect(result.after).toBe(1);
+    expect(result.exhausted).toBe(false);
+  });
 });

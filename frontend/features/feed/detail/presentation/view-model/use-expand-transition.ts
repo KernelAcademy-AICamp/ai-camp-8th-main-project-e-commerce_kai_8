@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from "react";
 
-import type { OriginRect } from "@/features/feed/detail/presentation/view-model/use-detail-state";
+import type { OriginRect } from "@/features/feed/detail/domain/detail-stack";
 
 const DURATION_MS = 280;
 const EASING = "cubic-bezier(0.2, 0.8, 0.2, 1)";
@@ -27,6 +27,7 @@ export function useExpandTransition(
   phase: "open" | "closing",
   atFirstSlide: boolean,
   onClosed: () => void,
+  animateOpen = true,
 ) {
   const heroRef = useRef<HTMLDivElement | null>(null);
   const openedRef = useRef(false);
@@ -38,7 +39,7 @@ export function useExpandTransition(
     if (openedRef.current) return;
     openedRef.current = true;
     const hero = heroRef.current;
-    if (!hero || !originRect || prefersReducedMotion()) return;
+    if (!hero || !originRect || !animateOpen || prefersReducedMotion()) return;
     hero.animate(
       [
         { transform: rectTransform(originRect, hero.getBoundingClientRect()) },
