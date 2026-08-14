@@ -4,6 +4,7 @@ import { createElement } from "react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { fetchFeedPage } from "@/features/feed/data/feed-api";
+import { fetchSimilarPage } from "@/features/feed/data/similar-api";
 import { deriveSeed } from "@/features/feed/domain/derive-seed";
 import type { Product } from "@/features/feed/domain/product";
 import {
@@ -12,6 +13,7 @@ import {
 } from "@/features/feed/presentation/view-model/use-feed-view-model";
 
 vi.mock("@/features/feed/data/feed-api", () => ({ fetchFeedPage: vi.fn() }));
+vi.mock("@/features/feed/data/similar-api", () => ({ fetchSimilarPage: vi.fn() }));
 vi.mock("@/features/feed/data/session-seed", () => ({
   getSessionSeed: () => 1000,
 }));
@@ -48,10 +50,12 @@ class ObserverStub {
 }
 
 const fetchFeedPageMock = vi.mocked(fetchFeedPage);
+const fetchSimilarPageMock = vi.mocked(fetchSimilarPage);
 
 beforeEach(() => {
   vi.stubGlobal("IntersectionObserver", ObserverStub);
   fetchFeedPageMock.mockReset();
+  fetchSimilarPageMock.mockReset();
 });
 
 // renderHook은 훅을 실제 DOM에 붙이지 않아 sentinelRef.current가 계속 null로 남고,
@@ -76,6 +80,38 @@ describe("useFeedViewModel", () => {
     renderFeedViewModel();
     await waitFor(() => {
       expect(fetchFeedPageMock).toHaveBeenCalledWith(1000, null, 30);
+    });
+  });
+
+  it("similarFirst면 첫 페이지는 유사 상품, 다음 페이지는 무작위로 이어간다", async () => {
+    fetchSimilarPageMock.mockResolvedValue([product(21), product(22)]);
+    fetchFeedPageMock
+      .mockResolvedValueOnce([product(22), product(23)])
+      .mockResolvedValue([]);
+    const { result } = renderFeedViewModel({ exploreFrom: 7, similarFirst: true });
+    await waitFor(() => {
+      expect(fetchSimilarPageMock).toHaveBeenCalledWith(7, 60);
+    });
+    // 이어지는 무작위 페이지는 커서 처음(null)부터, 이미 보인 22는 중복 제거
+    await waitFor(() => {
+      expect(fetchFeedPageMock).toHaveBeenCalledWith(deriveSeed(1000, 7), null, 30);
+      const goodsNos = result.current.columns
+        .flat()
+        .map((card) => card.product.goodsNo)
+        .sort((a, b) => a - b);
+      expect(goodsNos).toEqual([21, 22, 23]);
+    });
+  });
+
+  it("유사 상품 로드가 실패하면 무작위 피드로 폴백한다", async () => {
+    fetchSimilarPageMock.mockRejectedValue(new Error("RPC 오류"));
+    fetchFeedPageMock.mockResolvedValueOnce([product(31)]).mockResolvedValue([]);
+    const { result } = renderFeedViewModel({ exploreFrom: 7, similarFirst: true });
+    await waitFor(() => {
+      const goodsNos = result.current.columns
+        .flat()
+        .map((card) => card.product.goodsNo);
+      expect(goodsNos).toEqual([31]);
     });
   });
 

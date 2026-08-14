@@ -41,7 +41,7 @@ export function ProductCard({ card, onSelect }: ProductCardProps) {
           </div>
         ) : (
           <Image
-            src={card.product.thumbnail}
+            src={card.product.matchedImage?.url ?? card.product.thumbnail}
             alt={card.product.title}
             width={card.width}
             height={card.height}

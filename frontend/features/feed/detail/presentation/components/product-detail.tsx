@@ -14,6 +14,7 @@ import { useExpandTransition } from "@/features/feed/detail/presentation/view-mo
 import { useSlideIndex } from "@/features/feed/detail/presentation/view-model/use-slide-index";
 import { formatPrice } from "@/features/feed/domain/format-price";
 import type { Product } from "@/features/feed/domain/product";
+import { initialSlideIndex } from "@/features/feed/domain/similar";
 import { FeedGrid } from "@/features/feed/presentation/components/feed-grid";
 import { useFeedViewModel } from "@/features/feed/presentation/view-model/use-feed-view-model";
 
@@ -47,18 +48,24 @@ export function ProductDetail({
 }: ProductDetailProps) {
   const { product, originRect, phase } = entry;
   const slides = useMemo(() => buildSlides(product), [product]);
-  const { sliderRef, index, onScroll } = useSlideIndex();
+  // 유사 검색에서 갤러리 사진이 매칭됐으면 그 슬라이드에서 열고,
+  // 닫기 축소 전환도 그 슬라이드에 있을 때만 카드로 되돌린다 (O-27)
+  const initialSlide = useMemo(() => initialSlideIndex(product), [product]);
+  const { sliderRef, index, onScroll } = useSlideIndex(initialSlide);
   const { heroRef } = useExpandTransition(
     originRect,
     phase,
-    index === 0,
+    index === initialSlide,
     onClosed,
     !entry.revealed,
   );
   const { scrollRef, heroEndRef, pastHero, scrollToTop } = useDetailScroll(
     entry.savedScrollTop,
   );
-  const explore = useFeedViewModel({ exploreFrom: product.goodsNo });
+  const explore = useFeedViewModel({
+    exploreFrom: product.goodsNo,
+    similarFirst: true,
+  });
   useBodyScrollLock();
 
   return (
@@ -115,7 +122,7 @@ export function ProductDetail({
                     fill
                     sizes="100vw"
                     className="object-contain"
-                    priority={slideIndex === 0}
+                    priority={slideIndex === initialSlide}
                   />
                 </div>
               ))}
