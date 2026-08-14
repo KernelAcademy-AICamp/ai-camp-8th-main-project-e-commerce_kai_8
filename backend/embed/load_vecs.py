@@ -11,13 +11,16 @@ SUPABASE_DB_URL 환경변수 필요 (backend/.env.local).
 import os
 import pathlib
 import sqlite3
+import sys
 import time
 
 import numpy as np
 import psycopg
 
 BASE = pathlib.Path(__file__).parent
-DB = BASE / "data" / "embed_state.db"
+# 배치 실행 중 부분 적재를 하려면 스냅숏 복사본 경로를 인자로 준다
+# (진행 중인 DB를 직접 읽으면 배치의 커밋과 잠금 충돌 위험)
+DB = pathlib.Path(sys.argv[1]) if len(sys.argv) > 1 else BASE / "data" / "embed_state.db"
 CHUNK = 20_000
 
 
@@ -69,9 +72,10 @@ with psycopg.connect(os.environ["SUPABASE_DB_URL"]) as conn:
 
         cur.execute("select count(*) from c_img_vecs")
         n = cur.fetchone()[0]
-        if n >= total_done:
-            print("building binary-quantize HNSW index (수 분)...")
-            cur.execute("set maintenance_work_mem = '512MB'")
+        if "--final" in sys.argv:
+            print("building binary-quantize HNSW index (수십 분)...")
+            # 512MB는 이 인스턴스의 공유 메모리 한도를 넘는다(DiskFull) — 128MB는 PoC에서 검증됨
+            cur.execute("set maintenance_work_mem = '128MB'")
             cur.execute("set statement_timeout = '60min'")
             cur.execute("""
                 create index if not exists c_img_vecs_bq_idx on c_img_vecs
@@ -87,4 +91,5 @@ with psycopg.connect(os.environ["SUPABASE_DB_URL"]) as conn:
             t, i = cur.fetchone()
             print(f"rows={n} table={t} index={i} (c_vec_poc dropped)")
         else:
-            print(f"경고: 원격 {n} < 로컬 done {total_done} — 인덱스 생성 보류")
+            print(f"부분 적재 완료 (원격 {n} / 로컬 done {total_done})."
+                  " 인덱스는 --final로 전체 적재 후 생성.")

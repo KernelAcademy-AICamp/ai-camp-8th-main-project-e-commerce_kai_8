@@ -56,6 +56,8 @@ as $$
     from c_img_vecs v
     where v.img_type in (0, 1)
       and v.goods_no <> p_goods
+      -- 앵커가 없으면 빈 결과 — NULL 거리 정렬로 임의 상품이 반환되는 것 방지
+      and exists (select 1 from anchor)
     order by binary_quantize(v.emb)::bit(768)
              <~> binary_quantize((select emb from anchor))::bit(768)
     limit p_size * 20
