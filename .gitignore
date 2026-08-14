@@ -17,3 +17,4 @@ __pycache__/
 
 # ── 로컬 DB 백업 (커밋 금지) ──
 backups/
+.vercel
