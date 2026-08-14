@@ -22,13 +22,14 @@ export interface FeedAppendResult {
 export function appendFeedPage(
   current: readonly FeedItem[],
   products: readonly Product[],
+  excludeGoodsNo?: number,
 ): FeedAppendResult {
   if (products.length === 0) {
     return { items: [...current], after: null, exhausted: true };
   }
   const seen = new Set(current.map((item) => item.product.goodsNo));
   const appended = products
-    .filter((p) => !seen.has(p.goodsNo))
+    .filter((p) => !seen.has(p.goodsNo) && p.goodsNo !== excludeGoodsNo)
     .map((p) => ({ feedKey: String(p.goodsNo), product: p }));
   return {
     items: [...current, ...appended],
