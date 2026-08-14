@@ -55,8 +55,9 @@ export function ProductDetail({
     onClosed,
     !entry.revealed,
   );
-  // pastHero·scrollToTop은 Task 8에서 사용한다 (미사용 변수 lint 방지)
-  const { scrollRef, heroEndRef } = useDetailScroll(entry.savedScrollTop);
+  const { scrollRef, heroEndRef, pastHero, scrollToTop } = useDetailScroll(
+    entry.savedScrollTop,
+  );
   const explore = useFeedViewModel({ exploreFrom: product.goodsNo });
   useBodyScrollLock();
 
@@ -76,6 +77,22 @@ export function ProductDetail({
           >
             ←
           </button>
+          {pastHero && (
+            <button
+              type="button"
+              aria-label="상품 상세로 돌아가기"
+              onClick={scrollToTop}
+              className="absolute left-1/2 -translate-x-1/2 cursor-pointer overflow-hidden rounded-md"
+            >
+              <Image
+                src={product.thumbnail}
+                alt=""
+                width={32}
+                height={44}
+                className="h-11 w-8 object-cover"
+              />
+            </button>
+          )}
         </header>
 
         <div ref={scrollRef} className="min-h-0 flex-1 overflow-y-auto">
@@ -158,6 +175,16 @@ export function ProductDetail({
             />
           </div>
         </div>
+        {pastHero && (
+          <button
+            type="button"
+            aria-label="맨위로"
+            onClick={scrollToTop}
+            className="absolute bottom-6 left-1/2 flex h-12 w-12 -translate-x-1/2 cursor-pointer items-center justify-center rounded-full bg-neutral-800/90 text-xl text-white backdrop-blur-sm"
+          >
+            ↑
+          </button>
+        )}
       </div>
     </div>
   );
