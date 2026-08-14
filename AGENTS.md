@@ -69,7 +69,7 @@ design/     # 디자인 시스템·시안
 - 브랜치 보호: `develop`·`main` 모두 force-push·삭제 차단. 병합 방식은 squash만 허용, 병합 시 작업 브랜치 자동 삭제.
 - **Vercel 배포**: repo가 Vercel에 Git 연동돼 있다(Root Directory=`frontend`). PR을 열면 preview URL이 자동 생성되고, `main`에 push되면 프로덕션이 자동 배포된다.
 - **릴리즈**: Actions 탭의 `Release` 워크플로우를 수동 실행(auto/patch/minor/major). Conventional Commits로 버전을 올리고 `frontend/CHANGELOG.md`·태그·GitHub Release를 만든 뒤 `develop`을 `main`으로 승격(merge)해 프로덕션 배포까지 이어진다. **릴리즈 봇의 main 직접 push는 "main 직접 push 금지" 규칙의 유일한 예외다.**
-- Slack 알림은 아직 없다 — 필요해지면 ecommerce repo의 `notify-slack.yml` 방식(Vercel `deployment_status` → 웹훅)을 이식한다.
+- **Slack 알림**: 프로덕션 배포가 성공하면 `notify-slack.yml`이 릴리즈 태그·커밋·사이트 링크를 Slack으로 보낸다 (시크릿 `SLACK_WEBHOOK_URL`, 2026-08-14 ecommerce 방식 이식).
 
 ---
 

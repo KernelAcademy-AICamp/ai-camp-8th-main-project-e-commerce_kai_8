@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { takeNextPage } from "@/features/feed/domain/feed-page";
+import { appendFeedPage } from "@/features/feed/domain/feed-page";
 import type { Product } from "@/features/feed/domain/product";
 
 const product = (goodsNo: number): Product => ({
@@ -15,25 +15,52 @@ const product = (goodsNo: number): Product => ({
   gallery: [],
 });
 
-const catalog = [product(1), product(2), product(3)];
+describe("appendFeedPage", () => {
+  it("받은 상품을 뒤에 붙이고 마지막 goods_no를 다음 커서로 준다", () => {
+    const first = appendFeedPage([], [product(1), product(2)]);
+    expect(first.items.map((i) => i.product.goodsNo)).toEqual([1, 2]);
+    expect(first.after).toBe(2);
+    expect(first.exhausted).toBe(false);
 
-describe("takeNextPage", () => {
-  it("커서부터 요청한 개수만큼 돌려주고 커서를 전진시킨다", () => {
-    const page = takeNextPage(catalog, 0, 2);
-    expect(page.items.map((i) => i.product.goodsNo)).toEqual([1, 2]);
-    expect(page.nextCursor).toBe(2);
+    const second = appendFeedPage(first.items, [product(3)]);
+    expect(second.items.map((i) => i.product.goodsNo)).toEqual([1, 2, 3]);
+    expect(second.after).toBe(3);
   });
 
-  it("샘플이 소진되면 처음부터 순환한다", () => {
-    const page = takeNextPage(catalog, 2, 2);
-    expect(page.items.map((i) => i.product.goodsNo)).toEqual([3, 1]);
+  it("빈 페이지면 소진으로 표시한다", () => {
+    const prev = appendFeedPage([], [product(1)]);
+    const result = appendFeedPage(prev.items, []);
+    expect(result.exhausted).toBe(true);
+    expect(result.items).toHaveLength(1);
+    expect(result.after).toBeNull();
   });
 
-  it("순환하더라도 feedKey는 겹치지 않는다", () => {
-    const first = takeNextPage(catalog, 0, 3);
-    const second = takeNextPage(catalog, first.nextCursor, 3);
-    const keys = [...first.items, ...second.items].map((i) => i.feedKey);
-    expect(keys).toHaveLength(6);
+  it("이미 붙은 상품이 다시 와도 중복으로 붙이지 않는다", () => {
+    const prev = appendFeedPage([], [product(1), product(2)]);
+    const result = appendFeedPage(prev.items, [product(2), product(3)]);
+    expect(result.items.map((i) => i.product.goodsNo)).toEqual([1, 2, 3]);
+    // 커서는 받은 페이지의 끝까지 전진해야 같은 페이지를 다시 받지 않는다
+    expect(result.after).toBe(3);
+  });
+
+  it("feedKey는 상품마다 유일하다", () => {
+    const result = appendFeedPage([], [product(1), product(2), product(3)]);
+    const keys = result.items.map((i) => i.feedKey);
     expect(new Set(keys).size).toBe(keys.length);
+  });
+
+  it("제외 상품은 피드에 붙이지 않는다", () => {
+    const result = appendFeedPage([], [product(1), product(2)], 1);
+    expect(result.items.map((i) => i.product.goodsNo)).toEqual([2]);
+    // 커서는 필터와 무관하게 받은 페이지 끝까지 전진한다
+    expect(result.after).toBe(2);
+    expect(result.exhausted).toBe(false);
+  });
+
+  it("페이지 전체가 제외 상품이어도 커서는 전진하고 소진되지 않는다", () => {
+    const result = appendFeedPage([], [product(1)], 1);
+    expect(result.items).toHaveLength(0);
+    expect(result.after).toBe(1);
+    expect(result.exhausted).toBe(false);
   });
 });
