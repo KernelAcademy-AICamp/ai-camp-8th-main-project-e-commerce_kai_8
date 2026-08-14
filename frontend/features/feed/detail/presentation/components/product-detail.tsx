@@ -4,16 +4,29 @@ import Image from "next/image";
 import { useEffect, useMemo } from "react";
 
 import { buildSlides } from "@/features/feed/detail/domain/detail-slides";
+import type {
+  DetailEntry,
+  OriginRect,
+} from "@/features/feed/detail/domain/detail-stack";
 import { sellerUrl } from "@/features/feed/detail/domain/seller-link";
-import type { DetailEntry } from "@/features/feed/detail/presentation/view-model/use-detail-state";
+import { useDetailScroll } from "@/features/feed/detail/presentation/view-model/use-detail-scroll";
 import { useExpandTransition } from "@/features/feed/detail/presentation/view-model/use-expand-transition";
 import { useSlideIndex } from "@/features/feed/detail/presentation/view-model/use-slide-index";
 import { formatPrice } from "@/features/feed/domain/format-price";
+import type { Product } from "@/features/feed/domain/product";
+import { FeedGrid } from "@/features/feed/presentation/components/feed-grid";
+import { useFeedViewModel } from "@/features/feed/presentation/view-model/use-feed-view-model";
 
 interface ProductDetailProps {
   entry: DetailEntry;
   onRequestClose: () => void;
   onClosed: () => void;
+  /** 하단 탐색 그리드에서 상품을 골라 체인으로 새 상세를 여는 콜백 */
+  onSelectProduct: (
+    product: Product,
+    originRect: OriginRect | null,
+    currentScrollTop: number,
+  ) => void;
 }
 
 function useBodyScrollLock() {
@@ -26,11 +39,25 @@ function useBodyScrollLock() {
   }, []);
 }
 
-export function ProductDetail({ entry, onRequestClose, onClosed }: ProductDetailProps) {
+export function ProductDetail({
+  entry,
+  onRequestClose,
+  onClosed,
+  onSelectProduct,
+}: ProductDetailProps) {
   const { product, originRect, phase } = entry;
   const slides = useMemo(() => buildSlides(product), [product]);
   const { sliderRef, index, onScroll } = useSlideIndex();
-  const { heroRef } = useExpandTransition(originRect, phase, index === 0, onClosed);
+  const { heroRef } = useExpandTransition(
+    originRect,
+    phase,
+    index === 0,
+    onClosed,
+    !entry.revealed,
+  );
+  // pastHero·scrollToTop은 Task 8에서 사용한다 (미사용 변수 lint 방지)
+  const { scrollRef, heroEndRef } = useDetailScroll(entry.savedScrollTop);
+  const explore = useFeedViewModel({ exploreFrom: product.goodsNo });
   useBodyScrollLock();
 
   return (
@@ -39,8 +66,8 @@ export function ProductDetail({ entry, onRequestClose, onClosed }: ProductDetail
         phase === "closing" ? "opacity-0" : "opacity-100"
       }`}
     >
-      <div className="mx-auto flex h-full max-w-md flex-col">
-        <header className="flex items-center px-2 py-2">
+      <div className="relative mx-auto flex h-full max-w-md flex-col">
+        <header className="relative flex items-center px-2 py-2">
           <button
             type="button"
             aria-label="뒤로 가기"
@@ -51,7 +78,7 @@ export function ProductDetail({ entry, onRequestClose, onClosed }: ProductDetail
           </button>
         </header>
 
-        <div className="min-h-0 flex-1 overflow-y-auto">
+        <div ref={scrollRef} className="min-h-0 flex-1 overflow-y-auto">
           <div ref={heroRef} className="origin-top-left">
             <div
               ref={sliderRef}
@@ -77,6 +104,7 @@ export function ProductDetail({ entry, onRequestClose, onClosed }: ProductDetail
               ))}
             </div>
           </div>
+          <div ref={heroEndRef} aria-hidden className="h-px" />
 
           {slides.length > 1 && (
             <div
@@ -114,6 +142,20 @@ export function ProductDetail({ entry, onRequestClose, onClosed }: ProductDetail
                 ↗
               </a>
             </div>
+          </div>
+
+          <div className="px-2 pb-10">
+            <FeedGrid
+              columns={explore.columns}
+              sentinelRef={explore.sentinelRef}
+              onSelect={(card, cardRect) => {
+                onSelectProduct(
+                  card.product,
+                  cardRect,
+                  scrollRef.current?.scrollTop ?? 0,
+                );
+              }}
+            />
           </div>
         </div>
       </div>

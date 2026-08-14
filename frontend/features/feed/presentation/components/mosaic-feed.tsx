@@ -25,6 +25,7 @@ export function MosaicFeed() {
           entry={top}
           onRequestClose={requestClose}
           onClosed={finishClose}
+          onSelectProduct={open}
         />
       )}
     </div>
