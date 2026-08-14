@@ -18,6 +18,12 @@ export interface FeedAppendResult {
  * 서버에서 받은 페이지를 기존 피드 뒤에 붙인다.
  * 재시도·중복 응답에 대비해 이미 있는 상품은 건너뛰되,
  * 커서는 받은 페이지 끝까지 전진시켜 같은 페이지를 다시 받지 않는다.
+ *
+ * @param excludeGoodsNo - 결과 목록에서 제외할 단일 상품(goods_no). 예: 상세
+ * 페이지 하단 "이어보기" 그리드에서 현재 보고 있는 상품 자신을 뺄 때 사용.
+ * 이 필터는 items에만 적용되고 after 커서에는 영향을 주지 않는다 — 커서는
+ * excludeGoodsNo로 걸러졌는지와 무관하게 받은 페이지의 마지막 goods_no까지
+ * 전진한다.
  */
 export function appendFeedPage(
   current: readonly FeedItem[],

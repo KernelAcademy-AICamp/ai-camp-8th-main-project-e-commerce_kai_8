@@ -85,10 +85,16 @@ export function useDetailScroll(initialScrollTop: number) {
     if (!marker) return;
     const observer = new IntersectionObserver(
       (entries) => {
-        // 마커가 화면 위로 사라졌으면 히어로를 지나 그리드 영역에 들어온 것
+        // 마커가 root(스크롤 컨테이너) 상단 위로 사라졌으면 히어로를 지나
+        // 그리드 영역에 들어온 것. root는 헤더 아래에서 시작하므로 뷰포트
+        // 기준 0이 아니라 rootBounds.top을 기준선으로 삼아야, root 상단을
+        // 막 넘는 유일한 이탈 이벤트도 놓치지 않는다(아래로 벗어난 경우는
+        // 여전히 오판하지 않는다).
         setPastHero(
           entries.some(
-            (entry) => !entry.isIntersecting && entry.boundingClientRect.top < 0,
+            (entry) =>
+              !entry.isIntersecting &&
+              entry.boundingClientRect.top < (entry.rootBounds?.top ?? 0),
           ),
         );
       },
