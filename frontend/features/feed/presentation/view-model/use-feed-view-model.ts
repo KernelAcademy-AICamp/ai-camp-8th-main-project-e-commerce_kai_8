@@ -4,6 +4,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import { fetchFeedPage } from "@/features/feed/data/feed-api";
 import { getSessionSeed } from "@/features/feed/data/session-seed";
+import { fetchSimilarPage } from "@/features/feed/data/similar-api";
 import { deriveSeed } from "@/features/feed/domain/derive-seed";
 import { appendFeedPage, type FeedItem } from "@/features/feed/domain/feed-page";
 import { formatPrice } from "@/features/feed/domain/format-price";
@@ -11,6 +12,7 @@ import { distributeToColumns } from "@/features/feed/domain/masonry";
 import type { Product } from "@/features/feed/domain/product";
 
 const PAGE_SIZE = 30;
+const SIMILAR_PAGE_SIZE = 60;
 const COLUMN_COUNT = 2;
 const RETRY_DELAY_MS = 2000;
 
@@ -25,6 +27,11 @@ export interface FeedCardViewData {
 export interface FeedOptions {
   /** 지정하면 이 상품(goodsNo) 기준 파생 시드 피드가 되고, 해당 상품은 제외된다 */
   exploreFrom?: number;
+  /**
+   * exploreFrom과 함께 쓰면 첫 페이지를 유사 상품(임베딩 검색)으로 채우고,
+   * 이후·실패 시엔 파생 시드 무작위 피드로 이어간다 (PRD 폴백 원칙).
+   */
+  similarFirst?: boolean;
 }
 
 export function useFeedViewModel(options?: FeedOptions) {
@@ -38,21 +45,44 @@ export function useFeedViewModel(options?: FeedOptions) {
   const afterRef = useRef<number | null>(null);
   const exhaustedRef = useRef(false);
   const loadingRef = useRef(false);
+  // 유사 첫 페이지는 딱 한 번만 시도한다 (실패·빈 결과면 무작위로 폴백)
+  const similarPendingRef = useRef(
+    options?.similarFirst === true && exploreFrom != null,
+  );
   // 로드 실패 시 잠시 뒤 옵저버를 다시 걸어 재시도하게 하는 신호
   const [retryTick, setRetryTick] = useState(0);
 
   const loadMore = useCallback(() => {
     if (loadingRef.current || exhaustedRef.current) return;
     loadingRef.current = true;
-    fetchFeedPage(seed, afterRef.current, PAGE_SIZE)
-      .then((products) => {
+
+    const loadRandom = () =>
+      fetchFeedPage(seed, afterRef.current, PAGE_SIZE).then((products) => {
         setItems((prev) => {
           const page = appendFeedPage(prev, products, exploreFrom);
           afterRef.current = page.after ?? afterRef.current;
           exhaustedRef.current = page.exhausted;
           return page.items;
         });
-      })
+      });
+
+    const loadSimilarFirst = () =>
+      fetchSimilarPage(exploreFrom ?? 0, SIMILAR_PAGE_SIZE).then((products) => {
+        if (products.length === 0) return loadRandom();
+        // 유사 결과는 커서와 무관하다 — items에만 붙이고 afterRef는 건드리지 않아
+        // 다음 로드부터 무작위 피드가 처음 커서에서 이어진다.
+        setItems((prev) => appendFeedPage(prev, products, exploreFrom).items);
+      });
+
+    const first = similarPendingRef.current
+      ? ((similarPendingRef.current = false),
+        loadSimilarFirst().catch((error: unknown) => {
+          console.error("유사 상품 로드 실패 — 무작위 탐색으로 폴백", error);
+          return loadRandom();
+        }))
+      : loadRandom();
+
+    first
       .catch((error: unknown) => {
         console.error("피드 로드 실패 — 잠시 후 재시도", error);
         setTimeout(() => {

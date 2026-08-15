@@ -32,6 +32,29 @@ export function mapFeedDto(dto: FeedProductDto): Product {
   };
 }
 
+/** Supabase RPC 호출 공통부 — 유사 상품 API(similar-api)와 공유한다 */
+export async function rpcPost<T>(
+  fn: string,
+  body: Record<string, unknown>,
+): Promise<T> {
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const key = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
+  if (!url || !key) {
+    throw new Error(
+      "NEXT_PUBLIC_SUPABASE_URL / NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY 환경변수가 필요합니다 (frontend/.env.example 참고)",
+    );
+  }
+  const res = await fetch(`${url}/rest/v1/rpc/${fn}`, {
+    method: "POST",
+    headers: { apikey: key, "Content-Type": "application/json" },
+    body: JSON.stringify(body),
+  });
+  if (!res.ok) {
+    throw new Error(`${fn} 실패: HTTP ${String(res.status)}`);
+  }
+  return (await res.json()) as T;
+}
+
 /**
  * 무작위 피드 한 페이지를 받아온다.
  * seed가 같으면 순서가 고정되고(세션 내 스크롤 복원), after는 keyset 커서다.
@@ -41,21 +64,10 @@ export async function fetchFeedPage(
   after: number | null,
   size: number,
 ): Promise<Product[]> {
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const key = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
-  if (!url || !key) {
-    throw new Error(
-      "NEXT_PUBLIC_SUPABASE_URL / NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY 환경변수가 필요합니다 (frontend/.env.example 참고)",
-    );
-  }
-  const res = await fetch(`${url}/rest/v1/rpc/c_feed_page`, {
-    method: "POST",
-    headers: { apikey: key, "Content-Type": "application/json" },
-    body: JSON.stringify({ p_seed: seed, p_after: after, p_size: size }),
+  const dtos = await rpcPost<FeedProductDto[]>("c_feed_page", {
+    p_seed: seed,
+    p_after: after,
+    p_size: size,
   });
-  if (!res.ok) {
-    throw new Error(`피드 로드 실패: HTTP ${String(res.status)}`);
-  }
-  const dtos = (await res.json()) as FeedProductDto[];
   return dtos.map(mapFeedDto);
 }
