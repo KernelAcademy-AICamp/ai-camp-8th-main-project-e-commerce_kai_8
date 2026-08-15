@@ -3,7 +3,7 @@
 -- PoC 실측: docs/plans/2026-08-14-personalization-embedding-similar-explore.md 실행 기록
 --
 -- 벡터는 로컬 파이프라인(backend/embed/run_embed.py)이 만들고
--- load_vecs.py가 COPY로 적재한다. HNSW 인덱스는 적재 후 로더가 생성한다
+-- load_vecs.py가 COPY로 적재한다. ANN 인덱스는 적재 후 로더가 생성한다
 -- (빈 테이블에 인덱스를 먼저 만들면 COPY 중 빌드가 일어나 매우 느려짐).
 
 create table if not exists c_img_vecs (
@@ -39,11 +39,16 @@ returns table (
   thumbnail   text,
   gallery     text[]
 )
-language sql stable security definer
+language plpgsql stable security definer
 set search_path = public, extensions
-set hnsw.ef_search = 600
-set hnsw.iterative_scan = relaxed_order
 as $$
+-- plpgsql인 이유: 함수 SET 절의 ivfflat.probes가 이 환경에서 권한 거부라
+-- set_config(트랜잭션 로컬)로 대신 설정한다. 값은 게이트(Recall@30) 실측으로 조정.
+-- 이진 후보 인덱스는 IVFFlat (HNSW는 96.7만 행 빌드가 인스턴스 메모리 한도에서 60분 초과).
+#variable_conflict use_column
+begin
+  perform set_config('ivfflat.probes', '40', true);
+  return query
   with anchor as (
     select emb from c_img_vecs
     where goods_no = p_goods
@@ -72,7 +77,8 @@ as $$
   from best b
   join c_feed_products f using (goods_no)
   order by b.dist
-  limit p_size
+  limit p_size;
+end
 $$;
 
 grant execute on function c_similar_page(bigint, int) to anon;

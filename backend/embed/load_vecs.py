@@ -20,7 +20,8 @@ import psycopg
 BASE = pathlib.Path(__file__).parent
 # 배치 실행 중 부분 적재를 하려면 스냅숏 복사본 경로를 인자로 준다
 # (진행 중인 DB를 직접 읽으면 배치의 커밋과 잠금 충돌 위험)
-DB = pathlib.Path(sys.argv[1]) if len(sys.argv) > 1 else BASE / "data" / "embed_state.db"
+_db_arg = next((a for a in sys.argv[1:] if a.endswith(".db")), None)
+DB = pathlib.Path(_db_arg) if _db_arg else BASE / "data" / "embed_state.db"
 CHUNK = 20_000
 
 
@@ -73,13 +74,16 @@ with psycopg.connect(os.environ["SUPABASE_DB_URL"]) as conn:
         cur.execute("select count(*) from c_img_vecs")
         n = cur.fetchone()[0]
         if "--final" in sys.argv:
-            print("building binary-quantize HNSW index (수십 분)...")
-            # 512MB는 이 인스턴스의 공유 메모리 한도를 넘는다(DiskFull) — 128MB는 PoC에서 검증됨
+            print("building binary-quantize IVFFlat index (수 분)...")
+            # HNSW는 96.7만 행 그래프가 maintenance_work_mem(인스턴스 공유 메모리 한도
+            # 때문에 128MB가 상한)을 넘어 빌드가 60분을 초과했다 → IVFFlat로 전환.
+            # 512MB 시도는 shm DiskFull. probes 조정은 RPC(c_similar_page) 쪽에서.
             cur.execute("set maintenance_work_mem = '128MB'")
-            cur.execute("set statement_timeout = '60min'")
+            cur.execute("set statement_timeout = 0")
             cur.execute("""
                 create index if not exists c_img_vecs_bq_idx on c_img_vecs
-                using hnsw ((binary_quantize(emb)::bit(768)) bit_hamming_ops)
+                using ivfflat ((binary_quantize(emb)::bit(768)) bit_hamming_ops)
+                with (lists = 1000)
             """)
             cur.execute("analyze c_img_vecs")
             cur.execute("drop table if exists c_vec_poc")
