@@ -13,12 +13,13 @@ import sqlite3
 import sys
 
 BASE = pathlib.Path(__file__).parent
-DB = BASE / "data" / "embed_state.db"
-N = int(sys.argv[1]) if len(sys.argv) > 1 else 200
+DB = BASE / "data" / "embed_state.db"  # DB_ARG로 대체 가능(배치 중 스냅숏)
+DB_ARG = next((a for a in sys.argv[1:] if a.endswith(".db")), None)
+N = next((int(a) for a in sys.argv[1:] if a.isdigit()), 200)
 TYPES = ["착용샷", "단품컷", "디테일·원단", "표·라벨"]
 GRAPHICS = ["무지", "그래픽", "레터링"]
 
-conn = sqlite3.connect(DB)
+conn = sqlite3.connect(DB_ARG or DB)
 per_type = max(1, N // len(TYPES))
 rows = []
 for t in range(len(TYPES)):
@@ -43,9 +44,9 @@ body{font-family:-apple-system,sans-serif;margin:16px;background:#fafafa}
 .c.wrong{border-color:#e11;background:#fee}
 #sum{position:fixed;bottom:0;left:0;right:0;background:#111;color:#fff;padding:10px 16px;font-size:14px}
 </style>
-<h1>이미지 유형 분류 판정 (표본 %d)</h1>
+<h1>이미지 유형 분류 판정 (표본 __COUNT__)</h1>
 <p>예측 라벨이 <b>틀린</b> 카드를 클릭해 빨갛게 표시하세요. 하단에 오류율이 집계됩니다.</p>
-<div class="g">%s</div>
+<div class="g">__CARDS__</div>
 <div id="sum"></div>
 <script>
 function tog(el){el.classList.toggle('wrong');upd()}
@@ -60,7 +61,8 @@ function upd(){
   document.getElementById('sum').textContent=s+'   [틀린 항목: '+wrong.join(', ')+']';
 }
 upd();
-</script>""" % (len(rows), "\n".join(cards))
+</script>"""
+page = page.replace("__COUNT__", str(len(rows))).replace("__CARDS__", "\n".join(cards))
 
 out = BASE / "data" / "judgment.html"
 out.write_text(page)
