@@ -47,7 +47,7 @@ as $$
 -- 이진 후보 인덱스는 IVFFlat (HNSW는 96.7만 행 빌드가 인스턴스 메모리 한도에서 60분 초과).
 #variable_conflict use_column
 begin
-  perform set_config('ivfflat.probes', '40', true);
+  perform set_config('ivfflat.probes', '80', true);
   return query
   with anchor as (
     select emb from c_img_vecs
