@@ -23,10 +23,26 @@ EVAL_DIR = ROOT / "docs" / "atee" / "eval"
 LEVELS = [0, 1, 2]
 
 
-def load(path: str) -> dict[str, int]:
+def load(path: str) -> tuple[dict[str, int], set[str]]:
+    """등급과 needsImage 표시를 함께 읽는다."""
     doc = json.loads(Path(path).read_text(encoding="utf-8"))
     rows = doc["grades"] if isinstance(doc, dict) else doc
-    return {r["itemId"]: r["grade"] for r in rows}
+    return (
+        {r["itemId"]: r["grade"] for r in rows},
+        {r["itemId"] for r in rows if r.get("needsImage")},
+    )
+
+
+def wilson(successes: int, total: int) -> tuple[float, float]:
+    """정확 일치 비율의 95% 신뢰구간 (Wilson). 표본이 작아 정규근사는 쓰지 않는다."""
+    if total == 0:
+        return (0.0, 0.0)
+    z = 1.96
+    phat = successes / total
+    denom = 1 + z * z / total
+    centre = (phat + z * z / (2 * total)) / denom
+    margin = z * ((phat * (1 - phat) / total + z * z / (4 * total * total)) ** 0.5) / denom
+    return (max(0.0, centre - margin), min(1.0, centre + margin))
 
 
 def quadratic_weighted_kappa(pairs: list[tuple[int, int]]) -> float:
@@ -57,7 +73,9 @@ def main() -> int:
     parser.add_argument("--out", default=str(EVAL_DIR / "agreement.json"))
     args = parser.parse_args()
 
-    ga, gb = load(args.a), load(args.b)
+    ga, need_a = load(args.a)
+    gb, need_b = load(args.b)
+    needs_image = need_a | need_b
     shared = sorted(set(ga) & set(gb))
     pairs = [(ga[i], gb[i]) for i in shared]
 
@@ -82,6 +100,36 @@ def main() -> int:
         {"itemId": i, "a": ga[i], "b": gb[i]} for i in shared if ga[i] != gb[i]
     ]
 
+    # 계열별 일치도와 신뢰구간 — 계열마다 규칙이 달라 한 숫자로 합치면 가려진다.
+    # itemId 앞부분(queryId)으로는 계열을 알 수 없어 질의 세트에서 끌어온다.
+    qset = json.loads((EVAL_DIR / "query-set.json").read_text(encoding="utf-8"))
+    bucket_of = {e["id"]: e["bucket"] for e in qset["entries"]}
+    by_bucket: dict[str, list[tuple[int, int]]] = defaultdict(list)
+    for iid in shared:
+        b = bucket_of.get(iid.rsplit("-", 1)[0])
+        if b:
+            by_bucket[b].append((ga[iid], gb[iid]))
+    per_bucket = []
+    for bucket, ps in sorted(by_bucket.items()):
+        hits = sum(1 for a, b in ps if a == b)
+        lo, hi = wilson(hits, len(ps))
+        per_bucket.append(
+            {
+                "bucket": bucket, "items": len(ps),
+                "exact": hits / len(ps), "ci95": [lo, hi],
+                "qwk": quadratic_weighted_kappa(ps),
+            }
+        )
+
+    # 이미지가 필요하다고 표시된 항목은 따로 본다 — 텍스트 채점의 한계가
+    # 실제로 나타나는지 확인하는 자리다 (설계 §8.4)
+    img_pairs = [(ga[i], gb[i]) for i in shared if i in needs_image]
+    image_dependent = {
+        "items": len(img_pairs),
+        "exact": (sum(1 for a, b in img_pairs if a == b) / len(img_pairs)) if img_pairs else None,
+        "note": "표시가 적으면 판단 불가 — 사람 판정을 정본으로 삼을지 결정할 근거가 부족하다는 뜻",
+    }
+
     result = {
         "meta": {
             "a": args.a, "b": args.b,
@@ -93,6 +141,8 @@ def main() -> int:
                 "이 수치로 하네스를 신뢰해선 안 된다."
             ),
         },
+        "perBucket": per_bucket,
+        "imageDependent": image_dependent,
         "exactAgreement": exact,
         "adjacentAgreement": adjacent,
         "quadraticWeightedKappa": qwk,
@@ -107,6 +157,16 @@ def main() -> int:
     print(f"  이차 가중 κ    {qwk:.3f}")
     print(f"\n분포 A: {dict(sorted(Counter(a for a, _ in pairs).items()))}")
     print(f"분포 B: {dict(sorted(Counter(b for _, b in pairs).items()))}")
+    print("\n계열별 정확 일치 (95% 신뢰구간):")
+    for row in per_bucket:
+        print(
+            f"  {row['bucket']:<4} {row['items']:>3}개  {row['exact']:>6.1%}"
+            f"  [{row['ci95'][0]:.1%}~{row['ci95'][1]:.1%}]  κ {row['qwk']:.3f}"
+        )
+    print(
+        f"\n이미지 필요 표시 항목: {image_dependent['items']}개"
+        + (f" · 정확 일치 {image_dependent['exact']:.1%}" if image_dependent["exact"] is not None else " (판단 불가)")
+    )
     print(f"\n불일치 {len(disagreements)}건 · 질의별 평균 등급 차이가 큰 순:")
     for row in sorted(per_query, key=lambda r: -abs(r["diff"]))[:5]:
         print(

@@ -8,7 +8,12 @@
     "openLog": [
       {
         "partition": "holdout",
-        "when": "0단계 6단계 기준선 측정",
+        "when": "0단계 기준선 측정 (2026-08-17)",
+        "status": "열람함"
+      },
+      {
+        "partition": "progress",
+        "when": "A단계 완료 시",
         "status": "예정"
       },
       {
@@ -38,8 +43,8 @@
       "G2": {
         "total": 22,
         "dev": 11,
-        "progress": 6,
-        "holdout": 5
+        "progress": 5,
+        "holdout": 6
       },
       "R1": {
         "total": 16,
@@ -61,8 +66,8 @@
       },
       "G3": {
         "total": 18,
-        "dev": 10,
-        "progress": 3,
+        "dev": 9,
+        "progress": 4,
         "holdout": 5
       }
     },
@@ -78,6 +83,7 @@
       "tags": [],
       "note": null,
       "confidence": null,
+      "familyRoot": "s01",
       "partition": "holdout"
     },
     {
@@ -91,6 +97,7 @@
       ],
       "note": "니트는 우리 카탈로그(반소매 티셔츠) 밖",
       "confidence": null,
+      "familyRoot": "s02",
       "partition": "progress"
     },
     {
@@ -102,6 +109,7 @@
       "tags": [],
       "note": null,
       "confidence": null,
+      "familyRoot": "s03",
       "partition": "dev"
     },
     {
@@ -115,6 +123,7 @@
       ],
       "note": "ecommerce 원본은 '하와이안 프린팅 티는 존재 가능'이라고 본다 — 0건 단정 불가. 우리 카탈로그에서 실제 0건인지 확인한 뒤 G6 여부를 정한다(2차 리뷰)",
       "confidence": null,
+      "familyRoot": "s04",
       "partition": "holdout"
     },
     {
@@ -128,6 +137,7 @@
       ],
       "note": null,
       "confidence": null,
+      "familyRoot": "s05",
       "partition": "dev"
     },
     {
@@ -139,6 +149,7 @@
       "tags": [],
       "note": null,
       "confidence": null,
+      "familyRoot": "s06",
       "partition": "progress"
     },
     {
@@ -150,6 +161,7 @@
       "tags": [],
       "note": null,
       "confidence": null,
+      "familyRoot": "s07",
       "partition": "dev"
     },
     {
@@ -163,6 +175,7 @@
       ],
       "note": "정답 방향이 논쟁 중 — 커버 목적이면 비침 없음, 시스루 의도면 있음. ecommerce parser-golden 리뷰포인트 ⑤와 동일 쟁점. rubric에서 low로 분리한다.",
       "confidence": "low",
+      "familyRoot": "s08",
       "partition": "dev"
     },
     {
@@ -174,6 +187,7 @@
       "tags": [],
       "note": null,
       "confidence": null,
+      "familyRoot": "s09",
       "partition": "dev"
     },
     {
@@ -185,6 +199,7 @@
       "tags": [],
       "note": null,
       "confidence": null,
+      "familyRoot": "s10",
       "partition": "progress"
     },
     {
@@ -196,6 +211,7 @@
       "tags": [],
       "note": null,
       "confidence": null,
+      "familyRoot": "s11",
       "partition": "dev"
     },
     {
@@ -207,6 +223,7 @@
       "tags": [],
       "note": null,
       "confidence": null,
+      "familyRoot": "s12",
       "partition": "holdout"
     },
     {
@@ -218,6 +235,7 @@
       "tags": [],
       "note": null,
       "confidence": null,
+      "familyRoot": "s13",
       "partition": "dev"
     },
     {
@@ -229,6 +247,7 @@
       "tags": [],
       "note": null,
       "confidence": null,
+      "familyRoot": "s14",
       "partition": "progress"
     },
     {
@@ -242,6 +261,7 @@
       ],
       "note": null,
       "confidence": null,
+      "familyRoot": "s15",
       "partition": "dev"
     },
     {
@@ -253,6 +273,7 @@
       "tags": [],
       "note": null,
       "confidence": null,
+      "familyRoot": "s16",
       "partition": "dev"
     },
     {
@@ -264,6 +285,7 @@
       "tags": [],
       "note": null,
       "confidence": null,
+      "familyRoot": "s17",
       "partition": "progress"
     },
     {
@@ -275,6 +297,7 @@
       "tags": [],
       "note": null,
       "confidence": null,
+      "familyRoot": "s18",
       "partition": "dev"
     },
     {
@@ -286,7 +309,8 @@
       "tags": [],
       "note": null,
       "confidence": null,
-      "partition": "progress"
+      "familyRoot": "s19",
+      "partition": "holdout"
     },
     {
       "id": "s20",
@@ -297,6 +321,7 @@
       "tags": [],
       "note": null,
       "confidence": null,
+      "familyRoot": "s20",
       "partition": "progress"
     },
     {
@@ -308,6 +333,7 @@
       "tags": [],
       "note": null,
       "confidence": null,
+      "familyRoot": "s21",
       "partition": "holdout"
     },
     {
@@ -319,6 +345,7 @@
       "tags": [],
       "note": null,
       "confidence": null,
+      "familyRoot": "s22",
       "partition": "holdout"
     },
     {
@@ -332,6 +359,7 @@
       ],
       "note": "정도 부정 — 그래픽 크기 축이 필요(C1 zero-shot 후보)",
       "confidence": null,
+      "familyRoot": "s23",
       "partition": "dev"
     },
     {
@@ -343,6 +371,7 @@
       "tags": [],
       "note": null,
       "confidence": null,
+      "familyRoot": "s24",
       "partition": "holdout"
     },
     {
@@ -356,6 +385,7 @@
       ],
       "note": null,
       "confidence": null,
+      "familyRoot": "s25",
       "partition": "dev"
     },
     {
@@ -367,6 +397,7 @@
       "tags": [],
       "note": null,
       "confidence": null,
+      "familyRoot": "s26",
       "partition": "progress"
     },
     {
@@ -378,6 +409,7 @@
       "tags": [],
       "note": null,
       "confidence": null,
+      "familyRoot": "s27",
       "partition": "dev"
     },
     {
@@ -391,6 +423,7 @@
       ],
       "note": "40수는 면 밀도 규격 — 우리 카탈로그에 해당 필드가 없다",
       "confidence": null,
+      "familyRoot": "s28",
       "partition": "progress"
     },
     {
@@ -402,6 +435,7 @@
       "tags": [],
       "note": "함정: '노란색'은 신발 색 — 옷 색 하드필터 금지. 신발과의 코디가 핵심이라 R1(외부맥락)으로 재배정(2차 리뷰)",
       "confidence": null,
+      "familyRoot": "fam-yellow-shoes",
       "partition": "dev"
     },
     {
@@ -413,6 +447,7 @@
       "tags": [],
       "note": "짧은 키워드. ecommerce에서는 핏 vocab에 '크롭'이 없고 스톱워드라 도달 불가였다 — 우리도 어휘 커버리지 확인 대상",
       "confidence": null,
+      "familyRoot": "g02",
       "partition": "dev"
     },
     {
@@ -424,6 +459,7 @@
       "tags": [],
       "note": null,
       "confidence": null,
+      "familyRoot": "g03",
       "partition": "dev"
     },
     {
@@ -437,6 +473,7 @@
       ],
       "note": "'노란색이 없으면' = 색 제외. '제일 인기' = 인기순 정렬 의도. 소매 프린트 위치·땀 흡수는 소프트",
       "confidence": null,
+      "familyRoot": "g04",
       "partition": "holdout"
     },
     {
@@ -448,6 +485,7 @@
       "tags": [],
       "note": "g01 + 성별 명시. 코디 질의라 R1로 재배정(2차 리뷰)",
       "confidence": null,
+      "familyRoot": "fam-yellow-shoes",
       "partition": "dev"
     },
     {
@@ -461,6 +499,7 @@
       ],
       "note": "'프린팅 없이·브랜드 노출 없이' = 무지 선호. 자연 발생 오타 포함('좋겠엉')",
       "confidence": null,
+      "familyRoot": "g06",
       "partition": "progress"
     },
     {
@@ -472,6 +511,7 @@
       "tags": [],
       "note": "기장 축 부재 — 하드 조건 없음. 색·핏 환각 추출이 없어야 한다",
       "confidence": null,
+      "familyRoot": "g07",
       "partition": "progress"
     },
     {
@@ -483,6 +523,7 @@
       "tags": [],
       "note": "블라우스는 카탈로그 밖 — 0건이 정당. 화이트를 아이보리로 근사 반환하지 않는다",
       "confidence": null,
+      "familyRoot": "g08",
       "partition": "dev"
     },
     {
@@ -494,6 +535,7 @@
       "tags": [],
       "note": null,
       "confidence": null,
+      "familyRoot": "g09",
       "partition": "progress"
     },
     {
@@ -507,6 +549,7 @@
       ],
       "note": "가격 '2만원대' = [20000, 29999]",
       "confidence": null,
+      "familyRoot": "g10",
       "partition": "holdout"
     },
     {
@@ -518,6 +561,7 @@
       "tags": [],
       "note": "무의미 질의 — 신호 없음. 전체 노출로 강등하지 않는다",
       "confidence": null,
+      "familyRoot": "g11",
       "partition": "dev"
     },
     {
@@ -531,6 +575,7 @@
       ],
       "note": "자연 발생 오타 다수('찾고있는뒈','조켔ㅇㅇ'). 하드는 가격뿐. ecommerce에서 결과 수가 263↔16↔2로 요동친 회귀 케이스",
       "confidence": null,
+      "familyRoot": "g12",
       "partition": "dev"
     },
     {
@@ -542,6 +587,7 @@
       "tags": [],
       "note": "테마 상품이 없어도 색 하드 + 나머지 소프트로 근접 결과를 낸다. 테마 불충족을 이유로 0건 강등 금지",
       "confidence": null,
+      "familyRoot": "g13",
       "partition": "progress"
     },
     {
@@ -553,6 +599,7 @@
       "tags": [],
       "note": "프린트색·위치(등판)는 검증 불가 — 바탕색·핏·레터링만 판정",
       "confidence": null,
+      "familyRoot": "g14",
       "partition": "dev"
     },
     {
@@ -564,6 +611,7 @@
       "tags": [],
       "note": "함정: 무지개 = 다색 그래픽 테마 — 색 하드필터 금지. 제목은 대개 '레인보우'라 한영 동의어 공백 케이스이기도 하다",
       "confidence": null,
+      "familyRoot": "g15",
       "partition": "dev"
     },
     {
@@ -577,6 +625,7 @@
       ],
       "note": "'이하'를 priceMin에 넣는 실수가 잦은 케이스",
       "confidence": null,
+      "familyRoot": "g16",
       "partition": "dev"
     },
     {
@@ -588,6 +637,7 @@
       "tags": [],
       "note": "머슬핏 어휘 부재·7부는 기장 — 하드 조건 없음. 오버/슬림 오추출 금지",
       "confidence": null,
+      "familyRoot": "g17",
       "partition": "progress"
     },
     {
@@ -599,7 +649,8 @@
       "tags": [],
       "note": null,
       "confidence": null,
-      "partition": "dev"
+      "familyRoot": "g18",
+      "partition": "progress"
     },
     {
       "id": "b01",
@@ -609,6 +660,7 @@
       "family": "fam-brand-돌돌",
       "tags": [],
       "note": "브랜드명 정본(c_goods.brand_name)에서 생성. 해당 브랜드가 아니면 0점(기준서 규칙)",
+      "familyRoot": "fam-brand-돌돌",
       "partition": "holdout"
     },
     {
@@ -619,6 +671,7 @@
       "family": "fam-brand-칸6312",
       "tags": [],
       "note": "브랜드명 정본(c_goods.brand_name)에서 생성. 해당 브랜드가 아니면 0점(기준서 규칙)",
+      "familyRoot": "fam-brand-칸6312",
       "partition": "holdout"
     },
     {
@@ -629,6 +682,7 @@
       "family": "fam-brand-트립션",
       "tags": [],
       "note": "브랜드명 정본(c_goods.brand_name)에서 생성. 해당 브랜드가 아니면 0점(기준서 규칙)",
+      "familyRoot": "fam-brand-트립션",
       "partition": "holdout"
     },
     {
@@ -639,6 +693,7 @@
       "family": "fam-brand-어썸어스",
       "tags": [],
       "note": "브랜드명 정본(c_goods.brand_name)에서 생성. 해당 브랜드가 아니면 0점(기준서 규칙)",
+      "familyRoot": "fam-brand-어썸어스",
       "partition": "progress"
     },
     {
@@ -649,6 +704,7 @@
       "family": "fam-brand-그레이버",
       "tags": [],
       "note": "브랜드명 정본(c_goods.brand_name)에서 생성. 해당 브랜드가 아니면 0점(기준서 규칙)",
+      "familyRoot": "fam-brand-그레이버",
       "partition": "progress"
     },
     {
@@ -659,6 +715,7 @@
       "family": "fam-brand-원헌드레드퍼센트",
       "tags": [],
       "note": "브랜드명 정본(c_goods.brand_name)에서 생성. 해당 브랜드가 아니면 0점(기준서 규칙)",
+      "familyRoot": "fam-brand-원헌드레드퍼센트",
       "partition": "holdout"
     },
     {
@@ -669,6 +726,7 @@
       "family": "fam-brand-아스트랄 프로젝션",
       "tags": [],
       "note": "브랜드명 정본(c_goods.brand_name)에서 생성. 해당 브랜드가 아니면 0점(기준서 규칙)",
+      "familyRoot": "fam-brand-아스트랄 프로젝션",
       "partition": "dev"
     },
     {
@@ -679,6 +737,7 @@
       "family": "fam-brand-이스케이프프롬",
       "tags": [],
       "note": "브랜드명 정본(c_goods.brand_name)에서 생성. 해당 브랜드가 아니면 0점(기준서 규칙)",
+      "familyRoot": "fam-brand-이스케이프프롬",
       "partition": "progress"
     },
     {
@@ -689,6 +748,7 @@
       "family": "fam-brand-무신사 스탠다드",
       "tags": [],
       "note": "브랜드명 정본(c_goods.brand_name)에서 생성. 해당 브랜드가 아니면 0점(기준서 규칙)",
+      "familyRoot": "fam-brand-무신사 스탠다드",
       "partition": "dev"
     },
     {
@@ -699,6 +759,7 @@
       "family": "fam-brand-라디네오",
       "tags": [],
       "note": "브랜드명 정본(c_goods.brand_name)에서 생성. 해당 브랜드가 아니면 0점(기준서 규칙)",
+      "familyRoot": "fam-brand-라디네오",
       "partition": "dev"
     },
     {
@@ -709,6 +770,7 @@
       "family": "fam-brand-티글레이크",
       "tags": [],
       "note": "브랜드명 정본(c_goods.brand_name)에서 생성. 해당 브랜드가 아니면 0점(기준서 규칙)",
+      "familyRoot": "fam-brand-티글레이크",
       "partition": "dev"
     },
     {
@@ -719,6 +781,7 @@
       "family": "fam-brand-엘라모",
       "tags": [],
       "note": "브랜드명 정본(c_goods.brand_name)에서 생성. 해당 브랜드가 아니면 0점(기준서 규칙)",
+      "familyRoot": "fam-brand-엘라모",
       "partition": "dev"
     },
     {
@@ -729,6 +792,7 @@
       "family": "fam-brand-크림소다랩",
       "tags": [],
       "note": "브랜드명 정본(c_goods.brand_name)에서 생성. 해당 브랜드가 아니면 0점(기준서 규칙)",
+      "familyRoot": "fam-brand-크림소다랩",
       "partition": "dev"
     },
     {
@@ -739,6 +803,7 @@
       "family": "fam-brand-다이나핏",
       "tags": [],
       "note": "브랜드명 정본(c_goods.brand_name)에서 생성. 해당 브랜드가 아니면 0점(기준서 규칙)",
+      "familyRoot": "fam-brand-다이나핏",
       "partition": "dev"
     },
     {
@@ -749,6 +814,7 @@
       "family": "fam-brand-닉앤니콜",
       "tags": [],
       "note": "브랜드명 정본(c_goods.brand_name)에서 생성. 해당 브랜드가 아니면 0점(기준서 규칙)",
+      "familyRoot": "fam-brand-닉앤니콜",
       "partition": "progress"
     },
     {
@@ -759,6 +825,7 @@
       "family": "fam-brand-젝시믹스",
       "tags": [],
       "note": "브랜드명 정본(c_goods.brand_name)에서 생성. 해당 브랜드가 아니면 0점(기준서 규칙)",
+      "familyRoot": "fam-brand-젝시믹스",
       "partition": "dev"
     },
     {
@@ -769,6 +836,7 @@
       "family": "fam-brand-아디다스",
       "tags": [],
       "note": "브랜드명 정본(c_goods.brand_name)에서 생성. 해당 브랜드가 아니면 0점(기준서 규칙)",
+      "familyRoot": "fam-brand-아디다스",
       "partition": "holdout"
     },
     {
@@ -779,6 +847,7 @@
       "family": "fam-brand-커버낫",
       "tags": [],
       "note": "브랜드명 정본(c_goods.brand_name)에서 생성. 해당 브랜드가 아니면 0점(기준서 규칙)",
+      "familyRoot": "fam-brand-커버낫",
       "partition": "dev"
     },
     {
@@ -792,6 +861,7 @@
       ],
       "note": "한영 자판 변형. 원본='아디다스' — 원본이 되는데 변형이 안 되면 A단계 실패",
       "origin": "아디다스",
+      "familyRoot": "fam-brand-아디다스",
       "partition": "holdout"
     },
     {
@@ -805,6 +875,7 @@
       ],
       "note": "한영 자판 변형. 원본='커버낫' — 원본이 되는데 변형이 안 되면 A단계 실패",
       "origin": "커버낫",
+      "familyRoot": "fam-brand-커버낫",
       "partition": "dev"
     },
     {
@@ -818,6 +889,7 @@
       ],
       "note": "한영 자판 변형. 원본='무신사 스탠다드' — 원본이 되는데 변형이 안 되면 A단계 실패",
       "origin": "무신사 스탠다드",
+      "familyRoot": "fam-brand-무신사 스탠다드",
       "partition": "dev"
     },
     {
@@ -831,6 +903,7 @@
       ],
       "note": "한영 자판 변형. 원본='젝시믹스' — 원본이 되는데 변형이 안 되면 A단계 실패",
       "origin": "젝시믹스",
+      "familyRoot": "fam-brand-젝시믹스",
       "partition": "dev"
     },
     {
@@ -844,6 +917,7 @@
       ],
       "note": "한영 자판 변형. 원본='다이나핏' — 원본이 되는데 변형이 안 되면 A단계 실패",
       "origin": "다이나핏",
+      "familyRoot": "fam-brand-다이나핏",
       "partition": "dev"
     },
     {
@@ -857,6 +931,7 @@
       ],
       "note": "한영 자판 변형. 원본='트립션' — 원본이 되는데 변형이 안 되면 A단계 실패",
       "origin": "트립션",
+      "familyRoot": "fam-brand-트립션",
       "partition": "holdout"
     },
     {
@@ -870,6 +945,7 @@
       ],
       "note": "초성 변형. 원본='아디다스' — 원본이 되는데 변형이 안 되면 A단계 실패",
       "origin": "아디다스",
+      "familyRoot": "fam-brand-아디다스",
       "partition": "holdout"
     },
     {
@@ -883,6 +959,7 @@
       ],
       "note": "초성 변형. 원본='커버낫' — 원본이 되는데 변형이 안 되면 A단계 실패",
       "origin": "커버낫",
+      "familyRoot": "fam-brand-커버낫",
       "partition": "dev"
     },
     {
@@ -896,6 +973,7 @@
       ],
       "note": "초성 변형. 원본='그레이버' — 원본이 되는데 변형이 안 되면 A단계 실패",
       "origin": "그레이버",
+      "familyRoot": "fam-brand-그레이버",
       "partition": "progress"
     },
     {
@@ -909,6 +987,7 @@
       ],
       "note": "초성 변형. 원본='무지티' — 원본이 되는데 변형이 안 되면 A단계 실패",
       "origin": "무지티",
+      "familyRoot": "fam-var-무지티",
       "partition": "dev"
     },
     {
@@ -922,6 +1001,7 @@
       ],
       "note": "초성 변형. 원본='오버핏' — 원본이 되는데 변형이 안 되면 A단계 실패",
       "origin": "오버핏",
+      "familyRoot": "fam-var-오버핏",
       "partition": "progress"
     },
     {
@@ -935,6 +1015,7 @@
       ],
       "note": "띄어쓰기 변형. 원본='반팔 티' — 두 표기가 같은 결과를 내야 한다",
       "origin": "반팔 티",
+      "familyRoot": "fam-var-반팔 티",
       "partition": "progress"
     },
     {
@@ -948,6 +1029,7 @@
       ],
       "note": "띄어쓰기 변형. 원본='무지 티셔츠' — 두 표기가 같은 결과를 내야 한다",
       "origin": "무지 티셔츠",
+      "familyRoot": "fam-var-무지 티셔츠",
       "partition": "dev"
     },
     {
@@ -961,7 +1043,8 @@
       ],
       "note": "띄어쓰기 변형. 원본='오버 핏' — 두 표기가 같은 결과를 내야 한다",
       "origin": "오버 핏",
-      "partition": "dev"
+      "familyRoot": "fam-var-오버핏",
+      "partition": "progress"
     },
     {
       "id": "v15",
@@ -974,6 +1057,7 @@
       ],
       "note": "띄어쓰기 변형. 원본='포켓 티' — 두 표기가 같은 결과를 내야 한다",
       "origin": "포켓 티",
+      "familyRoot": "fam-var-포켓 티",
       "partition": "holdout"
     },
     {
@@ -987,6 +1071,7 @@
       ],
       "note": "띄어쓰기 변형. 원본='무지 반팔 티' — 두 표기가 같은 결과를 내야 한다",
       "origin": "무지 반팔 티",
+      "familyRoot": "fam-var-무지 반팔 티",
       "partition": "dev"
     },
     {
@@ -1000,6 +1085,7 @@
       ],
       "note": "한 글자 오타. 원본='아디다스'",
       "origin": "아디다스",
+      "familyRoot": "fam-brand-아디다스",
       "partition": "holdout"
     },
     {
@@ -1013,6 +1099,7 @@
       ],
       "note": "한 글자 오타. 원본='커버낫'",
       "origin": "커버낫",
+      "familyRoot": "fam-brand-커버낫",
       "partition": "dev"
     },
     {
@@ -1023,7 +1110,8 @@
       "family": "fam-g2-01",
       "tags": [],
       "note": null,
-      "partition": "progress"
+      "familyRoot": "fam-var-무지티",
+      "partition": "dev"
     },
     {
       "id": "a-g2-02",
@@ -1033,6 +1121,7 @@
       "family": "fam-g2-02",
       "tags": [],
       "note": null,
+      "familyRoot": "fam-g2-02",
       "partition": "dev"
     },
     {
@@ -1043,6 +1132,7 @@
       "family": "fam-g2-03",
       "tags": [],
       "note": null,
+      "familyRoot": "fam-g2-03",
       "partition": "dev"
     },
     {
@@ -1053,6 +1143,7 @@
       "family": "fam-g2-04",
       "tags": [],
       "note": null,
+      "familyRoot": "fam-g2-04",
       "partition": "dev"
     },
     {
@@ -1063,6 +1154,7 @@
       "family": "fam-g2-05",
       "tags": [],
       "note": null,
+      "familyRoot": "fam-g2-05",
       "partition": "dev"
     },
     {
@@ -1073,6 +1165,7 @@
       "family": "fam-g2-06",
       "tags": [],
       "note": null,
+      "familyRoot": "fam-g2-06",
       "partition": "holdout"
     },
     {
@@ -1083,6 +1176,7 @@
       "family": "fam-g2-07",
       "tags": [],
       "note": null,
+      "familyRoot": "fam-g2-07",
       "partition": "progress"
     },
     {
@@ -1093,6 +1187,7 @@
       "family": "fam-g2-08",
       "tags": [],
       "note": null,
+      "familyRoot": "fam-g2-08",
       "partition": "holdout"
     },
     {
@@ -1103,6 +1198,7 @@
       "family": "fam-g2-09",
       "tags": [],
       "note": null,
+      "familyRoot": "fam-g2-09",
       "partition": "progress"
     },
     {
@@ -1113,6 +1209,7 @@
       "family": "fam-g2-10",
       "tags": [],
       "note": null,
+      "familyRoot": "fam-g2-10",
       "partition": "progress"
     },
     {
@@ -1123,6 +1220,7 @@
       "family": "fam-g2-11",
       "tags": [],
       "note": null,
+      "familyRoot": "fam-g2-11",
       "partition": "dev"
     },
     {
@@ -1133,6 +1231,7 @@
       "family": "fam-g2-12",
       "tags": [],
       "note": null,
+      "familyRoot": "fam-g2-12",
       "partition": "holdout"
     },
     {
@@ -1143,6 +1242,7 @@
       "family": "fam-g2-13",
       "tags": [],
       "note": null,
+      "familyRoot": "fam-g2-13",
       "partition": "holdout"
     },
     {
@@ -1153,6 +1253,7 @@
       "family": "fam-g4-01",
       "tags": [],
       "note": null,
+      "familyRoot": "fam-g4-01",
       "partition": "dev"
     },
     {
@@ -1163,6 +1264,7 @@
       "family": "fam-g4-02",
       "tags": [],
       "note": null,
+      "familyRoot": "fam-g4-02",
       "partition": "dev"
     },
     {
@@ -1173,6 +1275,7 @@
       "family": "fam-g4-03",
       "tags": [],
       "note": null,
+      "familyRoot": "fam-g4-03",
       "partition": "dev"
     },
     {
@@ -1183,6 +1286,7 @@
       "family": "fam-g4-04",
       "tags": [],
       "note": null,
+      "familyRoot": "fam-g4-04",
       "partition": "dev"
     },
     {
@@ -1193,6 +1297,7 @@
       "family": "fam-g4-05",
       "tags": [],
       "note": null,
+      "familyRoot": "fam-g4-05",
       "partition": "dev"
     },
     {
@@ -1203,6 +1308,7 @@
       "family": "fam-g4-06",
       "tags": [],
       "note": null,
+      "familyRoot": "fam-g4-06",
       "partition": "dev"
     },
     {
@@ -1213,6 +1319,7 @@
       "family": "fam-g4-07",
       "tags": [],
       "note": null,
+      "familyRoot": "fam-g4-07",
       "partition": "dev"
     },
     {
@@ -1223,6 +1330,7 @@
       "family": "fam-g4-08",
       "tags": [],
       "note": null,
+      "familyRoot": "fam-g4-08",
       "partition": "progress"
     },
     {
@@ -1233,6 +1341,7 @@
       "family": "fam-g4-09",
       "tags": [],
       "note": null,
+      "familyRoot": "fam-g4-09",
       "partition": "dev"
     },
     {
@@ -1243,6 +1352,7 @@
       "family": "fam-g4-10",
       "tags": [],
       "note": null,
+      "familyRoot": "fam-g4-10",
       "partition": "holdout"
     },
     {
@@ -1253,6 +1363,7 @@
       "family": "fam-g4-11",
       "tags": [],
       "note": null,
+      "familyRoot": "fam-g4-11",
       "partition": "progress"
     },
     {
@@ -1263,6 +1374,7 @@
       "family": "fam-g4-12",
       "tags": [],
       "note": null,
+      "familyRoot": "fam-g4-12",
       "partition": "holdout"
     },
     {
@@ -1273,6 +1385,7 @@
       "family": "fam-g4-13",
       "tags": [],
       "note": null,
+      "familyRoot": "fam-g4-13",
       "partition": "holdout"
     },
     {
@@ -1283,6 +1396,7 @@
       "family": "fam-g5-01",
       "tags": [],
       "note": null,
+      "familyRoot": "fam-g5-01",
       "partition": "dev"
     },
     {
@@ -1293,6 +1407,7 @@
       "family": "fam-g5-02",
       "tags": [],
       "note": null,
+      "familyRoot": "fam-g5-02",
       "partition": "dev"
     },
     {
@@ -1303,6 +1418,7 @@
       "family": "fam-g5-03",
       "tags": [],
       "note": null,
+      "familyRoot": "fam-g5-03",
       "partition": "dev"
     },
     {
@@ -1313,6 +1429,7 @@
       "family": "fam-g5-04",
       "tags": [],
       "note": null,
+      "familyRoot": "fam-g5-04",
       "partition": "progress"
     },
     {
@@ -1323,6 +1440,7 @@
       "family": "fam-g5-05",
       "tags": [],
       "note": null,
+      "familyRoot": "fam-g5-05",
       "partition": "dev"
     },
     {
@@ -1333,6 +1451,7 @@
       "family": "fam-g5-06",
       "tags": [],
       "note": null,
+      "familyRoot": "fam-g5-06",
       "partition": "progress"
     },
     {
@@ -1343,6 +1462,7 @@
       "family": "fam-g5-07",
       "tags": [],
       "note": null,
+      "familyRoot": "fam-g5-07",
       "partition": "holdout"
     },
     {
@@ -1353,6 +1473,7 @@
       "family": "fam-g5-08",
       "tags": [],
       "note": null,
+      "familyRoot": "fam-g5-08",
       "partition": "holdout"
     },
     {
@@ -1363,6 +1484,7 @@
       "family": "fam-g5-09",
       "tags": [],
       "note": null,
+      "familyRoot": "fam-g5-09",
       "partition": "dev"
     },
     {
@@ -1373,6 +1495,7 @@
       "family": "fam-g6-01",
       "tags": [],
       "note": null,
+      "familyRoot": "fam-g6-01",
       "partition": "holdout"
     },
     {
@@ -1383,6 +1506,7 @@
       "family": "fam-g6-02",
       "tags": [],
       "note": null,
+      "familyRoot": "fam-g6-02",
       "partition": "dev"
     },
     {
@@ -1393,6 +1517,7 @@
       "family": "fam-g6-03",
       "tags": [],
       "note": null,
+      "familyRoot": "fam-g6-03",
       "partition": "progress"
     },
     {
@@ -1403,6 +1528,7 @@
       "family": "fam-g6-04",
       "tags": [],
       "note": null,
+      "familyRoot": "fam-g6-04",
       "partition": "holdout"
     },
     {
@@ -1413,6 +1539,7 @@
       "family": "fam-g6-05",
       "tags": [],
       "note": null,
+      "familyRoot": "fam-g6-05",
       "partition": "dev"
     },
     {
@@ -1423,6 +1550,7 @@
       "family": "fam-g6-06",
       "tags": [],
       "note": null,
+      "familyRoot": "fam-g6-06",
       "partition": "dev"
     },
     {
@@ -1433,6 +1561,7 @@
       "family": "fam-g6-07",
       "tags": [],
       "note": null,
+      "familyRoot": "fam-g6-07",
       "partition": "holdout"
     },
     {
@@ -1443,6 +1572,7 @@
       "family": "fam-g6-08",
       "tags": [],
       "note": null,
+      "familyRoot": "fam-g6-08",
       "partition": "progress"
     },
     {
@@ -1453,6 +1583,7 @@
       "family": "fam-g6-09",
       "tags": [],
       "note": null,
+      "familyRoot": "fam-g6-09",
       "partition": "dev"
     },
     {
@@ -1463,6 +1594,7 @@
       "family": "fam-g6-10",
       "tags": [],
       "note": null,
+      "familyRoot": "fam-g6-10",
       "partition": "dev"
     }
   ]

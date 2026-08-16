@@ -1,6 +1,10 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-import { logSearch, postSearchLog } from "@/features/feed/search/data/search-log-api";
+import {
+  logSearch,
+  postSearchLog,
+  SEARCH_VER,
+} from "@/features/feed/search/data/search-log-api";
 import { getDeviceId } from "@/shared/signals/device-id";
 import { rpcPost } from "@/shared/supabase-rpc";
 
@@ -11,10 +15,12 @@ const rpcPostMock = vi.mocked(rpcPost);
 const getDeviceIdMock = vi.mocked(getDeviceId);
 
 const input = {
+  logId: "33333333-3333-4333-8333-333333333333",
   queryRaw: "  흰 무지 오버핏 반팔  ",
   queryNorm: "흰 무지 오버핏 반팔",
   resultCount: 12,
   sessionId: "11111111-1111-4111-8111-111111111111",
+  occurredAt: "2026-08-17T00:00:00.000Z",
 };
 
 beforeEach(() => {
@@ -71,15 +77,33 @@ describe("postSearchLog", () => {
     expect(body.p_logs[0].model_ver).not.toBe("");
   });
 
-  it("호출마다 새 log_id를 만든다 — 재전송 중복 제거 키", async () => {
+  it("호출자가 준 log_id를 그대로 쓴다 — 재시도 때 결과 수만 보정하기 위해", async () => {
     rpcPostMock.mockResolvedValue(1);
     await postSearchLog(input);
-    await postSearchLog(input);
+    await postSearchLog({ ...input, resultCount: 7 });
 
     const ids = rpcPostMock.mock.calls.map(
       (call) => (call[1] as { p_logs: { log_id: string }[] }).p_logs[0].log_id,
     );
-    expect(ids[0]).not.toBe(ids[1]);
+    expect(ids[0]).toBe(input.logId);
+    expect(ids[1]).toBe(input.logId);
+  });
+
+  it("제출 시각을 그대로 싣는다 — 응답 시각으로 대체하지 않는다", async () => {
+    rpcPostMock.mockResolvedValue(1);
+    await postSearchLog(input);
+    const body = rpcPostMock.mock.calls[0][1] as {
+      p_logs: { occurred_at: string }[];
+    };
+    expect(body.p_logs[0].occurred_at).toBe(input.occurredAt);
+  });
+
+  it("검색 버전을 남긴다 — 피드 개인화 버전과 분리돼 있다", async () => {
+    rpcPostMock.mockResolvedValue(1);
+    await postSearchLog(input);
+    const body = rpcPostMock.mock.calls[0][1] as { p_logs: { model_ver: string }[] };
+    expect(body.p_logs[0].model_ver).toBe(SEARCH_VER);
+    expect(body.p_logs[0].model_ver).not.toContain("siglip");
   });
 });
 

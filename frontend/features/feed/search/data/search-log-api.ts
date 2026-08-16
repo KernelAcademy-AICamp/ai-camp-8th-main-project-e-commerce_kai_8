@@ -1,6 +1,10 @@
 import { getDeviceId } from "@/shared/signals/device-id";
-import { MODEL_VER } from "@/shared/signals/types";
 import { rpcPost } from "@/shared/supabase-rpc";
+
+// 검색 알고리즘 버전 — 피드 개인화 버전(MODEL_VER)과 **분리한다**.
+// 같이 쓰면 A단계 색인이 배포돼도 기존 검색과 구분할 수 없고, 구분하려고
+// 값을 바꾸면 행동 로그 버전까지 불필요하게 바뀐다(구현 리뷰 지적).
+export const SEARCH_VER = "search-v1-substring";
 
 /**
  * 검색어 기록 (검색 0단계 계획 1단계 · 방침 O-32).
@@ -14,14 +18,18 @@ import { rpcPost } from "@/shared/supabase-rpc";
 const LOG_TIMEOUT_MS = 5_000;
 
 export interface SearchLogInput {
+  /** 제출마다 하나. 실패 후 재시도 때 같은 값을 보내면 결과 수만 보정된다 */
+  logId: string;
   /** 사용자가 친 원문 (서버가 200자로 자른다) */
   queryRaw: string;
   /** 프론트·서버 공통 정규화를 거친 질의 */
   queryNorm: string;
   /** ⚠️ 첫 페이지 건수. 전체 매치 수가 아니다 (현재 RPC가 총계를 주지 않는다) */
   resultCount: number | null;
-  /** 비활성 30분 경계 세션 ID (O-29) */
+  /** 비활성 30분 경계 세션 ID (O-29) — **제출 시점**에 잡은 값 */
   sessionId: string;
+  /** **제출 시각** (응답 시각이 아니다) */
+  occurredAt: string;
 }
 
 export async function postSearchLog(input: SearchLogInput): Promise<void> {
@@ -31,13 +39,13 @@ export async function postSearchLog(input: SearchLogInput): Promise<void> {
       p_device: getDeviceId(),
       p_logs: [
         {
-          log_id: crypto.randomUUID(),
+          log_id: input.logId,
           session_id: input.sessionId,
           query_raw: input.queryRaw,
           query_norm: input.queryNorm,
           result_count: input.resultCount,
-          occurred_at: new Date().toISOString(),
-          model_ver: MODEL_VER,
+          occurred_at: input.occurredAt,
+          model_ver: SEARCH_VER,
         },
       ],
     },

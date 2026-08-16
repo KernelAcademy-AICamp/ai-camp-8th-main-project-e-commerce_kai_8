@@ -4,7 +4,7 @@
     "generatedBy": "backend/eval/build_pool.py",
     "system": "baseline-c_search_page",
     "topN": 20,
-    "collectedAt": "2026-08-16T18:09:35.661239+00:00",
+    "collectedAt": "2026-08-16T19:08:50.246610+00:00",
     "catalogSnapshot": {
       "c_goods_rows": 226320,
       "c_search_text_rows": 226304,
@@ -402,7 +402,7 @@
     {
       "id": "s19",
       "bucket": "G2",
-      "partition": "progress",
+      "partition": "holdout",
       "query": "보트넥 나염 티셔츠",
       "queryNorm": "보트넥 나염 티셔츠",
       "resultCount": 0,
@@ -935,7 +935,7 @@
     {
       "id": "g18",
       "bucket": "G2",
-      "partition": "dev",
+      "partition": "progress",
       "query": "여성 슬림핏 반팔티",
       "queryNorm": "여성 슬림핏 반팔티",
       "resultCount": 20,
@@ -4452,7 +4452,7 @@
     {
       "id": "v14",
       "bucket": "G3",
-      "partition": "dev",
+      "partition": "progress",
       "query": "오버핏",
       "queryNorm": "오버핏",
       "resultCount": 20,
@@ -4844,7 +4844,7 @@
     {
       "id": "a-g2-01",
       "bucket": "G2",
-      "partition": "progress",
+      "partition": "dev",
       "query": "무지티",
       "queryNorm": "무지티",
       "resultCount": 10,

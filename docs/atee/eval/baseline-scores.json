@@ -11,7 +11,7 @@
     "G2": {
       "metric": "p_at_20",
       "queries": 22,
-      "score": 0.6670454545454546,
+      "score": 0.5818181818181819,
       "ndcg": 0.761106456861928,
       "unjudgedRate": 0.0,
       "zeroResultRate": 0.22727272727272727
@@ -19,7 +19,7 @@
     "G3": {
       "metric": "p_at_20",
       "queries": 18,
-      "score": 0.25555555555555554,
+      "score": 0.15555555555555556,
       "ndcg": 0.2721007751772785,
       "unjudgedRate": 0.0,
       "zeroResultRate": 0.7222222222222222
@@ -27,7 +27,7 @@
     "G4": {
       "metric": "p_at_20",
       "queries": 22,
-      "score": 0.045454545454545456,
+      "score": 0.020454545454545454,
       "ndcg": 0.045454545454545456,
       "unjudgedRate": 0.0,
       "zeroResultRate": 0.9545454545454546
@@ -54,17 +54,60 @@
       "zeroResultRate": 1.0
     }
   },
-  "overallGate": 0.4335648148148148,
+  "perPartition": {
+    "dev": {
+      "perBucket": {
+        "G1": 0.5666666666666667,
+        "G2": 0.4954545454545455,
+        "G3": 0.022222222222222223,
+        "G4": 0.04090909090909091,
+        "G5": 0.0,
+        "G6": 1.0,
+        "R1": 0.0
+      },
+      "gate": 0.22505050505050503
+    },
+    "holdout": {
+      "perBucket": {
+        "G1": 0.78,
+        "G2": 0.47500000000000003,
+        "G3": 0.2,
+        "G4": 0.0,
+        "G5": 0.0,
+        "G6": 1.0,
+        "R1": 0.0
+      },
+      "gate": 0.29100000000000004
+    },
+    "progress": {
+      "perBucket": {
+        "G1": 0.6,
+        "G2": 0.9,
+        "G3": 0.4,
+        "G4": 0.0,
+        "G5": 0.0,
+        "G6": 1.0,
+        "R1": 0.0
+      },
+      "gate": 0.38
+    }
+  },
+  "repool": {
+    "threshold": 0.3,
+    "needed": [],
+    "verdict": "불필요"
+  },
+  "overallGate": 0.2782323232323233,
   "gateBuckets": [
     "G1",
     "G2",
     "G3",
     "G4",
-    "G5",
-    "G6"
+    "G5"
   ],
   "excludedFromGate": [
-    "R1"
+    "R1",
+    "G6(별도 게이트)"
   ],
   "lowConfidenceExcluded": [
     "s08"
@@ -119,7 +162,7 @@
       "bucket": "G2",
       "partition": "progress",
       "kind": "ranked",
-      "p_at_k": 1.0,
+      "p_at_k": 0.55,
       "ndcg": 1.0,
       "unjudgedRate": 0.0,
       "zero": false
@@ -229,7 +272,7 @@
       "bucket": "G2",
       "partition": "dev",
       "kind": "ranked",
-      "p_at_k": 1.0,
+      "p_at_k": 0.8,
       "ndcg": 1.0,
       "unjudgedRate": 0.0,
       "zero": false
@@ -237,7 +280,7 @@
     {
       "id": "s19",
       "bucket": "G2",
-      "partition": "progress",
+      "partition": "holdout",
       "kind": "ranked",
       "p_at_k": 0.0,
       "ndcg": 0.0,
@@ -349,7 +392,7 @@
       "bucket": "G2",
       "partition": "dev",
       "kind": "ranked",
-      "p_at_k": 0.95,
+      "p_at_k": 1.0,
       "ndcg": 1.0,
       "unjudgedRate": 0.0,
       "zero": false
@@ -470,7 +513,7 @@
       "bucket": "G2",
       "partition": "dev",
       "kind": "ranked",
-      "p_at_k": 0.125,
+      "p_at_k": 0.1,
       "ndcg": 0.7977228895450266,
       "unjudgedRate": 0.0,
       "zero": false
@@ -498,7 +541,7 @@
     {
       "id": "g18",
       "bucket": "G2",
-      "partition": "dev",
+      "partition": "progress",
       "kind": "ranked",
       "p_at_k": 1.0,
       "ndcg": 1.0,
@@ -810,7 +853,7 @@
       "bucket": "G3",
       "partition": "dev",
       "kind": "ranked",
-      "p_at_k": 1.0,
+      "p_at_k": 0.05,
       "ndcg": 1.0,
       "unjudgedRate": 0.0,
       "zero": false
@@ -818,7 +861,7 @@
     {
       "id": "v14",
       "bucket": "G3",
-      "partition": "dev",
+      "partition": "progress",
       "kind": "ranked",
       "p_at_k": 0.6,
       "ndcg": 0.8978139531910125,
@@ -840,7 +883,7 @@
       "bucket": "G3",
       "partition": "dev",
       "kind": "ranked",
-      "p_at_k": 1.0,
+      "p_at_k": 0.15,
       "ndcg": 1.0,
       "unjudgedRate": 0.0,
       "zero": false
@@ -868,9 +911,9 @@
     {
       "id": "a-g2-01",
       "bucket": "G2",
-      "partition": "progress",
+      "partition": "dev",
       "kind": "ranked",
-      "p_at_k": 1.0,
+      "p_at_k": 0.5,
       "ndcg": 1.0,
       "unjudgedRate": 0.0,
       "zero": false
@@ -910,7 +953,7 @@
       "bucket": "G2",
       "partition": "dev",
       "kind": "ranked",
-      "p_at_k": 1.0,
+      "p_at_k": 0.25,
       "ndcg": 1.0,
       "unjudgedRate": 0.0,
       "zero": false
@@ -1030,7 +1073,7 @@
       "bucket": "G4",
       "partition": "dev",
       "kind": "ranked",
-      "p_at_k": 1.0,
+      "p_at_k": 0.45,
       "ndcg": 1.0,
       "unjudgedRate": 0.0,
       "zero": false

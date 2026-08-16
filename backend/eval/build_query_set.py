@@ -250,10 +250,46 @@ def build() -> dict:
                 }
             )
 
-    # ⑤ 층화 분할 — 가족 단위, 해시 기반이라 실행마다 같은 결과가 나온다
+    # ⑤ 가족을 **관계로 계산한다** — 선언한 family 문자열만 믿으면 누출이 생긴다.
+    # 실측(2차 구현 리뷰 Blocker): v10 'ㅁㅈㅌ'(원본 무지티)가 dev인데 같은 원문
+    # 질의 a-g2-01 '무지티'는 progress였다. origin 링크와 동일 원문을 union으로
+    # 합쳐야 "개발셋에서 익힌 변환을 홀드아웃에서 다시 시험"하는 누출을 막는다.
+    parent: dict[str, str] = {}
+
+    def find(x: str) -> str:
+        parent.setdefault(x, x)
+        while parent[x] != x:
+            parent[x] = parent[parent[x]]
+            x = parent[x]
+        return x
+
+    def union(a: str, b: str) -> None:
+        ra, rb = find(a), find(b)
+        if ra != rb:
+            parent[min(ra, rb)] = max(ra, rb)
+
+    for e in entries:
+        find(e["family"])
+    # (a) 선언된 family가 같으면 같은 가족
+    # (b) origin(파생의 원본)이 어떤 질의의 원문과 같으면 그 질의와 같은 가족
+    # (c) 원문이 완전히 같은 질의끼리 같은 가족
+    by_query_text: dict[str, list[dict]] = {}
+    for e in entries:
+        by_query_text.setdefault(e["query"], []).append(e)
+    for rows in by_query_text.values():
+        for other in rows[1:]:
+            union(rows[0]["family"], other["family"])
+    for e in entries:
+        origin = e.get("origin")
+        if origin and origin in by_query_text:
+            union(e["family"], by_query_text[origin][0]["family"])
+
+    for e in entries:
+        e["familyRoot"] = find(e["family"])
+
     families: dict[str, list[dict]] = {}
     for e in entries:
-        families.setdefault(e["family"], []).append(e)
+        families.setdefault(e["familyRoot"], []).append(e)
 
     by_bucket_families: dict[str, list[str]] = {}
     for fam, members in families.items():
@@ -276,7 +312,7 @@ def build() -> dict:
                 partition_of[fam] = "holdout"
 
     for e in entries:
-        e["partition"] = partition_of[e["family"]]
+        e["partition"] = partition_of[e["familyRoot"]]
 
     counts: dict[str, dict[str, int]] = {}
     for e in entries:
@@ -296,7 +332,8 @@ def build() -> dict:
                 "최종 판정 딱 두 번만 연다. 열람할 때마다 계획의 실행 기록에 남긴다."
             ),
             "openLog": [
-                {"partition": "holdout", "when": "0단계 6단계 기준선 측정", "status": "예정"},
+                {"partition": "holdout", "when": "0단계 기준선 측정 (2026-08-17)", "status": "열람함"},
+                {"partition": "progress", "when": "A단계 완료 시", "status": "예정"},
                 {"partition": "holdout", "when": "전체 완료 최종 판정", "status": "예정"},
             ],
             "partitionRules": {
@@ -314,6 +351,7 @@ def build() -> dict:
 def check(doc: dict) -> list[str]:
     """불변식 검사 — 어기면 평가가 무의미해지는 것들만."""
     problems: list[str] = []
+    notes: list[str] = []
     targets = json.loads(TARGETS_PATH.read_text(encoding="utf-8"))["targets"]
     counts = doc["meta"]["counts"]
 
@@ -321,15 +359,33 @@ def check(doc: dict) -> list[str]:
         want = spec["count"]
         got = counts.get(bucket, {}).get("total", 0)
         if want and got < want:
-            problems.append(f"{bucket}: 목표 {want}건인데 {got}건")
+            problems.append(f"{bucket}: 목표 {want}건 미달 — {got}건")
+        elif want and got > want:
+            # 초과는 실패가 아니지만 "목표와 일치"라고 말하면 안 된다
+            notes.append(f"{bucket}: 목표 {want}건 · 실제 {got}건 (초과)")
 
-    # 같은 가족이 두 파티션에 흩어지면 누출이다
-    fam_parts: dict[str, set[str]] = {}
+    # 같은 가족이 두 파티션에 흩어지면 누출이다 (선언 family + 계산된 familyRoot 둘 다)
+    for key in ("family", "familyRoot"):
+        fam_parts: dict[str, set[str]] = {}
+        for e in doc["entries"]:
+            if key in e:
+                fam_parts.setdefault(e[key], set()).add(e["partition"])
+        for fam, parts in fam_parts.items():
+            if len(parts) > 1:
+                problems.append(f"가족 누출({key}): {fam} → {sorted(parts)}")
+
+    # 관계 기반 누출 — 선언값을 우회하는 두 경로를 직접 본다
+    part_of_text: dict[str, str] = {}
     for e in doc["entries"]:
-        fam_parts.setdefault(e["family"], set()).add(e["partition"])
-    for fam, parts in fam_parts.items():
-        if len(parts) > 1:
-            problems.append(f"가족 누출: {fam} → {sorted(parts)}")
+        part_of_text.setdefault(e["query"], e["partition"])
+    for e in doc["entries"]:
+        if part_of_text[e["query"]] != e["partition"]:
+            problems.append(f"동일 원문 누출: {e['query']!r} ({e['id']})")
+        origin = e.get("origin")
+        if origin and origin in part_of_text and part_of_text[origin] != e["partition"]:
+            problems.append(
+                f"origin 누출: {e['id']} {e['query']!r}({e['partition']}) ← {origin!r}({part_of_text[origin]})"
+            )
 
     ids = [e["id"] for e in doc["entries"]]
     if len(ids) != len(set(ids)):
@@ -340,6 +396,8 @@ def check(doc: dict) -> list[str]:
     if dupes:
         problems.append(f"중복 질의: {sorted(dupes)}")
 
+    if notes:
+        problems.extend(f"[참고] {n}" for n in notes)
     return problems
 
 
@@ -365,9 +423,13 @@ def main() -> int:
                 f"dev {c['dev']:>2} / progress {c['progress']:>2} / holdout {c['holdout']:>2}"
             )
 
-    if problems:
+    hard = [p for p in problems if not p.startswith("[참고]")]
+    for p in problems:
+        if p.startswith("[참고]"):
+            print(f"  {p}")
+    if hard:
         print("\n불변식 위반:")
-        for p in problems:
+        for p in hard:
             print(f"  - {p}")
         return 1
     print("\n불변식 통과 (목표 개수·가족 누출 없음·중복 없음)")

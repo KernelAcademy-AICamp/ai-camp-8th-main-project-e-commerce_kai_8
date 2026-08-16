@@ -8,7 +8,7 @@ import { distributeToColumns } from "@/features/feed/domain/masonry";
 import type { FeedCardViewData } from "@/features/feed/presentation/view-model/card-view-data";
 import { fetchSearchPage } from "@/features/feed/search/data/search-api";
 import { logSearch } from "@/features/feed/search/data/search-log-api";
-import { touchSession } from "@/shared/signals/signals";
+import type { SearchSubmission } from "@/features/feed/search/presentation/view-model/use-search-state";
 
 const PAGE_SIZE = 30;
 const COLUMN_COUNT = 2;
@@ -16,8 +16,11 @@ const COLUMN_COUNT = 2;
 export interface SearchFeedOptions {
   /** 제출된 검색어 — null이면 검색 모드 아님 (아무것도 요청하지 않는다) */
   query: string | null;
-  /** 계측용 입력 원문 (방침 O-32). 없으면 정규화 질의로 대체한다 */
-  queryRaw?: string | null;
+  /**
+   * 제출 identity — 같은 검색어를 다시 제출해도 새 검색이다.
+   * 계측 시각·세션도 여기 담긴 **제출 시점** 값을 쓴다 (응답 시점이 아니다).
+   */
+  submission?: SearchSubmission | null;
   /**
    * true면 추가 로드를 멈춘다 — 상세 레이어가 위를 덮었을 때 등.
    * 검색 그리드는 상세 아래에서도 DOM상 보이므로 명시적으로 막아야 한다 (설계 §2).
@@ -52,7 +55,7 @@ interface Progress {
  *
  * 실패는 자동 재시도 없이 오류 상태로 두고 retry()로만 다시 요청한다 (설계 §4).
  */
-export function useSearchFeed({ query, queryRaw, paused }: SearchFeedOptions) {
+export function useSearchFeed({ query, submission, paused }: SearchFeedOptions) {
   const [result, setResult] = useState<ResultState>({
     query: null,
     items: [],
@@ -73,19 +76,23 @@ export function useSearchFeed({ query, queryRaw, paused }: SearchFeedOptions) {
     pausedRef.current = paused === true;
   }, [paused]);
   // 계측 입력은 렌더와 무관해 ref로 미러링 (로드 콜백이 최신 값을 보게)
-  const queryRawRef = useRef(queryRaw);
+  const submissionRef = useRef(submission);
   useEffect(() => {
-    queryRawRef.current = queryRaw;
-  }, [queryRaw]);
+    submissionRef.current = submission;
+  }, [submission]);
+  // 제출마다 하나의 로그 ID — 실패 후 재시도가 성공하면 같은 ID로 다시 보내
+  // 결과 수만 보정된다(서버가 result_count가 null일 때만 갱신한다)
+  const logIdBySeq = useRef(new Map<number, string>());
   // 검색어 한 번당 기록 한 번 — 오류 후 retry로 첫 페이지를 다시 불러도
   // 중복 기록하지 않는다 (세대 번호로 판정)
   const loggedGenerationRef = useRef(-1);
 
   // 검색어 전환 시 표시를 즉시 비운다 (React 권장 렌더 중 리셋) — 같은 검색어를
   // 해제 후 재제출해도 이전 세션의 결과·오류가 잠깐 비치지 않는다
-  const [lastQuery, setLastQuery] = useState(query);
-  if (lastQuery !== query) {
-    setLastQuery(query);
+  const identity = query == null ? null : `${String(submission?.seq ?? 0)}:${query}`;
+  const [lastQuery, setLastQuery] = useState(identity);
+  if (lastQuery !== identity) {
+    setLastQuery(identity);
     setResult({ query: null, items: [], ready: false, error: false });
   }
 
@@ -93,7 +100,7 @@ export function useSearchFeed({ query, queryRaw, paused }: SearchFeedOptions) {
   // (아래 로드 재개 효과보다 먼저 선언해 같은 커밋에서 세대가 먼저 오른다)
   useEffect(() => {
     generationRef.current += 1;
-  }, [query]);
+  }, [query, submission?.seq]);
 
   const loadMore = useCallback(() => {
     if (query == null) return;
@@ -117,13 +124,26 @@ export function useSearchFeed({ query, queryRaw, paused }: SearchFeedOptions) {
     // 검색어 기록 (방침 O-32). 첫 페이지가 결론난 시점에 한 번 — 결과 수를
     // 함께 남기려면 응답을 기다려야 하기 때문이다. 실패는 결과 수 없이 남긴다.
     const logOnce = (resultCount: number | null) => {
-      if (!isFirstPage || loggedGenerationRef.current === generation) return;
+      if (!isFirstPage) return;
+      const sub = submissionRef.current;
+      if (!sub) return;
+      // 실패로 이미 기록했더라도 재시도가 성공하면 같은 log_id로 다시 보내
+      // 결과 수를 보정한다. 성공 뒤에는 다시 보내지 않는다.
+      const alreadyLogged = loggedGenerationRef.current === generation;
+      if (alreadyLogged && resultCount === null) return;
       loggedGenerationRef.current = generation;
+      let logId = logIdBySeq.current.get(sub.seq);
+      if (logId === undefined) {
+        logId = crypto.randomUUID();
+        logIdBySeq.current.set(sub.seq, logId);
+      }
       logSearch({
-        queryRaw: queryRawRef.current ?? query,
-        queryNorm: query,
+        logId,
+        queryRaw: sub.queryRaw,
+        queryNorm: sub.queryNorm,
         resultCount,
-        sessionId: touchSession(),
+        sessionId: sub.sessionId,
+        occurredAt: sub.occurredAt,
       });
     };
     fetchSearchPage(query, progress.after, PAGE_SIZE)

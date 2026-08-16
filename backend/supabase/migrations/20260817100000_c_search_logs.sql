@@ -57,11 +57,14 @@ begin
     return 0;
   end if;
 
-  -- 기기별 일일 상한 500건 — 사람이 하루에 검색할 수 있는 양을 크게 웃도는 차단선
+  -- 기기별 일일 상한 500건. **배치 크기를 더해서** 판정한다 — 499건 상태에서
+  -- 20건 배치를 넣어 519건이 되던 구멍을 막는다(구현 리뷰 지적).
+  -- 동시 요청이 같은 count를 보고 모두 통과하는 것은 기기 단위 권고 잠금으로 막는다.
+  perform pg_advisory_xact_lock(hashtextextended(p_device::text, 0));
   select count(*) into v_today_count
   from c_search_logs
   where device_id = p_device and received_at >= date_trunc('day', now());
-  if v_today_count >= 500 then
+  if v_today_count + jsonb_array_length(p_logs) > 500 then
     return 0;
   end if;
 
@@ -79,15 +82,29 @@ begin
     (l ->> 'occurred_at')::timestamptz,
     left(coalesce(l ->> 'model_ver', ''), 64)
   from jsonb_array_elements(p_logs) l
-  where (l ->> 'log_id')     ~ '^[0-9a-fA-F-]{36}$'
-    and (l ->> 'session_id') ~ '^[0-9a-fA-F-]{36}$'
+  -- ⚠️ 캐스트 전에 형태를 확정한다. 느슨한 정규식(`[0-9a-fA-F-]{36}`)은 하이픈
+  -- 36개도 통과시켜 ::uuid에서 **RPC 전체가 실패**했다(구현 리뷰 지적).
+  where (l ->> 'log_id')     ~* '^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$'
+    and (l ->> 'session_id') ~* '^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$'
     and nullif(trim(l ->> 'query_raw'), '')  is not null
     and nullif(trim(l ->> 'query_norm'), '') is not null
-    and (l ->> 'occurred_at') is not null
+    -- 시각도 임의 문자열이 바로 캐스트돼 오류를 냈다. ISO 8601 형태만 받고,
+    -- 말이 안 되는 시각(미래·아주 과거)은 버린다.
+    and (l ->> 'occurred_at') ~ '^\d{4}-\d{2}-\d{2}[T ]\d{2}:\d{2}:\d{2}'
+    and (l ->> 'occurred_at')::timestamptz between now() - interval '7 days'
+                                              and now() + interval '1 day'
+    -- 첫 페이지 상한(60)을 넘는 결과 수는 있을 수 없다
     and (l ->> 'result_count' is null
          or l ->> 'result_count' = ''
-         or ((l ->> 'result_count') ~ '^[0-9]{1,7}$'))
-  on conflict (log_id) do nothing;
+         or ((l ->> 'result_count') ~ '^[0-9]{1,3}$'
+             and (l ->> 'result_count')::int <= 60))
+    and nullif(trim(l ->> 'model_ver'), '') is not null
+  -- 실패로 result_count 없이 먼저 기록된 뒤 재시도가 성공하면 **결과 수만** 보정한다.
+  -- 그 외에는 아무것도 덮어쓰지 않는다(재전송 중복 제거는 그대로 유지).
+  on conflict (log_id) do update
+    set result_count = excluded.result_count
+    where c_search_logs.result_count is null
+      and excluded.result_count is not null;
 
   get diagnostics v_inserted = row_count;
 
@@ -144,8 +161,36 @@ exception when others then
   null;  -- 없으면 무시
 end $$;
 
+-- 삭제는 유계로 반복한다. 공격·장애로 행이 크게 쌓였을 때 한 트랜잭션에서
+-- 전량을 지우면 공유 DB의 WAL·I/O가 튄다(구현 리뷰 지적).
+create or replace function c_search_logs_purge(p_batch int default 5000, p_max_batches int default 20)
+returns int
+language plpgsql volatile security definer
+set search_path = public
+as $$
+declare
+  v_total int := 0;
+  v_deleted int;
+begin
+  for i in 1..greatest(p_max_batches, 1) loop
+    delete from c_search_logs
+    where ctid in (
+      select ctid from c_search_logs
+      where received_at < now() - interval '90 days'
+      limit greatest(p_batch, 1)
+    );
+    get diagnostics v_deleted = row_count;
+    v_total := v_total + v_deleted;
+    exit when v_deleted = 0;
+  end loop;
+  return v_total;
+end
+$$;
+
+revoke all on function c_search_logs_purge(int, int) from public;
+
 select cron.schedule(
   'c_search_logs_retention',
   '0 18 * * *',
-  $cron$delete from c_search_logs where received_at < now() - interval '90 days'$cron$
+  $cron$select c_search_logs_purge()$cron$
 );

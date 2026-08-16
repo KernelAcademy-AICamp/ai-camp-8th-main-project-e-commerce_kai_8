@@ -12,7 +12,9 @@
 confidence=low 항목은 주 지표에서 분리한다(기준서 §4).
 
 실행:
-  python backend/eval/compute_baseline.py --grades docs/atee/eval/grading-codex-dev.json
+  python backend/eval/compute_baseline.py --grades docs/atee/eval/grading-codex-all.json
+
+⚠️ grading-codex-dev.json은 기준서 v1로 매긴 폐기본이다. 섞어 쓰면 안 된다.
 """
 
 from __future__ import annotations
@@ -26,7 +28,10 @@ ROOT = Path(__file__).resolve().parents[2]
 EVAL_DIR = ROOT / "docs" / "atee" / "eval"
 
 K = 20
-GATE_BUCKETS = ["G1", "G2", "G3", "G4", "G5", "G6", "G7"]  # R1은 게이트에서 제외
+# 종합 게이트 = 상품 단위 계열의 P@20 평균 (기준서 §1-1).
+# G6은 질의 단위 지표라 단위가 달라 합치지 않는다 — 합치면 "원래 못 찾아서 100%"인
+# 값이 종합을 밀어올린다(실측: 넣으면 43.4%, 빼면 32.0%). G6은 별도 게이트다.
+GATE_BUCKETS = ["G1", "G2", "G3", "G4", "G5", "G7"]  # R1·G6 제외
 
 
 def dcg(gains: list[int]) -> float:
@@ -69,7 +74,9 @@ def compute(pool: dict, grades: dict[str, int], low_conf: set[str]) -> dict:
             )
             continue
 
-        p = (sum(1 for g in known if g == 2) / len(known)) if known else 0.0
+        # 분모는 항상 K다 (기준서 §1). 반환·판정된 개수로 나누면 결과가 적은
+        # 질의가 과대평가된다 — 실측: 결과 1개짜리가 P@20 1.00으로 잡혔다.
+        p = sum(1 for g in known if g == 2) / K
         gains = [g for _, g in judged if g is not None]
         ideal = sorted(gains, reverse=True)
         n = (dcg(gains) / dcg(ideal)) if ideal and dcg(ideal) > 0 else 0.0
@@ -116,11 +123,45 @@ def compute(pool: dict, grades: dict[str, int], low_conf: set[str]) -> dict:
             }
 
     gate = [summary[x]["score"] for x in GATE_BUCKETS if x in summary]
+
+    # 파티션별 집계 — A단계는 progress만 열어 비교하므로 같은 표본끼리 봐야 한다
+    by_partition: dict[str, dict] = {}
+    for row in per_query:
+        part = by_partition.setdefault(row["partition"], {})
+        b = part.setdefault(row["bucket"], {"queries": 0, "p": [], "correct": 0})
+        b["queries"] += 1
+        if row["kind"] == "zero_result":
+            b["correct"] += int(row["correct"])
+        else:
+            b["p"].append(row["p_at_k"])
+    partition_summary: dict[str, dict] = {}
+    for part, buckets in sorted(by_partition.items()):
+        rows = {}
+        for bucket, b in sorted(buckets.items()):
+            rows[bucket] = (
+                b["correct"] / b["queries"] if bucket == "G6" else sum(b["p"]) / len(b["p"])
+            )
+        g = [rows[x] for x in GATE_BUCKETS if x in rows]
+        partition_summary[part] = {"perBucket": rows, "gate": sum(g) / len(g) if g else 0.0}
+
+    # 재풀링 필요 판정 — 규칙을 메타로만 두지 않고 실제로 검사한다
+    threshold = 0.30
+    need_repool = [
+        r["id"] for r in per_query
+        if r["kind"] == "ranked" and r["unjudgedRate"] > threshold
+    ]
+
     return {
         "perBucket": summary,
+        "perPartition": partition_summary,
+        "repool": {
+            "threshold": threshold,
+            "needed": need_repool,
+            "verdict": "재풀링 필요" if need_repool else "불필요",
+        },
         "overallGate": sum(gate) / len(gate) if gate else 0.0,
         "gateBuckets": [x for x in GATE_BUCKETS if x in summary],
-        "excludedFromGate": ["R1"],
+        "excludedFromGate": ["R1", "G6(별도 게이트)"],
         "lowConfidenceExcluded": sorted(low_conf),
         "perQuery": per_query,
     }
@@ -165,6 +206,11 @@ def main() -> int:
             )
     print(f"\n게이트 종합({'+'.join(result['gateBuckets'])}): {result['overallGate']:.1%}  (목표 70%)")
     print(f"게이트 제외: {result['excludedFromGate']} · 논쟁 분리: {result['lowConfidenceExcluded']}")
+    print(f"G6 별도 게이트: {result['perBucket'].get('G6', {}).get('score', 0):.1%} (기준선 대비 하락 시 실패)")
+    print("\n파티션별 게이트 종합:")
+    for part, s2 in result["perPartition"].items():
+        print(f"  {part:<9} {s2['gate']:>6.1%}")
+    print(f"\n재풀링: {result['repool']['verdict']} (미판정 30% 초과 질의 {len(result['repool']['needed'])}건)")
     return 0
 
 

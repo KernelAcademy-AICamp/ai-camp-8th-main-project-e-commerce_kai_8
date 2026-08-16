@@ -12,6 +12,7 @@ import { useSearchFeed } from "@/features/feed/search/presentation/view-model/us
 import { useSearchScroll } from "@/features/feed/search/presentation/view-model/use-search-scroll";
 import { useSearchState } from "@/features/feed/search/presentation/view-model/use-search-state";
 import { useConsentNoticeVisible } from "@/shared/consent-notice-store";
+import { useRetryPendingForget } from "@/shared/signals/use-retry-pending-forget";
 
 // 산 채로 유지하는 상세 레이어 수 — 뒤로가기 시 재마운트(번쩍임) 없이 즉시
 // 드러난다. 이보다 깊은 체인은 메모리를 위해 언마운트한다(복귀 시에만 재로딩).
@@ -34,12 +35,14 @@ export function MosaicFeed() {
   // 검색 피드는 상세가 덮인 동안 멈춘다 (검색 모드가 아니면 query가 null이라 유휴)
   const searchFeed = useSearchFeed({
     query: search.submittedQuery,
-    queryRaw: search.submittedRaw,
+    submission: search.submission,
     paused: detailOpen,
   });
   const { saveFeedScroll, suppressUntilRef } = useSearchScroll(search.submittedQuery);
   const { collapsed, expand } = useSearchCollapse(suppressUntilRef);
   const bannerVisible = useConsentNoticeVisible();
+  // 지난번 서버 삭제가 실패했다면 조용히 다시 시도한다 (방침 O-32 삭제 계약)
+  useRetryPendingForget();
 
   const liveLayers = stack.slice(-LIVE_DETAIL_LAYERS);
 
