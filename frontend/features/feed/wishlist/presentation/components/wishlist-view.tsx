@@ -14,7 +14,7 @@ import { useWishlist } from "@/features/feed/wishlist/presentation/view-model/us
 /** 찜 보관함 — 최신 찜 순 2열 그리드, 탭하면 상세로 (설계 §8 최소 목록 뷰) */
 export function WishlistView() {
   const { entries } = useWishlist();
-  const { top, depth, open, requestClose, finishClose } = useDetailState();
+  const { stack, open, requestClose, finishClose } = useDetailState();
   // 보관함은 무한 스크롤이 없다 — FeedGrid 계약용 더미 센티널
   const sentinelRef = useRef<HTMLDivElement | null>(null);
 
@@ -62,15 +62,19 @@ export function WishlistView() {
         />
       )}
 
-      {top && (
-        <ProductDetail
-          key={`wish-detail-${String(depth)}-${String(top.product.goodsNo)}`}
-          entry={top}
-          onRequestClose={requestClose}
-          onClosed={finishClose}
-          onSelectProduct={open}
-        />
-      )}
+      {stack.slice(-3).map((entry, i, shown) => {
+        const stackIndex = stack.length - shown.length + i;
+        return (
+          <ProductDetail
+            key={`wish-detail-${String(stackIndex)}-${String(entry.product.goodsNo)}`}
+            entry={entry}
+            active={i === shown.length - 1}
+            onRequestClose={requestClose}
+            onClosed={finishClose}
+            onSelectProduct={open}
+          />
+        );
+      })}
     </div>
   );
 }

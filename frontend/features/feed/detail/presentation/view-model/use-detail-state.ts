@@ -54,5 +54,5 @@ export function useDetailState() {
 
   const top = stack.length > 0 ? stack[stack.length - 1] : null;
 
-  return { top, depth: stack.length, open, requestClose, finishClose };
+  return { stack, top, depth: stack.length, open, requestClose, finishClose };
 }

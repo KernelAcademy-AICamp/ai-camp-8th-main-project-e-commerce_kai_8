@@ -26,6 +26,11 @@ import { logAction } from "@/shared/signals/signals";
 
 interface ProductDetailProps {
   entry: DetailEntry;
+  /**
+   * 스택 최상단(사용자에게 보이는 레이어)인가. 아래층은 마운트를 유지해
+   * 뒤로가기 시 재로딩 없이 즉시 드러나되, 추가 로드·노출 계측은 멈춘다.
+   */
+  active: boolean;
   onRequestClose: () => void;
   onClosed: () => void;
   /** 하단 탐색 그리드에서 상품을 골라 체인으로 새 상세를 여는 콜백 */
@@ -48,6 +53,7 @@ function useBodyScrollLock() {
 
 export function ProductDetail({
   entry,
+  active,
   onRequestClose,
   onClosed,
   onSelectProduct,
@@ -71,6 +77,7 @@ export function ProductDetail({
   const explore = useFeedViewModel({
     exploreFrom: product.goodsNo,
     similarFirst: true,
+    paused: !active,
   });
   const { wished, toggle } = useWishlist();
   const isWishedNow = wished(product.goodsNo);

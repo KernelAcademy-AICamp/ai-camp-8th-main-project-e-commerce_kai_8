@@ -49,10 +49,22 @@ export interface FeedOptions {
    * 이후·실패 시엔 파생 시드 무작위 피드로 이어간다 (PRD 폴백 원칙).
    */
   similarFirst?: boolean;
+  /**
+   * true면 추가 로드·노출 계측을 멈춘다 — 상세가 위를 덮은 피드나
+   * 상세 체인의 아래층처럼, 마운트는 유지하되 보이지 않는 레이어용.
+   * (IntersectionObserver는 가려짐을 모르므로 여기서 막아야 유령 노출이 없다)
+   */
+  paused?: boolean;
 }
 
 export function useFeedViewModel(options?: FeedOptions) {
   const exploreFrom = options?.exploreFrom;
+  const paused = options?.paused === true;
+  // 콜백(loadMore·onImpress)이 호출 시점의 최신 값을 보게 ref로 미러링
+  const pausedRef = useRef(paused);
+  useEffect(() => {
+    pausedRef.current = paused;
+  }, [paused]);
   const seed = useMemo(() => {
     const sessionSeed = getSessionSeed();
     return exploreFrom == null ? sessionSeed : deriveSeed(sessionSeed, exploreFrom);
@@ -76,7 +88,7 @@ export function useFeedViewModel(options?: FeedOptions) {
   const loadedGoodsRef = useRef<number[]>([]);
 
   const loadMore = useCallback(() => {
-    if (loadingRef.current || exhaustedRef.current) return;
+    if (pausedRef.current || loadingRef.current || exhaustedRef.current) return;
     loadingRef.current = true;
 
     const applyPage = (products: Product[], advanceCursor: boolean) => {
@@ -165,9 +177,10 @@ export function useFeedViewModel(options?: FeedOptions) {
 
   // 첫 페이지는 마운트 즉시 로드한다 — 상세 하단 탐색처럼 센티널이 화면 밖에
   // 있어도 스크롤 없이 콘텐츠가 준비된다 (O-30). 진행 중 가드가 중복을 막는다.
+  // 일시정지가 풀릴 때도 한 번 찔러 준다 (가려진 동안 놓친 로드 재개).
   useEffect(() => {
-    loadMore();
-  }, [loadMore]);
+    if (!paused) loadMore();
+  }, [paused, loadMore]);
 
   useEffect(() => {
     const sentinel = sentinelRef.current;
@@ -203,6 +216,7 @@ export function useFeedViewModel(options?: FeedOptions) {
   // 유형이 없는 카드(무작위·유사 폴백)는 similar/diversity로 태깅한다.
   const onImpress = useCallback(
     (card: FeedCardViewData, info: ImpressionDomInfo) => {
+      if (pausedRef.current) return; // 가려진 레이어의 유령 노출 차단
       const bucket =
         (card.product.sourceBucket as SourceBucket | undefined) ??
         (card.product.matchedImage ? "similar" : "diversity");
