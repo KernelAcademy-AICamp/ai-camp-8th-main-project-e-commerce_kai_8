@@ -1,6 +1,11 @@
 "use client";
 
-import { useRef } from "react";
+import { useRef, useSyncExternalStore } from "react";
+
+import {
+  isConsentNoticeVisible,
+  subscribeConsentNotice,
+} from "@/shared/consent-notice-store";
 
 interface FloatingSearchProps {
   input: string;
@@ -49,6 +54,12 @@ export function FloatingSearch({
   onExpand,
 }: FloatingSearchProps) {
   const inputRef = useRef<HTMLInputElement | null>(null);
+  // 최초 방문 고지 배너가 하단을 차지하는 동안은 그 위로 물러난다 (설계 §3)
+  const bannerVisible = useSyncExternalStore(
+    subscribeConsentNotice,
+    isConsentNoticeVisible,
+    () => false,
+  );
 
   return (
     <form
@@ -58,10 +69,14 @@ export function FloatingSearch({
         onSubmit();
         inputRef.current?.blur(); // 제출하면 키보드를 닫는다 (설계 §3)
       }}
-      className={`fixed inset-x-0 z-30 mx-auto flex w-full max-w-md justify-center px-4 transition-opacity duration-200 ${
+      className={`fixed inset-x-0 z-30 mx-auto flex w-full max-w-md justify-center px-4 transition-[opacity,bottom] duration-200 ${
         hidden ? "pointer-events-none opacity-0" : "opacity-100"
       }`}
-      style={{ bottom: "calc(1rem + env(safe-area-inset-bottom))" }}
+      style={{
+        bottom: bannerVisible
+          ? "calc(9rem + env(safe-area-inset-bottom))"
+          : "calc(1rem + env(safe-area-inset-bottom))",
+      }}
     >
       <div
         onClick={
