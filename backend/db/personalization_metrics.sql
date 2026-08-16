@@ -42,15 +42,19 @@ select
 from c_events
 where event_type = 'impression';
 
-\echo '=== 4. 신선도 노출 비율 (올해 시즌 상품) ==='
+\echo '=== 4. 신선도 노출 비율 (올해 시즌 상품 — 알고리즘 버전별 전후 비교) ==='
+-- model_ver = 임베딩+알고리즘 버전 태그 (예: siglip2-base → 3차 전,
+-- siglip2-base+cls2+mix2 → 3차 후). 배포 전후 지표를 이 키로 분리한다.
 select
+  model_ver,
   policy,
   count(*) filter (where is_fresh) as fresh,
   count(*) as total,
   round(100.0 * count(*) filter (where is_fresh) / greatest(count(*), 1), 1) as fresh_pct
 from c_events
 where event_type = 'impression'
-group by 1;
+group by 1, 2
+order by 1, 2;
 
 \echo '=== 5. 세션당 유효 탐색 (이벤트 기준 세션 길이·노출 수) — 최근 20세션 ==='
 select
