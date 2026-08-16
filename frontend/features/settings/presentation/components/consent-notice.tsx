@@ -1,42 +1,19 @@
 "use client";
 
 import Link from "next/link";
-import { useState, useSyncExternalStore } from "react";
 
-const STORAGE_KEY = "atee-consent-notice-seen";
-
-const noopSubscribe = () => () => {
-  // 저장소 변경 구독 불필요 — 닫기는 setDismissed가 리렌더한다
-};
-
-function readSeen(): boolean {
-  try {
-    return localStorage.getItem(STORAGE_KEY) !== null;
-  } catch {
-    // 저장 불가 환경 — 고지를 반복 노출하지 않기 위해 본 것으로 취급
-    return true;
-  }
-}
+import { useConsentNotice } from "@/features/settings/presentation/view-model/use-consent-notice";
 
 /**
  * 최초 방문 1회 개인화 고지 배너 (PRD P0).
  * 확인하면 다시 보이지 않고, 자세한 내용·초기화는 /settings에 있다.
+ * 표시 여부는 shared 저장소로 공유한다 — 플로팅 검색창이 겹침을 피해
+ * 위로 물러날 수 있게 (검색 설계 §3).
  */
 export function ConsentNotice() {
-  // SSR에서는 안 보이고(서버 스냅샷 true), 클라이언트에서 저장소를 읽어 결정한다
-  const seen = useSyncExternalStore(noopSubscribe, readSeen, () => true);
-  const [dismissed, setDismissed] = useState(false);
+  const { visible, dismiss } = useConsentNotice();
 
-  if (seen || dismissed) return null;
-
-  const dismiss = () => {
-    try {
-      localStorage.setItem(STORAGE_KEY, "1");
-    } catch {
-      // 저장 불가 시 이번 세션만 닫힘
-    }
-    setDismissed(true);
-  };
+  if (!visible) return null;
 
   return (
     <div className="fixed inset-x-0 bottom-0 z-40 mx-auto max-w-md p-3">
