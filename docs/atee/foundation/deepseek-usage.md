@@ -4,19 +4,21 @@
 > 쓰는 곳: [검색 업그레이드 설계](../../superpowers/specs/2026-08-17-search-upgrade-design.md) §6 C2(오프라인 배치) · §7 D(질의 이해)
 > 이 문서는 **정보 이식**이다. 코드는 옮기지 않았다 — 어휘·도메인이 달라 그대로 쓸 수 없고(§5), 우리 D단계는 A·B 뒤 조건부이기 때문이다.
 
-## 1. ecommerce가 실제로 쓰는 구성
+## 1. ecommerce의 구성 — 코드 기본값과 실제 실행은 다르다
 
 LLM을 쓰는 모듈이 셋이고 **전부 OpenAI 호환 chat completions**를 직접 `fetch`로 호출한다(SDK 없음).
 
-| 모듈 | 기본 엔드포인트 | 기본 모델 | 하는 일 |
+| 모듈 | 코드상 폴백 엔드포인트 | 코드상 폴백 모델 | 하는 일 |
 |---|---|---|---|
 | `parse-query-intent.ts` | NVIDIA `integrate.api.nvidia.com/v1` | `meta/llama-3.1-8b-instruct` | 자연어 → 구조화 `QueryIntent` |
 | `relation-linker.ts` | **`https://api.deepseek.com`** | **`deepseek-v4-flash`** | 의미 링커 |
-| `interpret-semantic.ts` | 위 env 공용 | 위 env 공용 | 의미 해석 |
+| `interpret-semantic.ts` | NVIDIA `integrate.api.nvidia.com/v1` | `meta/llama-3.1-8b-instruct` | 의미 해석 |
 
-**주의 — 이름이 오해를 부른다.** 환경변수가 `NVIDIA_API_KEY` / `NVIDIA_BASE_URL` / `NVIDIA_MODEL`인데, 이건 **범용 LLM 엔드포인트 변수로 재사용**되는 것이지 NVIDIA 전용이 아니다. `relation-linker.ts`는 같은 변수로 DeepSeek을 부른다. `client/.env.example`의 현재 값은 `NVIDIA_MODEL=qwen/qwen3-next-80b-a3b-instruct`다.
+> **이 표는 "코드에 적힌 폴백 기본값"이지 "실제로 도는 모델"이 아니다** (2차 리뷰 Major 15). 세 모듈이 **같은 환경변수를 공유**하므로, `client/.env.example`처럼 `NVIDIA_BASE_URL`·`NVIDIA_MODEL`이 설정된 환경에서는 **relation-linker의 DeepSeek 폴백도 Qwen/NVIDIA로 덮어써진다.** `.env.example`의 현재 값은 `NVIDIA_MODEL=qwen/qwen3-next-80b-a3b-instruct`다. **어느 모델이 실제로 도는지는 배포 환경 변수를 봐야 알 수 있고, 우리는 그것을 확인하지 않았다.**
 
-**즉 "ecommerce = DeepSeek 검색"이 아니다.** DeepSeek은 의미 링커의 기본값이고, 질의 파서의 골든셋(250건)에서는 **모델 A/B 비교 기준**으로 쓰였다(`parser-golden.json` meta: `"deepseek-v4-flash 기준(모델 A/B 비교에도 사용)"`).
+**주의 — 변수 이름이 오해를 부른다.** `NVIDIA_API_KEY` / `NVIDIA_BASE_URL` / `NVIDIA_MODEL`은 **범용 LLM 엔드포인트 변수로 재사용**되는 것이지 NVIDIA 전용이 아니다.
+
+**즉 "ecommerce = DeepSeek 검색"이 아니다.** DeepSeek은 의미 링커의 코드 폴백값이고, 질의 파서의 골든셋(250건)에서는 **모델 A/B 비교 기준**으로 쓰였다(`parser-golden.json` meta: `"deepseek-v4-flash 기준(모델 A/B 비교에도 사용)"`).
 
 **우리는 변수 이름을 목적에 맞게 새로 짓는다** — 남의 벤더 이름을 물려받지 않는다. 키는 서버 전용이고 저장소에 커밋하지 않는다.
 
@@ -32,7 +34,9 @@ LLM을 쓰는 모듈이 셋이고 **전부 OpenAI 호환 chat completions**를 �
 
 ## 3. 출력 신뢰 구조 — enum 주입 → 추출 → drop → 안전 강등
 
-우리 설계 §7 D의 "LLM 출력을 신뢰하지 않는다"가 여기서는 이미 구현돼 있다. 그대로 채택한다.
+> **이 구조는 `parse-query-intent.ts`(질의 파서) 하나의 것이다** (2차 리뷰 Major 16). 세 모듈의 실패·검증 계약은 서로 다르다 — 링커는 `http_error`·`timeout`·`json_error`·`schema_error`를 **구분해 보존**하고, 의미 해석기는 검증된 구조가 아니라 **raw JSON 또는 null**을 돌려준다. 따라서 아래를 "ecommerce 공통 구현"으로 이식하면 **진단 정보와 검증 경계가 달라진다.** 우리는 파서의 계약을 채택하되, 링커처럼 **실패 원인을 구분해 남기는 것**을 함께 가져간다(원인 구분이 없으면 캐시 미스인지 모델 오류인지 타임아웃인지 계측에서 못 가른다).
+
+우리 설계 §7 D의 "LLM 출력을 신뢰하지 않는다"에 해당하는 구조다.
 
 1. **enum 주입** — 허용 어휘(색·패턴·소재·핏·착용감·리뷰태그)를 시스템 프롬프트에 **목록으로 박아 넣는다.** "목록에서만 고르라"고 지시한다.
 2. **JSON만 출력** — "설명·코드펜스 없이 JSON 객체 하나만".

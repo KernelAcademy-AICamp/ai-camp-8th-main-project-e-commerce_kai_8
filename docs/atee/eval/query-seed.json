@@ -3,7 +3,18 @@
     "purpose": "검색 업그레이드 평가셋의 씨앗 질의. 설계 §8의 개발셋/골든셋은 이 씨앗 + 신규 생성분에서 층화 분할해 만든다.",
     "createdAt": "2026-08-17",
     "design": "docs/superpowers/specs/2026-08-17-search-upgrade-design.md",
-    "count": { "manual": 28, "ga4": 18, "total": 46 },
+    "count": {
+      "manual": 28,
+      "ga4": 18,
+      "total": 46,
+      "byBucket": {
+        "G2": 9,
+        "G4": 9,
+        "G5": 7,
+        "G6": 5,
+        "R1": 16
+      }
+    },
     "sources": [
       {
         "id": "manual",
@@ -11,7 +22,8 @@
         "author": "제품 책임자",
         "target": "ecommerce(search-by-llm) 제품",
         "count": 28,
-        "note": "각 질의를 ecommerce 검색에 넣어보고 'AI 있는 버전'과 'AI 없는 버전'이 무엇을 인식했는지 수기로 기록. 관찰값은 ecommerce 기준이므로 aTee의 기준선 점수가 아니다 — 실패 유형 목록으로만 쓴다."
+        "note": "각 질의를 ecommerce 검색에 넣어보고 'AI 있는 버전'과 'AI 없는 버전'이 무엇을 인식했는지 제품 책임자가 수기로 기록한 것. 관찰값은 ecommerce 기준이므로 aTee의 기준선 점수가 아니다 — 실패 유형 목록으로만 쓴다. ecommerce의 parser-golden.json은 'AI 초안 → 사용자 검토' 절차로 만들어진 별개 자산이며 이 관찰 기록과 다르다.",
+        "provenance": "원본은 저장소 파일이 아니라 제품 책임자가 2026-08-17 대화에 직접 입력한 목록이다. ecommerce 저장소에서 s01~s20은 동일·근접 질의를 찾을 수 있으나 s21~s28과 withAi/withoutAi 관찰값의 원본 파일은 없다. s15의 '여성스워보이는'은 ecommerce 원본('여성스러워보이는')과 다른데, 전사 오류가 아니라 입력된 그대로다 — 오타 표본으로 tags=['오타']를 붙였다."
       },
       {
         "id": "ga4",
@@ -31,7 +43,8 @@
     "warnings": [
       "분포가 문장형에 크게 치우쳐 있다. ecommerce는 '말로 검색하는' 제품이라 긴 문장이 유도됐다. aTee 플로팅 검색은 짧은 키워드 비중이 높을 것이므로, 계열별 비율은 이 씨앗이 아니라 사람이 먼저 정한다(설계 §8.3).",
       "이 씨앗은 'AI 검색 제품'의 질의 목록이다. 여기에 최적화하면 aTee가 LLM 검색 제품으로 되돌아가 Non-goal과 충돌한다. 그래서 외부지식·추천형은 참고 계열 R1로 분리해 70% 게이트에서 제외한다."
-    ]
+    ],
+    "reviewedBy": "2026-08-17 Codex 2차 교차 리뷰 — 집계 오류(M12)·계열 오배정(M13)·provenance(M14)·s15 문구(m2) 반영"
   },
   "buckets": {
     "gate": {
@@ -50,74 +63,454 @@
     },
     "coverage": {
       "G1": 0,
-      "G2": 8,
+      "G2": 9,
       "G3": 0,
-      "G4": 11,
+      "G4": 9,
       "G5": 7,
-      "G6": 7,
+      "G6": 5,
       "G7": 0,
-      "R1": 13,
-      "note": "G1·G3·G7이 비어 있다. G1·G3는 카탈로그와 규칙으로 기계 생성하고(정답이 결정론적이라 편향 없음), G7과 짧은 키워드 보강만 사람이 새로 쓴다."
-    }
+      "R1": 16,
+      "note": "주 버킷 기준 실제 집계(스크립트 산출 — 손으로 세지 않는다). G1·G3·G7이 비어 있다. G1·G3는 카탈로그와 규칙으로 기계 생성하고(정답이 결정론적이라 편향 없음), G7과 짧은 키워드 보강은 사람이 쓴다. 2차 리뷰 반영으로 목표 규모가 120~150건으로 늘었다(계열당 15건 이상)."
+    },
+    "tagsNote": "주 버킷은 하나만 배정하고, 다른 계열의 능력을 함께 시험하는 항목은 tags로 표시한다. 예: g06·g12는 자연 발생 오타를 포함하지만 주 버킷은 G5·G4다 — tags=['오타']로 G3 회귀 검증 대상에 포함시킨다. coverage 표는 주 버킷 기준이므로, 태그로 잡히는 실사용 커버리지가 0이 아님에 유의한다."
   },
   "entries": [
-    { "id": "s01", "src": "manual", "bucket": "G5", "query": "등에 프린트가 없는 와인색 여자 티셔츠", "withAi": "와인색 / 프린트제외", "withoutAi": "와인색, 여자" },
-    { "id": "s02", "src": "manual", "bucket": "G6", "query": "여자 시스루 검은색 여름니트", "withAi": "시스루, 니트", "withoutAi": "여자, 시스루, 여름, 니트", "note": "니트는 우리 카탈로그(반소매 티셔츠) 밖" },
-    { "id": "s03", "src": "manual", "bucket": "G2", "query": "동물로고 티셔츠", "withAi": "동물로고", "withoutAi": "동물로고, 티셔츠" },
-    { "id": "s04", "src": "manual", "bucket": "G6", "query": "하와이안 셔츠 xl", "withAi": "하와이안셔츠", "withoutAi": "하와이안셔츠, 사이즈인식" },
-    { "id": "s05", "src": "manual", "bucket": "G6", "query": "보풀안생기는 여름니트", "withAi": "보풀안생기는소재, 니트", "withoutAi": "보풀안생기는소재, 여름, 니트" },
-    { "id": "s06", "src": "manual", "bucket": "G2", "query": "오버핏 7부 티셔츠", "withAi": "오버핏, 7부", "withoutAi": "오버핏, 7부" },
-    { "id": "s07", "src": "manual", "bucket": "R1", "query": "클럽에 갈때 입을옷 추천해줘 - 여자야", "withAi": "검색안됨", "withoutAi": "검색안됨" },
-    { "id": "s08", "src": "manual", "bucket": "R1", "query": "바다에서 비키니 위에 입을 얇은 티셔츠", "withAi": "여자, 비침없음", "withoutAi": "검색안됨", "confidence": "low", "note": "정답 방향이 논쟁 중 — 커버 목적이면 비침 없음, 시스루 의도면 있음. ecommerce parser-golden 리뷰포인트 ⑤와 동일 쟁점. rubric에서 low로 분리한다." },
-    { "id": "s09", "src": "manual", "bucket": "R1", "query": "요즘 유행하는옷", "withAi": "패턴 인식은 되나 결과가 뒤죽박죽", "withoutAi": "검색안됨" },
-    { "id": "s10", "src": "manual", "bucket": "G5", "query": "목이 안늘어나는 기본 티셔츠", "withAi": "목이 안늘어나는소재, 기본티셔츠(민무늬로 오인)", "withoutAi": "검색안됨" },
-    { "id": "s11", "src": "manual", "bucket": "R1", "query": "싸이 흠뻑쇼갈때 입을옷", "withAi": "검색안됨", "withoutAi": "검색안됨" },
-    { "id": "s12", "src": "manual", "bucket": "G4", "query": "묻어도 세탁이 잘되는 소재의 흰티셔츠", "withAi": "세탁이잘되는소재", "withoutAi": "세탁이잘되는소재" },
-    { "id": "s13", "src": "manual", "bucket": "R1", "query": "웨이브체형한테 어울리는 여자티셔츠", "withAi": "검색안됨", "withoutAi": "검색안됨" },
-    { "id": "s14", "src": "manual", "bucket": "R1", "query": "흰 롱치마랑 입으면 잘어울리는 여자 티셔츠. 무늬가 있었으면 좋겠어", "withAi": "복불복 — 잘 나올 때만", "withoutAi": "패턴 검색 안 됨" },
-    { "id": "s15", "src": "manual", "bucket": "R1", "query": "데이트갈때 입을 여성스워보이는 티셔츠", "withAi": "데이트갈때입을", "withoutAi": "검색안됨" },
-    { "id": "s16", "src": "manual", "bucket": "R1", "query": "팔뚝살 커버 여름 반팔 티셔츠", "withAi": "팔뚝살커버", "withoutAi": "팔뚝살커버, 여름" },
-    { "id": "s17", "src": "manual", "bucket": "R1", "query": "상체통통 여자가 입어도 예쁜 티셔츠", "withAi": "상체통통", "withoutAi": "상체통통" },
-    { "id": "s18", "src": "manual", "bucket": "G2", "query": "브이넥 오버핏 티셔츠", "withAi": "브이넥", "withoutAi": "브이넥" },
-    { "id": "s19", "src": "manual", "bucket": "G2", "query": "보트넥 나염 티셔츠", "withAi": "보트넥, 나염", "withoutAi": "보트넥, 나염" },
-    { "id": "s20", "src": "manual", "bucket": "R1", "query": "회사에 입고갈만한 깔끔한 티셔츠", "withAi": "복불복 — 검색 안 될 때 있음", "withoutAi": "검색안됨" },
-    { "id": "s21", "src": "manual", "bucket": "R1", "query": "커플티로 입을수 있게 사이즈 여자꺼랑 남자꺼 사이즈 있는걸로 추천해줘", "withAi": null, "withoutAi": null },
-    { "id": "s22", "src": "manual", "bucket": "R1", "query": "골프칠때 입을건데 이쁘면서 시원한 운동복으로 보여줘", "withAi": null, "withoutAi": null },
-    { "id": "s23", "src": "manual", "bucket": "G5", "query": "디즈니 캐릭터인데 그림이 너무 크진않았으면 좋겠어", "withAi": "디즈니, 그래픽크기", "withoutAi": null, "note": "정도 부정 — 그래픽 크기 축이 필요(C1 zero-shot 후보)" },
-    { "id": "s24", "src": "manual", "bucket": "R1", "query": "친구들4명과 우정티셔츠로 맞출건데 비슷한데 다른 그림이 있는걸로 추천해줘", "withAi": null, "withoutAi": null },
-    { "id": "s25", "src": "manual", "bucket": "G5", "query": "너무 스포츠스러운거 말고 여성스러운 핏이 있는 티셔츠를 보여줘", "withAi": null, "withoutAi": null },
-    { "id": "s26", "src": "manual", "bucket": "R1", "query": "요가할때 입을 티셔츠인데 하늘하늘한 땀흡수 잘되는소재를 찾고있어", "withAi": null, "withoutAi": null },
-    { "id": "s27", "src": "manual", "bucket": "G5", "query": "젖꼭지가 튀어나와보이지않게 두꺼운 남자 여름 티셔츠", "withAi": null, "withoutAi": null },
-    { "id": "s28", "src": "manual", "bucket": "G4", "query": "40수 흰색 면티셔츠", "withAi": null, "withoutAi": null, "note": "40수는 면 밀도 규격 — 우리 카탈로그에 해당 필드가 없다" },
-
-    { "id": "g01", "src": "ga4", "bucket": "G4", "events": 4, "query": "내가 105 입는데 노란색 신발에 어울리는 티셔츠 추천해줘", "note": "함정: '노란색'은 신발 색 — 옷 색 하드필터 금지" },
-    { "id": "g02", "src": "ga4", "bucket": "G2", "events": 3, "query": "크롭티", "note": "짧은 키워드. ecommerce에서는 핏 vocab에 '크롭'이 없고 스톱워드라 도달 불가였다 — 우리도 어휘 커버리지 확인 대상" },
-    { "id": "g03", "src": "ga4", "bucket": "G2", "events": 3, "query": "파란색 줄무늬 티" },
-    { "id": "g04", "src": "ga4", "bucket": "G5", "events": 2, "query": "간지나는티 제일 인기있고 소매에 프린팅이 있으면 좋겠고 음 또 노란색이 없으면 좋겠다 그리고 좀 땀이 흡수가 잘되면 좋을듯", "note": "'노란색이 없으면' = 색 제외. '제일 인기' = 인기순 정렬 의도. 소매 프린트 위치·땀 흡수는 소프트" },
-    { "id": "g05", "src": "ga4", "bucket": "G4", "events": 2, "query": "내가 105 입는데 노란색 신발에 어울리는 티셔츠 추천해줘 나 남자야", "note": "g01 + 성별 명시" },
-    { "id": "g06", "src": "ga4", "bucket": "G5", "events": 2, "query": "놀러갈때 입기 편한 반팔티인데 내가 추위를 많이타서 그나마 두꺼운게 좋을것같고 프린팅은 없으면 좋겠어 또 너무 브랜드가 노출 안되면 좋겠엉", "note": "'프린팅 없이·브랜드 노출 없이' = 무지 선호. 자연 발생 오타 포함('좋겠엉')" },
-    { "id": "g07", "src": "ga4", "bucket": "G4", "events": 2, "query": "레이어드해서 입기 좋은 반팔티를 찾고있는데 아래기장이 좀 길면 좋겠어", "note": "기장 축 부재 — 하드 조건 없음. 색·핏 환각 추출이 없어야 한다" },
-    { "id": "g08", "src": "ga4", "bucket": "G6", "events": 2, "query": "린넨 소재의 블라우스 아이보리", "note": "블라우스는 카탈로그 밖 — 0건이 정당. 화이트를 아이보리로 근사 반환하지 않는다" },
-    { "id": "g09", "src": "ga4", "bucket": "G6", "events": 2, "query": "셔링이 있는 블라우스" },
-    { "id": "g10", "src": "ga4", "bucket": "G4", "events": 3, "query": "폴리에스테르 시원한 남성 반팔 2만원대", "note": "가격 '2만원대' = [20000, 29999]" },
-    { "id": "g11", "src": "ga4", "bucket": "G6", "events": 2, "query": "흐으으으음", "note": "무의미 질의 — 신호 없음. 전체 노출로 강등하지 않는다" },
-    { "id": "g12", "src": "ga4", "bucket": "G4", "events": 1, "query": "2만원 이하에 가성비있는 반팔티를찾고있는뒈 바람이 슝슝통하고 그림도 간지있고 기장은 좀 그나마 길었으면 조켔ㅇㅇ", "note": "자연 발생 오타 다수('찾고있는뒈','조켔ㅇㅇ'). 하드는 가격뿐. ecommerce에서 결과 수가 263↔16↔2로 요동친 회귀 케이스" },
-    { "id": "g13", "src": "ga4", "bucket": "G4", "events": 1, "query": "나는 등판에 개발자관련 글씨가 쓰여있고 통풍이 잘되는 회색 반팔티를 찾고있는데 오버핏이면 더 좋을것같고 목은 라운드넥이면 더 좋을것같아", "note": "테마 상품이 없어도 색 하드 + 나머지 소프트로 근접 결과를 낸다. 테마 불충족을 이유로 0건 강등 금지" },
-    { "id": "g14", "src": "ga4", "bucket": "G4", "events": 1, "query": "등판에 노란 레터링 있는 시원한 오버핏 흰티", "note": "프린트색·위치(등판)는 검증 불가 — 바탕색·핏·레터링만 판정" },
-    { "id": "g15", "src": "ga4", "bucket": "G2", "events": 1, "query": "무지개 티셔츠", "note": "함정: 무지개 = 다색 그래픽 테마 — 색 하드필터 금지. 제목은 대개 '레인보우'라 한영 동의어 공백 케이스이기도 하다" },
-    { "id": "g16", "src": "ga4", "bucket": "G4", "events": 1, "query": "블랙 오버핏 반팔티 3만원 이하", "note": "'이하'를 priceMin에 넣는 실수가 잦은 케이스" },
-    { "id": "g17", "src": "ga4", "bucket": "G4", "events": 1, "query": "사람그림이 있는 7부정도의 머슬핏 반팔티", "note": "머슬핏 어휘 부재·7부는 기장 — 하드 조건 없음. 오버/슬림 오추출 금지" },
-    { "id": "g18", "src": "ga4", "bucket": "G2", "events": 1, "query": "여성 슬림핏 반팔티" }
+    {
+      "id": "s01",
+      "src": "manual",
+      "bucket": "G5",
+      "query": "등에 프린트가 없는 와인색 여자 티셔츠",
+      "withAi": "와인색 / 프린트제외",
+      "withoutAi": "와인색, 여자"
+    },
+    {
+      "id": "s02",
+      "src": "manual",
+      "bucket": "G6",
+      "query": "여자 시스루 검은색 여름니트",
+      "withAi": "시스루, 니트",
+      "withoutAi": "여자, 시스루, 여름, 니트",
+      "note": "니트는 우리 카탈로그(반소매 티셔츠) 밖",
+      "tags": [
+        "G4"
+      ]
+    },
+    {
+      "id": "s03",
+      "src": "manual",
+      "bucket": "G2",
+      "query": "동물로고 티셔츠",
+      "withAi": "동물로고",
+      "withoutAi": "동물로고, 티셔츠"
+    },
+    {
+      "id": "s04",
+      "src": "manual",
+      "bucket": "G2",
+      "query": "하와이안 셔츠 xl",
+      "withAi": "하와이안셔츠",
+      "withoutAi": "하와이안셔츠, 사이즈인식",
+      "note": "ecommerce 원본은 '하와이안 프린팅 티는 존재 가능'이라고 본다 — 0건 단정 불가. 우리 카탈로그에서 실제 0건인지 확인한 뒤 G6 여부를 정한다(2차 리뷰)",
+      "tags": [
+        "사이즈"
+      ]
+    },
+    {
+      "id": "s05",
+      "src": "manual",
+      "bucket": "G6",
+      "query": "보풀안생기는 여름니트",
+      "withAi": "보풀안생기는소재, 니트",
+      "withoutAi": "보풀안생기는소재, 여름, 니트",
+      "tags": [
+        "G4"
+      ]
+    },
+    {
+      "id": "s06",
+      "src": "manual",
+      "bucket": "G2",
+      "query": "오버핏 7부 티셔츠",
+      "withAi": "오버핏, 7부",
+      "withoutAi": "오버핏, 7부"
+    },
+    {
+      "id": "s07",
+      "src": "manual",
+      "bucket": "R1",
+      "query": "클럽에 갈때 입을옷 추천해줘 - 여자야",
+      "withAi": "검색안됨",
+      "withoutAi": "검색안됨"
+    },
+    {
+      "id": "s08",
+      "src": "manual",
+      "bucket": "R1",
+      "query": "바다에서 비키니 위에 입을 얇은 티셔츠",
+      "withAi": "여자, 비침없음",
+      "withoutAi": "검색안됨",
+      "confidence": "low",
+      "note": "정답 방향이 논쟁 중 — 커버 목적이면 비침 없음, 시스루 의도면 있음. ecommerce parser-golden 리뷰포인트 ⑤와 동일 쟁점. rubric에서 low로 분리한다.",
+      "tags": [
+        "G5"
+      ]
+    },
+    {
+      "id": "s09",
+      "src": "manual",
+      "bucket": "R1",
+      "query": "요즘 유행하는옷",
+      "withAi": "패턴 인식은 되나 결과가 뒤죽박죽",
+      "withoutAi": "검색안됨"
+    },
+    {
+      "id": "s10",
+      "src": "manual",
+      "bucket": "G5",
+      "query": "목이 안늘어나는 기본 티셔츠",
+      "withAi": "목이 안늘어나는소재, 기본티셔츠(민무늬로 오인)",
+      "withoutAi": "검색안됨"
+    },
+    {
+      "id": "s11",
+      "src": "manual",
+      "bucket": "R1",
+      "query": "싸이 흠뻑쇼갈때 입을옷",
+      "withAi": "검색안됨",
+      "withoutAi": "검색안됨"
+    },
+    {
+      "id": "s12",
+      "src": "manual",
+      "bucket": "G4",
+      "query": "묻어도 세탁이 잘되는 소재의 흰티셔츠",
+      "withAi": "세탁이잘되는소재",
+      "withoutAi": "세탁이잘되는소재"
+    },
+    {
+      "id": "s13",
+      "src": "manual",
+      "bucket": "R1",
+      "query": "웨이브체형한테 어울리는 여자티셔츠",
+      "withAi": "검색안됨",
+      "withoutAi": "검색안됨"
+    },
+    {
+      "id": "s14",
+      "src": "manual",
+      "bucket": "R1",
+      "query": "흰 롱치마랑 입으면 잘어울리는 여자 티셔츠. 무늬가 있었으면 좋겠어",
+      "withAi": "복불복 — 잘 나올 때만",
+      "withoutAi": "패턴 검색 안 됨"
+    },
+    {
+      "id": "s15",
+      "src": "manual",
+      "bucket": "R1",
+      "query": "데이트갈때 입을 여성스워보이는 티셔츠",
+      "withAi": "데이트갈때입을",
+      "withoutAi": "검색안됨",
+      "tags": [
+        "오타"
+      ]
+    },
+    {
+      "id": "s16",
+      "src": "manual",
+      "bucket": "R1",
+      "query": "팔뚝살 커버 여름 반팔 티셔츠",
+      "withAi": "팔뚝살커버",
+      "withoutAi": "팔뚝살커버, 여름"
+    },
+    {
+      "id": "s17",
+      "src": "manual",
+      "bucket": "R1",
+      "query": "상체통통 여자가 입어도 예쁜 티셔츠",
+      "withAi": "상체통통",
+      "withoutAi": "상체통통"
+    },
+    {
+      "id": "s18",
+      "src": "manual",
+      "bucket": "G2",
+      "query": "브이넥 오버핏 티셔츠",
+      "withAi": "브이넥",
+      "withoutAi": "브이넥"
+    },
+    {
+      "id": "s19",
+      "src": "manual",
+      "bucket": "G2",
+      "query": "보트넥 나염 티셔츠",
+      "withAi": "보트넥, 나염",
+      "withoutAi": "보트넥, 나염"
+    },
+    {
+      "id": "s20",
+      "src": "manual",
+      "bucket": "R1",
+      "query": "회사에 입고갈만한 깔끔한 티셔츠",
+      "withAi": "복불복 — 검색 안 될 때 있음",
+      "withoutAi": "검색안됨"
+    },
+    {
+      "id": "s21",
+      "src": "manual",
+      "bucket": "R1",
+      "query": "커플티로 입을수 있게 사이즈 여자꺼랑 남자꺼 사이즈 있는걸로 추천해줘",
+      "withAi": null,
+      "withoutAi": null
+    },
+    {
+      "id": "s22",
+      "src": "manual",
+      "bucket": "R1",
+      "query": "골프칠때 입을건데 이쁘면서 시원한 운동복으로 보여줘",
+      "withAi": null,
+      "withoutAi": null
+    },
+    {
+      "id": "s23",
+      "src": "manual",
+      "bucket": "G5",
+      "query": "디즈니 캐릭터인데 그림이 너무 크진않았으면 좋겠어",
+      "withAi": "디즈니, 그래픽크기",
+      "withoutAi": null,
+      "note": "정도 부정 — 그래픽 크기 축이 필요(C1 zero-shot 후보)",
+      "tags": [
+        "G7"
+      ]
+    },
+    {
+      "id": "s24",
+      "src": "manual",
+      "bucket": "R1",
+      "query": "친구들4명과 우정티셔츠로 맞출건데 비슷한데 다른 그림이 있는걸로 추천해줘",
+      "withAi": null,
+      "withoutAi": null
+    },
+    {
+      "id": "s25",
+      "src": "manual",
+      "bucket": "G5",
+      "query": "너무 스포츠스러운거 말고 여성스러운 핏이 있는 티셔츠를 보여줘",
+      "withAi": null,
+      "withoutAi": null,
+      "tags": [
+        "G7"
+      ]
+    },
+    {
+      "id": "s26",
+      "src": "manual",
+      "bucket": "R1",
+      "query": "요가할때 입을 티셔츠인데 하늘하늘한 땀흡수 잘되는소재를 찾고있어",
+      "withAi": null,
+      "withoutAi": null
+    },
+    {
+      "id": "s27",
+      "src": "manual",
+      "bucket": "G5",
+      "query": "젖꼭지가 튀어나와보이지않게 두꺼운 남자 여름 티셔츠",
+      "withAi": null,
+      "withoutAi": null
+    },
+    {
+      "id": "s28",
+      "src": "manual",
+      "bucket": "G4",
+      "query": "40수 흰색 면티셔츠",
+      "withAi": null,
+      "withoutAi": null,
+      "note": "40수는 면 밀도 규격 — 우리 카탈로그에 해당 필드가 없다",
+      "tags": [
+        "사이즈"
+      ]
+    },
+    {
+      "id": "g01",
+      "src": "ga4",
+      "bucket": "R1",
+      "events": 4,
+      "query": "내가 105 입는데 노란색 신발에 어울리는 티셔츠 추천해줘",
+      "note": "함정: '노란색'은 신발 색 — 옷 색 하드필터 금지. 신발과의 코디가 핵심이라 R1(외부맥락)으로 재배정(2차 리뷰)"
+    },
+    {
+      "id": "g02",
+      "src": "ga4",
+      "bucket": "G2",
+      "events": 3,
+      "query": "크롭티",
+      "note": "짧은 키워드. ecommerce에서는 핏 vocab에 '크롭'이 없고 스톱워드라 도달 불가였다 — 우리도 어휘 커버리지 확인 대상"
+    },
+    {
+      "id": "g03",
+      "src": "ga4",
+      "bucket": "G2",
+      "events": 3,
+      "query": "파란색 줄무늬 티"
+    },
+    {
+      "id": "g04",
+      "src": "ga4",
+      "bucket": "G5",
+      "events": 2,
+      "query": "간지나는티 제일 인기있고 소매에 프린팅이 있으면 좋겠고 음 또 노란색이 없으면 좋겠다 그리고 좀 땀이 흡수가 잘되면 좋을듯",
+      "note": "'노란색이 없으면' = 색 제외. '제일 인기' = 인기순 정렬 의도. 소매 프린트 위치·땀 흡수는 소프트",
+      "tags": [
+        "정렬"
+      ]
+    },
+    {
+      "id": "g05",
+      "src": "ga4",
+      "bucket": "R1",
+      "events": 2,
+      "query": "내가 105 입는데 노란색 신발에 어울리는 티셔츠 추천해줘 나 남자야",
+      "note": "g01 + 성별 명시. 코디 질의라 R1로 재배정(2차 리뷰)"
+    },
+    {
+      "id": "g06",
+      "src": "ga4",
+      "bucket": "G5",
+      "events": 2,
+      "query": "놀러갈때 입기 편한 반팔티인데 내가 추위를 많이타서 그나마 두꺼운게 좋을것같고 프린팅은 없으면 좋겠어 또 너무 브랜드가 노출 안되면 좋겠엉",
+      "note": "'프린팅 없이·브랜드 노출 없이' = 무지 선호. 자연 발생 오타 포함('좋겠엉')",
+      "tags": [
+        "오타"
+      ]
+    },
+    {
+      "id": "g07",
+      "src": "ga4",
+      "bucket": "G4",
+      "events": 2,
+      "query": "레이어드해서 입기 좋은 반팔티를 찾고있는데 아래기장이 좀 길면 좋겠어",
+      "note": "기장 축 부재 — 하드 조건 없음. 색·핏 환각 추출이 없어야 한다"
+    },
+    {
+      "id": "g08",
+      "src": "ga4",
+      "bucket": "G6",
+      "events": 2,
+      "query": "린넨 소재의 블라우스 아이보리",
+      "note": "블라우스는 카탈로그 밖 — 0건이 정당. 화이트를 아이보리로 근사 반환하지 않는다"
+    },
+    {
+      "id": "g09",
+      "src": "ga4",
+      "bucket": "G6",
+      "events": 2,
+      "query": "셔링이 있는 블라우스"
+    },
+    {
+      "id": "g10",
+      "src": "ga4",
+      "bucket": "G4",
+      "events": 3,
+      "query": "폴리에스테르 시원한 남성 반팔 2만원대",
+      "note": "가격 '2만원대' = [20000, 29999]",
+      "tags": [
+        "가격"
+      ]
+    },
+    {
+      "id": "g11",
+      "src": "ga4",
+      "bucket": "G6",
+      "events": 2,
+      "query": "흐으으으음",
+      "note": "무의미 질의 — 신호 없음. 전체 노출로 강등하지 않는다"
+    },
+    {
+      "id": "g12",
+      "src": "ga4",
+      "bucket": "G4",
+      "events": 1,
+      "query": "2만원 이하에 가성비있는 반팔티를찾고있는뒈 바람이 슝슝통하고 그림도 간지있고 기장은 좀 그나마 길었으면 조켔ㅇㅇ",
+      "note": "자연 발생 오타 다수('찾고있는뒈','조켔ㅇㅇ'). 하드는 가격뿐. ecommerce에서 결과 수가 263↔16↔2로 요동친 회귀 케이스",
+      "tags": [
+        "오타"
+      ]
+    },
+    {
+      "id": "g13",
+      "src": "ga4",
+      "bucket": "G4",
+      "events": 1,
+      "query": "나는 등판에 개발자관련 글씨가 쓰여있고 통풍이 잘되는 회색 반팔티를 찾고있는데 오버핏이면 더 좋을것같고 목은 라운드넥이면 더 좋을것같아",
+      "note": "테마 상품이 없어도 색 하드 + 나머지 소프트로 근접 결과를 낸다. 테마 불충족을 이유로 0건 강등 금지"
+    },
+    {
+      "id": "g14",
+      "src": "ga4",
+      "bucket": "G4",
+      "events": 1,
+      "query": "등판에 노란 레터링 있는 시원한 오버핏 흰티",
+      "note": "프린트색·위치(등판)는 검증 불가 — 바탕색·핏·레터링만 판정"
+    },
+    {
+      "id": "g15",
+      "src": "ga4",
+      "bucket": "G2",
+      "events": 1,
+      "query": "무지개 티셔츠",
+      "note": "함정: 무지개 = 다색 그래픽 테마 — 색 하드필터 금지. 제목은 대개 '레인보우'라 한영 동의어 공백 케이스이기도 하다"
+    },
+    {
+      "id": "g16",
+      "src": "ga4",
+      "bucket": "G4",
+      "events": 1,
+      "query": "블랙 오버핏 반팔티 3만원 이하",
+      "note": "'이하'를 priceMin에 넣는 실수가 잦은 케이스",
+      "tags": [
+        "가격"
+      ]
+    },
+    {
+      "id": "g17",
+      "src": "ga4",
+      "bucket": "G4",
+      "events": 1,
+      "query": "사람그림이 있는 7부정도의 머슬핏 반팔티",
+      "note": "머슬핏 어휘 부재·7부는 기장 — 하드 조건 없음. 오버/슬림 오추출 금지"
+    },
+    {
+      "id": "g18",
+      "src": "ga4",
+      "bucket": "G2",
+      "events": 1,
+      "query": "여성 슬림핏 반팔티"
+    }
   ],
   "todo": {
     "note": "0단계에서 채운다.",
     "generated": [
-      { "bucket": "G1", "how": "c_goods.brand_name 상위 N개를 그대로 질의로", "정답": "결정론적" },
-      { "bucket": "G3", "how": "브랜드·카테고리 어휘를 한영 자판 매핑·초성 추출·공백 변형으로 기계 생성", "정답": "결정론적" }
+      {
+        "bucket": "G1",
+        "how": "c_goods.brand_name 상위 N개를 그대로 질의로",
+        "정답": "결정론적"
+      },
+      {
+        "bucket": "G3",
+        "how": "브랜드·카테고리 어휘를 한영 자판 매핑·초성 추출·공백 변형으로 기계 생성",
+        "정답": "결정론적"
+      }
     ],
     "authored": [
-      { "bucket": "G2", "how": "짧은 키워드 실사용형 보강 — 무지티·흰티·오버핏 등. 씨앗에 '크롭티' 정도만 있어 aTee 주 입력 형태의 표본이 부족하다", "who": "미정" },
-      { "bucket": "G7", "how": "느낌·주관 질의 신규 작성 — 레트로한 프린트·조용한 미니멀 등", "who": "미정" }
+      {
+        "bucket": "G2",
+        "how": "짧은 키워드 실사용형 보강 — 무지티·흰티·오버핏 등. 씨앗에 '크롭티' 정도만 있어 aTee 주 입력 형태의 표본이 부족하다",
+        "who": "미정"
+      },
+      {
+        "bucket": "G7",
+        "how": "느낌·주관 질의 신규 작성 — 레트로한 프린트·조용한 미니멀 등",
+        "who": "미정"
+      }
     ]
   }
 }
