@@ -16,7 +16,9 @@ import { getFeedProfileSummary, logImpression } from "@/shared/signals/signals";
 import type { FeedPolicy, SourceBucket } from "@/shared/signals/types";
 
 const PAGE_SIZE = 30;
-const SIMILAR_PAGE_SIZE = 60;
+// 유사 첫 페이지 크기 — 품질 게이트(Recall@30, probes=80)를 통과시킨 기준 크기.
+// 60으로 올리면 재정렬 후보(×20)가 배로 늘어 콜드 응답이 3.5초대로 느려진다.
+const SIMILAR_PAGE_SIZE = 30;
 const COLUMN_COUNT = 2;
 const RETRY_DELAY_MS = 2000;
 
@@ -54,6 +56,8 @@ export function useFeedViewModel(options?: FeedOptions) {
     return exploreFrom == null ? sessionSeed : deriveSeed(sessionSeed, exploreFrom);
   }, [exploreFrom]);
   const [items, setItems] = useState<FeedItem[]>([]);
+  // 첫 페이지가 도착하기 전 = 스켈레톤 표시 구간 (실패 재시도 중에도 유지)
+  const [ready, setReady] = useState(false);
   // 커서·중복 로드 방지는 렌더링과 무관한 진행 상태라 ref로 둔다
   const afterRef = useRef<number | null>(null);
   const exhaustedRef = useRef(false);
@@ -74,6 +78,7 @@ export function useFeedViewModel(options?: FeedOptions) {
     loadingRef.current = true;
 
     const applyPage = (products: Product[], advanceCursor: boolean) => {
+      setReady(true);
       setItems((prev) => {
         const page = appendFeedPage(prev, products, exploreFrom);
         if (advanceCursor) afterRef.current = page.after ?? afterRef.current;
@@ -215,5 +220,5 @@ export function useFeedViewModel(options?: FeedOptions) {
     [seed],
   );
 
-  return { columns, sentinelRef, onImpress };
+  return { columns, sentinelRef, onImpress, showSkeleton: !ready };
 }

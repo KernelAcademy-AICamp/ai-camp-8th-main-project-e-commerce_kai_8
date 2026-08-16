@@ -16,6 +16,7 @@ import { formatPrice } from "@/features/feed/domain/format-price";
 import type { Product } from "@/features/feed/domain/product";
 import { initialSlideIndex } from "@/features/feed/domain/similar";
 import { FeedGrid } from "@/features/feed/presentation/components/feed-grid";
+import { FeedSkeleton } from "@/features/feed/presentation/components/feed-skeleton";
 import { useFeedViewModel } from "@/features/feed/presentation/view-model/use-feed-view-model";
 import { useWishlist } from "@/features/feed/wishlist/presentation/view-model/use-wishlist";
 import { logAction } from "@/shared/signals/signals";
@@ -191,6 +192,7 @@ export function ProductDetail({
           </div>
 
           <div className="px-2 pb-10">
+            {explore.showSkeleton && <FeedSkeleton />}
             <FeedGrid
               columns={explore.columns}
               sentinelRef={explore.sentinelRef}

@@ -90,7 +90,7 @@ describe("useFeedViewModel", () => {
       .mockResolvedValue([]);
     const { result } = renderFeedViewModel({ exploreFrom: 7, similarFirst: true });
     await waitFor(() => {
-      expect(fetchSimilarPageMock).toHaveBeenCalledWith(7, 60);
+      expect(fetchSimilarPageMock).toHaveBeenCalledWith(7, 30);
     });
     // 이어지는 무작위 페이지는 커서 처음(null)부터, 이미 보인 22는 중복 제거
     await waitFor(() => {
