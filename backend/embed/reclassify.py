@@ -211,9 +211,57 @@ def apply(conn, set_name):
     print(f"applied set {set_name} as classify_ver={CLASSIFY_VER}: {n} rows")
 
 
+def push(conn, limit=None):
+    """라벨이 바뀐 행만 Supabase c_img_vecs에 반영한다 (계획 2단계).
+
+    전체 96.7만 행 재기록은 안 한다 — 벡터 테이블의 UPDATE는 대부분 non-HOT라
+    IVFFlat·이진 인덱스에 새 엔트리를 만들어 Micro에서 인덱스 팽창을 유발한다.
+    라벨 불변 행은 v1 분류가 그대로 유효하므로 건드리지 않는다(classify_ver
+    null = v1 라벨 유지). 서버 type_conf는 어떤 RPC 로직에도 쓰이지 않는
+    참고값이라 v1/v2 혼재를 허용하고, 정본 신뢰도는 로컬 DB에 있다.
+
+    멱등·재개: 서버에서 classify_ver=2인 (goods_no, slot)을 먼저 읽어 건너뛴다.
+    """
+    import os
+
+    import psycopg
+
+    rows = conn.execute(
+        """select goods_no, slot, img_type2, type_conf2 from imgs
+           where status='done' and img_type2 is not null and img_type2 <> img_type
+           order by goods_no, slot"""
+    ).fetchall()
+    print(f"changed rows local: {len(rows)}")
+    with psycopg.connect(os.environ["SUPABASE_DB_URL"]) as pg:
+        with pg.cursor() as cur:
+            cur.execute("select goods_no, slot from c_img_vecs where classify_ver = %s", (CLASSIFY_VER,))
+            seen = set(cur.fetchall())
+            todo = [r for r in rows if (r[0], r[1]) not in seen]
+            if limit:
+                todo = todo[:limit]
+            print(f"already pushed: {len(seen)}  todo: {len(todo)}")
+            CHUNK = 5000
+            for i in range(0, len(todo), CHUNK):
+                chunk = todo[i : i + CHUNK]
+                cur.executemany(
+                    """update c_img_vecs set img_type=%s, type_conf=%s, classify_ver=%s
+                       where goods_no=%s and slot=%s""",
+                    [(t, c, CLASSIFY_VER, g, s) for g, s, t, c in chunk],
+                )
+                pg.commit()
+                print(f"{i + len(chunk)}/{len(todo)} pushed", flush=True)
+            cur.execute("analyze c_img_vecs")
+            pg.commit()
+            cur.execute(
+                "select img_type, count(*) from c_img_vecs where classify_ver=%s group by 1 order by 1",
+                (CLASSIFY_VER,),
+            )
+            print("server ver2 by img_type:", cur.fetchall())
+
+
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("cmd", choices=["score", "report", "sample", "apply"])
+    ap.add_argument("cmd", choices=["score", "report", "sample", "apply", "push"])
     ap.add_argument("--set", dest="set_name", required=True)
     ap.add_argument("--label", type=int, default=3)
     ap.add_argument("--n", type=int, default=24)
@@ -221,6 +269,7 @@ def main():
     ap.add_argument("--seed", type=int, default=1)
     ap.add_argument("--conf-min", type=float, default=0.0)
     ap.add_argument("--conf-max", type=float, default=1.0)
+    ap.add_argument("--limit", type=int, default=None)
     args = ap.parse_args()
     conn = sqlite3.connect(DB)
     if args.cmd == "score":
@@ -232,6 +281,8 @@ def main():
                 args.conf_min, args.conf_max)
     elif args.cmd == "apply":
         apply(conn, args.set_name)
+    elif args.cmd == "push":
+        push(conn, args.limit)
 
 
 if __name__ == "__main__":
