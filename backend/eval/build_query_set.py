@@ -141,10 +141,22 @@ AUTHORED: dict[str, list[str]] = {
     ],
     "G6": [
         "패딩 점퍼", "청바지 32인치", "운동화 270", "가죽 자켓",
-        "ㅁㄴㅇㄹ", "asdfasdf", "12345", "코트 아우터",
+        "asdfasdf", "12345", "코트 아우터", "샌들 슬리퍼",
         "노트북 거치대", "강아지 사료",
     ],
 }
+
+# 초성 검색을 지원하면 'ㅁㄴㅇㄹ'은 더 이상 "0건이 정답"이 아니다 — 실제로 초성이
+# ㅁㄴㅇㄹ인 단어를 가진 상품이 19개 있다(A단계 실측). 자판 뭉개기로 의도했지만
+# 기능이 생기면서 의미가 바뀐 사례라 G3(표기 변형)로 옮기고 논쟁 표시를 단다.
+EXTRA_ENTRIES = [
+    {
+        "id": "x01", "bucket": "G3", "query": "ㅁㄴㅇㄹ", "src": "authored",
+        "family": "fam-x01", "tags": ["chosung"], "confidence": "low",
+        "note": "자판 뭉개기로 의도했으나 초성 검색을 켜면 유효한 질의가 된다"
+                " — 실제로 초성이 ㅁㄴㅇㄹ인 상품 19개. 정답 방향이 갈려 주 지표에서 분리한다.",
+    },
+]
 
 FAMILY_OVERRIDE = {
     # 근접 중복 실사용 질의 — 같은 파티션에 묶는다 (2차 리뷰 M9)
@@ -234,6 +246,9 @@ def build() -> dict:
                 "origin": correct,
             }
         )
+
+    for extra in EXTRA_ENTRIES:
+        entries.append({**extra})
 
     # ④ 작성분
     for bucket, queries in AUTHORED.items():

@@ -6,7 +6,10 @@ import { appendFeedPage, type FeedItem } from "@/features/feed/domain/feed-page"
 import { formatPrice } from "@/features/feed/domain/format-price";
 import { distributeToColumns } from "@/features/feed/domain/masonry";
 import type { FeedCardViewData } from "@/features/feed/presentation/view-model/card-view-data";
-import { fetchSearchPage } from "@/features/feed/search/data/search-api";
+import {
+  fetchSearchPage,
+  fetchSearchPageWithFallback,
+} from "@/features/feed/search/data/search-api";
 import { logSearch } from "@/features/feed/search/data/search-log-api";
 import type { SearchSubmission } from "@/features/feed/search/presentation/view-model/use-search-state";
 
@@ -83,6 +86,8 @@ export function useSearchFeed({ query, submission, paused }: SearchFeedOptions) 
   // 제출마다 하나의 로그 ID — 실패 후 재시도가 성공하면 같은 ID로 다시 보내
   // 결과 수만 보정된다(서버가 result_count가 null일 때만 갱신한다)
   const logIdBySeq = useRef(new Map<number, string>());
+  // 자판 폴백으로 실제 검색에 쓰인 질의 — 이후 페이지가 같은 질의로 이어가야 한다
+  const usedQueryRef = useRef<string | null>(null);
   // 검색어 한 번당 기록 한 번 — 오류 후 retry로 첫 페이지를 다시 불러도
   // 중복 기록하지 않는다 (세대 번호로 판정)
   const loggedGenerationRef = useRef(-1);
@@ -107,6 +112,7 @@ export function useSearchFeed({ query, submission, paused }: SearchFeedOptions) 
     const generation = generationRef.current;
     if (progressRef.current.generation !== generation) {
       // 새 세대의 첫 로드: 진행 상태를 통째로 교체
+      usedQueryRef.current = null;
       progressRef.current = {
         generation,
         after: null,
@@ -146,9 +152,19 @@ export function useSearchFeed({ query, submission, paused }: SearchFeedOptions) 
         occurredAt: sub.occurredAt,
       });
     };
-    fetchSearchPage(query, progress.after, PAGE_SIZE)
-      .then((products) => {
+    // 첫 페이지만 자판 폴백을 태운다. 이후 페이지는 확정된 질의로 이어간다.
+    const request = isFirstPage
+      ? fetchSearchPageWithFallback(query, null, PAGE_SIZE)
+      : fetchSearchPage(usedQueryRef.current ?? query, progress.after, PAGE_SIZE).then(
+          (products) => ({
+            products,
+            usedQuery: usedQueryRef.current ?? query,
+          }),
+        );
+    request
+      .then(({ products, usedQuery }) => {
         if (generation !== generationRef.current) return; // 늦은 응답 폐기
+        if (isFirstPage) usedQueryRef.current = usedQuery;
         logOnce(products.length);
         if (products.length === 0) progress.exhausted = true;
         else progress.after = products[products.length - 1].goodsNo;

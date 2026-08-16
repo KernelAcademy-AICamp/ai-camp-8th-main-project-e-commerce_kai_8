@@ -3,26 +3,26 @@
     "G1": {
       "metric": "p_at_20",
       "queries": 18,
-      "score": 0.6333333333333333,
-      "ndcg": 0.9628925375556832,
+      "score": 0.6888888888888889,
+      "ndcg": 0.9625937122947474,
       "unjudgedRate": 0.0,
       "zeroResultRate": 0.0
     },
     "G2": {
       "metric": "p_at_20",
       "queries": 22,
-      "score": 0.5818181818181819,
-      "ndcg": 0.761106456861928,
+      "score": 0.4818181818181818,
+      "ndcg": 0.7449422384510421,
       "unjudgedRate": 0.0,
       "zeroResultRate": 0.22727272727272727
     },
     "G3": {
       "metric": "p_at_20",
       "queries": 18,
-      "score": 0.15555555555555556,
-      "ndcg": 0.2721007751772785,
+      "score": 0.5722222222222223,
+      "ndcg": 0.8547224528601585,
       "unjudgedRate": 0.0,
-      "zeroResultRate": 0.7222222222222222
+      "zeroResultRate": 0.1111111111111111
     },
     "G4": {
       "metric": "p_at_20",
@@ -57,39 +57,39 @@
   "perPartition": {
     "dev": {
       "perBucket": {
-        "G1": 0.5666666666666667,
-        "G2": 0.4954545454545455,
-        "G3": 0.07272727272727272,
+        "G1": 0.7,
+        "G2": 0.3909090909090909,
+        "G3": 0.5,
         "G4": 0.04090909090909091,
         "G5": 0.0,
         "G6": 1.0,
         "R1": 0.0
       },
-      "gate": 0.23515151515151517
+      "gate": 0.32636363636363636
     },
     "holdout": {
       "perBucket": {
-        "G1": 0.78,
-        "G2": 0.47500000000000003,
-        "G3": 0.2,
+        "G1": 0.74,
+        "G2": 0.4166666666666667,
+        "G3": 0.58,
         "G4": 0.0,
         "G5": 0.0,
         "G6": 1.0,
         "R1": 0.0
       },
-      "gate": 0.29100000000000004
+      "gate": 0.3473333333333333
     },
     "progress": {
       "perBucket": {
         "G1": 0.6,
-        "G2": 0.9,
-        "G3": 0.5,
+        "G2": 0.76,
+        "G3": 0.95,
         "G4": 0.0,
         "G5": 0.0,
         "G6": 1.0,
         "R1": 0.0
       },
-      "gate": 0.4
+      "gate": 0.462
     }
   },
   "repool": {
@@ -97,7 +97,7 @@
     "needed": [],
     "verdict": "불필요"
   },
-  "overallGate": 0.2782323232323233,
+  "overallGate": 0.3526767676767677,
   "gateBuckets": [
     "G1",
     "G2",
@@ -554,8 +554,8 @@
       "bucket": "G1",
       "partition": "holdout",
       "kind": "ranked",
-      "p_at_k": 0.8,
-      "ndcg": 0.9987083562564225,
+      "p_at_k": 0.45,
+      "ndcg": 0.8196749739010851,
       "unjudgedRate": 0.0,
       "zero": false
     },
@@ -595,7 +595,7 @@
       "partition": "progress",
       "kind": "ranked",
       "p_at_k": 0.9,
-      "ndcg": 0.9139681901320934,
+      "ndcg": 0.965376169933812,
       "unjudgedRate": 0.0,
       "zero": false
     },
@@ -614,8 +614,8 @@
       "bucket": "G1",
       "partition": "dev",
       "kind": "ranked",
-      "p_at_k": 0.25,
-      "ndcg": 1.0,
+      "p_at_k": 0.95,
+      "ndcg": 0.9997323323328966,
       "unjudgedRate": 0.0,
       "zero": false
     },
@@ -654,8 +654,8 @@
       "bucket": "G1",
       "partition": "dev",
       "kind": "ranked",
-      "p_at_k": 0.0,
-      "ndcg": 1.0,
+      "p_at_k": 0.05,
+      "ndcg": 0.9378130211269909,
       "unjudgedRate": 0.0,
       "zero": false
     },
@@ -664,8 +664,8 @@
       "bucket": "G1",
       "partition": "dev",
       "kind": "ranked",
-      "p_at_k": 0.95,
-      "ndcg": 0.998774239728456,
+      "p_at_k": 0.8,
+      "ndcg": 0.9421746463890446,
       "unjudgedRate": 0.0,
       "zero": false
     },
@@ -674,8 +674,8 @@
       "bucket": "G1",
       "partition": "dev",
       "kind": "ranked",
-      "p_at_k": 0.2,
-      "ndcg": 0.8305188807615445,
+      "p_at_k": 0.65,
+      "ndcg": 1.0,
       "unjudgedRate": 0.0,
       "zero": false
     },
@@ -714,8 +714,8 @@
       "bucket": "G1",
       "partition": "holdout",
       "kind": "ranked",
-      "p_at_k": 0.75,
-      "ndcg": 0.9885937760883863,
+      "p_at_k": 0.9,
+      "ndcg": 0.9871295365635644,
       "unjudgedRate": 0.0,
       "zero": false
     },
@@ -724,8 +724,8 @@
       "bucket": "G1",
       "partition": "dev",
       "kind": "ranked",
-      "p_at_k": 0.7,
-      "ndcg": 0.910075417180183,
+      "p_at_k": 0.85,
+      "ndcg": 0.9833593252028471,
       "unjudgedRate": 0.0,
       "zero": false
     },
@@ -734,110 +734,110 @@
       "bucket": "G3",
       "partition": "holdout",
       "kind": "ranked",
-      "p_at_k": 0.0,
-      "ndcg": 0.0,
+      "p_at_k": 0.9,
+      "ndcg": 0.9871295365635644,
       "unjudgedRate": 0.0,
-      "zero": true
+      "zero": false
     },
     {
       "id": "v02",
       "bucket": "G3",
       "partition": "dev",
       "kind": "ranked",
-      "p_at_k": 0.0,
-      "ndcg": 0.0,
+      "p_at_k": 0.85,
+      "ndcg": 0.9833593252028471,
       "unjudgedRate": 0.0,
-      "zero": true
+      "zero": false
     },
     {
       "id": "v03",
       "bucket": "G3",
       "partition": "dev",
       "kind": "ranked",
-      "p_at_k": 0.0,
-      "ndcg": 0.0,
+      "p_at_k": 0.8,
+      "ndcg": 0.8762130360274992,
       "unjudgedRate": 0.0,
-      "zero": true
+      "zero": false
     },
     {
       "id": "v04",
       "bucket": "G3",
       "partition": "dev",
       "kind": "ranked",
-      "p_at_k": 0.0,
-      "ndcg": 0.0,
+      "p_at_k": 0.75,
+      "ndcg": 0.9963640553577419,
       "unjudgedRate": 0.0,
-      "zero": true
+      "zero": false
     },
     {
       "id": "v05",
       "bucket": "G3",
       "partition": "dev",
       "kind": "ranked",
-      "p_at_k": 0.0,
-      "ndcg": 0.0,
+      "p_at_k": 1.0,
+      "ndcg": 1.0,
       "unjudgedRate": 0.0,
-      "zero": true
+      "zero": false
     },
     {
       "id": "v06",
       "bucket": "G3",
       "partition": "holdout",
       "kind": "ranked",
-      "p_at_k": 0.0,
-      "ndcg": 0.0,
+      "p_at_k": 0.35,
+      "ndcg": 1.0,
       "unjudgedRate": 0.0,
-      "zero": true
+      "zero": false
     },
     {
       "id": "v07",
       "bucket": "G3",
       "partition": "holdout",
       "kind": "ranked",
-      "p_at_k": 0.0,
-      "ndcg": 0.0,
+      "p_at_k": 0.65,
+      "ndcg": 0.9871077230664075,
       "unjudgedRate": 0.0,
-      "zero": true
+      "zero": false
     },
     {
       "id": "v08",
       "bucket": "G3",
       "partition": "dev",
       "kind": "ranked",
-      "p_at_k": 0.0,
-      "ndcg": 0.0,
+      "p_at_k": 0.65,
+      "ndcg": 0.892233603225297,
       "unjudgedRate": 0.0,
-      "zero": true
+      "zero": false
     },
     {
       "id": "v09",
       "bucket": "G3",
       "partition": "progress",
       "kind": "ranked",
-      "p_at_k": 0.0,
-      "ndcg": 0.0,
+      "p_at_k": 0.9,
+      "ndcg": 0.9139681901320934,
       "unjudgedRate": 0.0,
-      "zero": true
+      "zero": false
     },
     {
       "id": "v10",
       "bucket": "G3",
       "partition": "dev",
       "kind": "ranked",
-      "p_at_k": 0.0,
-      "ndcg": 0.0,
+      "p_at_k": 0.4,
+      "ndcg": 0.9992654108704849,
       "unjudgedRate": 0.0,
-      "zero": true
+      "zero": false
     },
     {
       "id": "v11",
       "bucket": "G3",
       "partition": "dev",
       "kind": "ranked",
-      "p_at_k": 0.0,
-      "ndcg": 0.0,
+      "p_at_k": 0.6,
+      "ndcg": 0.8922800941305166,
       "unjudgedRate": 0.0,
-      "zero": true
+      "zero": false
     },
     {
       "id": "v12",
@@ -864,8 +864,8 @@
       "bucket": "G3",
       "partition": "dev",
       "kind": "ranked",
-      "p_at_k": 0.6,
-      "ndcg": 0.8978139531910125,
+      "p_at_k": 0.25,
+      "ndcg": 0.8570831769064011,
       "unjudgedRate": 0.0,
       "zero": false
     },
@@ -944,8 +944,8 @@
       "bucket": "G2",
       "partition": "dev",
       "kind": "ranked",
-      "p_at_k": 1.0,
-      "ndcg": 1.0,
+      "p_at_k": 0.85,
+      "ndcg": 0.9828360808879595,
       "unjudgedRate": 0.0,
       "zero": false
     },
@@ -984,8 +984,8 @@
       "bucket": "G2",
       "partition": "holdout",
       "kind": "ranked",
-      "p_at_k": 0.9,
-      "ndcg": 0.983078790402737,
+      "p_at_k": 0.55,
+      "ndcg": 0.9852833374824504,
       "unjudgedRate": 0.0,
       "zero": false
     },
@@ -994,8 +994,8 @@
       "bucket": "G2",
       "partition": "progress",
       "kind": "ranked",
-      "p_at_k": 1.0,
-      "ndcg": 1.0,
+      "p_at_k": 0.3,
+      "ndcg": 0.6593465669928388,
       "unjudgedRate": 0.0,
       "zero": false
     },
@@ -1014,7 +1014,7 @@
       "bucket": "G2",
       "partition": "dev",
       "kind": "ranked",
-      "p_at_k": 1.0,
+      "p_at_k": 0.0,
       "ndcg": 1.0,
       "unjudgedRate": 0.0,
       "zero": false
@@ -1331,7 +1331,7 @@
     }
   ],
   "meta": {
-    "system": "baseline-c_search_page",
+    "system": "a-c_search_page_v2-pgroonga-bigram",
     "gradeFiles": [
       "docs/atee/eval/grading-codex-all.json",
       "docs/atee/eval/grading-codex-a-new.json",

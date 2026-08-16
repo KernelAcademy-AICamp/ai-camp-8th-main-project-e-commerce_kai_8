@@ -30,7 +30,16 @@ SET_PATH = EVAL_DIR / "query-set.json"
 OUT_PATH = EVAL_DIR / "pool-baseline.json"
 
 TOP_N = 20  # 판정 대상 상위 개수 — P@20·nDCG@20의 K와 같게 맞춘다
-SYSTEM = "baseline-c_search_page"
+SYSTEMS = {
+    "baseline": {
+        "name": "baseline-c_search_page",
+        "sql": "select goods_no, title, brand_name, price_final, gender from c_search_page(%s, null, %s)",
+    },
+    "a": {
+        "name": "a-c_search_page_v2-pgroonga-bigram",
+        "sql": "select goods_no, title, brand_name, price_final, gender from c_search_page_v2(%s, null, null, %s)",
+    },
+}
 
 UNJUDGED_POLICY = {
     "onMissingJudgment": "exclude",
@@ -56,6 +65,97 @@ def normalize_query(raw: str) -> str:
     return " ".join(words[:MAX_QUERY_WORDS])
 
 
+# ⚠️ 프론트의 hangul-keyboard.ts와 같은 규칙이다. 두 곳에 있으므로 한쪽만 고치면
+# 평가와 실제 검색이 어긋난다 — 바꿀 때 반드시 함께 고친다.
+KEY_TO_JAMO = {
+    "r": "ㄱ", "R": "ㄲ", "s": "ㄴ", "e": "ㄷ", "E": "ㄸ", "f": "ㄹ", "a": "ㅁ",
+    "q": "ㅂ", "Q": "ㅃ", "t": "ㅅ", "T": "ㅆ", "d": "ㅇ", "w": "ㅈ", "W": "ㅉ",
+    "c": "ㅊ", "z": "ㅋ", "x": "ㅌ", "v": "ㅍ", "g": "ㅎ",
+    "k": "ㅏ", "o": "ㅐ", "i": "ㅑ", "O": "ㅒ", "j": "ㅓ", "p": "ㅔ", "u": "ㅕ",
+    "P": "ㅖ", "h": "ㅗ", "y": "ㅛ", "n": "ㅜ", "b": "ㅠ", "m": "ㅡ", "l": "ㅣ",
+}
+CHO = "ㄱㄲㄴㄷㄸㄹㅁㅂㅃㅅㅆㅇㅈㅉㅊㅋㅌㅍㅎ"
+JUNG = "ㅏㅐㅑㅒㅓㅔㅕㅖㅗㅘㅙㅚㅛㅜㅝㅞㅟㅠㅡㅢㅣ"
+JONG = " ㄱㄲㄳㄴㄵㄶㄷㄹㄺㄻㄼㄽㄾㄿㅀㅁㅂㅄㅅㅆㅇㅈㅊㅋㅌㅍㅎ"
+VOWEL_PAIRS = {"ㅗㅏ": "ㅘ", "ㅗㅐ": "ㅙ", "ㅗㅣ": "ㅚ", "ㅜㅓ": "ㅝ",
+               "ㅜㅔ": "ㅞ", "ㅜㅣ": "ㅟ", "ㅡㅣ": "ㅢ"}
+CODA_PAIRS = {"ㄱㅅ": "ㄳ", "ㄴㅈ": "ㄵ", "ㄴㅎ": "ㄶ", "ㄹㄱ": "ㄺ", "ㄹㅁ": "ㄻ",
+              "ㄹㅂ": "ㄼ", "ㄹㅅ": "ㄽ", "ㄹㅌ": "ㄾ", "ㄹㅍ": "ㄿ", "ㄹㅎ": "ㅀ",
+              "ㅂㅅ": "ㅄ"}
+
+
+def qwerty_to_hangul(text: str) -> str:
+    jamos = [KEY_TO_JAMO.get(ch, ch) for ch in text]
+    out: list[str] = []
+    cho = jung = jong = ""
+
+    def flush() -> None:
+        nonlocal cho, jung, jong
+        if cho and jung:
+            ki = JONG.index(jong) if jong else 0
+            out.append(chr(0xAC00 + CHO.index(cho) * 588 + JUNG.index(jung) * 28 + ki))
+        else:
+            out.append(cho + jung + jong)
+        cho = jung = jong = ""
+
+    for idx, jamo in enumerate(jamos):
+        nxt_vowel = idx + 1 < len(jamos) and jamos[idx + 1] in JUNG
+        if jamo not in CHO and jamo not in JUNG:
+            if cho or jung or jong:
+                flush()
+            out.append(jamo)
+            continue
+        if jamo in JUNG:
+            if jong:
+                moved, jong = jong, ""
+                flush()
+                cho, jung = moved, jamo
+            elif jung:
+                pair = VOWEL_PAIRS.get(jung + jamo)
+                if pair:
+                    jung = pair
+                else:
+                    flush()
+                    jung = jamo
+            else:
+                jung = jamo
+            continue
+        if not cho and not jung:
+            cho = jamo
+        elif cho and not jung:
+            flush()
+            cho = jamo
+        elif jong:
+            pair = CODA_PAIRS.get(jong + jamo)
+            if pair and not nxt_vowel:
+                jong = pair
+            else:
+                flush()
+                cho = jamo
+        elif jamo in JONG and not nxt_vowel:
+            jong = jamo
+        else:
+            flush()
+            cho = jamo
+    if cho or jung or jong:
+        flush()
+    return "".join(out)
+
+
+def restore_hangul_typing(query: str) -> str | None:
+    """원문이 0건일 때만 쓰는 폴백. 대상이 아니면 None."""
+    t = query.strip()
+    letters = [c for c in t if c != " "]
+    if not t or len(letters) < 2:
+        return None
+    if re.search(r"[가-힣ㄱ-ㅎㅏ-ㅣ]", t):
+        return None
+    if not all(c in KEY_TO_JAMO for c in letters):
+        return None
+    restored = qwerty_to_hangul(t)
+    return restored if re.search(r"[가-힣]", restored) else None
+
+
 def load_db_url() -> str:
     env_path = ROOT / "backend" / ".env.local"
     if env_path.exists():
@@ -69,8 +169,10 @@ def load_db_url() -> str:
     return url
 
 
-def build() -> dict:
+def build(system: str) -> dict:
     import psycopg
+
+    spec = SYSTEMS[system]
 
     doc = json.loads(SET_PATH.read_text(encoding="utf-8"))
     entries = doc["entries"]
@@ -86,12 +188,17 @@ def build() -> dict:
 
             for e in entries:
                 norm = normalize_query(e["query"])
-                cur.execute(
-                    "select goods_no, title, brand_name, price_final, gender "
-                    "from c_search_page(%s, null, %s)",
-                    (norm, TOP_N),
-                )
+                cur.execute(spec["sql"], (norm, TOP_N))
                 rows = cur.fetchall()
+                used = norm
+                # 한영 자판 폴백 — 프론트와 같은 규칙(원문 0건일 때만)
+                if not rows and system == "a":
+                    restored = restore_hangul_typing(norm)
+                    if restored:
+                        cur.execute(spec["sql"], (restored, TOP_N))
+                        rows = cur.fetchall()
+                        if rows:
+                            used = restored
                 results.append(
                     {
                         "id": e["id"],
@@ -99,6 +206,7 @@ def build() -> dict:
                         "partition": e["partition"],
                         "query": e["query"],
                         "queryNorm": norm,
+                        "queryUsed": used,
                         "resultCount": len(rows),
                         "candidates": [
                             {
@@ -118,7 +226,7 @@ def build() -> dict:
         "meta": {
             "purpose": "기준선 후보 풀 — 현재 검색(c_search_page)의 상위 결과. 판정 대상이다.",
             "generatedBy": "backend/eval/build_pool.py",
-            "system": SYSTEM,
+            "system": spec["name"],
             "topN": TOP_N,
             "collectedAt": datetime.now(timezone.utc).isoformat(),
             "catalogSnapshot": {
@@ -164,16 +272,19 @@ def summarize(doc: dict) -> None:
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--summary", action="store_true", help="재생성 없이 요약만")
+    parser.add_argument("--system", default="baseline", choices=sorted(SYSTEMS))
+    parser.add_argument("--out", default=None)
     args = parser.parse_args()
 
+    out_path = (ROOT / args.out) if args.out else OUT_PATH
     if args.summary:
-        doc = json.loads(OUT_PATH.read_text(encoding="utf-8"))
+        doc = json.loads(out_path.read_text(encoding="utf-8"))
     else:
-        doc = build()
-        OUT_PATH.write_text(
+        doc = build(args.system)
+        out_path.write_text(
             json.dumps(doc, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
         )
-        print(f"생성: {OUT_PATH.relative_to(ROOT)}\n")
+        print(f"생성: {out_path.relative_to(ROOT)}\n")
 
     summarize(doc)
     return 0

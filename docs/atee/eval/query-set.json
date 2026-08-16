@@ -65,13 +65,13 @@
         "holdout": 5
       },
       "G3": {
-        "total": 18,
-        "dev": 9,
-        "progress": 4,
+        "total": 19,
+        "dev": 11,
+        "progress": 3,
         "holdout": 5
       }
     },
-    "total": 127
+    "total": 128
   },
   "entries": [
     {
@@ -1002,7 +1002,7 @@
       "note": "초성 변형. 원본='오버핏' — 원본이 되는데 변형이 안 되면 A단계 실패",
       "origin": "오버핏",
       "familyRoot": "fam-var-오버핏",
-      "partition": "progress"
+      "partition": "dev"
     },
     {
       "id": "v12",
@@ -1044,7 +1044,7 @@
       "note": "띄어쓰기 변형. 원본='오버 핏' — 두 표기가 같은 결과를 내야 한다",
       "origin": "오버 핏",
       "familyRoot": "fam-var-오버핏",
-      "partition": "progress"
+      "partition": "dev"
     },
     {
       "id": "v15",
@@ -1101,6 +1101,20 @@
       "origin": "커버낫",
       "familyRoot": "fam-brand-커버낫",
       "partition": "dev"
+    },
+    {
+      "id": "x01",
+      "bucket": "G3",
+      "query": "ㅁㄴㅇㄹ",
+      "src": "authored",
+      "family": "fam-x01",
+      "tags": [
+        "chosung"
+      ],
+      "confidence": "low",
+      "note": "자판 뭉개기로 의도했으나 초성 검색을 켜면 유효한 질의가 된다 — 실제로 초성이 ㅁㄴㅇㄹ인 상품 19개. 정답 방향이 갈려 주 지표에서 분리한다.",
+      "familyRoot": "fam-x01",
+      "partition": "progress"
     },
     {
       "id": "a-g2-01",
@@ -1534,7 +1548,7 @@
     {
       "id": "a-g6-05",
       "bucket": "G6",
-      "query": "ㅁㄴㅇㄹ",
+      "query": "asdfasdf",
       "src": "authored",
       "family": "fam-g6-05",
       "tags": [],
@@ -1545,7 +1559,7 @@
     {
       "id": "a-g6-06",
       "bucket": "G6",
-      "query": "asdfasdf",
+      "query": "12345",
       "src": "authored",
       "family": "fam-g6-06",
       "tags": [],
@@ -1556,7 +1570,7 @@
     {
       "id": "a-g6-07",
       "bucket": "G6",
-      "query": "12345",
+      "query": "코트 아우터",
       "src": "authored",
       "family": "fam-g6-07",
       "tags": [],
@@ -1567,7 +1581,7 @@
     {
       "id": "a-g6-08",
       "bucket": "G6",
-      "query": "코트 아우터",
+      "query": "샌들 슬리퍼",
       "src": "authored",
       "family": "fam-g6-08",
       "tags": [],

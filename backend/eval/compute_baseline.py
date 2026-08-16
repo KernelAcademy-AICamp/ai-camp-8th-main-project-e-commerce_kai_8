@@ -171,9 +171,10 @@ def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--grades", required=True, help="채점 결과 JSON (여러 개 가능, 쉼표 구분)")
     parser.add_argument("--out", default=str(EVAL_DIR / "baseline-scores.json"))
+    parser.add_argument("--pool", default=str(EVAL_DIR / "pool-baseline.json"))
     args = parser.parse_args()
 
-    pool = json.loads((EVAL_DIR / "pool-baseline.json").read_text(encoding="utf-8"))
+    pool = json.loads(Path(args.pool).read_text(encoding="utf-8"))
     qset = json.loads((EVAL_DIR / "query-set.json").read_text(encoding="utf-8"))
     low_conf = {e["id"] for e in qset["entries"] if e.get("confidence") == "low"}
 

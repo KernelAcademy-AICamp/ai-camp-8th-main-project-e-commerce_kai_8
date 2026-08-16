@@ -10,9 +10,20 @@ import {
   useSearchFeed,
 } from "@/features/feed/search/presentation/view-model/use-search-feed";
 
-vi.mock("@/features/feed/search/data/search-api", () => ({
-  fetchSearchPage: vi.fn(),
-}));
+// 첫 페이지는 자판 폴백 경로를 타므로 둘 다 세운다. 폴백은 원문 호출로 위임해
+// 기존 단언(호출 인자·경합·오류 처리)이 그대로 의미를 갖게 한다.
+vi.mock("@/features/feed/search/data/search-api", () => {
+  const fetchSearchPage = vi.fn();
+  return {
+    fetchSearchPage,
+    fetchSearchPageWithFallback: vi.fn(
+      async (query: string, after: number | null, size: number) => ({
+        products: (await fetchSearchPage(query, after, size)) as Product[],
+        usedQuery: query,
+      }),
+    ),
+  };
+});
 
 const fetchSearchPageMock = vi.mocked(fetchSearchPage);
 
