@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useRef } from "react";
 
 import { buildSlides } from "@/features/feed/detail/domain/detail-slides";
 import type {
@@ -17,6 +17,7 @@ import type { Product } from "@/features/feed/domain/product";
 import { initialSlideIndex } from "@/features/feed/domain/similar";
 import { FeedGrid } from "@/features/feed/presentation/components/feed-grid";
 import { useFeedViewModel } from "@/features/feed/presentation/view-model/use-feed-view-model";
+import { useWishlist } from "@/features/feed/wishlist/presentation/view-model/use-wishlist";
 import { logAction } from "@/shared/signals/signals";
 
 interface ProductDetailProps {
@@ -67,6 +68,10 @@ export function ProductDetail({
     exploreFrom: product.goodsNo,
     similarFirst: true,
   });
+  const { wished, toggle } = useWishlist();
+  const isWishedNow = wished(product.goodsNo);
+  // `이 스타일로 계속 탐색` — 하단 탐색 그리드로 이동 (피드 믹스 반영은 후속 단계)
+  const exploreSectionRef = useRef<HTMLDivElement | null>(null);
   useBodyScrollLock();
 
   return (
@@ -156,23 +161,48 @@ export function ProductDetail({
               <p className="text-xl font-semibold text-white">
                 {formatPrice(product.priceFinal)}
               </p>
-              <a
-                href={sellerUrl(product.goodsNo)}
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label="판매처로 이동"
-                title="판매처로 이동"
-                className="flex h-11 w-11 shrink-0 items-center justify-center text-2xl font-semibold text-white"
-                onClick={() => {
-                  logAction("outbound", product.goodsNo);
-                }}
-              >
-                ↗
-              </a>
+              <div className="flex shrink-0 items-center">
+                <button
+                  type="button"
+                  aria-label={isWishedNow ? "찜 해제" : "찜"}
+                  aria-pressed={isWishedNow}
+                  className={`flex h-11 w-11 cursor-pointer items-center justify-center text-2xl ${
+                    isWishedNow ? "text-red-500" : "text-white"
+                  }`}
+                  onClick={() => {
+                    toggle(product);
+                  }}
+                >
+                  {isWishedNow ? "♥" : "♡"}
+                </button>
+                <a
+                  href={sellerUrl(product.goodsNo)}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="판매처로 이동"
+                  title="판매처로 이동"
+                  className="flex h-11 w-11 items-center justify-center text-2xl font-semibold text-white"
+                  onClick={() => {
+                    logAction("outbound", product.goodsNo);
+                  }}
+                >
+                  ↗
+                </a>
+              </div>
             </div>
+            <button
+              type="button"
+              className="mt-4 w-full cursor-pointer rounded-xl bg-white py-3 font-medium text-black"
+              onClick={() => {
+                logAction("style_explore", product.goodsNo);
+                exploreSectionRef.current?.scrollIntoView({ behavior: "smooth" });
+              }}
+            >
+              이 스타일로 계속 탐색
+            </button>
           </div>
 
-          <div className="px-2 pb-10">
+          <div ref={exploreSectionRef} className="px-2 pb-10">
             <FeedGrid
               columns={explore.columns}
               sentinelRef={explore.sentinelRef}

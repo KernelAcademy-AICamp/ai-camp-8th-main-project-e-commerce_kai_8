@@ -86,6 +86,7 @@ Orca 브라우저와 iOS 시뮬레이터에서 전체 흐름(탐색 → 찜·스
 - **0단계 일부 (2026-08-16):** 결정 기록 O-29(세션 30분) 추가, PRD 지표 절에 세션 경계 정의 추가. 표본 200장 판정은 judgment.html 준비 완료 — 제품 책임자 판정 대기(뒤에서 임계값 조정만 하면 되므로 다른 단계와 병행). 브랜치 `feature/personalization-signals`.
 - **1단계 완료 (2026-08-16):** `c_events` 테이블 + `c_log_events` RPC(요청당 50건·64KB, 값 범위 검증 — 위반 행만 폐기, event_id 중복 무시, 기기별 일일 2만 건 상한) + `c_forget_device`(삭제 요청 경로) 적용. 프론트: 기기 ID(localStorage UUID)·세션(비활성 30분, 순수 로직+테스트)·이벤트 큐(5초 주기·25건 즉시·실패 유지 재시도·pagehide keepalive, 테스트 11개), 노출 IntersectionObserver(50% 보임, 마운트당 1회, rank·col·카드 높이·화면 y·슬롯·시드 기록), 상세 열기=탭·판매처 이동 로깅(노출 귀속), 최초 1회 고지 배너 + `/settings` 화면(문구 초안 + 2단계 확인 초기화). Orca 브라우저 검증: 노출 120건(diversity+similar, 슬롯 0~5)·탭 2건(귀속 확인)·session_start 기록, anon 직접 select/insert 거부, 재전송 중복 0건, 초기화 버튼으로 서버 126건 삭제 확인. `npm run check`·vitest 60개 통과.
   - **발견·수정:** anon 역할 statement_timeout이 3초(Supabase 기본, authenticated는 8초)라 **콜드 앵커의 c_similar_page(~3.1초)가 500 → 무작위 폴백**되고 있었다(1차 배포 후 잠복 이슈 — 이전 검증은 웜 상태). anon도 8초로 상향(`20260816091000` 마이그레이션). 웜 응답은 0.1~1.7초.
+- **2단계 완료 (2026-08-16):** 상세 화면에 찜 하트 토글(♥/♡, aria-pressed)·`이 스타일로 계속 탐색` 버튼(하단 탐색 그리드로 스크롤 + 이벤트, 피드 믹스 반영은 4단계) 추가 — 상세 3요소 완성. 찜 목록 `features/feed/wishlist/`(순수 도메인 toggle·상한 500, localStorage store + useSyncExternalStore, 테스트 5개), `/wishlist` 보관함(최신순 2열 그리드, 탭→상세, 빈 상태), 피드 헤더에 ♡·ⓘ 진입점. Orca 브라우저 검증: 찜→보관함 표시·새로고침 유지·해제→사라짐, wish/unwish/style_explore 이벤트가 노출 귀속과 함께 기록. check·vitest 65개 통과.
 
 ## 미정 (지어내지 않고 남겨둔 것)
 

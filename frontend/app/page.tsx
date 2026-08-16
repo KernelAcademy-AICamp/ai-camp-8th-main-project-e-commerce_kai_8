@@ -8,13 +8,22 @@ export default function Home() {
     <main>
       <header className="relative mx-auto flex max-w-md items-center justify-center px-4 py-3">
         <h1 className="text-lg font-semibold tracking-tight text-white">aTee</h1>
-        <Link
-          href="/settings"
-          aria-label="개인화 안내·설정"
-          className="absolute right-3 flex h-9 w-9 items-center justify-center rounded-full text-lg text-neutral-400"
-        >
-          ⓘ
-        </Link>
+        <div className="absolute right-3 flex items-center">
+          <Link
+            href="/wishlist"
+            aria-label="찜 보관함"
+            className="flex h-9 w-9 items-center justify-center rounded-full text-lg text-neutral-400"
+          >
+            ♡
+          </Link>
+          <Link
+            href="/settings"
+            aria-label="개인화 안내·설정"
+            className="flex h-9 w-9 items-center justify-center rounded-full text-lg text-neutral-400"
+          >
+            ⓘ
+          </Link>
+        </div>
       </header>
       <MosaicFeed />
       <ConsentNotice />
