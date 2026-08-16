@@ -42,6 +42,3 @@ export interface SignalEvent {
 
 /** 임베딩 모델 버전 태그 (O-26) */
 export const MODEL_VER = "siglip2-base";
-
-/** 클라이언트 프로필 스키마 버전 — 취향 프로필 도입(계획 3단계) 전은 0 */
-export const PROFILE_VER = 0;

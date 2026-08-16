@@ -2,6 +2,12 @@
 // 서버(c_events)는 계측·평가 전용이고, 취향 프로필 계산은 기기가 한다(설계 §2).
 // 모든 공개 함수는 SSR·저장 불가 환경에서 조용히 no-op한다.
 
+import { PROFILE_SCHEMA_VERSION } from "@/shared/profile/profile-rules";
+import {
+  clearProfile,
+  recordProfileAction,
+  recordProfileImpression,
+} from "@/shared/profile/profile-store";
 import { rpcPost } from "@/shared/supabase-rpc";
 
 import { getDeviceId } from "./device-id";
@@ -10,7 +16,6 @@ import { advanceSession, type SessionState } from "./session";
 import {
   type FeedPolicy,
   MODEL_VER,
-  PROFILE_VER,
   type SignalEvent,
   type SignalEventType,
   type SourceBucket,
@@ -102,7 +107,7 @@ function baseEvent(
     occurred_at: new Date(occurredAtMs).toISOString(),
     policy,
     model_ver: MODEL_VER,
-    profile_ver: PROFILE_VER,
+    profile_ver: PROFILE_SCHEMA_VERSION,
   };
 }
 
@@ -181,6 +186,8 @@ export function logImpression(input: ImpressionInput): string | null {
   };
   impressionByGoods.set(input.goodsNo, event.event_id);
   enqueue(event);
+  // 취향 프로필의 자기강화 보정·최근 노출 목록 갱신 (설계 §6)
+  recordProfileImpression(input.goodsNo, sessionId, Date.now());
   return event.event_id;
 }
 
@@ -202,6 +209,8 @@ export function logAction(
     goods_no: goodsNo,
     impression_id: impressionByGoods.get(goodsNo),
   });
+  // 행동은 취향 프로필의 세션 앵커에도 반영된다 (설계 §6 가중 서열)
+  recordProfileAction(type, goodsNo, sessionId, Date.now());
 }
 
 /**
@@ -225,6 +234,7 @@ export async function clearSignals(): Promise<number | null> {
   } catch {
     // 저장소 접근 불가면 지울 것도 없다
   }
+  clearProfile();
   queue = null;
   impressionByGoods.clear();
   return deleted;
