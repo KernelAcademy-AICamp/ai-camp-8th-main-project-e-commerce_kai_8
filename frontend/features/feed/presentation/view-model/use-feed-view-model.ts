@@ -11,6 +11,10 @@ import { appendFeedPage, type FeedItem } from "@/features/feed/domain/feed-page"
 import { formatPrice } from "@/features/feed/domain/format-price";
 import { distributeToColumns } from "@/features/feed/domain/masonry";
 import type { Product } from "@/features/feed/domain/product";
+import type {
+  FeedCardViewData,
+  ImpressionDomInfo,
+} from "@/features/feed/presentation/view-model/card-view-data";
 import type { ProfileSummary } from "@/shared/profile/profile-store";
 import { getFeedProfileSummary, logImpression } from "@/shared/signals/signals";
 import type { FeedPolicy, SourceBucket } from "@/shared/signals/types";
@@ -24,22 +28,11 @@ export const SIMILAR_PAGE_SIZE = 16;
 const COLUMN_COUNT = 2;
 const RETRY_DELAY_MS = 2000;
 
-export interface FeedCardViewData {
-  feedKey: string;
-  product: Product;
-  priceLabel: string;
-  width: number;
-  height: number;
-  /** 피드 전체에서의 노출 순위 (0부터) — 노출 이벤트 계측용 */
-  rank: number;
-}
-
-/** 카드가 뷰포트에 실제로 보였을 때 ProductCard가 알려주는 DOM 정보 */
-export interface ImpressionDomInfo {
-  col: number;
-  cardHeight: number;
-  screenY: number;
-}
+// 카드 표시 계약은 card-view-data로 분리 (검색 피드와 공유) — 기존 import 경로 유지용 재노출
+export type {
+  FeedCardViewData,
+  ImpressionDomInfo,
+} from "@/features/feed/presentation/view-model/card-view-data";
 
 export interface FeedOptions {
   /** 지정하면 이 상품(goodsNo) 기준 파생 시드 피드가 되고, 해당 상품은 제외된다 */
