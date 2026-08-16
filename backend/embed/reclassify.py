@@ -73,6 +73,16 @@ PROMPT_SETS = {
 }
 
 
+def merge_probs(sm, labels, n_labels=4):
+    """프롬프트별 softmax 확률을 병합 라벨로 합산해 (라벨, 신뢰도)를 낸다.
+
+    sm: (n, k) 프롬프트 확률, labels: (k,) 각 프롬프트의 병합 라벨.
+    같은 라벨 프롬프트의 확률 합이 그 라벨의 점수 — 최댓값이 최종 라벨·신뢰도.
+    """
+    merged = np.stack([sm[:, labels == k].sum(1) for k in range(n_labels)], axis=1)
+    return merged.argmax(1), merged.max(1)
+
+
 def embed_prompts(texts):
     import torch
     from transformers import AutoModel, AutoTokenizer
@@ -108,10 +118,7 @@ def score(conn, set_name):
         logits = vecs @ t.T * 100
         sm = np.exp(logits - logits.max(1, keepdims=True))
         sm /= sm.sum(1, keepdims=True)
-        # 라벨 병합: 같은 라벨 프롬프트의 확률 합 → 최종 라벨·신뢰도
-        merged = np.stack([sm[:, labels == k].sum(1) for k in range(4)], axis=1)
-        lab = merged.argmax(1)
-        conf = merged.max(1)
+        lab, conf = merge_probs(sm, labels)
         conn.executemany(
             "insert into reclass (set_name, goods_no, slot, label, conf) values (?,?,?,?,?)",
             [(set_name, r[0], r[1], int(lab[j]), float(conf[j])) for j, r in enumerate(rows)],
