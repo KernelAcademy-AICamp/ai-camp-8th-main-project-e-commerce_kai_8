@@ -20,4 +20,8 @@ export interface Product {
   gallery: string[];
   /** 유사 검색이 매칭한 이미지 — 있으면 카드에 이 이미지를 보여주고 상세를 이 슬라이드에서 연다 */
   matchedImage?: MatchedImage;
+  /** 개인화 믹스에서 이 상품이 귀속된 포트폴리오 유형 (노출 계측용, 설계 §7) */
+  sourceBucket?: string;
+  /** 신선도 플래그 — 올해 시즌 상품 (노출 계측용) */
+  isFresh?: boolean;
 }

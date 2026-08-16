@@ -1,4 +1,5 @@
 import type { Product } from "@/features/feed/domain/product";
+import { rpcPost } from "@/shared/supabase-rpc";
 
 // Supabase RPC c_feed_page 응답 행 (snake_case)
 export interface FeedProductDto {
@@ -30,29 +31,6 @@ export function mapFeedDto(dto: FeedProductDto): Product {
       path.startsWith("http") ? path : `${CDN_BASE}${path}`,
     ),
   };
-}
-
-/** Supabase RPC 호출 공통부 — 유사 상품 API(similar-api)와 공유한다 */
-export async function rpcPost<T>(
-  fn: string,
-  body: Record<string, unknown>,
-): Promise<T> {
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const key = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
-  if (!url || !key) {
-    throw new Error(
-      "NEXT_PUBLIC_SUPABASE_URL / NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY 환경변수가 필요합니다 (frontend/.env.example 참고)",
-    );
-  }
-  const res = await fetch(`${url}/rest/v1/rpc/${fn}`, {
-    method: "POST",
-    headers: { apikey: key, "Content-Type": "application/json" },
-    body: JSON.stringify(body),
-  });
-  if (!res.ok) {
-    throw new Error(`${fn} 실패: HTTP ${String(res.status)}`);
-  }
-  return (await res.json()) as T;
 }
 
 /**
