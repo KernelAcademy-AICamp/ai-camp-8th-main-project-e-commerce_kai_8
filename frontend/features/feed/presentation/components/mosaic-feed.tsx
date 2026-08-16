@@ -34,6 +34,7 @@ export function MosaicFeed() {
   // 검색 피드는 상세가 덮인 동안 멈춘다 (검색 모드가 아니면 query가 null이라 유휴)
   const searchFeed = useSearchFeed({
     query: search.submittedQuery,
+    queryRaw: search.submittedRaw,
     paused: detailOpen,
   });
   const { saveFeedScroll, suppressUntilRef } = useSearchScroll(search.submittedQuery);

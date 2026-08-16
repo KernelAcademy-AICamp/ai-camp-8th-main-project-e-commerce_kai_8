@@ -25,6 +25,9 @@ export function normalizeQuery(raw: string): string {
 export function useSearchState() {
   const [input, setInputState] = useState("");
   const [submittedQuery, setSubmittedQuery] = useState<string | null>(null);
+  // 계측용 원문 — 정규화가 무엇을 잘라냈는지 알아야 평가셋을 실사용대로 채운다
+  // (방침 O-32). 표시·페이징은 submittedQuery만 쓴다.
+  const [submittedRaw, setSubmittedRaw] = useState<string | null>(null);
   // submit이 호출 시점의 최신 입력을 보게 ref로 미러링 (렌더 지연과 무관)
   const inputRef = useRef("");
 
@@ -34,16 +37,21 @@ export function useSearchState() {
   }, []);
 
   const submit = useCallback(() => {
-    const normalized = normalizeQuery(inputRef.current);
+    const raw = inputRef.current;
+    const normalized = normalizeQuery(raw);
     // 빈 검색어 제출은 무시 — 검색 모드 진입/변경 없음 (설계 §4)
-    if (normalized !== "") setSubmittedQuery(normalized);
+    if (normalized !== "") {
+      setSubmittedQuery(normalized);
+      setSubmittedRaw(raw);
+    }
   }, []);
 
   const clear = useCallback(() => {
     inputRef.current = "";
     setInputState("");
     setSubmittedQuery(null);
+    setSubmittedRaw(null);
   }, []);
 
-  return { input, setInput, submittedQuery, submit, clear };
+  return { input, setInput, submittedQuery, submittedRaw, submit, clear };
 }

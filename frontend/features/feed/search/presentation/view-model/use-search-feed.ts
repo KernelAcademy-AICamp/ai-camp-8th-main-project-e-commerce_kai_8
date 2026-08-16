@@ -7,6 +7,8 @@ import { formatPrice } from "@/features/feed/domain/format-price";
 import { distributeToColumns } from "@/features/feed/domain/masonry";
 import type { FeedCardViewData } from "@/features/feed/presentation/view-model/card-view-data";
 import { fetchSearchPage } from "@/features/feed/search/data/search-api";
+import { logSearch } from "@/features/feed/search/data/search-log-api";
+import { touchSession } from "@/shared/signals/signals";
 
 const PAGE_SIZE = 30;
 const COLUMN_COUNT = 2;
@@ -14,6 +16,8 @@ const COLUMN_COUNT = 2;
 export interface SearchFeedOptions {
   /** 제출된 검색어 — null이면 검색 모드 아님 (아무것도 요청하지 않는다) */
   query: string | null;
+  /** 계측용 입력 원문 (방침 O-32). 없으면 정규화 질의로 대체한다 */
+  queryRaw?: string | null;
   /**
    * true면 추가 로드를 멈춘다 — 상세 레이어가 위를 덮었을 때 등.
    * 검색 그리드는 상세 아래에서도 DOM상 보이므로 명시적으로 막아야 한다 (설계 §2).
@@ -48,7 +52,7 @@ interface Progress {
  *
  * 실패는 자동 재시도 없이 오류 상태로 두고 retry()로만 다시 요청한다 (설계 §4).
  */
-export function useSearchFeed({ query, paused }: SearchFeedOptions) {
+export function useSearchFeed({ query, queryRaw, paused }: SearchFeedOptions) {
   const [result, setResult] = useState<ResultState>({
     query: null,
     items: [],
@@ -68,6 +72,14 @@ export function useSearchFeed({ query, paused }: SearchFeedOptions) {
   useEffect(() => {
     pausedRef.current = paused === true;
   }, [paused]);
+  // 계측 입력은 렌더와 무관해 ref로 미러링 (로드 콜백이 최신 값을 보게)
+  const queryRawRef = useRef(queryRaw);
+  useEffect(() => {
+    queryRawRef.current = queryRaw;
+  }, [queryRaw]);
+  // 검색어 한 번당 기록 한 번 — 오류 후 retry로 첫 페이지를 다시 불러도
+  // 중복 기록하지 않는다 (세대 번호로 판정)
+  const loggedGenerationRef = useRef(-1);
 
   // 검색어 전환 시 표시를 즉시 비운다 (React 권장 렌더 중 리셋) — 같은 검색어를
   // 해제 후 재제출해도 이전 세션의 결과·오류가 잠깐 비치지 않는다
@@ -102,9 +114,22 @@ export function useSearchFeed({ query, paused }: SearchFeedOptions) {
       return;
     progress.loading = true;
     const isFirstPage = progress.after === null;
+    // 검색어 기록 (방침 O-32). 첫 페이지가 결론난 시점에 한 번 — 결과 수를
+    // 함께 남기려면 응답을 기다려야 하기 때문이다. 실패는 결과 수 없이 남긴다.
+    const logOnce = (resultCount: number | null) => {
+      if (!isFirstPage || loggedGenerationRef.current === generation) return;
+      loggedGenerationRef.current = generation;
+      logSearch({
+        queryRaw: queryRawRef.current ?? query,
+        queryNorm: query,
+        resultCount,
+        sessionId: touchSession(),
+      });
+    };
     fetchSearchPage(query, progress.after, PAGE_SIZE)
       .then((products) => {
         if (generation !== generationRef.current) return; // 늦은 응답 폐기
+        logOnce(products.length);
         if (products.length === 0) progress.exhausted = true;
         else progress.after = products[products.length - 1].goodsNo;
         setResult((prev) => {
@@ -116,6 +141,7 @@ export function useSearchFeed({ query, paused }: SearchFeedOptions) {
       })
       .catch((cause: unknown) => {
         if (generation !== generationRef.current) return;
+        logOnce(null); // 결과 수를 모른 채로도 "무엇을 검색했는지"는 남긴다
         console.error("검색 로드 실패 — 수동 재시도 대기", cause);
         progress.error = true;
         setResult((prev) =>
