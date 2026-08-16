@@ -11,9 +11,14 @@ import { useCallback, useLayoutEffect, useRef } from "react";
  * 복원은 피드 그리드가 레이아웃에 복귀한 다음(레이아웃 효과 시점) 한다.
  * 카드 크기가 데이터에 있어 이미지 로드 전에도 문서 높이가 재현된다.
  */
+const SUPPRESS_WINDOW_MS = 600;
+
 export function useSearchScroll(submittedQuery: string | null) {
   const savedScrollYRef = useRef(0);
   const prevQueryRef = useRef<string | null>(null);
+  // 프로그램적 스크롤 직후의 이벤트를 축소/확장 판정에서 제외하기 위한
+  // 시각(performance.now 기준) — use-search-collapse가 소비한다 (설계 §2 전이 4)
+  const suppressUntilRef = useRef(0);
 
   /** 검색 제출 직전에 호출 — 피드에 있을 때만 위치를 저장한다 */
   const saveFeedScroll = useCallback(() => {
@@ -24,6 +29,7 @@ export function useSearchScroll(submittedQuery: string | null) {
     const prev = prevQueryRef.current;
     prevQueryRef.current = submittedQuery;
     if (prev === submittedQuery) return;
+    suppressUntilRef.current = performance.now() + SUPPRESS_WINDOW_MS;
     if (submittedQuery != null) {
       // 검색 진입·새 검색 제출: 결과 상단으로
       window.scrollTo(0, 0);
@@ -33,5 +39,5 @@ export function useSearchScroll(submittedQuery: string | null) {
     }
   }, [submittedQuery]);
 
-  return { saveFeedScroll };
+  return { saveFeedScroll, suppressUntilRef };
 }

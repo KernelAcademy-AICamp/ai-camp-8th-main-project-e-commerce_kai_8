@@ -7,6 +7,7 @@ import { FeedSkeleton } from "@/features/feed/presentation/components/feed-skele
 import { useFeedViewModel } from "@/features/feed/presentation/view-model/use-feed-view-model";
 import { FloatingSearch } from "@/features/feed/search/presentation/components/floating-search";
 import { SearchResults } from "@/features/feed/search/presentation/components/search-results";
+import { useSearchCollapse } from "@/features/feed/search/presentation/view-model/use-search-collapse";
 import { useSearchFeed } from "@/features/feed/search/presentation/view-model/use-search-feed";
 import { useSearchScroll } from "@/features/feed/search/presentation/view-model/use-search-scroll";
 import { useSearchState } from "@/features/feed/search/presentation/view-model/use-search-state";
@@ -34,7 +35,8 @@ export function MosaicFeed() {
     query: search.submittedQuery,
     paused: detailOpen,
   });
-  const { saveFeedScroll } = useSearchScroll(search.submittedQuery);
+  const { saveFeedScroll, suppressUntilRef } = useSearchScroll(search.submittedQuery);
+  const { collapsed, expand } = useSearchCollapse(suppressUntilRef);
 
   const liveLayers = stack.slice(-LIVE_DETAIL_LAYERS);
 
@@ -78,6 +80,8 @@ export function MosaicFeed() {
         onClear={search.clear}
         searching={searching}
         hidden={detailOpen}
+        collapsed={collapsed}
+        onExpand={expand}
       />
 
       {liveLayers.map((entry, i) => {
