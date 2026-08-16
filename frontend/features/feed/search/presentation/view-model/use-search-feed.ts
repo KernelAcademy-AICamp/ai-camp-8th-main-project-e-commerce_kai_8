@@ -21,7 +21,7 @@ export interface SearchFeedOptions {
   paused?: boolean;
 }
 
-/** 결과·진행 상태에 소유 검색어를 같이 저장한다 — 검색어가 바뀌면 무효 판별 근거 */
+/** 결과 상태 — 표시용으로 자신을 만든 검색어를 기억한다 */
 interface ResultState {
   query: string | null;
   items: FeedItem[];
@@ -29,8 +29,9 @@ interface ResultState {
   error: boolean;
 }
 
+/** 진행 상태 — 자신이 속한 세대를 기억한다 (커서·오류·로딩) */
 interface Progress {
-  query: string | null;
+  generation: number;
   after: number | null;
   exhausted: boolean;
   loading: boolean;
@@ -40,9 +41,10 @@ interface Progress {
 /**
  * 검색 결과 무한 스크롤 (설계 §2). 기본 피드 뷰모델과 분리된 단순 keyset 페이징.
  *
- * 경합 방어: 결과·진행 상태가 자신을 만든 검색어를 기억하고, 현재 검색어와
- * 다르면 응답 도착 시 버리고 렌더 파생 시 무시한다. 검색어 변경 시 별도
- * 리셋이 필요 없어(파생으로 즉시 빈 상태) effect setState·렌더 중 ref 변경이 없다.
+ * 경합 방어: 검색어가 바뀌거나 해제될 때마다 단조 증가하는 세대 번호를 올리고,
+ * 진행 상태·응답 채택은 세대가 일치할 때만 유효하다. 검색어 문자열 비교만으로는
+ * "해제 후 같은 검색어 재제출" 때 이전 세션(오류·커서·진행 중 응답)이 되살아난다
+ * (외부 리뷰 지적). 표시는 결과가 기억하는 검색어로 파생해 렌더 중 ref를 읽지 않는다.
  *
  * 실패는 자동 재시도 없이 오류 상태로 두고 retry()로만 다시 요청한다 (설계 §4).
  */
@@ -54,8 +56,9 @@ export function useSearchFeed({ query, paused }: SearchFeedOptions) {
     error: false,
   });
   // 커서·중복 로드 방지는 렌더링과 무관한 진행 상태라 ref로 둔다 (기본 피드 패턴)
+  const generationRef = useRef(0);
   const progressRef = useRef<Progress>({
-    query: null,
+    generation: 0,
     after: null,
     exhausted: false,
     loading: false,
@@ -66,12 +69,27 @@ export function useSearchFeed({ query, paused }: SearchFeedOptions) {
     pausedRef.current = paused === true;
   }, [paused]);
 
+  // 검색어 전환 시 표시를 즉시 비운다 (React 권장 렌더 중 리셋) — 같은 검색어를
+  // 해제 후 재제출해도 이전 세션의 결과·오류가 잠깐 비치지 않는다
+  const [lastQuery, setLastQuery] = useState(query);
+  if (lastQuery !== query) {
+    setLastQuery(query);
+    setResult({ query: null, items: [], ready: false, error: false });
+  }
+
+  // 검색어가 바뀌거나 해제될 때마다 새 세대 — 이전 요청·오류·커서를 무효화한다.
+  // (아래 로드 재개 효과보다 먼저 선언해 같은 커밋에서 세대가 먼저 오른다)
+  useEffect(() => {
+    generationRef.current += 1;
+  }, [query]);
+
   const loadMore = useCallback(() => {
     if (query == null) return;
-    if (progressRef.current.query !== query) {
-      // 새 검색: 진행 상태를 통째로 교체 — 이전 검색의 커서·오류·로딩이 개입하지 못한다
+    const generation = generationRef.current;
+    if (progressRef.current.generation !== generation) {
+      // 새 세대의 첫 로드: 진행 상태를 통째로 교체
       progressRef.current = {
-        query,
+        generation,
         after: null,
         exhausted: false,
         loading: false,
@@ -83,19 +101,21 @@ export function useSearchFeed({ query, paused }: SearchFeedOptions) {
     if (pausedRef.current || progress.loading || progress.exhausted || progress.error)
       return;
     progress.loading = true;
+    const isFirstPage = progress.after === null;
     fetchSearchPage(query, progress.after, PAGE_SIZE)
       .then((products) => {
-        if (progressRef.current.query !== query) return; // 늦은 응답 폐기
+        if (generation !== generationRef.current) return; // 늦은 응답 폐기
         if (products.length === 0) progress.exhausted = true;
         else progress.after = products[products.length - 1].goodsNo;
         setResult((prev) => {
-          const base = prev.query === query ? prev.items : [];
+          // 새 세대의 첫 페이지는 빈 목록에서 시작 — 이전 세션 결과에 잇지 않는다
+          const base = !isFirstPage && prev.query === query ? prev.items : [];
           const page = appendFeedPage(base, products);
           return { query, items: page.items, ready: true, error: false };
         });
       })
       .catch((cause: unknown) => {
-        if (progressRef.current.query !== query) return;
+        if (generation !== generationRef.current) return;
         console.error("검색 로드 실패 — 수동 재시도 대기", cause);
         progress.error = true;
         setResult((prev) =>
@@ -105,7 +125,7 @@ export function useSearchFeed({ query, paused }: SearchFeedOptions) {
         );
       })
       .finally(() => {
-        if (progressRef.current.query === query) progress.loading = false;
+        if (generation === generationRef.current) progress.loading = false;
       });
   }, [query]);
 
@@ -139,7 +159,8 @@ export function useSearchFeed({ query, paused }: SearchFeedOptions) {
   }, [loadMore, items.length]);
 
   const retry = useCallback(() => {
-    if (progressRef.current.query === query) progressRef.current.error = false;
+    if (progressRef.current.generation === generationRef.current)
+      progressRef.current.error = false;
     setResult((prev) => (prev.query === query ? { ...prev, error: false } : prev));
     loadMore();
   }, [query, loadMore]);

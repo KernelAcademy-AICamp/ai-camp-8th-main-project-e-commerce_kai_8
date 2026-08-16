@@ -156,6 +156,47 @@ describe("useSearchFeed", () => {
     });
   });
 
+  it("해제 후 같은 검색어를 재제출하면 이전 오류 상태가 되살아나지 않는다", async () => {
+    fetchSearchPageMock
+      .mockRejectedValueOnce(new Error("RPC 오류"))
+      .mockResolvedValueOnce([product(1)])
+      .mockResolvedValue([]);
+    const { result, setOptions } = renderSearchFeed({ query: "A" });
+    await waitFor(() => {
+      expect(result.current.error).toBe(true);
+    });
+    setOptions({ query: null });
+    setOptions({ query: "A" });
+    // 이전 세션의 오류가 첫 로드를 막거나 화면에 남으면 안 된다
+    await waitFor(() => {
+      expect(result.current.error).toBe(false);
+      expect(goodsNos(result)).toEqual([1]);
+    });
+  });
+
+  it("해제 후 같은 검색어를 재제출하면 이전 진행 중 응답을 버리고 새로 요청한다", async () => {
+    let resolveOld: (products: Product[]) => void = () => undefined;
+    const pendingOld = new Promise<Product[]>((resolve) => (resolveOld = resolve));
+    fetchSearchPageMock.mockImplementationOnce(() => pendingOld);
+    fetchSearchPageMock.mockResolvedValueOnce([product(1)]).mockResolvedValue([]);
+
+    const { result, setOptions } = renderSearchFeed({ query: "A" });
+    await waitFor(() => {
+      expect(fetchSearchPageMock).toHaveBeenCalledTimes(1);
+    });
+    setOptions({ query: null });
+    setOptions({ query: "A" });
+    // 새 세대의 요청이 처음 커서로 다시 나가야 한다 (이전 진행 중 요청을 새 것으로 오인 금지)
+    await waitFor(() => {
+      expect(fetchSearchPageMock).toHaveBeenNthCalledWith(2, "A", null, 30);
+      expect(goodsNos(result)).toEqual([1]);
+    });
+    resolveOld([product(99)]);
+    await waitFor(() => {
+      expect(goodsNos(result)).toEqual([1]);
+    });
+  });
+
   it("실패하면 자동 재시도 없이 오류 상태가 되고, retry로만 다시 요청한다", async () => {
     fetchSearchPageMock
       .mockRejectedValueOnce(new Error("RPC 오류"))

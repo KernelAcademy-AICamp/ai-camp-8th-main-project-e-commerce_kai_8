@@ -11,6 +11,7 @@ import { useSearchCollapse } from "@/features/feed/search/presentation/view-mode
 import { useSearchFeed } from "@/features/feed/search/presentation/view-model/use-search-feed";
 import { useSearchScroll } from "@/features/feed/search/presentation/view-model/use-search-scroll";
 import { useSearchState } from "@/features/feed/search/presentation/view-model/use-search-state";
+import { useConsentNoticeVisible } from "@/shared/consent-notice-store";
 
 // 산 채로 유지하는 상세 레이어 수 — 뒤로가기 시 재마운트(번쩍임) 없이 즉시
 // 드러난다. 이보다 깊은 체인은 메모리를 위해 언마운트한다(복귀 시에만 재로딩).
@@ -37,6 +38,7 @@ export function MosaicFeed() {
   });
   const { saveFeedScroll, suppressUntilRef } = useSearchScroll(search.submittedQuery);
   const { collapsed, expand } = useSearchCollapse(suppressUntilRef);
+  const bannerVisible = useConsentNoticeVisible();
 
   const liveLayers = stack.slice(-LIVE_DETAIL_LAYERS);
 
@@ -82,6 +84,7 @@ export function MosaicFeed() {
         hidden={detailOpen}
         collapsed={collapsed}
         onExpand={expand}
+        lifted={bannerVisible}
       />
 
       {liveLayers.map((entry, i) => {

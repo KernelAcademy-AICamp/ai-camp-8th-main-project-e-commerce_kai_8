@@ -2,7 +2,18 @@
 import { act, renderHook } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 
-import { useSearchState } from "@/features/feed/search/presentation/view-model/use-search-state";
+import {
+  normalizeQuery,
+  useSearchState,
+} from "@/features/feed/search/presentation/view-model/use-search-state";
+
+describe("normalizeQuery", () => {
+  it("서버 방어와 같은 정규화를 한다 — 앞 60자, 앞 5단어, 단일 공백", () => {
+    expect(normalizeQuery("  나이키   반팔  ")).toBe("나이키 반팔");
+    expect(normalizeQuery("하나 둘 셋 넷 다섯 여섯 일곱")).toBe("하나 둘 셋 넷 다섯");
+    expect(normalizeQuery("가".repeat(100))).toBe("가".repeat(60));
+  });
+});
 
 describe("useSearchState", () => {
   it("입력값 변경은 제출된 검색어에 영향을 주지 않는다", () => {

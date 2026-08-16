@@ -1,11 +1,6 @@
 "use client";
 
-import { useRef, useSyncExternalStore } from "react";
-
-import {
-  isConsentNoticeVisible,
-  subscribeConsentNotice,
-} from "@/shared/consent-notice-store";
+import { useRef } from "react";
 
 interface FloatingSearchProps {
   input: string;
@@ -20,6 +15,8 @@ interface FloatingSearchProps {
   collapsed: boolean;
   /** 축소 버튼을 탭했을 때 — 재확장 요청 */
   onExpand: () => void;
+  /** 하단 고지 배너가 보이는 동안 그 위로 물러난다 (설계 §3) */
+  lifted: boolean;
 }
 
 function SearchIcon() {
@@ -42,6 +39,7 @@ function SearchIcon() {
  * 첫 페이지 하단 중앙의 플로팅 검색창 (다크 테마 알약형 — 설계 §3).
  * 스크롤을 내리면 원형 버튼으로 축소되고, 탭하면 다시 펼쳐지며 입력에
  * 포커스가 잡힌다. 축소는 CSS 전환(너비·둥글기·내용 투명도)만 쓴다.
+ * 숨김 상태는 inert로 탭 순서·스크린리더에서도 제외한다.
  */
 export function FloatingSearch({
   input,
@@ -52,18 +50,14 @@ export function FloatingSearch({
   hidden,
   collapsed,
   onExpand,
+  lifted,
 }: FloatingSearchProps) {
   const inputRef = useRef<HTMLInputElement | null>(null);
-  // 최초 방문 고지 배너가 하단을 차지하는 동안은 그 위로 물러난다 (설계 §3)
-  const bannerVisible = useSyncExternalStore(
-    subscribeConsentNotice,
-    isConsentNoticeVisible,
-    () => false,
-  );
 
   return (
     <form
       role="search"
+      inert={hidden}
       onSubmit={(event) => {
         event.preventDefault();
         onSubmit();
@@ -73,27 +67,37 @@ export function FloatingSearch({
         hidden ? "pointer-events-none opacity-0" : "opacity-100"
       }`}
       style={{
-        bottom: bannerVisible
+        bottom: lifted
           ? "calc(9rem + env(safe-area-inset-bottom))"
           : "calc(1rem + env(safe-area-inset-bottom))",
       }}
     >
       <div
-        onClick={
-          collapsed
-            ? () => {
-                onExpand();
-                inputRef.current?.focus(); // 재확장하며 바로 입력 가능 (설계 §3)
-              }
-            : undefined
-        }
         className={`flex h-11 items-center overflow-hidden rounded-full border border-neutral-700/60 bg-neutral-900/90 shadow-lg shadow-black/40 backdrop-blur transition-[width,padding] duration-250 ease-out ${
-          collapsed ? "w-11 cursor-pointer justify-center px-0" : "w-full gap-2 px-4"
+          collapsed ? "w-11 justify-center px-0" : "w-full gap-2 px-4"
         }`}
-        role={collapsed ? "button" : undefined}
-        aria-label={collapsed ? "검색창 열기" : undefined}
       >
-        <SearchIcon />
+        {collapsed ? (
+          <button
+            type="button"
+            aria-label="검색창 열기"
+            onClick={() => {
+              onExpand();
+              inputRef.current?.focus(); // 재확장하며 바로 입력 가능 (설계 §3)
+            }}
+            className="flex h-full w-full cursor-pointer items-center justify-center"
+          >
+            <SearchIcon />
+          </button>
+        ) : (
+          <button
+            type="submit"
+            aria-label="검색"
+            className="flex h-6 w-6 shrink-0 cursor-pointer items-center justify-center"
+          >
+            <SearchIcon />
+          </button>
+        )}
         <input
           ref={inputRef}
           type="search"

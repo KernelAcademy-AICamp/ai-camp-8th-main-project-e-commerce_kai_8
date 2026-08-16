@@ -21,9 +21,10 @@
 --   검색어 앞 60자만, 공백류로 분리해 앞 5단어만, %·_·\는 리터럴로 escape.
 --   정화 후 남는 단어가 없으면 빈 결과(전체 스캔 금지). p_size는 [1,60] 클램프.
 
--- 초기 시도(trgm GIN)의 잔재 정리 — 없으면 무시된다
+-- 초기 시도(trgm GIN)의 잔재 정리 — 없으면 무시된다.
+-- 확장(pg_trgm)은 건드리지 않는다: 이 DB는 ecommerce 앱과 공유라(README)
+-- c_* 실험 정리가 DB 전역 확장을 삭제해선 안 된다 (외부 리뷰 지적).
 drop index if exists c_goods_search_trgm;
-drop extension if exists pg_trgm;
 
 drop table if exists c_search_text;
 

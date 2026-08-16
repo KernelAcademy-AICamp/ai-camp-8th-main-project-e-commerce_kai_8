@@ -24,14 +24,18 @@ beforeEach(() => {
 });
 
 describe("fetchSearchPage", () => {
-  it("c_search_page RPC를 검색어·커서·크기로 호출한다", async () => {
+  it("c_search_page RPC를 검색어·커서·크기·타임아웃으로 호출한다", async () => {
     rpcPostMock.mockResolvedValue([]);
     await fetchSearchPage("나이키 반팔", 456, 30);
-    expect(rpcPostMock).toHaveBeenCalledWith("c_search_page", {
-      p_query: "나이키 반팔",
-      p_after: 456,
-      p_size: 30,
-    });
+    expect(rpcPostMock).toHaveBeenCalledWith(
+      "c_search_page",
+      {
+        p_query: "나이키 반팔",
+        p_after: 456,
+        p_size: 30,
+      },
+      { timeoutMs: 10_000 },
+    );
   });
 
   it("응답을 기존 피드와 같은 매핑으로 Product로 바꾼다 (CDN 접두 포함)", async () => {

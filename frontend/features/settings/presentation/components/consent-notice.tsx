@@ -1,13 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { useState, useSyncExternalStore } from "react";
 
-import {
-  dismissConsentNotice,
-  isConsentNoticeVisible,
-  subscribeConsentNotice,
-} from "@/shared/consent-notice-store";
+import { useConsentNotice } from "@/features/settings/presentation/view-model/use-consent-notice";
 
 /**
  * 최초 방문 1회 개인화 고지 배너 (PRD P0).
@@ -16,21 +11,9 @@ import {
  * 위로 물러날 수 있게 (검색 설계 §3).
  */
 export function ConsentNotice() {
-  // SSR에서는 안 보이고(서버 스냅샷 false), 클라이언트에서 저장소를 읽어 결정한다
-  const visible = useSyncExternalStore(
-    subscribeConsentNotice,
-    isConsentNoticeVisible,
-    () => false,
-  );
-  // 저장 불가 환경에서도 이번 세션은 닫히도록 로컬 상태를 함께 둔다
-  const [dismissed, setDismissed] = useState(false);
+  const { visible, dismiss } = useConsentNotice();
 
-  if (!visible || dismissed) return null;
-
-  const dismiss = () => {
-    dismissConsentNotice();
-    setDismissed(true);
-  };
+  if (!visible) return null;
 
   return (
     <div className="fixed inset-x-0 bottom-0 z-40 mx-auto max-w-md p-3">
