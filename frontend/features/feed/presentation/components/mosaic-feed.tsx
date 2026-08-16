@@ -5,6 +5,11 @@ import { useDetailState } from "@/features/feed/detail/presentation/view-model/u
 import { FeedGrid } from "@/features/feed/presentation/components/feed-grid";
 import { FeedSkeleton } from "@/features/feed/presentation/components/feed-skeleton";
 import { useFeedViewModel } from "@/features/feed/presentation/view-model/use-feed-view-model";
+import { FloatingSearch } from "@/features/feed/search/presentation/components/floating-search";
+import { SearchResults } from "@/features/feed/search/presentation/components/search-results";
+import { useSearchFeed } from "@/features/feed/search/presentation/view-model/use-search-feed";
+import { useSearchScroll } from "@/features/feed/search/presentation/view-model/use-search-scroll";
+import { useSearchState } from "@/features/feed/search/presentation/view-model/use-search-state";
 
 // 산 채로 유지하는 상세 레이어 수 — 뒤로가기 시 재마운트(번쩍임) 없이 즉시
 // 드러난다. 이보다 깊은 체인은 메모리를 위해 언마운트한다(복귀 시에만 재로딩).
@@ -12,23 +17,67 @@ const LIVE_DETAIL_LAYERS = 3;
 
 export function MosaicFeed() {
   const { stack, open, requestClose, finishClose } = useDetailState();
-  // 상세가 덮고 있는 동안 피드의 추가 로드·노출 계측은 멈춘다 (유령 노출 방지)
+  const detailOpen = stack.length > 0;
+
+  // 검색 상태는 상세 스택과 같은 층위에서 항상 유지 — 상세가 열려도
+  // 입력값·검색 모드가 보존된다 (설계 §2). UI는 hidden으로만 숨긴다.
+  const search = useSearchState();
+  const searching = search.submittedQuery != null;
+
+  // 상세가 덮거나 검색 모드면 기본 피드의 추가 로드·노출 계측은 멈춘다.
+  // 그리드 DOM은 검색 모드에서 내리지만 훅 상태(상품·커서)는 여기 남는다.
   const { columns, sentinelRef, onImpress, showSkeleton } = useFeedViewModel({
-    paused: stack.length > 0,
+    paused: detailOpen || searching,
   });
+  // 검색 피드는 상세가 덮인 동안 멈춘다 (검색 모드가 아니면 query가 null이라 유휴)
+  const searchFeed = useSearchFeed({
+    query: search.submittedQuery,
+    paused: detailOpen,
+  });
+  const { saveFeedScroll } = useSearchScroll(search.submittedQuery);
 
   const liveLayers = stack.slice(-LIVE_DETAIL_LAYERS);
 
   return (
-    <div className="mx-auto max-w-md px-2 pt-2 pb-10">
-      {showSkeleton && <FeedSkeleton />}
-      <FeedGrid
-        columns={columns}
-        sentinelRef={sentinelRef}
-        onImpress={onImpress}
-        onSelect={(card, originRect) => {
-          open(card.product, originRect);
+    <div className="mx-auto max-w-md px-2 pt-2 pb-24">
+      {search.submittedQuery != null ? (
+        <SearchResults
+          query={search.submittedQuery}
+          columns={searchFeed.columns}
+          sentinelRef={searchFeed.sentinelRef}
+          showSkeleton={searchFeed.showSkeleton}
+          isEmpty={searchFeed.isEmpty}
+          error={searchFeed.error}
+          onRetry={searchFeed.retry}
+          onClear={search.clear}
+          onSelect={(card, originRect) => {
+            open(card.product, originRect);
+          }}
+        />
+      ) : (
+        <>
+          {showSkeleton && <FeedSkeleton />}
+          <FeedGrid
+            columns={columns}
+            sentinelRef={sentinelRef}
+            onImpress={onImpress}
+            onSelect={(card, originRect) => {
+              open(card.product, originRect);
+            }}
+          />
+        </>
+      )}
+
+      <FloatingSearch
+        input={search.input}
+        onInputChange={search.setInput}
+        onSubmit={() => {
+          saveFeedScroll(); // 피드 DOM이 내려가기 전에 위치 저장 (설계 §2 전이 1)
+          search.submit();
         }}
+        onClear={search.clear}
+        searching={searching}
+        hidden={detailOpen}
       />
 
       {liveLayers.map((entry, i) => {

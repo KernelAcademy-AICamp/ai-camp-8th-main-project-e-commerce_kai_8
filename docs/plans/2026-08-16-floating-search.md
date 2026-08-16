@@ -83,3 +83,7 @@ aTee 첫 페이지에 하단 플로팅 검색창을 추가한다. 검색어를 �
   - **경합 방어 구현:** 결과·진행 상태가 자신을 만든 검색어를 기억하고 현재 검색어와 다르면 응답 폐기·파생 무시 — 별도 리셋 effect가 필요 없어 엄격 린트(`set-state-in-effect`, 렌더 중 ref 변경 금지)와도 호환. 오류는 자동 재시도 없이 `retry()`로만 해제(오류 중 센티널 교차도 무시).
   - `FeedCardViewData`·`ImpressionDomInfo`를 `card-view-data.ts`로 분리(기존 경로 재노출로 호출부 무변경).
   - 테스트: A→B 늦은 A 폐기 · 요청 중 해제 폐기 · 커서 이어붙기 · paused · isEmpty · retry. 전체 91개 통과, `npm run check` 통과.
+- **3단계 완료 (2026-08-16):** 하단 플로팅 검색창(확장 상태) + 검색 모드 피드 교체.
+  - `floating-search.tsx`(알약형, safe-area, 상세 열림 시 hidden만), `search-results.tsx`(같은 FeedGrid 재사용, onImpress 미전달, 라벨·0건·오류 표시), `use-search-scroll.ts`(전이), MosaicFeed 통합(기본 피드 paused=상세∨검색, 검색 피드 paused=상세).
+  - **발견 — 스크롤 저장 시점 버그:** layout effect에서 저장하면 같은 커밋에서 피드 DOM이 먼저 짧아져 scrollY가 이미 클램프된 값(4000→479)으로 저장됨. 저장을 **제출 이벤트 시점**(DOM 교체 전)으로 옮겨 해결.
+  - Orca 브라우저 검증: '나이키'/'후드'/'반팔' 검색 → 결과 라벨·카드 30장 표시(`c_search_page 200`) → 결과 스크롤 시 30→60장 페이징 → 해제 시 피드 복귀 + 스크롤 정확 복원(7267→0→7267).
