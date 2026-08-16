@@ -41,13 +41,19 @@ export async function fetchMixPage(request: MixPageRequest): Promise<Product[]> 
     // 서버는 float 하나만 필요 — 소수 자리 축소로 페이로드를 줄인다
     w: Math.round(a.weight * 100) / 100,
   });
-  const dtos = await rpcPost<MixProductDto[]>("c_mix_page", {
-    p_session: request.sessionAnchors.map(toAnchor),
-    p_long: request.longAnchors.map(toAnchor),
-    p_exclude: request.exclude.slice(0, 600),
-    p_seed: request.seed,
-    p_size: request.size,
-    p_boost: request.boost,
-  });
+  const dtos = await rpcPost<MixProductDto[]>(
+    "c_mix_page",
+    {
+      p_session: request.sessionAnchors.map(toAnchor),
+      p_long: request.longAnchors.map(toAnchor),
+      p_exclude: request.exclude.slice(0, 600),
+      p_seed: request.seed,
+      p_size: request.size,
+      p_boost: request.boost,
+    },
+    // 서버가 느려질 때(콜드) 스켈레톤을 오래 잡고 있지 않도록 —
+    // 초과 시 호출부가 무작위 피드로 폴백한다 (설계 §9)
+    { timeoutMs: 5_000 },
+  );
   return dtos.map(mapMixDto);
 }

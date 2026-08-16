@@ -7,6 +7,8 @@ export async function rpcPost<T>(
   options?: {
     /** 페이지 이탈 중에도 전송을 이어가는 fetch keepalive (이벤트 로그용) */
     keepalive?: boolean;
+    /** 이 시간 안에 응답이 없으면 중단한다 — 폴백이 있는 호출용 (개인화 믹스 등) */
+    timeoutMs?: number;
   },
 ): Promise<T> {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -21,6 +23,10 @@ export async function rpcPost<T>(
     headers: { apikey: key, "Content-Type": "application/json" },
     body: JSON.stringify(body),
     keepalive: options?.keepalive ?? false,
+    signal:
+      options?.timeoutMs !== undefined && typeof AbortSignal !== "undefined"
+        ? AbortSignal.timeout(options.timeoutMs)
+        : undefined,
   });
   if (!res.ok) {
     throw new Error(`${fn} 실패: HTTP ${String(res.status)}`);
