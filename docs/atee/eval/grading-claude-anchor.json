@@ -1,0 +1,676 @@
+{
+  "meta": {
+    "grader": "claude-opus-5",
+    "role": "독립 채점자 2 — ⚠️ 사람이 아니다. 설계 §8.4가 요구하는 인간 앵커를 대체하지 않는다.",
+    "basis": "docs/atee/eval/rubric.md 만 보고 텍스트 메타로 판정. Codex 판정은 보지 않은 상태에서 매겼다.",
+    "sample": "개발셋 층화 표본 (질의 단위 추출)",
+    "count": 133
+  },
+  "grades": [
+    {
+      "itemId": "b14-2999264",
+      "grade": 2,
+      "needsImage": false
+    },
+    {
+      "itemId": "b14-3068859",
+      "grade": 2,
+      "needsImage": false
+    },
+    {
+      "itemId": "b14-3068777",
+      "grade": 2,
+      "needsImage": false
+    },
+    {
+      "itemId": "b14-3002728",
+      "grade": 2,
+      "needsImage": false
+    },
+    {
+      "itemId": "b14-3068727",
+      "grade": 2,
+      "needsImage": false
+    },
+    {
+      "itemId": "b14-3045385",
+      "grade": 2,
+      "needsImage": false
+    },
+    {
+      "itemId": "b14-3034140",
+      "grade": 2,
+      "needsImage": false
+    },
+    {
+      "itemId": "b14-3058491",
+      "grade": 2,
+      "needsImage": false
+    },
+    {
+      "itemId": "b14-3045388",
+      "grade": 2,
+      "needsImage": false
+    },
+    {
+      "itemId": "b14-2999269",
+      "grade": 2,
+      "needsImage": false
+    },
+    {
+      "itemId": "b14-3068756",
+      "grade": 2,
+      "needsImage": false
+    },
+    {
+      "itemId": "b14-3068767",
+      "grade": 2,
+      "needsImage": false
+    },
+    {
+      "itemId": "b14-3034141",
+      "grade": 2,
+      "needsImage": false
+    },
+    {
+      "itemId": "b14-3045369",
+      "grade": 2,
+      "needsImage": false
+    },
+    {
+      "itemId": "b14-3002727",
+      "grade": 2,
+      "needsImage": false
+    },
+    {
+      "itemId": "b14-3058472",
+      "grade": 2,
+      "needsImage": false
+    },
+    {
+      "itemId": "b14-3034117",
+      "grade": 2,
+      "needsImage": false
+    },
+    {
+      "itemId": "b14-3068850",
+      "grade": 2,
+      "needsImage": false
+    },
+    {
+      "itemId": "b14-3034112",
+      "grade": 2,
+      "needsImage": false
+    },
+    {
+      "itemId": "b14-3068759",
+      "grade": 2,
+      "needsImage": false
+    },
+    {
+      "itemId": "b10-1992655",
+      "grade": 2,
+      "needsImage": false
+    },
+    {
+      "itemId": "b10-1918192",
+      "grade": 2,
+      "needsImage": false
+    },
+    {
+      "itemId": "b10-1893629",
+      "grade": 2,
+      "needsImage": false
+    },
+    {
+      "itemId": "b10-1988884",
+      "grade": 2,
+      "needsImage": false
+    },
+    {
+      "itemId": "b10-1936541",
+      "grade": 2,
+      "needsImage": false
+    },
+    {
+      "itemId": "b10-1689664",
+      "grade": 2,
+      "needsImage": false
+    },
+    {
+      "itemId": "b10-1936585",
+      "grade": 2,
+      "needsImage": false
+    },
+    {
+      "itemId": "b10-1992668",
+      "grade": 2,
+      "needsImage": false
+    },
+    {
+      "itemId": "b10-1918160",
+      "grade": 2,
+      "needsImage": false
+    },
+    {
+      "itemId": "b10-1988875",
+      "grade": 2,
+      "needsImage": false
+    },
+    {
+      "itemId": "b10-1891332",
+      "grade": 2,
+      "needsImage": false
+    },
+    {
+      "itemId": "b10-1891320",
+      "grade": 2,
+      "needsImage": false
+    },
+    {
+      "itemId": "b10-1893610",
+      "grade": 2,
+      "needsImage": false
+    },
+    {
+      "itemId": "b10-1629866",
+      "grade": 2,
+      "needsImage": false
+    },
+    {
+      "itemId": "b10-1629868",
+      "grade": 2,
+      "needsImage": false
+    },
+    {
+      "itemId": "b10-1891327",
+      "grade": 2,
+      "needsImage": false
+    },
+    {
+      "itemId": "b10-1689680",
+      "grade": 2,
+      "needsImage": false
+    },
+    {
+      "itemId": "b10-1891340",
+      "grade": 2,
+      "needsImage": false
+    },
+    {
+      "itemId": "b10-1629864",
+      "grade": 2,
+      "needsImage": false
+    },
+    {
+      "itemId": "b10-1992650",
+      "grade": 2,
+      "needsImage": false
+    },
+    {
+      "itemId": "b16-3449444",
+      "grade": 2,
+      "needsImage": false
+    },
+    {
+      "itemId": "b16-3449439",
+      "grade": 2,
+      "needsImage": false
+    },
+    {
+      "itemId": "b16-3449493",
+      "grade": 2,
+      "needsImage": false
+    },
+    {
+      "itemId": "b16-3449437",
+      "grade": 2,
+      "needsImage": false
+    },
+    {
+      "itemId": "b16-3449394",
+      "grade": 2,
+      "needsImage": false
+    },
+    {
+      "itemId": "b16-3449465",
+      "grade": 2,
+      "needsImage": false
+    },
+    {
+      "itemId": "b16-3449443",
+      "grade": 2,
+      "needsImage": false
+    },
+    {
+      "itemId": "b16-3449526",
+      "grade": 2,
+      "needsImage": false
+    },
+    {
+      "itemId": "b16-3449470",
+      "grade": 2,
+      "needsImage": false
+    },
+    {
+      "itemId": "b16-3449492",
+      "grade": 2,
+      "needsImage": false
+    },
+    {
+      "itemId": "b16-3449500",
+      "grade": 2,
+      "needsImage": false
+    },
+    {
+      "itemId": "b16-3449446",
+      "grade": 2,
+      "needsImage": false
+    },
+    {
+      "itemId": "b16-3449501",
+      "grade": 2,
+      "needsImage": false
+    },
+    {
+      "itemId": "b16-3449464",
+      "grade": 2,
+      "needsImage": false
+    },
+    {
+      "itemId": "b16-3449525",
+      "grade": 2,
+      "needsImage": false
+    },
+    {
+      "itemId": "b16-3449387",
+      "grade": 2,
+      "needsImage": false
+    },
+    {
+      "itemId": "b16-3449445",
+      "grade": 2,
+      "needsImage": false
+    },
+    {
+      "itemId": "b16-3449430",
+      "grade": 2,
+      "needsImage": false
+    },
+    {
+      "itemId": "b16-3449468",
+      "grade": 2,
+      "needsImage": false
+    },
+    {
+      "itemId": "b16-3449511",
+      "grade": 2,
+      "needsImage": false
+    },
+    {
+      "itemId": "a-g2-05-3323264",
+      "grade": 2,
+      "needsImage": false
+    },
+    {
+      "itemId": "a-g2-05-6507375",
+      "grade": 2,
+      "needsImage": false
+    },
+    {
+      "itemId": "a-g2-05-3323259",
+      "grade": 2,
+      "needsImage": false
+    },
+    {
+      "itemId": "a-g2-05-3323261",
+      "grade": 2,
+      "needsImage": false
+    },
+    {
+      "itemId": "a-g2-05-6507373",
+      "grade": 2,
+      "needsImage": false
+    },
+    {
+      "itemId": "g15-4939109",
+      "grade": 0,
+      "needsImage": false
+    },
+    {
+      "itemId": "g15-4913962",
+      "grade": 0,
+      "needsImage": false
+    },
+    {
+      "itemId": "g15-4980898",
+      "grade": 0,
+      "needsImage": false
+    },
+    {
+      "itemId": "g15-6724360",
+      "grade": 0,
+      "needsImage": false
+    },
+    {
+      "itemId": "g15-4926867",
+      "grade": 0,
+      "needsImage": false
+    },
+    {
+      "itemId": "g15-4984083",
+      "grade": 2,
+      "needsImage": false
+    },
+    {
+      "itemId": "g15-6685284",
+      "grade": 0,
+      "needsImage": false
+    },
+    {
+      "itemId": "g15-4959539",
+      "grade": 0,
+      "needsImage": false
+    },
+    {
+      "itemId": "g15-4992057",
+      "grade": 0,
+      "needsImage": false
+    },
+    {
+      "itemId": "g15-6644422",
+      "grade": 0,
+      "needsImage": false
+    },
+    {
+      "itemId": "g15-4959517",
+      "grade": 0,
+      "needsImage": false
+    },
+    {
+      "itemId": "g15-6709059",
+      "grade": 0,
+      "needsImage": false
+    },
+    {
+      "itemId": "g15-4144853",
+      "grade": 1,
+      "needsImage": false
+    },
+    {
+      "itemId": "g15-6671291",
+      "grade": 0,
+      "needsImage": false
+    },
+    {
+      "itemId": "g15-4992028",
+      "grade": 0,
+      "needsImage": false
+    },
+    {
+      "itemId": "g15-4910459",
+      "grade": 0,
+      "needsImage": false
+    },
+    {
+      "itemId": "a-g2-03-4174758",
+      "grade": 2,
+      "needsImage": false
+    },
+    {
+      "itemId": "a-g2-03-5077452",
+      "grade": 2,
+      "needsImage": false
+    },
+    {
+      "itemId": "a-g2-03-4972034",
+      "grade": 2,
+      "needsImage": false
+    },
+    {
+      "itemId": "a-g2-03-5150346",
+      "grade": 1,
+      "needsImage": false
+    },
+    {
+      "itemId": "a-g2-03-4032729",
+      "grade": 2,
+      "needsImage": false
+    },
+    {
+      "itemId": "a-g2-03-5150350",
+      "grade": 1,
+      "needsImage": false
+    },
+    {
+      "itemId": "a-g2-03-4032739",
+      "grade": 1,
+      "needsImage": false
+    },
+    {
+      "itemId": "a-g2-03-2502350",
+      "grade": 2,
+      "needsImage": false
+    },
+    {
+      "itemId": "a-g2-03-4663569",
+      "grade": 2,
+      "needsImage": false
+    },
+    {
+      "itemId": "a-g2-03-4972037",
+      "grade": 2,
+      "needsImage": false
+    },
+    {
+      "itemId": "a-g2-03-5092396",
+      "grade": 2,
+      "needsImage": false
+    },
+    {
+      "itemId": "a-g2-03-5154831",
+      "grade": 2,
+      "needsImage": false
+    },
+    {
+      "itemId": "a-g2-03-4032812",
+      "grade": 1,
+      "needsImage": false
+    },
+    {
+      "itemId": "a-g2-03-4276774",
+      "grade": 2,
+      "needsImage": false
+    },
+    {
+      "itemId": "a-g2-03-5011826",
+      "grade": 2,
+      "needsImage": false
+    },
+    {
+      "itemId": "a-g2-03-4107425",
+      "grade": 2,
+      "needsImage": false
+    },
+    {
+      "itemId": "a-g2-03-4279799",
+      "grade": 2,
+      "needsImage": false
+    },
+    {
+      "itemId": "a-g2-03-4433819",
+      "grade": 2,
+      "needsImage": false
+    },
+    {
+      "itemId": "a-g2-03-4279794",
+      "grade": 2,
+      "needsImage": false
+    },
+    {
+      "itemId": "a-g2-03-4152731",
+      "grade": 2,
+      "needsImage": false
+    },
+    {
+      "itemId": "v14-438201",
+      "grade": 2,
+      "needsImage": false
+    },
+    {
+      "itemId": "v14-503413",
+      "grade": 2,
+      "needsImage": false
+    },
+    {
+      "itemId": "v14-401056",
+      "grade": 2,
+      "needsImage": false
+    },
+    {
+      "itemId": "v14-438202",
+      "grade": 2,
+      "needsImage": false
+    },
+    {
+      "itemId": "v14-489550",
+      "grade": 2,
+      "needsImage": false
+    },
+    {
+      "itemId": "v14-503399",
+      "grade": 2,
+      "needsImage": false
+    },
+    {
+      "itemId": "v14-550020",
+      "grade": 2,
+      "needsImage": false
+    },
+    {
+      "itemId": "v14-500914",
+      "grade": 2,
+      "needsImage": false
+    },
+    {
+      "itemId": "v14-546361",
+      "grade": 2,
+      "needsImage": false
+    },
+    {
+      "itemId": "v14-489549",
+      "grade": 2,
+      "needsImage": false
+    },
+    {
+      "itemId": "v14-538836",
+      "grade": 2,
+      "needsImage": false
+    },
+    {
+      "itemId": "v14-441684",
+      "grade": 2,
+      "needsImage": false
+    },
+    {
+      "itemId": "v14-441686",
+      "grade": 2,
+      "needsImage": false
+    },
+    {
+      "itemId": "v14-532246",
+      "grade": 2,
+      "needsImage": false
+    },
+    {
+      "itemId": "v14-500915",
+      "grade": 2,
+      "needsImage": false
+    },
+    {
+      "itemId": "v14-540420",
+      "grade": 2,
+      "needsImage": false
+    },
+    {
+      "itemId": "v14-540421",
+      "grade": 2,
+      "needsImage": false
+    },
+    {
+      "itemId": "v14-438204",
+      "grade": 2,
+      "needsImage": false
+    },
+    {
+      "itemId": "v14-438203",
+      "grade": 2,
+      "needsImage": false
+    },
+    {
+      "itemId": "v14-401811",
+      "grade": 2,
+      "needsImage": false
+    },
+    {
+      "itemId": "v16-6459224",
+      "grade": 2,
+      "needsImage": false
+    },
+    {
+      "itemId": "v16-3287438",
+      "grade": 2,
+      "needsImage": false
+    },
+    {
+      "itemId": "v16-3286250",
+      "grade": 2,
+      "needsImage": false
+    },
+    {
+      "itemId": "a-g4-04-3211176",
+      "grade": 2,
+      "needsImage": false
+    },
+    {
+      "itemId": "a-g4-04-4862620",
+      "grade": 2,
+      "needsImage": false
+    },
+    {
+      "itemId": "a-g4-04-4862619",
+      "grade": 2,
+      "needsImage": false
+    },
+    {
+      "itemId": "a-g4-04-6122726",
+      "grade": 2,
+      "needsImage": false
+    },
+    {
+      "itemId": "a-g4-04-6371862",
+      "grade": 2,
+      "needsImage": false
+    },
+    {
+      "itemId": "a-g4-04-6371861",
+      "grade": 2,
+      "needsImage": false
+    },
+    {
+      "itemId": "a-g4-04-4862618",
+      "grade": 2,
+      "needsImage": false
+    },
+    {
+      "itemId": "a-g4-04-6122725",
+      "grade": 2,
+      "needsImage": false
+    },
+    {
+      "itemId": "a-g4-04-3211175",
+      "grade": 2,
+      "needsImage": false
+    }
+  ]
+}

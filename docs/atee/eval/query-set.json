@@ -1,0 +1,1469 @@
+{
+  "meta": {
+    "purpose": "검색 평가 질의 세트 — 씨앗 + 기계 생성 + 작성분을 합쳐 질의 가족 단위로 층화 분할한 것.",
+    "generatedBy": "backend/eval/build_query_set.py (손으로 고치지 말 것 — 생성기를 고치고 다시 돌린다)",
+    "plan": "docs/plans/2026-08-17-search-eval-harness.md 2단계",
+    "targets": "docs/atee/eval/bucket-targets.json",
+    "lockNotice": "⚠️ 잠금: partition이 'progress'·'holdout'인 항목은 튜닝에 쓰지 않는다. progress는 각 단계(A·B·C·D) 끝에서 한 번씩만, holdout은 0단계 기준선과 최종 판정 딱 두 번만 연다. 열람할 때마다 계획의 실행 기록에 남긴다.",
+    "openLog": [
+      {
+        "partition": "holdout",
+        "when": "0단계 6단계 기준선 측정",
+        "status": "예정"
+      },
+      {
+        "partition": "holdout",
+        "when": "전체 완료 최종 판정",
+        "status": "예정"
+      }
+    ],
+    "partitionRules": {
+      "dev": "자유롭게 본다. 파라미터 튜닝·기준서 보정·채점자 검증을 여기서만 한다.",
+      "progress": "각 단계(A·B·C·D) 끝에서 한 번씩 열어 진행 확인. 튜닝 금지.",
+      "holdout": "0단계 기준선 측정과 최종 판정, 딱 두 번만 연다. 튜닝 금지."
+    },
+    "counts": {
+      "G5": {
+        "total": 16,
+        "dev": 8,
+        "progress": 4,
+        "holdout": 4
+      },
+      "G6": {
+        "total": 15,
+        "dev": 8,
+        "progress": 4,
+        "holdout": 3
+      },
+      "G2": {
+        "total": 22,
+        "dev": 11,
+        "progress": 6,
+        "holdout": 5
+      },
+      "R1": {
+        "total": 16,
+        "dev": 9,
+        "progress": 4,
+        "holdout": 3
+      },
+      "G4": {
+        "total": 22,
+        "dev": 11,
+        "progress": 6,
+        "holdout": 5
+      },
+      "G1": {
+        "total": 18,
+        "dev": 9,
+        "progress": 4,
+        "holdout": 5
+      },
+      "G3": {
+        "total": 18,
+        "dev": 10,
+        "progress": 3,
+        "holdout": 5
+      }
+    },
+    "total": 127
+  },
+  "entries": [
+    {
+      "id": "s01",
+      "bucket": "G5",
+      "query": "등에 프린트가 없는 와인색 여자 티셔츠",
+      "src": "manual",
+      "family": "s01",
+      "tags": [],
+      "note": null,
+      "confidence": null,
+      "partition": "holdout"
+    },
+    {
+      "id": "s02",
+      "bucket": "G6",
+      "query": "여자 시스루 검은색 여름니트",
+      "src": "manual",
+      "family": "s02",
+      "tags": [
+        "G4"
+      ],
+      "note": "니트는 우리 카탈로그(반소매 티셔츠) 밖",
+      "confidence": null,
+      "partition": "progress"
+    },
+    {
+      "id": "s03",
+      "bucket": "G2",
+      "query": "동물로고 티셔츠",
+      "src": "manual",
+      "family": "s03",
+      "tags": [],
+      "note": null,
+      "confidence": null,
+      "partition": "dev"
+    },
+    {
+      "id": "s04",
+      "bucket": "G2",
+      "query": "하와이안 셔츠 xl",
+      "src": "manual",
+      "family": "s04",
+      "tags": [
+        "사이즈"
+      ],
+      "note": "ecommerce 원본은 '하와이안 프린팅 티는 존재 가능'이라고 본다 — 0건 단정 불가. 우리 카탈로그에서 실제 0건인지 확인한 뒤 G6 여부를 정한다(2차 리뷰)",
+      "confidence": null,
+      "partition": "holdout"
+    },
+    {
+      "id": "s05",
+      "bucket": "G6",
+      "query": "보풀안생기는 여름니트",
+      "src": "manual",
+      "family": "s05",
+      "tags": [
+        "G4"
+      ],
+      "note": null,
+      "confidence": null,
+      "partition": "dev"
+    },
+    {
+      "id": "s06",
+      "bucket": "G2",
+      "query": "오버핏 7부 티셔츠",
+      "src": "manual",
+      "family": "s06",
+      "tags": [],
+      "note": null,
+      "confidence": null,
+      "partition": "progress"
+    },
+    {
+      "id": "s07",
+      "bucket": "R1",
+      "query": "클럽에 갈때 입을옷 추천해줘 - 여자야",
+      "src": "manual",
+      "family": "s07",
+      "tags": [],
+      "note": null,
+      "confidence": null,
+      "partition": "dev"
+    },
+    {
+      "id": "s08",
+      "bucket": "R1",
+      "query": "바다에서 비키니 위에 입을 얇은 티셔츠",
+      "src": "manual",
+      "family": "s08",
+      "tags": [
+        "G5"
+      ],
+      "note": "정답 방향이 논쟁 중 — 커버 목적이면 비침 없음, 시스루 의도면 있음. ecommerce parser-golden 리뷰포인트 ⑤와 동일 쟁점. rubric에서 low로 분리한다.",
+      "confidence": "low",
+      "partition": "dev"
+    },
+    {
+      "id": "s09",
+      "bucket": "R1",
+      "query": "요즘 유행하는옷",
+      "src": "manual",
+      "family": "s09",
+      "tags": [],
+      "note": null,
+      "confidence": null,
+      "partition": "dev"
+    },
+    {
+      "id": "s10",
+      "bucket": "G5",
+      "query": "목이 안늘어나는 기본 티셔츠",
+      "src": "manual",
+      "family": "s10",
+      "tags": [],
+      "note": null,
+      "confidence": null,
+      "partition": "progress"
+    },
+    {
+      "id": "s11",
+      "bucket": "R1",
+      "query": "싸이 흠뻑쇼갈때 입을옷",
+      "src": "manual",
+      "family": "s11",
+      "tags": [],
+      "note": null,
+      "confidence": null,
+      "partition": "dev"
+    },
+    {
+      "id": "s12",
+      "bucket": "G4",
+      "query": "묻어도 세탁이 잘되는 소재의 흰티셔츠",
+      "src": "manual",
+      "family": "s12",
+      "tags": [],
+      "note": null,
+      "confidence": null,
+      "partition": "holdout"
+    },
+    {
+      "id": "s13",
+      "bucket": "R1",
+      "query": "웨이브체형한테 어울리는 여자티셔츠",
+      "src": "manual",
+      "family": "s13",
+      "tags": [],
+      "note": null,
+      "confidence": null,
+      "partition": "dev"
+    },
+    {
+      "id": "s14",
+      "bucket": "R1",
+      "query": "흰 롱치마랑 입으면 잘어울리는 여자 티셔츠. 무늬가 있었으면 좋겠어",
+      "src": "manual",
+      "family": "s14",
+      "tags": [],
+      "note": null,
+      "confidence": null,
+      "partition": "progress"
+    },
+    {
+      "id": "s15",
+      "bucket": "R1",
+      "query": "데이트갈때 입을 여성스워보이는 티셔츠",
+      "src": "manual",
+      "family": "s15",
+      "tags": [
+        "오타"
+      ],
+      "note": null,
+      "confidence": null,
+      "partition": "dev"
+    },
+    {
+      "id": "s16",
+      "bucket": "R1",
+      "query": "팔뚝살 커버 여름 반팔 티셔츠",
+      "src": "manual",
+      "family": "s16",
+      "tags": [],
+      "note": null,
+      "confidence": null,
+      "partition": "dev"
+    },
+    {
+      "id": "s17",
+      "bucket": "R1",
+      "query": "상체통통 여자가 입어도 예쁜 티셔츠",
+      "src": "manual",
+      "family": "s17",
+      "tags": [],
+      "note": null,
+      "confidence": null,
+      "partition": "progress"
+    },
+    {
+      "id": "s18",
+      "bucket": "G2",
+      "query": "브이넥 오버핏 티셔츠",
+      "src": "manual",
+      "family": "s18",
+      "tags": [],
+      "note": null,
+      "confidence": null,
+      "partition": "dev"
+    },
+    {
+      "id": "s19",
+      "bucket": "G2",
+      "query": "보트넥 나염 티셔츠",
+      "src": "manual",
+      "family": "s19",
+      "tags": [],
+      "note": null,
+      "confidence": null,
+      "partition": "progress"
+    },
+    {
+      "id": "s20",
+      "bucket": "R1",
+      "query": "회사에 입고갈만한 깔끔한 티셔츠",
+      "src": "manual",
+      "family": "s20",
+      "tags": [],
+      "note": null,
+      "confidence": null,
+      "partition": "progress"
+    },
+    {
+      "id": "s21",
+      "bucket": "R1",
+      "query": "커플티로 입을수 있게 사이즈 여자꺼랑 남자꺼 사이즈 있는걸로 추천해줘",
+      "src": "manual",
+      "family": "s21",
+      "tags": [],
+      "note": null,
+      "confidence": null,
+      "partition": "holdout"
+    },
+    {
+      "id": "s22",
+      "bucket": "R1",
+      "query": "골프칠때 입을건데 이쁘면서 시원한 운동복으로 보여줘",
+      "src": "manual",
+      "family": "s22",
+      "tags": [],
+      "note": null,
+      "confidence": null,
+      "partition": "holdout"
+    },
+    {
+      "id": "s23",
+      "bucket": "G5",
+      "query": "디즈니 캐릭터인데 그림이 너무 크진않았으면 좋겠어",
+      "src": "manual",
+      "family": "s23",
+      "tags": [
+        "G7"
+      ],
+      "note": "정도 부정 — 그래픽 크기 축이 필요(C1 zero-shot 후보)",
+      "confidence": null,
+      "partition": "dev"
+    },
+    {
+      "id": "s24",
+      "bucket": "R1",
+      "query": "친구들4명과 우정티셔츠로 맞출건데 비슷한데 다른 그림이 있는걸로 추천해줘",
+      "src": "manual",
+      "family": "s24",
+      "tags": [],
+      "note": null,
+      "confidence": null,
+      "partition": "holdout"
+    },
+    {
+      "id": "s25",
+      "bucket": "G5",
+      "query": "너무 스포츠스러운거 말고 여성스러운 핏이 있는 티셔츠를 보여줘",
+      "src": "manual",
+      "family": "s25",
+      "tags": [
+        "G7"
+      ],
+      "note": null,
+      "confidence": null,
+      "partition": "dev"
+    },
+    {
+      "id": "s26",
+      "bucket": "R1",
+      "query": "요가할때 입을 티셔츠인데 하늘하늘한 땀흡수 잘되는소재를 찾고있어",
+      "src": "manual",
+      "family": "s26",
+      "tags": [],
+      "note": null,
+      "confidence": null,
+      "partition": "progress"
+    },
+    {
+      "id": "s27",
+      "bucket": "G5",
+      "query": "젖꼭지가 튀어나와보이지않게 두꺼운 남자 여름 티셔츠",
+      "src": "manual",
+      "family": "s27",
+      "tags": [],
+      "note": null,
+      "confidence": null,
+      "partition": "dev"
+    },
+    {
+      "id": "s28",
+      "bucket": "G4",
+      "query": "40수 흰색 면티셔츠",
+      "src": "manual",
+      "family": "s28",
+      "tags": [
+        "사이즈"
+      ],
+      "note": "40수는 면 밀도 규격 — 우리 카탈로그에 해당 필드가 없다",
+      "confidence": null,
+      "partition": "progress"
+    },
+    {
+      "id": "g01",
+      "bucket": "R1",
+      "query": "내가 105 입는데 노란색 신발에 어울리는 티셔츠 추천해줘",
+      "src": "ga4",
+      "family": "fam-yellow-shoes",
+      "tags": [],
+      "note": "함정: '노란색'은 신발 색 — 옷 색 하드필터 금지. 신발과의 코디가 핵심이라 R1(외부맥락)으로 재배정(2차 리뷰)",
+      "confidence": null,
+      "partition": "dev"
+    },
+    {
+      "id": "g02",
+      "bucket": "G2",
+      "query": "크롭티",
+      "src": "ga4",
+      "family": "g02",
+      "tags": [],
+      "note": "짧은 키워드. ecommerce에서는 핏 vocab에 '크롭'이 없고 스톱워드라 도달 불가였다 — 우리도 어휘 커버리지 확인 대상",
+      "confidence": null,
+      "partition": "dev"
+    },
+    {
+      "id": "g03",
+      "bucket": "G2",
+      "query": "파란색 줄무늬 티",
+      "src": "ga4",
+      "family": "g03",
+      "tags": [],
+      "note": null,
+      "confidence": null,
+      "partition": "dev"
+    },
+    {
+      "id": "g04",
+      "bucket": "G5",
+      "query": "간지나는티 제일 인기있고 소매에 프린팅이 있으면 좋겠고 음 또 노란색이 없으면 좋겠다 그리고 좀 땀이 흡수가 잘되면 좋을듯",
+      "src": "ga4",
+      "family": "g04",
+      "tags": [
+        "정렬"
+      ],
+      "note": "'노란색이 없으면' = 색 제외. '제일 인기' = 인기순 정렬 의도. 소매 프린트 위치·땀 흡수는 소프트",
+      "confidence": null,
+      "partition": "holdout"
+    },
+    {
+      "id": "g05",
+      "bucket": "R1",
+      "query": "내가 105 입는데 노란색 신발에 어울리는 티셔츠 추천해줘 나 남자야",
+      "src": "ga4",
+      "family": "fam-yellow-shoes",
+      "tags": [],
+      "note": "g01 + 성별 명시. 코디 질의라 R1로 재배정(2차 리뷰)",
+      "confidence": null,
+      "partition": "dev"
+    },
+    {
+      "id": "g06",
+      "bucket": "G5",
+      "query": "놀러갈때 입기 편한 반팔티인데 내가 추위를 많이타서 그나마 두꺼운게 좋을것같고 프린팅은 없으면 좋겠어 또 너무 브랜드가 노출 안되면 좋겠엉",
+      "src": "ga4",
+      "family": "g06",
+      "tags": [
+        "오타"
+      ],
+      "note": "'프린팅 없이·브랜드 노출 없이' = 무지 선호. 자연 발생 오타 포함('좋겠엉')",
+      "confidence": null,
+      "partition": "progress"
+    },
+    {
+      "id": "g07",
+      "bucket": "G4",
+      "query": "레이어드해서 입기 좋은 반팔티를 찾고있는데 아래기장이 좀 길면 좋겠어",
+      "src": "ga4",
+      "family": "g07",
+      "tags": [],
+      "note": "기장 축 부재 — 하드 조건 없음. 색·핏 환각 추출이 없어야 한다",
+      "confidence": null,
+      "partition": "progress"
+    },
+    {
+      "id": "g08",
+      "bucket": "G6",
+      "query": "린넨 소재의 블라우스 아이보리",
+      "src": "ga4",
+      "family": "g08",
+      "tags": [],
+      "note": "블라우스는 카탈로그 밖 — 0건이 정당. 화이트를 아이보리로 근사 반환하지 않는다",
+      "confidence": null,
+      "partition": "dev"
+    },
+    {
+      "id": "g09",
+      "bucket": "G6",
+      "query": "셔링이 있는 블라우스",
+      "src": "ga4",
+      "family": "g09",
+      "tags": [],
+      "note": null,
+      "confidence": null,
+      "partition": "progress"
+    },
+    {
+      "id": "g10",
+      "bucket": "G4",
+      "query": "폴리에스테르 시원한 남성 반팔 2만원대",
+      "src": "ga4",
+      "family": "g10",
+      "tags": [
+        "가격"
+      ],
+      "note": "가격 '2만원대' = [20000, 29999]",
+      "confidence": null,
+      "partition": "holdout"
+    },
+    {
+      "id": "g11",
+      "bucket": "G6",
+      "query": "흐으으으음",
+      "src": "ga4",
+      "family": "g11",
+      "tags": [],
+      "note": "무의미 질의 — 신호 없음. 전체 노출로 강등하지 않는다",
+      "confidence": null,
+      "partition": "dev"
+    },
+    {
+      "id": "g12",
+      "bucket": "G4",
+      "query": "2만원 이하에 가성비있는 반팔티를찾고있는뒈 바람이 슝슝통하고 그림도 간지있고 기장은 좀 그나마 길었으면 조켔ㅇㅇ",
+      "src": "ga4",
+      "family": "g12",
+      "tags": [
+        "오타"
+      ],
+      "note": "자연 발생 오타 다수('찾고있는뒈','조켔ㅇㅇ'). 하드는 가격뿐. ecommerce에서 결과 수가 263↔16↔2로 요동친 회귀 케이스",
+      "confidence": null,
+      "partition": "dev"
+    },
+    {
+      "id": "g13",
+      "bucket": "G4",
+      "query": "나는 등판에 개발자관련 글씨가 쓰여있고 통풍이 잘되는 회색 반팔티를 찾고있는데 오버핏이면 더 좋을것같고 목은 라운드넥이면 더 좋을것같아",
+      "src": "ga4",
+      "family": "g13",
+      "tags": [],
+      "note": "테마 상품이 없어도 색 하드 + 나머지 소프트로 근접 결과를 낸다. 테마 불충족을 이유로 0건 강등 금지",
+      "confidence": null,
+      "partition": "progress"
+    },
+    {
+      "id": "g14",
+      "bucket": "G4",
+      "query": "등판에 노란 레터링 있는 시원한 오버핏 흰티",
+      "src": "ga4",
+      "family": "g14",
+      "tags": [],
+      "note": "프린트색·위치(등판)는 검증 불가 — 바탕색·핏·레터링만 판정",
+      "confidence": null,
+      "partition": "dev"
+    },
+    {
+      "id": "g15",
+      "bucket": "G2",
+      "query": "무지개 티셔츠",
+      "src": "ga4",
+      "family": "g15",
+      "tags": [],
+      "note": "함정: 무지개 = 다색 그래픽 테마 — 색 하드필터 금지. 제목은 대개 '레인보우'라 한영 동의어 공백 케이스이기도 하다",
+      "confidence": null,
+      "partition": "dev"
+    },
+    {
+      "id": "g16",
+      "bucket": "G4",
+      "query": "블랙 오버핏 반팔티 3만원 이하",
+      "src": "ga4",
+      "family": "g16",
+      "tags": [
+        "가격"
+      ],
+      "note": "'이하'를 priceMin에 넣는 실수가 잦은 케이스",
+      "confidence": null,
+      "partition": "dev"
+    },
+    {
+      "id": "g17",
+      "bucket": "G4",
+      "query": "사람그림이 있는 7부정도의 머슬핏 반팔티",
+      "src": "ga4",
+      "family": "g17",
+      "tags": [],
+      "note": "머슬핏 어휘 부재·7부는 기장 — 하드 조건 없음. 오버/슬림 오추출 금지",
+      "confidence": null,
+      "partition": "progress"
+    },
+    {
+      "id": "g18",
+      "bucket": "G2",
+      "query": "여성 슬림핏 반팔티",
+      "src": "ga4",
+      "family": "g18",
+      "tags": [],
+      "note": null,
+      "confidence": null,
+      "partition": "dev"
+    },
+    {
+      "id": "b01",
+      "bucket": "G1",
+      "query": "돌돌",
+      "src": "generated",
+      "family": "fam-brand-돌돌",
+      "tags": [],
+      "note": "브랜드명 정본(c_goods.brand_name)에서 생성. 해당 브랜드가 아니면 0점(기준서 규칙)",
+      "partition": "holdout"
+    },
+    {
+      "id": "b02",
+      "bucket": "G1",
+      "query": "칸6312",
+      "src": "generated",
+      "family": "fam-brand-칸6312",
+      "tags": [],
+      "note": "브랜드명 정본(c_goods.brand_name)에서 생성. 해당 브랜드가 아니면 0점(기준서 규칙)",
+      "partition": "holdout"
+    },
+    {
+      "id": "b03",
+      "bucket": "G1",
+      "query": "트립션",
+      "src": "generated",
+      "family": "fam-brand-트립션",
+      "tags": [],
+      "note": "브랜드명 정본(c_goods.brand_name)에서 생성. 해당 브랜드가 아니면 0점(기준서 규칙)",
+      "partition": "holdout"
+    },
+    {
+      "id": "b04",
+      "bucket": "G1",
+      "query": "어썸어스",
+      "src": "generated",
+      "family": "fam-brand-어썸어스",
+      "tags": [],
+      "note": "브랜드명 정본(c_goods.brand_name)에서 생성. 해당 브랜드가 아니면 0점(기준서 규칙)",
+      "partition": "progress"
+    },
+    {
+      "id": "b05",
+      "bucket": "G1",
+      "query": "그레이버",
+      "src": "generated",
+      "family": "fam-brand-그레이버",
+      "tags": [],
+      "note": "브랜드명 정본(c_goods.brand_name)에서 생성. 해당 브랜드가 아니면 0점(기준서 규칙)",
+      "partition": "progress"
+    },
+    {
+      "id": "b06",
+      "bucket": "G1",
+      "query": "원헌드레드퍼센트",
+      "src": "generated",
+      "family": "fam-brand-원헌드레드퍼센트",
+      "tags": [],
+      "note": "브랜드명 정본(c_goods.brand_name)에서 생성. 해당 브랜드가 아니면 0점(기준서 규칙)",
+      "partition": "holdout"
+    },
+    {
+      "id": "b07",
+      "bucket": "G1",
+      "query": "아스트랄 프로젝션",
+      "src": "generated",
+      "family": "fam-brand-아스트랄 프로젝션",
+      "tags": [],
+      "note": "브랜드명 정본(c_goods.brand_name)에서 생성. 해당 브랜드가 아니면 0점(기준서 규칙)",
+      "partition": "dev"
+    },
+    {
+      "id": "b08",
+      "bucket": "G1",
+      "query": "이스케이프프롬",
+      "src": "generated",
+      "family": "fam-brand-이스케이프프롬",
+      "tags": [],
+      "note": "브랜드명 정본(c_goods.brand_name)에서 생성. 해당 브랜드가 아니면 0점(기준서 규칙)",
+      "partition": "progress"
+    },
+    {
+      "id": "b09",
+      "bucket": "G1",
+      "query": "무신사 스탠다드",
+      "src": "generated",
+      "family": "fam-brand-무신사 스탠다드",
+      "tags": [],
+      "note": "브랜드명 정본(c_goods.brand_name)에서 생성. 해당 브랜드가 아니면 0점(기준서 규칙)",
+      "partition": "dev"
+    },
+    {
+      "id": "b10",
+      "bucket": "G1",
+      "query": "라디네오",
+      "src": "generated",
+      "family": "fam-brand-라디네오",
+      "tags": [],
+      "note": "브랜드명 정본(c_goods.brand_name)에서 생성. 해당 브랜드가 아니면 0점(기준서 규칙)",
+      "partition": "dev"
+    },
+    {
+      "id": "b11",
+      "bucket": "G1",
+      "query": "티글레이크",
+      "src": "generated",
+      "family": "fam-brand-티글레이크",
+      "tags": [],
+      "note": "브랜드명 정본(c_goods.brand_name)에서 생성. 해당 브랜드가 아니면 0점(기준서 규칙)",
+      "partition": "dev"
+    },
+    {
+      "id": "b12",
+      "bucket": "G1",
+      "query": "엘라모",
+      "src": "generated",
+      "family": "fam-brand-엘라모",
+      "tags": [],
+      "note": "브랜드명 정본(c_goods.brand_name)에서 생성. 해당 브랜드가 아니면 0점(기준서 규칙)",
+      "partition": "dev"
+    },
+    {
+      "id": "b13",
+      "bucket": "G1",
+      "query": "크림소다랩",
+      "src": "generated",
+      "family": "fam-brand-크림소다랩",
+      "tags": [],
+      "note": "브랜드명 정본(c_goods.brand_name)에서 생성. 해당 브랜드가 아니면 0점(기준서 규칙)",
+      "partition": "dev"
+    },
+    {
+      "id": "b14",
+      "bucket": "G1",
+      "query": "다이나핏",
+      "src": "generated",
+      "family": "fam-brand-다이나핏",
+      "tags": [],
+      "note": "브랜드명 정본(c_goods.brand_name)에서 생성. 해당 브랜드가 아니면 0점(기준서 규칙)",
+      "partition": "dev"
+    },
+    {
+      "id": "b15",
+      "bucket": "G1",
+      "query": "닉앤니콜",
+      "src": "generated",
+      "family": "fam-brand-닉앤니콜",
+      "tags": [],
+      "note": "브랜드명 정본(c_goods.brand_name)에서 생성. 해당 브랜드가 아니면 0점(기준서 규칙)",
+      "partition": "progress"
+    },
+    {
+      "id": "b16",
+      "bucket": "G1",
+      "query": "젝시믹스",
+      "src": "generated",
+      "family": "fam-brand-젝시믹스",
+      "tags": [],
+      "note": "브랜드명 정본(c_goods.brand_name)에서 생성. 해당 브랜드가 아니면 0점(기준서 규칙)",
+      "partition": "dev"
+    },
+    {
+      "id": "b17",
+      "bucket": "G1",
+      "query": "아디다스",
+      "src": "generated",
+      "family": "fam-brand-아디다스",
+      "tags": [],
+      "note": "브랜드명 정본(c_goods.brand_name)에서 생성. 해당 브랜드가 아니면 0점(기준서 규칙)",
+      "partition": "holdout"
+    },
+    {
+      "id": "b18",
+      "bucket": "G1",
+      "query": "커버낫",
+      "src": "generated",
+      "family": "fam-brand-커버낫",
+      "tags": [],
+      "note": "브랜드명 정본(c_goods.brand_name)에서 생성. 해당 브랜드가 아니면 0점(기준서 규칙)",
+      "partition": "dev"
+    },
+    {
+      "id": "v01",
+      "bucket": "G3",
+      "query": "dkelektm",
+      "src": "generated",
+      "family": "fam-brand-아디다스",
+      "tags": [
+        "qwerty"
+      ],
+      "note": "한영 자판 변형. 원본='아디다스' — 원본이 되는데 변형이 안 되면 A단계 실패",
+      "origin": "아디다스",
+      "partition": "holdout"
+    },
+    {
+      "id": "v02",
+      "bucket": "G3",
+      "query": "zjqjskt",
+      "src": "generated",
+      "family": "fam-brand-커버낫",
+      "tags": [
+        "qwerty"
+      ],
+      "note": "한영 자판 변형. 원본='커버낫' — 원본이 되는데 변형이 안 되면 A단계 실패",
+      "origin": "커버낫",
+      "partition": "dev"
+    },
+    {
+      "id": "v03",
+      "bucket": "G3",
+      "query": "antlstk tmxosekem",
+      "src": "generated",
+      "family": "fam-brand-무신사 스탠다드",
+      "tags": [
+        "qwerty"
+      ],
+      "note": "한영 자판 변형. 원본='무신사 스탠다드' — 원본이 되는데 변형이 안 되면 A단계 실패",
+      "origin": "무신사 스탠다드",
+      "partition": "dev"
+    },
+    {
+      "id": "v04",
+      "bucket": "G3",
+      "query": "wprtlalrtm",
+      "src": "generated",
+      "family": "fam-brand-젝시믹스",
+      "tags": [
+        "qwerty"
+      ],
+      "note": "한영 자판 변형. 원본='젝시믹스' — 원본이 되는데 변형이 안 되면 A단계 실패",
+      "origin": "젝시믹스",
+      "partition": "dev"
+    },
+    {
+      "id": "v05",
+      "bucket": "G3",
+      "query": "ekdlskvlt",
+      "src": "generated",
+      "family": "fam-brand-다이나핏",
+      "tags": [
+        "qwerty"
+      ],
+      "note": "한영 자판 변형. 원본='다이나핏' — 원본이 되는데 변형이 안 되면 A단계 실패",
+      "origin": "다이나핏",
+      "partition": "dev"
+    },
+    {
+      "id": "v06",
+      "bucket": "G3",
+      "query": "xmflqtus",
+      "src": "generated",
+      "family": "fam-brand-트립션",
+      "tags": [
+        "qwerty"
+      ],
+      "note": "한영 자판 변형. 원본='트립션' — 원본이 되는데 변형이 안 되면 A단계 실패",
+      "origin": "트립션",
+      "partition": "holdout"
+    },
+    {
+      "id": "v07",
+      "bucket": "G3",
+      "query": "ㅇㄷㄷㅅ",
+      "src": "generated",
+      "family": "fam-brand-아디다스",
+      "tags": [
+        "chosung"
+      ],
+      "note": "초성 변형. 원본='아디다스' — 원본이 되는데 변형이 안 되면 A단계 실패",
+      "origin": "아디다스",
+      "partition": "holdout"
+    },
+    {
+      "id": "v08",
+      "bucket": "G3",
+      "query": "ㅋㅂㄴ",
+      "src": "generated",
+      "family": "fam-brand-커버낫",
+      "tags": [
+        "chosung"
+      ],
+      "note": "초성 변형. 원본='커버낫' — 원본이 되는데 변형이 안 되면 A단계 실패",
+      "origin": "커버낫",
+      "partition": "dev"
+    },
+    {
+      "id": "v09",
+      "bucket": "G3",
+      "query": "ㄱㄹㅇㅂ",
+      "src": "generated",
+      "family": "fam-brand-그레이버",
+      "tags": [
+        "chosung"
+      ],
+      "note": "초성 변형. 원본='그레이버' — 원본이 되는데 변형이 안 되면 A단계 실패",
+      "origin": "그레이버",
+      "partition": "progress"
+    },
+    {
+      "id": "v10",
+      "bucket": "G3",
+      "query": "ㅁㅈㅌ",
+      "src": "generated",
+      "family": "fam-var-무지티",
+      "tags": [
+        "chosung"
+      ],
+      "note": "초성 변형. 원본='무지티' — 원본이 되는데 변형이 안 되면 A단계 실패",
+      "origin": "무지티",
+      "partition": "dev"
+    },
+    {
+      "id": "v11",
+      "bucket": "G3",
+      "query": "ㅇㅂㅍ",
+      "src": "generated",
+      "family": "fam-var-오버핏",
+      "tags": [
+        "chosung"
+      ],
+      "note": "초성 변형. 원본='오버핏' — 원본이 되는데 변형이 안 되면 A단계 실패",
+      "origin": "오버핏",
+      "partition": "progress"
+    },
+    {
+      "id": "v12",
+      "bucket": "G3",
+      "query": "반팔티",
+      "src": "generated",
+      "family": "fam-var-반팔 티",
+      "tags": [
+        "띄어쓰기"
+      ],
+      "note": "띄어쓰기 변형. 원본='반팔 티' — 두 표기가 같은 결과를 내야 한다",
+      "origin": "반팔 티",
+      "partition": "progress"
+    },
+    {
+      "id": "v13",
+      "bucket": "G3",
+      "query": "무지티셔츠",
+      "src": "generated",
+      "family": "fam-var-무지 티셔츠",
+      "tags": [
+        "띄어쓰기"
+      ],
+      "note": "띄어쓰기 변형. 원본='무지 티셔츠' — 두 표기가 같은 결과를 내야 한다",
+      "origin": "무지 티셔츠",
+      "partition": "dev"
+    },
+    {
+      "id": "v14",
+      "bucket": "G3",
+      "query": "오버핏",
+      "src": "generated",
+      "family": "fam-var-오버 핏",
+      "tags": [
+        "띄어쓰기"
+      ],
+      "note": "띄어쓰기 변형. 원본='오버 핏' — 두 표기가 같은 결과를 내야 한다",
+      "origin": "오버 핏",
+      "partition": "dev"
+    },
+    {
+      "id": "v15",
+      "bucket": "G3",
+      "query": "포켓티",
+      "src": "generated",
+      "family": "fam-var-포켓 티",
+      "tags": [
+        "띄어쓰기"
+      ],
+      "note": "띄어쓰기 변형. 원본='포켓 티' — 두 표기가 같은 결과를 내야 한다",
+      "origin": "포켓 티",
+      "partition": "holdout"
+    },
+    {
+      "id": "v16",
+      "bucket": "G3",
+      "query": "무지반팔티",
+      "src": "generated",
+      "family": "fam-var-무지 반팔 티",
+      "tags": [
+        "띄어쓰기"
+      ],
+      "note": "띄어쓰기 변형. 원본='무지 반팔 티' — 두 표기가 같은 결과를 내야 한다",
+      "origin": "무지 반팔 티",
+      "partition": "dev"
+    },
+    {
+      "id": "v17",
+      "bucket": "G3",
+      "query": "아디다드",
+      "src": "generated",
+      "family": "fam-brand-아디다스",
+      "tags": [
+        "오타"
+      ],
+      "note": "한 글자 오타. 원본='아디다스'",
+      "origin": "아디다스",
+      "partition": "holdout"
+    },
+    {
+      "id": "v18",
+      "bucket": "G3",
+      "query": "커버났",
+      "src": "generated",
+      "family": "fam-brand-커버낫",
+      "tags": [
+        "오타"
+      ],
+      "note": "한 글자 오타. 원본='커버낫'",
+      "origin": "커버낫",
+      "partition": "dev"
+    },
+    {
+      "id": "a-g2-01",
+      "bucket": "G2",
+      "query": "무지티",
+      "src": "authored",
+      "family": "fam-g2-01",
+      "tags": [],
+      "note": null,
+      "partition": "progress"
+    },
+    {
+      "id": "a-g2-02",
+      "bucket": "G2",
+      "query": "흰티",
+      "src": "authored",
+      "family": "fam-g2-02",
+      "tags": [],
+      "note": null,
+      "partition": "dev"
+    },
+    {
+      "id": "a-g2-03",
+      "bucket": "G2",
+      "query": "검정 반팔",
+      "src": "authored",
+      "family": "fam-g2-03",
+      "tags": [],
+      "note": null,
+      "partition": "dev"
+    },
+    {
+      "id": "a-g2-04",
+      "bucket": "G2",
+      "query": "오버핏 반팔",
+      "src": "authored",
+      "family": "fam-g2-04",
+      "tags": [],
+      "note": null,
+      "partition": "dev"
+    },
+    {
+      "id": "a-g2-05",
+      "bucket": "G2",
+      "query": "박시핏 반팔",
+      "src": "authored",
+      "family": "fam-g2-05",
+      "tags": [],
+      "note": null,
+      "partition": "dev"
+    },
+    {
+      "id": "a-g2-06",
+      "bucket": "G2",
+      "query": "스트라이프 티셔츠",
+      "src": "authored",
+      "family": "fam-g2-06",
+      "tags": [],
+      "note": null,
+      "partition": "holdout"
+    },
+    {
+      "id": "a-g2-07",
+      "bucket": "G2",
+      "query": "라운드넥 반팔",
+      "src": "authored",
+      "family": "fam-g2-07",
+      "tags": [],
+      "note": null,
+      "partition": "progress"
+    },
+    {
+      "id": "a-g2-08",
+      "bucket": "G2",
+      "query": "레터링 티",
+      "src": "authored",
+      "family": "fam-g2-08",
+      "tags": [],
+      "note": null,
+      "partition": "holdout"
+    },
+    {
+      "id": "a-g2-09",
+      "bucket": "G2",
+      "query": "포켓 티셔츠",
+      "src": "authored",
+      "family": "fam-g2-09",
+      "tags": [],
+      "note": null,
+      "partition": "progress"
+    },
+    {
+      "id": "a-g2-10",
+      "bucket": "G2",
+      "query": "루즈핏 반팔티",
+      "src": "authored",
+      "family": "fam-g2-10",
+      "tags": [],
+      "note": null,
+      "partition": "progress"
+    },
+    {
+      "id": "a-g2-11",
+      "bucket": "G2",
+      "query": "그래픽 티",
+      "src": "authored",
+      "family": "fam-g2-11",
+      "tags": [],
+      "note": null,
+      "partition": "dev"
+    },
+    {
+      "id": "a-g2-12",
+      "bucket": "G2",
+      "query": "브이넥 티셔츠",
+      "src": "authored",
+      "family": "fam-g2-12",
+      "tags": [],
+      "note": null,
+      "partition": "holdout"
+    },
+    {
+      "id": "a-g2-13",
+      "bucket": "G2",
+      "query": "니트 가디건",
+      "src": "authored",
+      "family": "fam-g2-13",
+      "tags": [],
+      "note": null,
+      "partition": "holdout"
+    },
+    {
+      "id": "a-g4-01",
+      "bucket": "G4",
+      "query": "3만원 이하 흰 반팔티",
+      "src": "authored",
+      "family": "fam-g4-01",
+      "tags": [],
+      "note": null,
+      "partition": "dev"
+    },
+    {
+      "id": "a-g4-02",
+      "bucket": "G4",
+      "query": "2만원대 남성 오버핏 반팔",
+      "src": "authored",
+      "family": "fam-g4-02",
+      "tags": [],
+      "note": null,
+      "partition": "dev"
+    },
+    {
+      "id": "a-g4-03",
+      "bucket": "G4",
+      "query": "여름에 시원한 얇은 반팔티",
+      "src": "authored",
+      "family": "fam-g4-03",
+      "tags": [],
+      "note": null,
+      "partition": "dev"
+    },
+    {
+      "id": "a-g4-04",
+      "bucket": "G4",
+      "query": "여성 크롭 스트라이프 반팔",
+      "src": "authored",
+      "family": "fam-g4-04",
+      "tags": [],
+      "note": null,
+      "partition": "dev"
+    },
+    {
+      "id": "a-g4-05",
+      "bucket": "G4",
+      "query": "면 100% 기본 반팔티",
+      "src": "authored",
+      "family": "fam-g4-05",
+      "tags": [],
+      "note": null,
+      "partition": "dev"
+    },
+    {
+      "id": "a-g4-06",
+      "bucket": "G4",
+      "query": "네이비 라운드넥 반팔 3만원 이하",
+      "src": "authored",
+      "family": "fam-g4-06",
+      "tags": [],
+      "note": null,
+      "partition": "dev"
+    },
+    {
+      "id": "a-g4-07",
+      "bucket": "G4",
+      "query": "커플로 입을 수 있는 무지 반팔 남녀 사이즈",
+      "src": "authored",
+      "family": "fam-g4-07",
+      "tags": [],
+      "note": null,
+      "partition": "dev"
+    },
+    {
+      "id": "a-g4-08",
+      "bucket": "G4",
+      "query": "회색 오버핏 반팔에 작은 로고 있는 것",
+      "src": "authored",
+      "family": "fam-g4-08",
+      "tags": [],
+      "note": null,
+      "partition": "progress"
+    },
+    {
+      "id": "a-g4-09",
+      "bucket": "G4",
+      "query": "린넨 느낌 나는 시원한 남성 반팔",
+      "src": "authored",
+      "family": "fam-g4-09",
+      "tags": [],
+      "note": null,
+      "partition": "dev"
+    },
+    {
+      "id": "a-g4-10",
+      "bucket": "G4",
+      "query": "베이지 루즈핏 반팔티 2만원 이하",
+      "src": "authored",
+      "family": "fam-g4-10",
+      "tags": [],
+      "note": null,
+      "partition": "holdout"
+    },
+    {
+      "id": "a-g4-11",
+      "bucket": "G4",
+      "query": "여성 브이넥 반팔 흰색",
+      "src": "authored",
+      "family": "fam-g4-11",
+      "tags": [],
+      "note": null,
+      "partition": "progress"
+    },
+    {
+      "id": "a-g4-12",
+      "bucket": "G4",
+      "query": "땀 잘 마르는 운동용 반팔티",
+      "src": "authored",
+      "family": "fam-g4-12",
+      "tags": [],
+      "note": null,
+      "partition": "holdout"
+    },
+    {
+      "id": "a-g4-13",
+      "bucket": "G4",
+      "query": "빅사이즈 남성 반팔 티셔츠 3XL",
+      "src": "authored",
+      "family": "fam-g4-13",
+      "tags": [],
+      "note": null,
+      "partition": "holdout"
+    },
+    {
+      "id": "a-g5-01",
+      "bucket": "G5",
+      "query": "로고 없는 무지 반팔티",
+      "src": "authored",
+      "family": "fam-g5-01",
+      "tags": [],
+      "note": null,
+      "partition": "dev"
+    },
+    {
+      "id": "a-g5-02",
+      "bucket": "G5",
+      "query": "프린트 없는 검정 반팔",
+      "src": "authored",
+      "family": "fam-g5-02",
+      "tags": [],
+      "note": null,
+      "partition": "dev"
+    },
+    {
+      "id": "a-g5-03",
+      "bucket": "G5",
+      "query": "너무 붙지 않는 여성 반팔티",
+      "src": "authored",
+      "family": "fam-g5-03",
+      "tags": [],
+      "note": null,
+      "partition": "dev"
+    },
+    {
+      "id": "a-g5-04",
+      "bucket": "G5",
+      "query": "형광색 말고 차분한 반팔티",
+      "src": "authored",
+      "family": "fam-g5-04",
+      "tags": [],
+      "note": null,
+      "partition": "progress"
+    },
+    {
+      "id": "a-g5-05",
+      "bucket": "G5",
+      "query": "브이넥 말고 라운드넥 반팔",
+      "src": "authored",
+      "family": "fam-g5-05",
+      "tags": [],
+      "note": null,
+      "partition": "dev"
+    },
+    {
+      "id": "a-g5-06",
+      "bucket": "G5",
+      "query": "비침 없는 흰 반팔티",
+      "src": "authored",
+      "family": "fam-g5-06",
+      "tags": [],
+      "note": null,
+      "partition": "progress"
+    },
+    {
+      "id": "a-g5-07",
+      "bucket": "G5",
+      "query": "그림 너무 크지 않은 그래픽 티",
+      "src": "authored",
+      "family": "fam-g5-07",
+      "tags": [],
+      "note": null,
+      "partition": "holdout"
+    },
+    {
+      "id": "a-g5-08",
+      "bucket": "G5",
+      "query": "소매 짧지 않은 반팔티",
+      "src": "authored",
+      "family": "fam-g5-08",
+      "tags": [],
+      "note": null,
+      "partition": "holdout"
+    },
+    {
+      "id": "a-g5-09",
+      "bucket": "G5",
+      "query": "화려하지 않은 기본 티셔츠",
+      "src": "authored",
+      "family": "fam-g5-09",
+      "tags": [],
+      "note": null,
+      "partition": "dev"
+    },
+    {
+      "id": "a-g6-01",
+      "bucket": "G6",
+      "query": "패딩 점퍼",
+      "src": "authored",
+      "family": "fam-g6-01",
+      "tags": [],
+      "note": null,
+      "partition": "holdout"
+    },
+    {
+      "id": "a-g6-02",
+      "bucket": "G6",
+      "query": "청바지 32인치",
+      "src": "authored",
+      "family": "fam-g6-02",
+      "tags": [],
+      "note": null,
+      "partition": "dev"
+    },
+    {
+      "id": "a-g6-03",
+      "bucket": "G6",
+      "query": "운동화 270",
+      "src": "authored",
+      "family": "fam-g6-03",
+      "tags": [],
+      "note": null,
+      "partition": "progress"
+    },
+    {
+      "id": "a-g6-04",
+      "bucket": "G6",
+      "query": "가죽 자켓",
+      "src": "authored",
+      "family": "fam-g6-04",
+      "tags": [],
+      "note": null,
+      "partition": "holdout"
+    },
+    {
+      "id": "a-g6-05",
+      "bucket": "G6",
+      "query": "ㅁㄴㅇㄹ",
+      "src": "authored",
+      "family": "fam-g6-05",
+      "tags": [],
+      "note": null,
+      "partition": "dev"
+    },
+    {
+      "id": "a-g6-06",
+      "bucket": "G6",
+      "query": "asdfasdf",
+      "src": "authored",
+      "family": "fam-g6-06",
+      "tags": [],
+      "note": null,
+      "partition": "dev"
+    },
+    {
+      "id": "a-g6-07",
+      "bucket": "G6",
+      "query": "12345",
+      "src": "authored",
+      "family": "fam-g6-07",
+      "tags": [],
+      "note": null,
+      "partition": "holdout"
+    },
+    {
+      "id": "a-g6-08",
+      "bucket": "G6",
+      "query": "코트 아우터",
+      "src": "authored",
+      "family": "fam-g6-08",
+      "tags": [],
+      "note": null,
+      "partition": "progress"
+    },
+    {
+      "id": "a-g6-09",
+      "bucket": "G6",
+      "query": "노트북 거치대",
+      "src": "authored",
+      "family": "fam-g6-09",
+      "tags": [],
+      "note": null,
+      "partition": "dev"
+    },
+    {
+      "id": "a-g6-10",
+      "bucket": "G6",
+      "query": "강아지 사료",
+      "src": "authored",
+      "family": "fam-g6-10",
+      "tags": [],
+      "note": null,
+      "partition": "dev"
+    }
+  ]
+}

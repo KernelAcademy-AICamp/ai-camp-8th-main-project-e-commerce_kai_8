@@ -91,10 +91,9 @@ begin
 
   get diagnostics v_inserted = row_count;
 
-  -- 90일 만료 정리 (방침 O-32). 별도 스케줄러(pg_cron)를 두지 않는 이유는
-  -- 이 DB를 ecommerce와 공유해 전역 확장 추가를 최소화하기 위해서다.
+  -- 90일 만료 정리 — 2차 방어선. 정본은 아래 pg_cron 일일 작업이다.
+  -- 여기에도 두는 이유: 스케줄러가 멈춰도 쓰기가 있는 한 만료 행이 쌓이지 않는다.
   -- 한 번에 최대 500행만 지워 쓰기 지연이 튀지 않게 유계로 둔다.
-  -- 한계: 검색이 전혀 없으면 만료 행이 남는다 (방침 문서에 명시).
   delete from c_search_logs
   where ctid in (
     select ctid from c_search_logs
@@ -132,3 +131,21 @@ end
 $$;
 
 grant execute on function c_forget_device(uuid) to anon;
+
+-- ── 90일 만료 정리 스케줄 (방침 O-32) ────────────────────────────────────────
+-- pg_cron은 이 DB에 이미 설치돼 있고 c_* 작업이 쓰고 있다(prewarm_c_img_vecs_bq_idx).
+-- 그래서 확장을 새로 추가하는 것이 아니라 작업 하나를 더하는 것뿐이다.
+-- 매일 UTC 18:00(한국시간 03:00) — 트래픽이 가장 적은 시간대.
+-- 이 작업이 있으면 "검색이 없으면 만료 행이 남는다"는 한계가 사라진다.
+do $$
+begin
+  perform cron.unschedule('c_search_logs_retention');
+exception when others then
+  null;  -- 없으면 무시
+end $$;
+
+select cron.schedule(
+  'c_search_logs_retention',
+  '0 18 * * *',
+  $cron$delete from c_search_logs where received_at < now() - interval '90 days'$cron$
+);
