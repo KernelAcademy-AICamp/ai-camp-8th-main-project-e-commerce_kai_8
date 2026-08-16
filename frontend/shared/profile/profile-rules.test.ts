@@ -13,6 +13,7 @@ import {
   RECENT_IMPRESSIONS_MAX,
   SESSION_ANCHOR_MAX,
   SIGNAL_WEIGHTS,
+  STYLE_BOOST_IMPRESSIONS,
 } from "./profile-rules";
 
 const NOW = 1_000_000;
@@ -94,6 +95,29 @@ describe("applyImpression (계측 보조 상태)", () => {
     session = applyImpression(session, 7);
     expect(session.recentImpressions.filter((g) => g === 7)).toHaveLength(1);
     expect(session.impressionCounts["7"]).toBe(2);
+  });
+});
+
+describe("스타일 탐색 부스트 (설계 §7 — 노출 60장 기준)", () => {
+  it("스타일 탐색이 부스트 카운터를 채우고, 노출마다 줄어 0에서 꺼진다", () => {
+    let session = emptySession("s1");
+    expect(session.boostRemaining).toBe(0);
+    session = applyAction(session, { type: "style_explore", goodsNo: 1, nowMs: NOW });
+    expect(session.boostRemaining).toBe(STYLE_BOOST_IMPRESSIONS);
+    for (let i = 0; i < STYLE_BOOST_IMPRESSIONS; i += 1) {
+      session = applyImpression(session, 100 + i);
+    }
+    expect(session.boostRemaining).toBe(0);
+    session = applyImpression(session, 999);
+    expect(session.boostRemaining).toBe(0); // 음수로 내려가지 않는다
+  });
+
+  it("부스트 중 다시 스타일 탐색하면 카운터가 다시 차오른다", () => {
+    let session = emptySession("s1");
+    session = applyAction(session, { type: "style_explore", goodsNo: 1, nowMs: NOW });
+    session = applyImpression(session, 2);
+    session = applyAction(session, { type: "style_explore", goodsNo: 3, nowMs: NOW });
+    expect(session.boostRemaining).toBe(STYLE_BOOST_IMPRESSIONS);
   });
 });
 

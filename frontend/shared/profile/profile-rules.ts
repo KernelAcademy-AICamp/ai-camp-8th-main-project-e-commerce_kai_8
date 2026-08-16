@@ -29,6 +29,9 @@ export const RECENT_IMPRESSIONS_MAX = 600;
 /** 상품별 노출 횟수 맵 상한 — 초과 시 횟수 낮은 것부터 버린다 */
 export const IMPRESSION_COUNT_MAX = 600;
 
+/** `이 스타일로 계속 탐색` 직후 세션 슬롯을 부스트하는 실제 노출 수 (설계 §7) */
+export const STYLE_BOOST_IMPRESSIONS = 60;
+
 export type ProfileActionType = keyof typeof SIGNAL_WEIGHTS | "unwish";
 
 export interface Anchor {
@@ -46,6 +49,8 @@ export interface SessionProfile {
   recentImpressions: number[];
   /** 이 세션에서 찜 해제된 상품 — 장기 반영 시 앵커 제거 */
   removed: number[];
+  /** 스타일 탐색 부스트가 유지될 남은 노출 수 (0 = 부스트 꺼짐) */
+  boostRemaining: number;
 }
 
 export interface LongTermProfile {
@@ -61,6 +66,7 @@ export function emptySession(sessionId: string): SessionProfile {
     impressionCounts: {},
     recentImpressions: [],
     removed: [],
+    boostRemaining: 0,
   };
 }
 
@@ -110,6 +116,10 @@ export function applyAction(
     anchors: pruneAnchors(anchors, SESSION_ANCHOR_MAX),
     // 다시 긍정 신호를 주면 제거 목록에서 빼서 앵커로 복귀할 수 있게 한다
     removed: session.removed.filter((g) => g !== action.goodsNo),
+    boostRemaining:
+      action.type === "style_explore"
+        ? STYLE_BOOST_IMPRESSIONS
+        : session.boostRemaining,
   };
 }
 
@@ -134,7 +144,12 @@ export function applyImpression(
     goodsNo,
     ...session.recentImpressions.filter((g) => g !== goodsNo),
   ].slice(0, RECENT_IMPRESSIONS_MAX);
-  return { ...session, impressionCounts: counts, recentImpressions: recent };
+  return {
+    ...session,
+    impressionCounts: counts,
+    recentImpressions: recent,
+    boostRemaining: Math.max(0, session.boostRemaining - 1),
+  };
 }
 
 /**

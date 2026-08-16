@@ -74,7 +74,17 @@ function parseSession(raw: string | null): SessionProfile | null {
       typeof (parsed as SessionProfile).sessionId === "string" &&
       Array.isArray((parsed as SessionProfile).anchors)
     ) {
-      return parsed as SessionProfile;
+      // 과거 스키마에서 저장된 프로필의 누락 필드 보정
+      const session = parsed as Partial<SessionProfile> &
+        Pick<SessionProfile, "sessionId" | "anchors">;
+      return {
+        ...session,
+        impressionCounts: session.impressionCounts ?? {},
+        recentImpressions: session.recentImpressions ?? [],
+        removed: session.removed ?? [],
+        boostRemaining:
+          typeof session.boostRemaining === "number" ? session.boostRemaining : 0,
+      };
     }
     return null;
   } catch {
@@ -134,6 +144,8 @@ export interface ProfileSummary {
   longAnchors: { goodsNo: number; weight: number }[];
   sessionAnchors: { goodsNo: number; weight: number }[];
   recentImpressions: number[];
+  /** `이 스타일로 계속 탐색` 부스트가 아직 살아 있는가 (노출 60장 기준) */
+  boostActive: boolean;
 }
 
 export function getProfileSummary(sessionId: string, nowMs: number): ProfileSummary {
@@ -144,6 +156,7 @@ export function getProfileSummary(sessionId: string, nowMs: number): ProfileSumm
     longAnchors: longTerm.anchors.map(({ goodsNo, weight }) => ({ goodsNo, weight })),
     sessionAnchors: session.anchors.map(({ goodsNo, weight }) => ({ goodsNo, weight })),
     recentImpressions: session.recentImpressions,
+    boostActive: session.boostRemaining > 0,
   };
 }
 

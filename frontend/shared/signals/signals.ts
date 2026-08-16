@@ -5,6 +5,8 @@
 import { PROFILE_SCHEMA_VERSION } from "@/shared/profile/profile-rules";
 import {
   clearProfile,
+  getProfileSummary,
+  type ProfileSummary,
   recordProfileAction,
   recordProfileImpression,
 } from "@/shared/profile/profile-store";
@@ -211,6 +213,16 @@ export function logAction(
   });
   // 행동은 취향 프로필의 세션 앵커에도 반영된다 (설계 §6 가중 서열)
   recordProfileAction(type, goodsNo, sessionId, Date.now());
+}
+
+/**
+ * 피드 요청용 프로필 요약 — 활동으로 간주해 세션도 갱신한다.
+ * SSR에서는 null (콜드스타트 = 무작위 피드).
+ */
+export function getFeedProfileSummary(): ProfileSummary | null {
+  if (!isBrowser()) return null;
+  const sessionId = touchSession();
+  return getProfileSummary(sessionId, Date.now());
 }
 
 /**
