@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useMemo, useRef } from "react";
+import { useEffect, useMemo } from "react";
 
 import { buildSlides } from "@/features/feed/detail/domain/detail-slides";
 import type {
@@ -70,8 +70,6 @@ export function ProductDetail({
   });
   const { wished, toggle } = useWishlist();
   const isWishedNow = wished(product.goodsNo);
-  // `이 스타일로 계속 탐색` — 하단 탐색 그리드로 이동 (피드 믹스 반영은 후속 단계)
-  const exploreSectionRef = useRef<HTMLDivElement | null>(null);
   useBodyScrollLock();
 
   return (
@@ -190,19 +188,9 @@ export function ProductDetail({
                 </a>
               </div>
             </div>
-            <button
-              type="button"
-              className="mt-4 w-full cursor-pointer rounded-xl bg-white py-3 font-medium text-black"
-              onClick={() => {
-                logAction("style_explore", product.goodsNo);
-                exploreSectionRef.current?.scrollIntoView({ behavior: "smooth" });
-              }}
-            >
-              이 스타일로 계속 탐색
-            </button>
           </div>
 
-          <div ref={exploreSectionRef} className="px-2 pb-10">
+          <div className="px-2 pb-10">
             <FeedGrid
               columns={explore.columns}
               sentinelRef={explore.sentinelRef}

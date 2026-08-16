@@ -156,6 +156,12 @@ export function useFeedViewModel(options?: FeedOptions) {
 
   const sentinelRef = useRef<HTMLDivElement | null>(null);
 
+  // 첫 페이지는 마운트 즉시 로드한다 — 상세 하단 탐색처럼 센티널이 화면 밖에
+  // 있어도 스크롤 없이 콘텐츠가 준비된다 (O-30). 진행 중 가드가 중복을 막는다.
+  useEffect(() => {
+    loadMore();
+  }, [loadMore]);
+
   useEffect(() => {
     const sentinel = sentinelRef.current;
     if (!sentinel) return;
@@ -171,7 +177,7 @@ export function useFeedViewModel(options?: FeedOptions) {
       observer.disconnect();
     };
     // 페이지가 붙거나 재시도 신호가 오면 옵저버를 다시 걸어,
-    // 센티널이 계속 보이는 동안 이어서 로드한다 (첫 로드도 이 경로로 시작된다)
+    // 센티널이 계속 보이는 동안 이어서 로드한다
   }, [loadMore, items.length, retryTick]);
 
   const columns = useMemo(() => {
