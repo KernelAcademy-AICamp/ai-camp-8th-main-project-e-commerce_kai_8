@@ -19,7 +19,8 @@ const PAGE_SIZE = 30;
 // 유사 첫 페이지 크기 — 재정렬 후보(×20)가 크기에 비례해 콜드 응답을 좌우한다.
 // 실측(Micro 인스턴스, 콜드 앵커): 60장 3.5초 / 30장 2.0초 / 16장 1.2초.
 // 오버샘플 ×20은 유지라 상위 결과 정확도는 동일 (품질 게이트 기준).
-const SIMILAR_PAGE_SIZE = 16;
+// 상세 하단은 이 수만큼 이미지도 즉시 프리로드한다 (스크롤 전에 준비).
+export const SIMILAR_PAGE_SIZE = 16;
 const COLUMN_COUNT = 2;
 const RETRY_DELAY_MS = 2000;
 

@@ -17,7 +17,10 @@ import type { Product } from "@/features/feed/domain/product";
 import { initialSlideIndex } from "@/features/feed/domain/similar";
 import { FeedGrid } from "@/features/feed/presentation/components/feed-grid";
 import { FeedSkeleton } from "@/features/feed/presentation/components/feed-skeleton";
-import { useFeedViewModel } from "@/features/feed/presentation/view-model/use-feed-view-model";
+import {
+  SIMILAR_PAGE_SIZE,
+  useFeedViewModel,
+} from "@/features/feed/presentation/view-model/use-feed-view-model";
 import { useWishlist } from "@/features/feed/wishlist/presentation/view-model/use-wishlist";
 import { logAction } from "@/shared/signals/signals";
 
@@ -197,6 +200,7 @@ export function ProductDetail({
               columns={explore.columns}
               sentinelRef={explore.sentinelRef}
               onImpress={explore.onImpress}
+              eagerImageRankBelow={SIMILAR_PAGE_SIZE}
               onSelect={(card, cardRect) => {
                 onSelectProduct(
                   card.product,

@@ -14,9 +14,16 @@ interface ProductCardProps {
     card: FeedCardViewData,
     dom: { cardHeight: number; screenY: number },
   ) => void;
+  /** true면 화면 밖이어도 이미지를 즉시 내려받는다 (상세 하단 첫 페이지 프리로드) */
+  eagerImage?: boolean;
 }
 
-export function ProductCard({ card, onSelect, onImpress }: ProductCardProps) {
+export function ProductCard({
+  card,
+  onSelect,
+  onImpress,
+  eagerImage,
+}: ProductCardProps) {
   const [failed, setFailed] = useState(false);
   const rootRef = useRef<HTMLElement | null>(null);
   // 콜백 정체성이 바뀌어도(부모 리렌더) 관찰을 다시 걸지 않도록 ref로 참조하고,
@@ -86,6 +93,7 @@ export function ProductCard({ card, onSelect, onImpress }: ProductCardProps) {
             width={card.width}
             height={card.height}
             sizes="50vw"
+            loading={eagerImage ? "eager" : "lazy"}
             className="h-auto w-full"
             onError={() => {
               setFailed(true);
