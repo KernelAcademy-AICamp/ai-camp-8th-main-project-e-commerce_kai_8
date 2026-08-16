@@ -40,5 +40,6 @@ export interface SignalEvent {
   seed?: number;
 }
 
-/** 임베딩 모델 버전 태그 (O-26) */
-export const MODEL_VER = "siglip2-base";
+/** 임베딩 모델 + 알고리즘 버전 태그 (O-26) — 배포 전후 지표를 분리 집계하는 키.
+ * cls2 = 표·라벨 재분류 v2, mix2 = 색군 축·신선도 가산점 믹스 (2026-08-16 3차) */
+export const MODEL_VER = "siglip2-base+cls2+mix2";
