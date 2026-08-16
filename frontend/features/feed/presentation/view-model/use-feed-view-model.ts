@@ -10,6 +10,7 @@ import { appendFeedPage, type FeedItem } from "@/features/feed/domain/feed-page"
 import { formatPrice } from "@/features/feed/domain/format-price";
 import { distributeToColumns } from "@/features/feed/domain/masonry";
 import type { Product } from "@/features/feed/domain/product";
+import { logImpression } from "@/shared/signals/signals";
 
 const PAGE_SIZE = 30;
 const SIMILAR_PAGE_SIZE = 60;
@@ -22,6 +23,15 @@ export interface FeedCardViewData {
   priceLabel: string;
   width: number;
   height: number;
+  /** 피드 전체에서의 노출 순위 (0부터) — 노출 이벤트 계측용 */
+  rank: number;
+}
+
+/** 카드가 뷰포트에 실제로 보였을 때 ProductCard가 알려주는 DOM 정보 */
+export interface ImpressionDomInfo {
+  col: number;
+  cardHeight: number;
+  screenY: number;
 }
 
 export interface FeedOptions {
@@ -115,15 +125,35 @@ export function useFeedViewModel(options?: FeedOptions) {
   }, [loadMore, items.length, retryTick]);
 
   const columns = useMemo(() => {
-    const cards: FeedCardViewData[] = items.map((item) => ({
+    const cards: FeedCardViewData[] = items.map((item, index) => ({
       feedKey: item.feedKey,
       product: item.product,
       priceLabel: formatPrice(item.product.priceFinal),
       width: item.product.width,
       height: item.product.height,
+      rank: index,
     }));
     return distributeToColumns(cards, COLUMN_COUNT);
   }, [items]);
 
-  return { columns, sentinelRef };
+  // 노출 이벤트 (설계 §4) — 현재 피드는 무작위 정책. 유사 검색으로 채운 카드는
+  // similar, 나머지는 diversity 유형으로 기록한다 (믹스 도입 시 실제 유형으로 대체).
+  const onImpress = useCallback(
+    (card: FeedCardViewData, info: ImpressionDomInfo) => {
+      logImpression({
+        goodsNo: card.product.goodsNo,
+        policy: "random",
+        sourceBucket: card.product.matchedImage ? "similar" : "diversity",
+        rank: card.rank,
+        col: info.col,
+        cardHeight: info.cardHeight,
+        screenY: info.screenY,
+        slot: card.product.matchedImage?.slot ?? 0,
+        seed,
+      });
+    },
+    [seed],
+  );
+
+  return { columns, sentinelRef, onImpress };
 }

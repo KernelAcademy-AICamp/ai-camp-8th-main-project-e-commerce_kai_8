@@ -6,7 +6,7 @@ import { FeedGrid } from "@/features/feed/presentation/components/feed-grid";
 import { useFeedViewModel } from "@/features/feed/presentation/view-model/use-feed-view-model";
 
 export function MosaicFeed() {
-  const { columns, sentinelRef } = useFeedViewModel();
+  const { columns, sentinelRef, onImpress } = useFeedViewModel();
   const { top, depth, open, requestClose, finishClose } = useDetailState();
 
   return (
@@ -14,6 +14,7 @@ export function MosaicFeed() {
       <FeedGrid
         columns={columns}
         sentinelRef={sentinelRef}
+        onImpress={onImpress}
         onSelect={(card, originRect) => {
           open(card.product, originRect);
         }}

@@ -10,6 +10,7 @@ import {
   pushDetail,
 } from "@/features/feed/detail/domain/detail-stack";
 import type { Product } from "@/features/feed/domain/product";
+import { logAction } from "@/shared/signals/signals";
 
 // 기존 소비처(product-card 등)의 import 경로 유지를 위한 재수출
 export type { DetailEntry, OriginRect };
@@ -27,6 +28,8 @@ export function useDetailState() {
     (product: Product, originRect: OriginRect | null, currentScrollTop = 0) => {
       setStack((prev) => pushDetail(prev, product, originRect, currentScrollTop));
       window.history.pushState({ aTeeDetail: true }, "");
+      // 상세 열기 = 탭 신호 — 모든 진입 경로(피드·상세 하단 탐색 체인)의 단일 지점
+      logAction("tap", product.goodsNo);
     },
     [],
   );

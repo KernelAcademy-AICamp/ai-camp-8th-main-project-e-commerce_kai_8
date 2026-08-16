@@ -17,6 +17,7 @@ import type { Product } from "@/features/feed/domain/product";
 import { initialSlideIndex } from "@/features/feed/domain/similar";
 import { FeedGrid } from "@/features/feed/presentation/components/feed-grid";
 import { useFeedViewModel } from "@/features/feed/presentation/view-model/use-feed-view-model";
+import { logAction } from "@/shared/signals/signals";
 
 interface ProductDetailProps {
   entry: DetailEntry;
@@ -162,6 +163,9 @@ export function ProductDetail({
                 aria-label="판매처로 이동"
                 title="판매처로 이동"
                 className="flex h-11 w-11 shrink-0 items-center justify-center text-2xl font-semibold text-white"
+                onClick={() => {
+                  logAction("outbound", product.goodsNo);
+                }}
               >
                 ↗
               </a>
@@ -172,6 +176,7 @@ export function ProductDetail({
             <FeedGrid
               columns={explore.columns}
               sentinelRef={explore.sentinelRef}
+              onImpress={explore.onImpress}
               onSelect={(card, cardRect) => {
                 onSelectProduct(
                   card.product,

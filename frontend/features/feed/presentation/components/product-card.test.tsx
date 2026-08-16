@@ -7,6 +7,7 @@ import type { FeedCardViewData } from "@/features/feed/presentation/view-model/u
 
 const card: FeedCardViewData = {
   feedKey: "1:0",
+  rank: 0,
   product: {
     goodsNo: 1,
     title: "테스트 티셔츠",
