@@ -16,9 +16,10 @@ import { getFeedProfileSummary, logImpression } from "@/shared/signals/signals";
 import type { FeedPolicy, SourceBucket } from "@/shared/signals/types";
 
 const PAGE_SIZE = 30;
-// 유사 첫 페이지 크기 — 품질 게이트(Recall@30, probes=80)를 통과시킨 기준 크기.
-// 60으로 올리면 재정렬 후보(×20)가 배로 늘어 콜드 응답이 3.5초대로 느려진다.
-const SIMILAR_PAGE_SIZE = 30;
+// 유사 첫 페이지 크기 — 재정렬 후보(×20)가 크기에 비례해 콜드 응답을 좌우한다.
+// 실측(Micro 인스턴스, 콜드 앵커): 60장 3.5초 / 30장 2.0초 / 16장 1.2초.
+// 오버샘플 ×20은 유지라 상위 결과 정확도는 동일 (품질 게이트 기준).
+const SIMILAR_PAGE_SIZE = 16;
 const COLUMN_COUNT = 2;
 const RETRY_DELAY_MS = 2000;
 
