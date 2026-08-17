@@ -15,7 +15,7 @@
       "2026-08-17 C-3 리뷰 2차: 프론트·하네스의 선행 5단어 절단 제거, 자판 복원을 네 글자 이상으로 제한(xl→티 변질 차단), 오타 교정이 5단어로 자르던 것 제거(6번째 이후 조건 삭제 차단)"
     ],
     "topN": 20,
-    "collectedAt": "2026-08-17T10:49:45.050013+00:00",
+    "collectedAt": "2026-08-17T11:56:32.444292+00:00",
     "catalogSnapshot": {
       "c_goods_rows": 226320,
       "c_search_text_rows": 226304,
@@ -11721,6 +11721,16 @@
         },
         {
           "rank": 5,
+          "goodsNo": 4887176,
+          "title": "면 라운드넥 모던 반팔 티셔츠 블루 FJBMTT79A",
+          "brandName": "닥터퍼니스트",
+          "priceFinal": 20900,
+          "gender": "남성",
+          "colorLabel": "다크 네이비",
+          "category": "001001"
+        },
+        {
+          "rank": 6,
           "goodsNo": 4973512,
           "title": "에센셜 라운드넥 반팔 티셔츠 MDTS073_10 Colors",
           "brandName": "몽돌",
@@ -11730,7 +11740,7 @@
           "category": "001001"
         },
         {
-          "rank": 6,
+          "rank": 7,
           "goodsNo": 5059107,
           "title": "숄더 포인트 디자인 라운드넥 반팔티 STEE131A",
           "brandName": "이카룩",
@@ -11740,7 +11750,7 @@
           "category": "001001"
         },
         {
-          "rank": 7,
+          "rank": 8,
           "goodsNo": 5063008,
           "title": "라운드넥 슬릿 반팔 티셔츠 [NAVY]",
           "brandName": "블랙브라운",
@@ -11750,7 +11760,7 @@
           "category": "001001"
         },
         {
-          "rank": 8,
+          "rank": 9,
           "goodsNo": 5071404,
           "title": "슬림핏 라운드넥 반팔 티셔츠 (네이비)",
           "brandName": "피아네르",
@@ -11760,7 +11770,7 @@
           "category": "001001"
         },
         {
-          "rank": 9,
+          "rank": 10,
           "goodsNo": 5267594,
           "title": "모아 도트 하트 로고패치 라운드넥 크롭 반팔 티 (2컬러)",
           "brandName": "무센트",
@@ -11770,7 +11780,7 @@
           "category": "001001"
         },
         {
-          "rank": 10,
+          "rank": 11,
           "goodsNo": 5393250,
           "title": "아스킨 세미오버핏 라운드넥 반팔티 네이비 LZTS3113",
           "brandName": "베이직하우스",
@@ -11780,7 +11790,7 @@
           "category": "001001"
         },
         {
-          "rank": 11,
+          "rank": 12,
           "goodsNo": 5496185,
           "title": "UV차단 라운드넥 반팔티셔츠 3color",
           "brandName": "그렉노먼",
@@ -11790,7 +11800,7 @@
           "category": "001001"
         },
         {
-          "rank": 12,
+          "rank": 13,
           "goodsNo": 5496232,
           "title": "UV차단 라운드넥 반팔티셔츠 3color",
           "brandName": "그렉노먼",
@@ -11800,7 +11810,7 @@
           "category": "001001"
         },
         {
-          "rank": 13,
+          "rank": 14,
           "goodsNo": 5887892,
           "title": "여성 골프 면 혼방 라운드넥 반팔 티셔츠",
           "brandName": "빌트모아",
@@ -11810,7 +11820,7 @@
           "category": "001001"
         },
         {
-          "rank": 14,
+          "rank": 15,
           "goodsNo": 5896803,
           "title": "Supima 코튼 라운드넥 반팔 티셔츠 네이비 (세미오버핏)_STSUB93NSN",
           "brandName": "에스티코",
@@ -11820,7 +11830,7 @@
           "category": "001001"
         },
         {
-          "rank": 15,
+          "rank": 16,
           "goodsNo": 6137884,
           "title": "소프트 터치 아미핏 라운드넥 무지 반팔 티셔츠 1+1",
           "brandName": "펜타온",
@@ -11830,7 +11840,7 @@
           "category": "001001"
         },
         {
-          "rank": 16,
+          "rank": 17,
           "goodsNo": 6149979,
           "title": "[코튼스판] 골지 라운드넥 반팔티_SPRWG37C02",
           "brandName": "스파오",
@@ -11840,7 +11850,7 @@
           "category": "001001"
         },
         {
-          "rank": 17,
+          "rank": 18,
           "goodsNo": 6276043,
           "title": "[ECR X MERGO] 골지 라운드넥 반팔 티셔츠 : 4COLOR",
           "brandName": "이코르",
@@ -11850,23 +11860,13 @@
           "category": "001001"
         },
         {
-          "rank": 18,
+          "rank": 19,
           "goodsNo": 6339291,
           "title": "라운드넥 쿨링 루즈핏 반팔 티셔츠 3Color",
           "brandName": "지크립",
           "priceFinal": 12670,
           "gender": "남성",
           "colorLabel": "화이트/블랙/네이비",
-          "category": "001001"
-        },
-        {
-          "rank": 19,
-          "goodsNo": 6399468,
-          "title": "소프트 터치 아미핏 라운드넥 무지 반팔 티셔츠",
-          "brandName": "펜타온",
-          "priceFinal": 9390,
-          "gender": "남성",
-          "colorLabel": "화이트/블랙/아이보리/다크 그레이/그레이/카키/네이비",
           "category": "001001"
         }
       ]

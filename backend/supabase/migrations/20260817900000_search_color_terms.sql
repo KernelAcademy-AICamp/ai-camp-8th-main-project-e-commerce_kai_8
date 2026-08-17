@@ -63,8 +63,12 @@ insert into c_search_color_terms_next (term, codes, note) values
   ('하얀',   array['1'],                                  '화이트'),
   ('하양',   array['1'],                                  '화이트'),
   ('백색',   array['1'],                                  '화이트'),
-  ('회색',   array['3','13','24','25'],                   '그레이 색군'),
-  ('잿빛',   array['3','24','25'],                        '그레이(실버 제외)'),
+  -- ⚠️ **실버를 뺀다.** 예전엔 `회색`이 실버(13)를 품어 51,997개였는데,
+  -- `회색 반팔`을 찾는 사람이 메탈릭 실버를 원했다고 보기 어렵다. 바로 아래
+  -- `잿빛`이 이미 실버를 빼고 있었다 — 표를 만들 때도 알던 문제다.
+  -- 실버를 원하면 `실버`·`은색`으로 지목할 수 있다 (사람이 정함, 2026-08-17).
+  ('회색',   array['3','24','25'],                        '그레이 색군(실버 제외)'),
+  ('잿빛',   array['3','24','25'],                        '회색과 같은 말'),
   ('은색',   array['13'],                                 '실버'),
   ('무채색', array['1','2','3','13','24','25'],           'is_achromatic 전체'),
   -- 파랑
@@ -108,8 +112,6 @@ insert into c_search_color_terms_next (term, codes, note) values
   ('갈색',   array['4','82','83'],                        '브라운'),
   ('밤색',   array['4','83'],                             '브라운'),
   ('금색',   array['14'],                                 '골드'),
-  -- `카키`(정식 명칭, 코드 30)와 범위를 맞춘다. 예전엔 `카키색`만 28을 더 받았다.
-  ('카키색', array['30'],                                 '카키'),
   -- 개발셋 표현과 흔한 변형 보강
   ('하얀색', array['1'],                                  '화이트'),
   ('까만색', array['2'],                                  '블랙'),
@@ -123,17 +125,83 @@ insert into c_search_color_terms_next (term, codes, note) values
   ('연두색', array['31','79'],                            '라이트 그린·라임'),
   ('청록',   array['32'],                                 '민트 — 좁은 말이라 좁게'),
   ('연보라', array['39'],                                 '라벤더'),
-  -- `-색`을 붙이는 흔한 변형. 정식 명칭에 붙는 형태를 함께 넣는다.
-  ('아이보리색', array['23'],                              '아이보리'),
-  ('베이지색',   array['5'],                               '베이지'),
-  ('네이비색',   array['36','81'],                         '네이비'),
-  -- ⚠️ `-색`은 같은 말의 변형이므로 **정식 명칭과 같은 넓이**로 둔다.
-  -- 색군 전체로 넓혔더니 `핑크`와 `핑크색`의 후보가 달라졌다(교차 리뷰 m4).
-  ('핑크색',     array['10'],                              '핑크 (정식명과 동일)'),
-  ('그레이색',   array['3'],                               '그레이 (정식명과 동일)'),
-  ('브라운색',   array['4'],                               '브라운 (정식명과 동일)'),
-  ('퍼플색',     array['8'],                               '퍼플 (정식명과 동일)'),
+  -- ⚠️ **정식 명칭의 `-색` 형태는 여기에 적지 않는다.** 아래 4번이 정식 명칭
+  -- 전부에 대해 자동으로 만든다. 손으로 고른 일부만 넣던 방식이 `오렌지색`을
+  -- 0건으로 만들었고, `네이비`(36)와 `네이비색`(36,81)이 어긋나 있었다.
   ('코랄',   array['74'],                                 '피치 — 좁은 말이라 좁게')
+on conflict (term) do update set codes = excluded.codes, note = excluded.note;
+
+-- ── 3. 외래어 정식명의 넓이를 한국어 일상어에 맞춘다 ────────────────────────
+-- **왜.** 정식명은 판매자 라벨과 1:1이라 좁고, 일상어는 색군 전체라 넓었다.
+-- 그래서 같은 뜻인데 결과가 달랐다 — `오렌지` 1,461개 vs `주황` 1,927개,
+-- `블루` 7,287개 vs `파란` 34,719개 (실측 2026-08-17). 사용자에게 둘은 같은 말이다.
+--
+-- ⚠️ **같은 말일 때만 맞춘다.** 일상어가 더 넓은 **상위어**면 맞추지 않는다.
+--   · `아이보리`(23) ↔ `크림`(23,77) — 크림이 오트밀까지 덮는다. 맞추면 아이보리를
+--     좁게 지목할 길이 사라진다.
+--   · `라임`(79) ↔ `연두`(31,79) — 같은 이유.
+--   · `민트`·`피치`·`실버`·`골드`는 대응 일상어와 이미 같아 할 일이 없다.
+--   · 수식어가 붙은 정식명(`다크 오렌지`·`라이트 그레이`)은 대응 일상어가 없다.
+--
+-- 코드를 다시 적지 않고 **일상어에서 복사한다.** 두 곳에 같은 값을 적으면 언젠가
+-- 어긋난다 — 이 표가 이미 `네이비`(36)와 `네이비색`(36,81)로 어긋나 있었다.
+update c_search_color_terms_next t
+set codes = s.codes, note = s.term || '과 같은 말 — 넓이를 맞춘다'
+from (values
+  ('그레이','회색'), ('브라운','갈색'), ('그린','초록'), ('블루','파란'),
+  ('퍼플','보라'),   ('옐로우','노랑'), ('핑크','분홍'), ('레드','빨강'),
+  ('오렌지','주황'), ('네이비','남색')
+) as p(formal, common)
+join c_search_color_terms_next s on s.term = p.common
+where t.term = p.formal;
+
+-- ── 4. `-색` 변형을 자동으로 만든다 ─────────────────────────────────────────
+-- **왜 자동인가.** 손으로 고른 일부만 넣었더니 `오렌지색`이 **0건**이었다.
+-- `오렌지`는 표에 있는데 `-색` 형태가 없어 텍스트로 떨어진 것이다. 같은 구멍이
+-- 한 단어 정식명 **28개**에 있었다(블루색·그린색·레드색…).
+--
+-- ⚠️ **3번(넓이 정렬) 뒤에 돌려야 한다.** 코드를 정식명에서 복사하므로, 먼저
+-- 돌리면 정렬 전의 좁은 값이 굳는다.
+insert into c_search_color_terms_next (term, codes, note)
+select t.term || '색', t.codes, t.term || '의 -색 형태(자동)'
+from c_search_color_terms_next t
+join c_color_groups g on lower(g.name_ko) = t.term
+where g.name_ko not like '% %'      -- `라이트 그레이색`은 아무도 치지 않는다
+  and t.term !~ '색$'                -- `기타색상색` 같은 것을 만들지 않는다
+on conflict (term) do update set codes = excluded.codes, note = excluded.note;
+
+-- 실제로 관측한 오표기만 별칭으로 넣는다. 코드는 원말에서 복사한다.
+-- **표에 없는 변형을 지어내지 않는다** — 못 알아본 것은 텍스트로 남는 편이 낫다.
+insert into c_search_color_terms_next (term, codes, note)
+select v.alias, s.codes, s.term || '의 흔한 오표기'
+from (values ('오랜지','오렌지'), ('오랜지색','오렌지색')) as v(alias, src)
+join c_search_color_terms_next s on s.term = v.src
+on conflict (term) do update set codes = excluded.codes, note = excluded.note;
+
+-- ── 5. 영문 색 이름 ────────────────────────────────────────────────────────
+-- **왜 색 조건인가.** 표에 영문이 하나도 없어서 `orange`는 제목 텍스트 매칭으로
+-- 처리됐다. 후보가 500개(제목에 orange가 든 것)뿐이고 그중 408개만 실제 오렌지색
+-- 이라, 한국어 질의와 결과가 거의 겹치지 않았다(상위 20개 중 11개).
+--
+-- **브랜드와 겹치지 않는지 확인했다 — 0건이다.** 이 카탈로그의 브랜드명은 전부
+-- 한글이라 영문 색 단어를 품은 브랜드가 없다(실측 2026-08-17). 나중에 영문
+-- 브랜드가 들어오면 이 전제가 깨진다 — 그때 겹치는 단어만 빼고 이유를 남긴다.
+--
+-- 코드는 대응 한국어 표현에서 **복사한다.** 직접 적으면 한국어 쪽을 고칠 때
+-- 영문만 옛 값으로 남는다.
+insert into c_search_color_terms_next (term, codes, note)
+select v.en, s.codes, v.ko || '의 영문 이름'
+from (values
+  ('orange','주황'), ('black','검정'), ('white','흰'), ('blue','파란'),
+  ('red','빨강'), ('green','초록'), ('pink','분홍'), ('yellow','노랑'),
+  ('purple','보라'), ('navy','남색'), ('grey','회색'), ('gray','회색'),
+  ('beige','베이지'), ('brown','갈색'), ('khaki','카키'), ('ivory','아이보리'),
+  ('mint','민트'), ('olive','올리브'), ('charcoal','차콜'), ('lime','라임'),
+  ('silver','실버'), ('gold','골드'), ('burgundy','와인'), ('lavender','라벤더'),
+  ('cream','크림'), ('camel','카멜'), ('mustard','머스타드'), ('peach','피치'),
+  ('coral','코랄'), ('sand','샌드')
+) as v(en, ko)
+join c_search_color_terms_next s on s.term = v.ko
 on conflict (term) do update set codes = excluded.codes, note = excluded.note;
 
 alter table c_search_color_terms_next enable row level security;
@@ -156,6 +224,42 @@ end $swap$;
 
 comment on table c_search_color_terms is
   '질의의 색 표현 → c_color_groups.code 목록. 좁은 표현은 좁게, 넓은 표현은 색군 전체로.';
+
+-- 색 표현 하나를 표에서 찾는다. 조사가 붙어 있으면 떼고 한 번 더 본다.
+--
+-- **왜 필요한가.** `주황색이 들어간 티`가 **0건**이었다. 조사 `이` 때문에 표 조회가
+-- 빗나가 색이 텍스트로 떨어졌고, 제목에 `주황색이`가 있을 리 없다(실측 2026-08-17).
+--
+-- ⚠️ **받는 조사는 열거한다.** `[가-힣]*`로 열어 두면 색이 아닌 말까지 색으로 읽는다 —
+-- 가격 조건에서 이미 겪었다(`3만원 미만족`을 가격으로 읽었다).
+--
+-- ⚠️ **원말이 브랜드면 떼지 않는다.** `골드만`처럼 브랜드 이름 자체가 조사로 끝나는
+-- 모양일 수 있다. 브랜드 보호(아래 ①)는 두 단어 이상만 보므로 여기서 따로 막는다.
+--
+-- 돌려주는 term은 **조사를 뗀 정본**이다. 호출자가 이 값으로 "몇 가지 색을 말했나"를
+-- 세므로, 조사가 붙은 형태를 그대로 돌려주면 같은 색을 다른 색으로 센다.
+create or replace function c_search_color_lookup(p_phrase text)
+returns table (term text, codes text[])
+language plpgsql stable security definer
+set search_path = public, pg_temp
+as $$
+declare
+  k_josa constant text := '(이|가|은|는|을|를|의|에|로|으로|와|과|랑|이랑|도|만)$';
+  v_bare text;
+begin
+  return query select t.term, t.codes from c_search_color_terms t where t.term = p_phrase;
+  if found then return; end if;
+
+  -- 브랜드로 저장된 말은 조사를 떼지 않는다
+  if exists (select 1 from c_search_vocab v where v.term = p_phrase) then return; end if;
+
+  v_bare := regexp_replace(p_phrase, k_josa, '');
+  if v_bare = p_phrase then return; end if;
+  return query select t.term, t.codes from c_search_color_terms t where t.term = v_bare;
+end
+$$;
+
+revoke all on function c_search_color_lookup(text) from public, anon, authenticated;
 
 -- 질의를 색 조건과 나머지 텍스트로 가른다. **한 함수에서 한다** — 코드 뽑기와
 -- 단어 빼기를 따로 두면 둘이 어긋난다.
@@ -209,7 +313,7 @@ declare
   v_terms text[] := '{}';   -- 걸린 색 표현들 (코드 집합으로 셀 때 쓴다)
   v_codes text[] := '{}';
   i int; w int; j int;
-  phrase text; hit text[];
+  phrase text; canon text; hit text[];
 begin
   if n = 0 then
     return query select null::text[], p_words;
@@ -240,13 +344,14 @@ begin
       if not protected[i] and not taken[i]
          and (w = 1 or (not protected[i + 1] and not taken[i + 1])) then
         phrase := lower(array_to_string(p_words[i : i + w - 1], ' '));
-        select t.codes into hit from c_search_color_terms t where t.term = phrase;
+        -- 조사가 붙은 형태도 여기서 받는다. canon은 조사를 뗀 정본이다.
+        select l.term, l.codes into canon, hit from c_search_color_lookup(phrase) l;
         -- ④ 바로 뒤가 역할어면 본체 색이 아니다
         if hit is not null and i + w <= n and p_words[i + w] ~ k_role then
           hit := null;
         end if;
         if hit is not null then
-          v_terms := v_terms || phrase;
+          v_terms := v_terms || canon;
           v_codes := v_codes || hit;
           for j in i .. i + w - 1 loop
             taken[j] := true;

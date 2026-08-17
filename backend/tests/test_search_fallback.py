@@ -312,6 +312,126 @@ def test_unknown_color_words_change_nothing(cur):
     assert cur.fetchone()[0] is None
 
 
+# ── 같은 색을 말하는 서로 다른 표현은 같은 결과를 준다 (2026-08-17) ──────────
+# 사용자가 `주황색`·`오렌지색`·`orange`·`주황색이 들어간 티`를 넣었더니 결과가
+# 전부 달랐다. 원인이 넷이었다: `-색` 변형 없음 · 영문 없음 · 정식명이 좁음 · 조사.
+
+
+def test_dash_saek_variant_matches_the_formal_name(cur):
+    """모든 한 단어 정식명에 `X색`이 있고, 코드가 `X`와 같아야 한다.
+
+    손으로 고른 `-색` 항목만 넣던 시절 `오렌지색`이 **0건**이었고,
+    `네이비`(36)와 `네이비색`(36,81)이 서로 달랐다.
+
+    ⚠️ **양쪽 다 left join이어야 한다.** 처음엔 둘 다 inner join이라 `X색`이 없으면
+    통과했다. 1차 교차 리뷰 뒤 `b`만 left로 고쳤는데, 2차 리뷰가 `a`도 여전히 inner라
+    **정식명 `X` 자체가 빠지면 조용히 통과**한다고 짚었다. 둘 다 left join으로 둔다.
+
+    ⚠️ **제외 목록도 명시한다.** 색으로 해석하면 안 되는 8개(데님·연청 등)는 예전엔
+    "표에 `a`가 없어서 inner join에서 우연히 사라지는" 방식으로 빠졌다. 그건 검사가
+    아니라 사고다 — 표에 실수로 들어와도 아무도 모른다.
+    """
+    cur.execute(
+        "select g.name_ko, a.codes, b.codes"
+        " from c_color_groups g"
+        " left join c_search_color_terms a on a.term = lower(g.name_ko)"
+        " left join c_search_color_terms b on b.term = lower(g.name_ko) || '색'"
+        " where g.name_ko not like '%% %%'"
+        "   and g.name_ko not in ('데님','연청','중청','진청','흑청','기타색상','클리어','로즈골드')"
+        "   and (a.codes is null or b.codes is null or a.codes <> b.codes)"
+    )
+    assert cur.fetchall() == []
+
+
+def test_colors_that_must_not_be_treated_as_colors_stay_out(cur):
+    """색으로 해석하면 안 되는 이름은 표에 없어야 한다.
+
+    `데님 티셔츠`의 데님은 **소재**일 가능성이 높고, `기타색상`·`클리어`·`로즈골드`는
+    사용자가 색으로 치는 말이 아니다. 위 검사에서 제외했으니, 제외한 것들이 정말
+    빠져 있는지는 여기서 따로 본다(교차 리뷰 ③).
+    """
+    cur.execute(
+        "select term from c_search_color_terms"
+        " where term = any(array['데님','연청','중청','진청','흑청','기타색상','클리어','로즈골드'])"
+    )
+    assert cur.fetchall() == []
+
+
+@pytest.mark.parametrize(
+    "formal,common",
+    [
+        ("그레이", "회색"), ("브라운", "갈색"), ("그린", "초록"), ("블루", "파란"),
+        ("퍼플", "보라"), ("옐로우", "노랑"), ("핑크", "분홍"), ("레드", "빨강"),
+        ("오렌지", "주황"), ("네이비", "남색"),
+    ],
+)
+def test_formal_name_has_the_same_width_as_the_everyday_word(cur, formal, common):
+    """외래어 정식명과 한국어 일상어는 같은 말이다 — 후보가 달라선 안 된다."""
+    cur.execute(
+        "select (select codes from c_search_color_terms where term = %s),"
+        "       (select codes from c_search_color_terms where term = %s)",
+        (formal, common),
+    )
+    a, b = cur.fetchone()
+    assert a is not None and sorted(a) == sorted(b)
+
+
+@pytest.mark.parametrize("narrow,wider", [("아이보리", "크림"), ("라임", "연두")])
+def test_hypernyms_are_not_aligned(cur, narrow, wider):
+    """일상어가 **상위어**면 맞추지 않는다 — 맞추면 좁게 지목할 길이 사라진다."""
+    cur.execute(
+        "select (select codes from c_search_color_terms where term = %s),"
+        "       (select codes from c_search_color_terms where term = %s)",
+        (narrow, wider),
+    )
+    a, b = cur.fetchone()
+    assert sorted(a) != sorted(b)
+
+
+@pytest.mark.parametrize(
+    "query,rest",
+    [
+        # 조사가 붙어도 색이다. 붙기 전에는 `주황색이`가 제목 조건이 되어 0건이었다
+        ("주황색이 들어간 티", ["들어간", "티"]),
+        ("주황색을 찾아", ["찾아"]),
+        ("주황색으로", None),
+        ("주황색의 반팔", ["반팔"]),
+        # 영문도 같은 색이다. 대소문자는 가리지 않는다
+        ("orange 반팔", ["반팔"]),
+        ("ORANGE 반팔", ["반팔"]),
+        # `-색` 변형과 흔한 오표기
+        ("오렌지색 반팔", ["반팔"]),
+        ("오랜지색 반팔", ["반팔"]),
+    ],
+)
+def test_every_way_of_saying_orange_gives_the_same_condition(cur, query, rest):
+    cur.execute("select codes, rest from c_search_color_parse(c_search_split(%s))", (query,))
+    codes, got_rest = cur.fetchone()
+    assert sorted(codes) == ["12", "75", "76"]
+    assert got_rest == rest
+
+
+@pytest.mark.parametrize(
+    "word,reason",
+    [
+        # 브랜드로 저장된 말은 조사를 떼지 않는다. `카멜로`는 실재하는 브랜드인데
+        # `로`를 떼면 `카멜`(색)이 된다 — 카탈로그에서 이 가드가 실제로 막는 유일한 말이다
+        ("카멜로", "브랜드 이름이 조사로 끝나는 모양일 수 있다"),
+        # 조사처럼 보이지만 조사가 아닌 끝소리
+        ("블루종", "옷 종류이지 파란색이 아니다"),
+    ],
+)
+def test_josa_stripping_does_not_invent_colors(cur, word, reason):
+    """⚠️ 이 가드는 **브랜드 목록에 있는 말만** 지킨다.
+
+    목록에 없으면서 조사로 끝나는 모양인 말(`골드만` 등)은 여전히 색으로 읽힌다.
+    티셔츠 카탈로그에서 그런 말이 질의로 들어올 일이 드물어 감수한 대가이고,
+    브랜드가 늘면 가드가 자동으로 함께 넓어진다.
+    """
+    cur.execute("select codes from c_search_color_parse(array[%s])", (word,))
+    assert cur.fetchone()[0] is None, reason
+
+
 def test_query_used_is_re_inputtable(cur):
     """query_used는 **그대로 다시 넣을 수 있는 질의**여야 한다.
 
@@ -407,9 +527,13 @@ def test_brand_queries_still_return_products(cur, query):
 
 
 def test_single_word_that_is_both_brand_and_color_stays_a_color(cur):
-    """`네이비`는 브랜드(상품 9개)이자 색(20,873개)이다. 색으로 둔다 — 대가를 알고 고른다."""
+    """`네이비`는 브랜드(상품 9개)이자 색(20,873개)이다. 색으로 둔다 — 대가를 알고 고른다.
+
+    코드가 `36` 하나였는데 `36,81`이 됐다 — 정식명 `네이비`를 일상어 `남색`과 같은
+    넓이로 맞추면서 다크 네이비(81)가 함께 들어왔다 (2026-08-17).
+    """
     cur.execute("select codes from c_search_color_parse(c_search_split('네이비'))")
-    assert cur.fetchone()[0] == ["36"]
+    assert sorted(cur.fetchone()[0]) == ["36", "81"]
 
 
 # ── 가격을 텍스트가 아니라 조건으로 (C단계 3단계) ──────────────────────────
@@ -421,10 +545,11 @@ def test_single_word_that_is_both_brand_and_color_stays_a_color(cur):
 @pytest.mark.parametrize(
     "query,pmin,pmax,code",
     [
-        ("블랙 오버핏 반팔티 3만원 이하", None, 30000, "2"),
-        ("3만원 이하 흰 반팔티", None, 30000, "1"),
+        ("블랙 오버핏 반팔티 3만원 이하", None, 30000, ["2"]),
+        ("3만원 이하 흰 반팔티", None, 30000, ["1"]),
         ("2만원대 남성 오버핏 반팔", 20000, 29999, None),
-        ("네이비 라운드넥 반팔 3만원 이하", None, 30000, "36"),
+        # `네이비`는 이제 다크 네이비(81)까지 받는다 — 일상어 `남색`과 넓이를 맞췄다
+        ("네이비 라운드넥 반팔 3만원 이하", None, 30000, ["36", "81"]),
     ],
 )
 def test_price_and_color_conditions_are_never_violated(cur, query, pmin, pmax, code):
@@ -438,7 +563,7 @@ def test_price_and_color_conditions_are_never_violated(cur, query, pmin, pmax, c
         "select count(*),"
         " count(*) filter (where %s::int is not null and g.price_final > %s::int),"
         " count(*) filter (where %s::int is not null and g.price_final < %s::int),"
-        " count(*) filter (where %s::text is not null and not (g.color_codes && array[%s::text]))"
+        " count(*) filter (where %s::text[] is not null and not (g.color_codes && %s::text[]))"
         " from c_search_page_v2(%s, null, null, 20) r join c_goods g using (goods_no)",
         (pmax, pmax, pmin, pmin, code, code, query),
     )
