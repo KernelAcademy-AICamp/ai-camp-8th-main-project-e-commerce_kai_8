@@ -1,0 +1,2199 @@
+{
+  "meta": {
+    "purpose": "블라인드 채점 입력. 시스템·순위 정보를 담지 않고 순서를 섞었다.",
+    "rubric": "docs/atee/eval/rubric.md — 이 문서를 읽고 채점한다",
+    "partitions": [
+      "dev"
+    ],
+    "pool": "pool-a.json",
+    "excludeGraded": true,
+    "gradedFiles": [
+      "grading-codex-all.json",
+      "grading-codex-a-new.json",
+      "grading-codex-a2.json",
+      "grading-codex-a3.json",
+      "grading-codex-typo.json",
+      "grading-codex-cat.json",
+      "grading-codex-color.json",
+      "grading-codex-color2.json",
+      "grading-codex-color3.json",
+      "grading-codex-range.json",
+      "grading-codex-price.json",
+      "grading-claude-color-width.json",
+      "grading-codex-color-width.json",
+      "grading-codex-soft-dev.json"
+    ],
+    "count": 144,
+    "gradeScale": {
+      "2": "질의가 명시한 조건을 전부 만족",
+      "1": "일부만 만족하거나 근접, 또는 텍스트로 확인 불가",
+      "0": "무관, 또는 계열 규칙 위반(브랜드 불일치·하드조건 위반·부정조건 위반)"
+    },
+    "needsImage": "이미지를 봐야 판단되면 true로 표시하고 등급은 1을 준다",
+    "colorLabel": "판매자가 등록한 색 라벨(정본). 제목에 색이 안 적혀 있어도 이 값이 질의의 색과 맞으면 색 조건은 **확인된 것**으로 본다",
+    "category": "무신사 카테고리 정본. 001001 반팔 티셔츠 · 001003 피케·카라 · 001004 후드·맨투맨 · 001010 긴팔 · 001011 민소매",
+    "outputFormat": "[{\"itemId\": \"...\", \"grade\": 0|1|2, \"needsImage\": true|false}]"
+  },
+  "items": [
+    {
+      "itemId": "s08-3511824",
+      "queryId": "s08",
+      "bucket": "R1",
+      "rule": "참고 계열. 다른 계열과 같은 방식으로 매기되 종합 점수에서 제외된다.",
+      "query": "바다에서 비키니 위에 입을 얇은 티셔츠",
+      "product": {
+        "title": "비키니 드로잉 티, 피그먼트 그레이",
+        "brand": "류영",
+        "price": 18000,
+        "gender": "여성",
+        "colorLabel": "그레이",
+        "category": "001001"
+      }
+    },
+    {
+      "itemId": "g01-2789441",
+      "queryId": "g01",
+      "bucket": "R1",
+      "rule": "참고 계열. 다른 계열과 같은 방식으로 매기되 종합 점수에서 제외된다.",
+      "query": "내가 105 입는데 노란색 신발에 어울리는 티셔츠 추천해줘",
+      "product": {
+        "title": "STRAPPY VEST TOP_T226TP105",
+        "brand": "탑걸",
+        "price": 22400,
+        "gender": "여성",
+        "colorLabel": "핑크/블랙/블루/옐로우",
+        "category": "001011"
+      }
+    },
+    {
+      "itemId": "g05-534994",
+      "queryId": "g05",
+      "bucket": "R1",
+      "rule": "참고 계열. 다른 계열과 같은 방식으로 매기되 종합 점수에서 제외된다.",
+      "query": "내가 105 입는데 노란색 신발에 어울리는 티셔츠 추천해줘 나 남자야",
+      "product": {
+        "title": "CHARMING SWEAT CROP TEE (YELLOW)",
+        "brand": "피피피",
+        "price": 15600,
+        "gender": "여성",
+        "colorLabel": "옐로우",
+        "category": "001001"
+      }
+    },
+    {
+      "itemId": "s16-4251887",
+      "queryId": "s16",
+      "bucket": "R1",
+      "rule": "참고 계열. 다른 계열과 같은 방식으로 매기되 종합 점수에서 제외된다.",
+      "query": "팔뚝살 커버 여름 반팔 티셔츠",
+      "product": {
+        "title": "[커버낫X랭글러] 모터사이클 피그먼트 티셔츠 화이트",
+        "brand": "커버낫",
+        "price": 29500,
+        "gender": "공용",
+        "colorLabel": "화이트",
+        "category": "001001"
+      }
+    },
+    {
+      "itemId": "g05-3844670",
+      "queryId": "g05",
+      "bucket": "R1",
+      "rule": "참고 계열. 다른 계열과 같은 방식으로 매기되 종합 점수에서 제외된다.",
+      "query": "내가 105 입는데 노란색 신발에 어울리는 티셔츠 추천해줘 나 남자야",
+      "product": {
+        "title": "[2PACK] 슬램 로고 피그먼트 슬리브리스 FSL105 / 6color",
+        "brand": "플루크",
+        "price": 35800,
+        "gender": "남성",
+        "colorLabel": "화이트/다크 그레이/민트/네이비/라이트 옐로우/오트밀",
+        "category": "001011"
+      }
+    },
+    {
+      "itemId": "s07-4842901",
+      "queryId": "s07",
+      "bucket": "R1",
+      "rule": "참고 계열. 다른 계열과 같은 방식으로 매기되 종합 점수에서 제외된다.",
+      "query": "클럽에 갈때 입을옷 추천해줘 - 여자야",
+      "product": {
+        "title": "GS-N-SS-24-501 프린팅 반팔 티셔츠_블랙",
+        "brand": "제네럴웍스",
+        "price": 29000,
+        "gender": "남성",
+        "colorLabel": "블랙",
+        "category": "001001"
+      }
+    },
+    {
+      "itemId": "s07-4843139",
+      "queryId": "s07",
+      "bucket": "R1",
+      "rule": "참고 계열. 다른 계열과 같은 방식으로 매기되 종합 점수에서 제외된다.",
+      "query": "클럽에 갈때 입을옷 추천해줘 - 여자야",
+      "product": {
+        "title": "GS-N-SS-24-501 프린팅 반팔 티셔츠_화이트",
+        "brand": "제네럴웍스",
+        "price": 29000,
+        "gender": "남성",
+        "colorLabel": "화이트",
+        "category": "001001"
+      }
+    },
+    {
+      "itemId": "g05-567853",
+      "queryId": "g05",
+      "bucket": "R1",
+      "rule": "참고 계열. 다른 계열과 같은 방식으로 매기되 종합 점수에서 제외된다.",
+      "query": "내가 105 입는데 노란색 신발에 어울리는 티셔츠 추천해줘 나 남자야",
+      "product": {
+        "title": "스트라이프 반팔티셔츠 (3 COLOR)",
+        "brand": "컨셉츄얼",
+        "price": 9900,
+        "gender": "남성",
+        "colorLabel": "핑크/그레이/옐로우",
+        "category": "001001"
+      }
+    },
+    {
+      "itemId": "g05-764985",
+      "queryId": "g05",
+      "bucket": "R1",
+      "rule": "참고 계열. 다른 계열과 같은 방식으로 매기되 종합 점수에서 제외된다.",
+      "query": "내가 105 입는데 노란색 신발에 어울리는 티셔츠 추천해줘 나 남자야",
+      "product": {
+        "title": "DINO LOGO 4 T-SHIRT - YELLOW",
+        "brand": "아임낫어휴먼비잉",
+        "price": 29250,
+        "gender": "남성",
+        "colorLabel": "옐로우",
+        "category": "001001"
+      }
+    },
+    {
+      "itemId": "s11-1980957",
+      "queryId": "s11",
+      "bucket": "R1",
+      "rule": "참고 계열. 다른 계열과 같은 방식으로 매기되 종합 점수에서 제외된다.",
+      "query": "싸이 흠뻑쇼갈때 입을옷",
+      "product": {
+        "title": "PP-DGST-WH",
+        "brand": "싸이코퍼플",
+        "price": 43000,
+        "gender": "남성",
+        "colorLabel": "화이트",
+        "category": "001001"
+      }
+    },
+    {
+      "itemId": "g03-4188865",
+      "queryId": "g03",
+      "bucket": "G2",
+      "rule": "짧은 키워드·속성. 속성이 모두 확인되면 2, 일부만 맞으면 1.",
+      "query": "파란색 줄무늬 티",
+      "product": {
+        "title": "[CP] Gorilla 골퍼 오버핏 반팔티 오버핏 반팔티 AST4596 (4 COLOR)",
+        "brand": "앨빈클로",
+        "price": 24900,
+        "gender": "남성",
+        "colorLabel": "화이트/블랙/아이보리/다크 블루",
+        "category": "001001"
+      }
+    },
+    {
+      "itemId": "s15-5210390",
+      "queryId": "s15",
+      "bucket": "R1",
+      "rule": "참고 계열. 다른 계열과 같은 방식으로 매기되 종합 점수에서 제외된다.",
+      "query": "데이트갈때 입을 여성스워보이는 티셔츠",
+      "product": {
+        "title": "BOSS 테니스 프린트 코튼 릴렉스 핏 티셔츠(50543905026) 휴고보스 반팔티셔츠",
+        "brand": "보스 스포츠",
+        "price": 115500,
+        "gender": "남성",
+        "colorLabel": "그레이",
+        "category": "001001"
+      }
+    },
+    {
+      "itemId": "s16-5305344",
+      "queryId": "s16",
+      "bucket": "R1",
+      "rule": "참고 계열. 다른 계열과 같은 방식으로 매기되 종합 점수에서 제외된다.",
+      "query": "팔뚝살 커버 여름 반팔 티셔츠",
+      "product": {
+        "title": "[커버낫X하이다나] 럭키 씨리얼 링거 티셔츠 Off White",
+        "brand": "커버낫",
+        "price": 35400,
+        "gender": "남성",
+        "colorLabel": "화이트",
+        "category": "001001"
+      }
+    },
+    {
+      "itemId": "s07-4843363",
+      "queryId": "s07",
+      "bucket": "R1",
+      "rule": "참고 계열. 다른 계열과 같은 방식으로 매기되 종합 점수에서 제외된다.",
+      "query": "클럽에 갈때 입을옷 추천해줘 - 여자야",
+      "product": {
+        "title": "GS-N-SS-24-502 프린팅 반팔 티셔츠_블랙",
+        "brand": "제네럴웍스",
+        "price": 29000,
+        "gender": "남성",
+        "colorLabel": "블랙",
+        "category": "001001"
+      }
+    },
+    {
+      "itemId": "s08-6655565",
+      "queryId": "s08",
+      "bucket": "R1",
+      "rule": "참고 계열. 다른 계열과 같은 방식으로 매기되 종합 점수에서 제외된다.",
+      "query": "바다에서 비키니 위에 입을 얇은 티셔츠",
+      "product": {
+        "title": "Le tencel layered tee ver. mul blue",
+        "brand": "위에버",
+        "price": 72800,
+        "gender": "여성",
+        "colorLabel": "라이트 그레이/민트/네이비/스카이 블루",
+        "category": "001001"
+      }
+    },
+    {
+      "itemId": "g01-764990",
+      "queryId": "g01",
+      "bucket": "R1",
+      "rule": "참고 계열. 다른 계열과 같은 방식으로 매기되 종합 점수에서 제외된다.",
+      "query": "내가 105 입는데 노란색 신발에 어울리는 티셔츠 추천해줘",
+      "product": {
+        "title": "FIRE CRACKER LOGO T-SHIRT - YELLOW",
+        "brand": "아임낫어휴먼비잉",
+        "price": 29250,
+        "gender": "남성",
+        "colorLabel": "옐로우",
+        "category": "001001"
+      }
+    },
+    {
+      "itemId": "g01-87860",
+      "queryId": "g01",
+      "bucket": "R1",
+      "rule": "참고 계열. 다른 계열과 같은 방식으로 매기되 종합 점수에서 제외된다.",
+      "query": "내가 105 입는데 노란색 신발에 어울리는 티셔츠 추천해줘",
+      "product": {
+        "title": "[슈가포인트] 남녀공용 그래픽 티셔츠  mystic-yellow",
+        "brand": "슈가포인트",
+        "price": 15200,
+        "gender": "남성",
+        "colorLabel": "옐로우",
+        "category": "001001"
+      }
+    },
+    {
+      "itemId": "s11-1506526",
+      "queryId": "s11",
+      "bucket": "R1",
+      "rule": "참고 계열. 다른 계열과 같은 방식으로 매기되 종합 점수에서 제외된다.",
+      "query": "싸이 흠뻑쇼갈때 입을옷",
+      "product": {
+        "title": "PP-BST-WH",
+        "brand": "싸이코퍼플",
+        "price": 31000,
+        "gender": "남성",
+        "colorLabel": "화이트",
+        "category": "001001"
+      }
+    },
+    {
+      "itemId": "s08-6655389",
+      "queryId": "s08",
+      "bucket": "R1",
+      "rule": "참고 계열. 다른 계열과 같은 방식으로 매기되 종합 점수에서 제외된다.",
+      "query": "바다에서 비키니 위에 입을 얇은 티셔츠",
+      "product": {
+        "title": "Le tencel layered tee ver. ember navy",
+        "brand": "위에버",
+        "price": 72800,
+        "gender": "여성",
+        "colorLabel": "라이트 그레이/민트/네이비/스카이 블루",
+        "category": "001001"
+      }
+    },
+    {
+      "itemId": "g01-770990",
+      "queryId": "g01",
+      "bucket": "R1",
+      "rule": "참고 계열. 다른 계열과 같은 방식으로 매기되 종합 점수에서 제외된다.",
+      "query": "내가 105 입는데 노란색 신발에 어울리는 티셔츠 추천해줘",
+      "product": {
+        "title": "OVER FIT POCKET NEON HALF SHIRTS LEMON 오버핏 포켓 형광 반팔티 레몬(이너겸용)",
+        "brand": "라울",
+        "price": 43000,
+        "gender": "남성",
+        "colorLabel": "옐로우",
+        "category": "001001"
+      }
+    },
+    {
+      "itemId": "g05-2789441",
+      "queryId": "g05",
+      "bucket": "R1",
+      "rule": "참고 계열. 다른 계열과 같은 방식으로 매기되 종합 점수에서 제외된다.",
+      "query": "내가 105 입는데 노란색 신발에 어울리는 티셔츠 추천해줘 나 남자야",
+      "product": {
+        "title": "STRAPPY VEST TOP_T226TP105",
+        "brand": "탑걸",
+        "price": 22400,
+        "gender": "여성",
+        "colorLabel": "핑크/블랙/블루/옐로우",
+        "category": "001011"
+      }
+    },
+    {
+      "itemId": "s07-4843488",
+      "queryId": "s07",
+      "bucket": "R1",
+      "rule": "참고 계열. 다른 계열과 같은 방식으로 매기되 종합 점수에서 제외된다.",
+      "query": "클럽에 갈때 입을옷 추천해줘 - 여자야",
+      "product": {
+        "title": "GS-N-SS-24-502 프린팅 반팔 티셔츠_화이트",
+        "brand": "제네럴웍스",
+        "price": 29000,
+        "gender": "남성",
+        "colorLabel": "화이트",
+        "category": "001001"
+      }
+    },
+    {
+      "itemId": "g05-565931",
+      "queryId": "g05",
+      "bucket": "R1",
+      "rule": "참고 계열. 다른 계열과 같은 방식으로 매기되 종합 점수에서 제외된다.",
+      "query": "내가 105 입는데 노란색 신발에 어울리는 티셔츠 추천해줘 나 남자야",
+      "product": {
+        "title": "QDLS STRIPE TEE_YELLOW",
+        "brand": "콴토데로코스",
+        "price": 35000,
+        "gender": "남성",
+        "colorLabel": "옐로우",
+        "category": "001001"
+      }
+    },
+    {
+      "itemId": "g05-761253",
+      "queryId": "g05",
+      "bucket": "R1",
+      "rule": "참고 계열. 다른 계열과 같은 방식으로 매기되 종합 점수에서 제외된다.",
+      "query": "내가 105 입는데 노란색 신발에 어울리는 티셔츠 추천해줘 나 남자야",
+      "product": {
+        "title": "빈티지 서커스 01_CRCT",
+        "brand": "상상발전소",
+        "price": 24500,
+        "gender": "남성",
+        "colorLabel": "옐로우",
+        "category": "001001"
+      }
+    },
+    {
+      "itemId": "s08-6523984",
+      "queryId": "s08",
+      "bucket": "R1",
+      "rule": "참고 계열. 다른 계열과 같은 방식으로 매기되 종합 점수에서 제외된다.",
+      "query": "바다에서 비키니 위에 입을 얇은 티셔츠",
+      "product": {
+        "title": "비키니 아일렛 탑 (그레이블루)",
+        "brand": "드라이로즈",
+        "price": 58900,
+        "gender": "여성",
+        "colorLabel": "그레이",
+        "category": "001001"
+      }
+    },
+    {
+      "itemId": "g01-761253",
+      "queryId": "g01",
+      "bucket": "R1",
+      "rule": "참고 계열. 다른 계열과 같은 방식으로 매기되 종합 점수에서 제외된다.",
+      "query": "내가 105 입는데 노란색 신발에 어울리는 티셔츠 추천해줘",
+      "product": {
+        "title": "빈티지 서커스 01_CRCT",
+        "brand": "상상발전소",
+        "price": 24500,
+        "gender": "남성",
+        "colorLabel": "옐로우",
+        "category": "001001"
+      }
+    },
+    {
+      "itemId": "g01-5073382",
+      "queryId": "g01",
+      "bucket": "R1",
+      "rule": "참고 계열. 다른 계열과 같은 방식으로 매기되 종합 점수에서 제외된다.",
+      "query": "내가 105 입는데 노란색 신발에 어울리는 티셔츠 추천해줘",
+      "product": {
+        "title": "멀티컬러 라운드넥 니트 반팔 티셔츠 STEE105A",
+        "brand": "이카룩",
+        "price": 58700,
+        "gender": "남성",
+        "colorLabel": "화이트/블랙/옐로우",
+        "category": "001001"
+      }
+    },
+    {
+      "itemId": "s16-5292842",
+      "queryId": "s16",
+      "bucket": "R1",
+      "rule": "참고 계열. 다른 계열과 같은 방식으로 매기되 종합 점수에서 제외된다.",
+      "query": "팔뚝살 커버 여름 반팔 티셔츠",
+      "product": {
+        "title": "커버 피크 그래픽 면 티셔츠 (BLACK)",
+        "brand": "커버라이즈",
+        "price": 19900,
+        "gender": "남성",
+        "colorLabel": "블랙",
+        "category": "001001"
+      }
+    },
+    {
+      "itemId": "g05-587120",
+      "queryId": "g05",
+      "bucket": "R1",
+      "rule": "참고 계열. 다른 계열과 같은 방식으로 매기되 종합 점수에서 제외된다.",
+      "query": "내가 105 입는데 노란색 신발에 어울리는 티셔츠 추천해줘 나 남자야",
+      "product": {
+        "title": "브러시 프린트 아이스크림 티셔츠 옐로우그린",
+        "brand": "발란트",
+        "price": 39200,
+        "gender": "남성",
+        "colorLabel": "라이트 옐로우",
+        "category": "001001"
+      }
+    },
+    {
+      "itemId": "s16-5305340",
+      "queryId": "s16",
+      "bucket": "R1",
+      "rule": "참고 계열. 다른 계열과 같은 방식으로 매기되 종합 점수에서 제외된다.",
+      "query": "팔뚝살 커버 여름 반팔 티셔츠",
+      "product": {
+        "title": "[커버낫X하이다나] 럭키 씨리얼 로고 티셔츠 Off White",
+        "brand": "커버낫",
+        "price": 41300,
+        "gender": "여성",
+        "colorLabel": "화이트",
+        "category": "001001"
+      }
+    },
+    {
+      "itemId": "s16-6245389",
+      "queryId": "s16",
+      "bucket": "R1",
+      "rule": "참고 계열. 다른 계열과 같은 방식으로 매기되 종합 점수에서 제외된다.",
+      "query": "팔뚝살 커버 여름 반팔 티셔츠",
+      "product": {
+        "title": "[커버낫 X 미즈노] 소로나 트랙 레터링 그래픽 메쉬 티셔츠 라이트그레이",
+        "brand": "커버낫",
+        "price": 55200,
+        "gender": "남성",
+        "colorLabel": "오트밀",
+        "category": "001001"
+      }
+    },
+    {
+      "itemId": "s11-1506497",
+      "queryId": "s11",
+      "bucket": "R1",
+      "rule": "참고 계열. 다른 계열과 같은 방식으로 매기되 종합 점수에서 제외된다.",
+      "query": "싸이 흠뻑쇼갈때 입을옷",
+      "product": {
+        "title": "PP-NST-BK",
+        "brand": "싸이코퍼플",
+        "price": 31000,
+        "gender": "남성",
+        "colorLabel": "블랙",
+        "category": "001001"
+      }
+    },
+    {
+      "itemId": "s16-4251895",
+      "queryId": "s16",
+      "bucket": "R1",
+      "rule": "참고 계열. 다른 계열과 같은 방식으로 매기되 종합 점수에서 제외된다.",
+      "query": "팔뚝살 커버 여름 반팔 티셔츠",
+      "product": {
+        "title": "[커버낫X랭글러] 08 빈티지 티셔츠 화이트",
+        "brand": "커버낫",
+        "price": 35400,
+        "gender": "공용",
+        "colorLabel": "화이트",
+        "category": "001001"
+      }
+    },
+    {
+      "itemId": "s08-5210096",
+      "queryId": "s08",
+      "bucket": "R1",
+      "rule": "참고 계열. 다른 계열과 같은 방식으로 매기되 종합 점수에서 제외된다.",
+      "query": "바다에서 비키니 위에 입을 얇은 티셔츠",
+      "product": {
+        "title": "스폰지밥 비키니시티 주민들 그래픽 반팔 티셔츠(한정판)",
+        "brand": "댄꼼마",
+        "price": 39900,
+        "gender": "공용",
+        "colorLabel": "아이보리",
+        "category": "001001"
+      }
+    },
+    {
+      "itemId": "s15-5155029",
+      "queryId": "s15",
+      "bucket": "R1",
+      "rule": "참고 계열. 다른 계열과 같은 방식으로 매기되 종합 점수에서 제외된다.",
+      "query": "데이트갈때 입을 여성스워보이는 티셔츠",
+      "product": {
+        "title": "피치 핑크 반팔피치 핑크 반팔 티셔츠 Fleur Douce Tee T-Shirt피치 핑크 반팔 티셔츠 Fleur Douce Tee T-Shirt",
+        "brand": "에클라 디뱅",
+        "price": 28000,
+        "gender": "여성",
+        "colorLabel": "라이트 핑크",
+        "category": "001001"
+      }
+    },
+    {
+      "itemId": "s11-2555665",
+      "queryId": "s11",
+      "bucket": "R1",
+      "rule": "참고 계열. 다른 계열과 같은 방식으로 매기되 종합 점수에서 제외된다.",
+      "query": "싸이 흠뻑쇼갈때 입을옷",
+      "product": {
+        "title": "(리싸이클)씽크 크루넥(옐로우)",
+        "brand": "이프지오",
+        "price": 43820,
+        "gender": "여성",
+        "colorLabel": "옐로우",
+        "category": "001001"
+      }
+    },
+    {
+      "itemId": "a-g5-09-3092631",
+      "queryId": "a-g5-09",
+      "bucket": "G5",
+      "rule": "부정 조건. 부정을 위반하면 다른 조건을 다 만족해도 0.",
+      "query": "화려하지 않은 기본 티셔츠",
+      "product": {
+        "title": "6.0oz 액티브 무지 기본 반팔 티셔츠_네이비",
+        "brand": "샤카웨어",
+        "price": 11160,
+        "gender": "남성",
+        "colorLabel": "블랙",
+        "category": "001001"
+      }
+    },
+    {
+      "itemId": "s16-6245394",
+      "queryId": "s16",
+      "bucket": "R1",
+      "rule": "참고 계열. 다른 계열과 같은 방식으로 매기되 종합 점수에서 제외된다.",
+      "query": "팔뚝살 커버 여름 반팔 티셔츠",
+      "product": {
+        "title": "[커버낫 X 미즈노] 쿨 코튼 쉘 그래픽 티셔츠 화이트",
+        "brand": "커버낫",
+        "price": 47200,
+        "gender": "남성",
+        "colorLabel": "화이트",
+        "category": "001001"
+      }
+    },
+    {
+      "itemId": "s11-1980948",
+      "queryId": "s11",
+      "bucket": "R1",
+      "rule": "참고 계열. 다른 계열과 같은 방식으로 매기되 종합 점수에서 제외된다.",
+      "query": "싸이 흠뻑쇼갈때 입을옷",
+      "product": {
+        "title": "PP-DGST-BK",
+        "brand": "싸이코퍼플",
+        "price": 43000,
+        "gender": "남성",
+        "colorLabel": "블랙",
+        "category": "001001"
+      }
+    },
+    {
+      "itemId": "s11-4144501",
+      "queryId": "s11",
+      "bucket": "R1",
+      "rule": "참고 계열. 다른 계열과 같은 방식으로 매기되 종합 점수에서 제외된다.",
+      "query": "싸이 흠뻑쇼갈때 입을옷",
+      "product": {
+        "title": "싸이버 걸 반팔티 (오션블루)",
+        "brand": "넷소셜클럽",
+        "price": 19900,
+        "gender": "여성",
+        "colorLabel": "블루",
+        "category": "001001"
+      }
+    },
+    {
+      "itemId": "g01-3844670",
+      "queryId": "g01",
+      "bucket": "R1",
+      "rule": "참고 계열. 다른 계열과 같은 방식으로 매기되 종합 점수에서 제외된다.",
+      "query": "내가 105 입는데 노란색 신발에 어울리는 티셔츠 추천해줘",
+      "product": {
+        "title": "[2PACK] 슬램 로고 피그먼트 슬리브리스 FSL105 / 6color",
+        "brand": "플루크",
+        "price": 35800,
+        "gender": "남성",
+        "colorLabel": "화이트/다크 그레이/민트/네이비/라이트 옐로우/오트밀",
+        "category": "001011"
+      }
+    },
+    {
+      "itemId": "s15-4882562",
+      "queryId": "s15",
+      "bucket": "R1",
+      "rule": "참고 계열. 다른 계열과 같은 방식으로 매기되 종합 점수에서 제외된다.",
+      "query": "데이트갈때 입을 여성스워보이는 티셔츠",
+      "product": {
+        "title": "PWX Q525-3614-15 여성용 기능성 마스크넥 귀걸이형 자외선차단 베이스레이어 티셔츠 쿨티셔츠",
+        "brand": "프로월드컵",
+        "price": 31120,
+        "gender": "여성",
+        "colorLabel": "화이트/블랙",
+        "category": "001001"
+      }
+    },
+    {
+      "itemId": "s11-3205935",
+      "queryId": "s11",
+      "bucket": "R1",
+      "rule": "참고 계열. 다른 계열과 같은 방식으로 매기되 종합 점수에서 제외된다.",
+      "query": "싸이 흠뻑쇼갈때 입을옷",
+      "product": {
+        "title": "모터 싸이클 다이어리 블랙 티셔츠",
+        "brand": "그란투리스모",
+        "price": 31200,
+        "gender": "남성",
+        "colorLabel": "블랙",
+        "category": "001001"
+      }
+    },
+    {
+      "itemId": "s16-5305337",
+      "queryId": "s16",
+      "bucket": "R1",
+      "rule": "참고 계열. 다른 계열과 같은 방식으로 매기되 종합 점수에서 제외된다.",
+      "query": "팔뚝살 커버 여름 반팔 티셔츠",
+      "product": {
+        "title": "[커버낫X하이다나] 럭키 씨리얼 로고 티셔츠 Heather Gray",
+        "brand": "커버낫",
+        "price": 47200,
+        "gender": "남성",
+        "colorLabel": "라이트 그레이",
+        "category": "001001"
+      }
+    },
+    {
+      "itemId": "g05-87860",
+      "queryId": "g05",
+      "bucket": "R1",
+      "rule": "참고 계열. 다른 계열과 같은 방식으로 매기되 종합 점수에서 제외된다.",
+      "query": "내가 105 입는데 노란색 신발에 어울리는 티셔츠 추천해줘 나 남자야",
+      "product": {
+        "title": "[슈가포인트] 남녀공용 그래픽 티셔츠  mystic-yellow",
+        "brand": "슈가포인트",
+        "price": 15200,
+        "gender": "남성",
+        "colorLabel": "옐로우",
+        "category": "001001"
+      }
+    },
+    {
+      "itemId": "g01-764507",
+      "queryId": "g01",
+      "bucket": "R1",
+      "rule": "참고 계열. 다른 계열과 같은 방식으로 매기되 종합 점수에서 제외된다.",
+      "query": "내가 105 입는데 노란색 신발에 어울리는 티셔츠 추천해줘",
+      "product": {
+        "title": "never quit SST(mustard)",
+        "brand": "핍스",
+        "price": 39000,
+        "gender": "남성",
+        "colorLabel": "옐로우",
+        "category": "001001"
+      }
+    },
+    {
+      "itemId": "g01-559111",
+      "queryId": "g01",
+      "bucket": "R1",
+      "rule": "참고 계열. 다른 계열과 같은 방식으로 매기되 종합 점수에서 제외된다.",
+      "query": "내가 105 입는데 노란색 신발에 어울리는 티셔츠 추천해줘",
+      "product": {
+        "title": "08:37 체크 포인트 반팔 티셔츠 (옐로우)",
+        "brand": "나우왓",
+        "price": 13900,
+        "gender": "남성",
+        "colorLabel": "옐로우",
+        "category": "001001"
+      }
+    },
+    {
+      "itemId": "s07-4843647",
+      "queryId": "s07",
+      "bucket": "R1",
+      "rule": "참고 계열. 다른 계열과 같은 방식으로 매기되 종합 점수에서 제외된다.",
+      "query": "클럽에 갈때 입을옷 추천해줘 - 여자야",
+      "product": {
+        "title": "GS-N-SS-24-503 프린팅 반팔 티셔츠_화이트",
+        "brand": "제네럴웍스",
+        "price": 29000,
+        "gender": "남성",
+        "colorLabel": "화이트",
+        "category": "001001"
+      }
+    },
+    {
+      "itemId": "s15-5073443",
+      "queryId": "s15",
+      "bucket": "R1",
+      "rule": "참고 계열. 다른 계열과 같은 방식으로 매기되 종합 점수에서 제외된다.",
+      "query": "데이트갈때 입을 여성스워보이는 티셔츠",
+      "product": {
+        "title": "[2PACK] 오버핏 크루넥 로고 반팔 티셔츠 & 크루넥 오버핏 유니버셜 티셔츠",
+        "brand": "블론드나인",
+        "price": 32600,
+        "gender": "공용",
+        "colorLabel": "화이트",
+        "category": "001001"
+      }
+    },
+    {
+      "itemId": "s08-5038922",
+      "queryId": "s08",
+      "bucket": "R1",
+      "rule": "참고 계열. 다른 계열과 같은 방식으로 매기되 종합 점수에서 제외된다.",
+      "query": "바다에서 비키니 위에 입을 얇은 티셔츠",
+      "product": {
+        "title": "러브썸머 모달 크롭T - White",
+        "brand": "비키니밴더",
+        "price": 31350,
+        "gender": "여성",
+        "colorLabel": "화이트",
+        "category": "001001"
+      }
+    },
+    {
+      "itemId": "g05-764511",
+      "queryId": "g05",
+      "bucket": "R1",
+      "rule": "참고 계열. 다른 계열과 같은 방식으로 매기되 종합 점수에서 제외된다.",
+      "query": "내가 105 입는데 노란색 신발에 어울리는 티셔츠 추천해줘 나 남자야",
+      "product": {
+        "title": "change game SST(mustard)",
+        "brand": "핍스",
+        "price": 39000,
+        "gender": "남성",
+        "colorLabel": "옐로우",
+        "category": "001001"
+      }
+    },
+    {
+      "itemId": "s08-6524283",
+      "queryId": "s08",
+      "bucket": "R1",
+      "rule": "참고 계열. 다른 계열과 같은 방식으로 매기되 종합 점수에서 제외된다.",
+      "query": "바다에서 비키니 위에 입을 얇은 티셔츠",
+      "product": {
+        "title": "비키니 아일렛 탑 (화이트)",
+        "brand": "드라이로즈",
+        "price": 62000,
+        "gender": "여성",
+        "colorLabel": "화이트",
+        "category": "001001"
+      }
+    },
+    {
+      "itemId": "s16-5096230",
+      "queryId": "s16",
+      "bucket": "R1",
+      "rule": "참고 계열. 다른 계열과 같은 방식으로 매기되 종합 점수에서 제외된다.",
+      "query": "팔뚝살 커버 여름 반팔 티셔츠",
+      "product": {
+        "title": "[커버낫X르망고] 우먼 그래픽 크롭 티셔츠 Pink",
+        "brand": "커버낫 우먼",
+        "price": 31850,
+        "gender": "여성",
+        "colorLabel": "핑크",
+        "category": "001001"
+      }
+    },
+    {
+      "itemId": "s07-4843684",
+      "queryId": "s07",
+      "bucket": "R1",
+      "rule": "참고 계열. 다른 계열과 같은 방식으로 매기되 종합 점수에서 제외된다.",
+      "query": "클럽에 갈때 입을옷 추천해줘 - 여자야",
+      "product": {
+        "title": "GS-N-SS-24-503 프린팅 반팔 티셔츠_다크그레이",
+        "brand": "제네럴웍스",
+        "price": 29000,
+        "gender": "남성",
+        "colorLabel": "다크 그레이",
+        "category": "001001"
+      }
+    },
+    {
+      "itemId": "s07-4843326",
+      "queryId": "s07",
+      "bucket": "R1",
+      "rule": "참고 계열. 다른 계열과 같은 방식으로 매기되 종합 점수에서 제외된다.",
+      "query": "클럽에 갈때 입을옷 추천해줘 - 여자야",
+      "product": {
+        "title": "GS-N-SS-24-501 프린팅 반팔 티셔츠_카키",
+        "brand": "제네럴웍스",
+        "price": 29000,
+        "gender": "남성",
+        "colorLabel": "카키",
+        "category": "001001"
+      }
+    },
+    {
+      "itemId": "s16-4251888",
+      "queryId": "s16",
+      "bucket": "R1",
+      "rule": "참고 계열. 다른 계열과 같은 방식으로 매기되 종합 점수에서 제외된다.",
+      "query": "팔뚝살 커버 여름 반팔 티셔츠",
+      "product": {
+        "title": "[커버낫X랭글러] 08 빈티지 티셔츠 블루",
+        "brand": "커버낫",
+        "price": 35400,
+        "gender": "공용",
+        "colorLabel": "블루",
+        "category": "001001"
+      }
+    },
+    {
+      "itemId": "s07-4843855",
+      "queryId": "s07",
+      "bucket": "R1",
+      "rule": "참고 계열. 다른 계열과 같은 방식으로 매기되 종합 점수에서 제외된다.",
+      "query": "클럽에 갈때 입을옷 추천해줘 - 여자야",
+      "product": {
+        "title": "GS-N-SS-24-504 프린팅 반팔 티셔츠_네이비",
+        "brand": "제네럴웍스",
+        "price": 29000,
+        "gender": "남성",
+        "colorLabel": "네이비",
+        "category": "001001"
+      }
+    },
+    {
+      "itemId": "g05-777443",
+      "queryId": "g05",
+      "bucket": "R1",
+      "rule": "참고 계열. 다른 계열과 같은 방식으로 매기되 종합 점수에서 제외된다.",
+      "query": "내가 105 입는데 노란색 신발에 어울리는 티셔츠 추천해줘 나 남자야",
+      "product": {
+        "title": "언발란스 베이직 티셔츠",
+        "brand": "고디크",
+        "price": 39000,
+        "gender": "남성",
+        "colorLabel": "옐로우",
+        "category": "001001"
+      }
+    },
+    {
+      "itemId": "g01-764985",
+      "queryId": "g01",
+      "bucket": "R1",
+      "rule": "참고 계열. 다른 계열과 같은 방식으로 매기되 종합 점수에서 제외된다.",
+      "query": "내가 105 입는데 노란색 신발에 어울리는 티셔츠 추천해줘",
+      "product": {
+        "title": "DINO LOGO 4 T-SHIRT - YELLOW",
+        "brand": "아임낫어휴먼비잉",
+        "price": 29250,
+        "gender": "남성",
+        "colorLabel": "옐로우",
+        "category": "001001"
+      }
+    },
+    {
+      "itemId": "g05-532010",
+      "queryId": "g05",
+      "bucket": "R1",
+      "rule": "참고 계열. 다른 계열과 같은 방식으로 매기되 종합 점수에서 제외된다.",
+      "query": "내가 105 입는데 노란색 신발에 어울리는 티셔츠 추천해줘 나 남자야",
+      "product": {
+        "title": "래퍼 간디_BNCT",
+        "brand": "상상발전소",
+        "price": 24500,
+        "gender": "남성",
+        "colorLabel": "옐로우",
+        "category": "001001"
+      }
+    },
+    {
+      "itemId": "g05-764507",
+      "queryId": "g05",
+      "bucket": "R1",
+      "rule": "참고 계열. 다른 계열과 같은 방식으로 매기되 종합 점수에서 제외된다.",
+      "query": "내가 105 입는데 노란색 신발에 어울리는 티셔츠 추천해줘 나 남자야",
+      "product": {
+        "title": "never quit SST(mustard)",
+        "brand": "핍스",
+        "price": 39000,
+        "gender": "남성",
+        "colorLabel": "옐로우",
+        "category": "001001"
+      }
+    },
+    {
+      "itemId": "s08-6605342",
+      "queryId": "s08",
+      "bucket": "R1",
+      "rule": "참고 계열. 다른 계열과 같은 방식으로 매기되 종합 점수에서 제외된다.",
+      "query": "바다에서 비키니 위에 입을 얇은 티셔츠",
+      "product": {
+        "title": "Lin stripe t- shirts ver. brown",
+        "brand": "위에버",
+        "price": 47200,
+        "gender": "여성",
+        "colorLabel": "아이보리/라이트 그레이/다크 그레이/브라운",
+        "category": "001001"
+      }
+    },
+    {
+      "itemId": "s08-6605335",
+      "queryId": "s08",
+      "bucket": "R1",
+      "rule": "참고 계열. 다른 계열과 같은 방식으로 매기되 종합 점수에서 제외된다.",
+      "query": "바다에서 비키니 위에 입을 얇은 티셔츠",
+      "product": {
+        "title": "Lin stripe t- shirts ver. charcoal",
+        "brand": "위에버",
+        "price": 47200,
+        "gender": "여성",
+        "colorLabel": "아이보리/라이트 그레이/다크 그레이/브라운",
+        "category": "001001"
+      }
+    },
+    {
+      "itemId": "s16-5055242",
+      "queryId": "s16",
+      "bucket": "R1",
+      "rule": "참고 계열. 다른 계열과 같은 방식으로 매기되 종합 점수에서 제외된다.",
+      "query": "팔뚝살 커버 여름 반팔 티셔츠",
+      "product": {
+        "title": "PWX 프로월드컵 S225-3527-30 남성용 기능성 반팔티셔츠 쿨티셔츠 아이스티셔츠 4종",
+        "brand": "프로월드컵",
+        "price": 14900,
+        "gender": "남성",
+        "colorLabel": "화이트/블랙/그레이/다크 블루",
+        "category": "001001"
+      }
+    },
+    {
+      "itemId": "s15-5055242",
+      "queryId": "s15",
+      "bucket": "R1",
+      "rule": "참고 계열. 다른 계열과 같은 방식으로 매기되 종합 점수에서 제외된다.",
+      "query": "데이트갈때 입을 여성스워보이는 티셔츠",
+      "product": {
+        "title": "PWX 프로월드컵 S225-3527-30 남성용 기능성 반팔티셔츠 쿨티셔츠 아이스티셔츠 4종",
+        "brand": "프로월드컵",
+        "price": 14900,
+        "gender": "남성",
+        "colorLabel": "화이트/블랙/그레이/다크 블루",
+        "category": "001001"
+      }
+    },
+    {
+      "itemId": "s11-2546297",
+      "queryId": "s11",
+      "bucket": "R1",
+      "rule": "참고 계열. 다른 계열과 같은 방식으로 매기되 종합 점수에서 제외된다.",
+      "query": "싸이 흠뻑쇼갈때 입을옷",
+      "product": {
+        "title": "싸이로 포켓 티셔츠 - 멜란지 그레이",
+        "brand": "퀄리티 퍼포먼스",
+        "price": 49000,
+        "gender": "남성",
+        "colorLabel": "그레이",
+        "category": "001001"
+      }
+    },
+    {
+      "itemId": "s08-6655418",
+      "queryId": "s08",
+      "bucket": "R1",
+      "rule": "참고 계열. 다른 계열과 같은 방식으로 매기되 종합 점수에서 제외된다.",
+      "query": "바다에서 비키니 위에 입을 얇은 티셔츠",
+      "product": {
+        "title": "Le tencel layered tee ver. light gray",
+        "brand": "위에버",
+        "price": 72800,
+        "gender": "여성",
+        "colorLabel": "라이트 그레이/민트/네이비/스카이 블루",
+        "category": "001001"
+      }
+    },
+    {
+      "itemId": "s15-5079932",
+      "queryId": "s15",
+      "bucket": "R1",
+      "rule": "참고 계열. 다른 계열과 같은 방식으로 매기되 종합 점수에서 제외된다.",
+      "query": "데이트갈때 입을 여성스워보이는 티셔츠",
+      "product": {
+        "title": "[2PACK] 라이딩 바이크 티셔츠 & 글로브 티셔츠",
+        "brand": "라이크더모스트",
+        "price": 55900,
+        "gender": "공용",
+        "colorLabel": "화이트/블랙/다크 그레이",
+        "category": "001001"
+      }
+    },
+    {
+      "itemId": "s15-3214029",
+      "queryId": "s15",
+      "bucket": "R1",
+      "rule": "참고 계열. 다른 계열과 같은 방식으로 매기되 종합 점수에서 제외된다.",
+      "query": "데이트갈때 입을 여성스워보이는 티셔츠",
+      "product": {
+        "title": "GCR LOGO T-SHIRTS 로고 티셔츠 크롭 티셔츠",
+        "brand": "고코리",
+        "price": 38000,
+        "gender": "여성",
+        "colorLabel": "화이트",
+        "category": "001001"
+      }
+    },
+    {
+      "itemId": "s11-1506537",
+      "queryId": "s11",
+      "bucket": "R1",
+      "rule": "참고 계열. 다른 계열과 같은 방식으로 매기되 종합 점수에서 제외된다.",
+      "query": "싸이 흠뻑쇼갈때 입을옷",
+      "product": {
+        "title": "PP-BST-BK",
+        "brand": "싸이코퍼플",
+        "price": 31000,
+        "gender": "남성",
+        "colorLabel": "블랙",
+        "category": "001001"
+      }
+    },
+    {
+      "itemId": "s15-3276155",
+      "queryId": "s15",
+      "bucket": "R1",
+      "rule": "참고 계열. 다른 계열과 같은 방식으로 매기되 종합 점수에서 제외된다.",
+      "query": "데이트갈때 입을 여성스워보이는 티셔츠",
+      "product": {
+        "title": "[SET] 손더 반팔티셔츠 + 스페이스 반팔티셔츠 (KMST6693+KMST6696)",
+        "brand": "에즈카톤",
+        "price": 39800,
+        "gender": "공용",
+        "colorLabel": "다크 브라운",
+        "category": "001001"
+      }
+    },
+    {
+      "itemId": "s07-4843628",
+      "queryId": "s07",
+      "bucket": "R1",
+      "rule": "참고 계열. 다른 계열과 같은 방식으로 매기되 종합 점수에서 제외된다.",
+      "query": "클럽에 갈때 입을옷 추천해줘 - 여자야",
+      "product": {
+        "title": "GS-N-SS-24-503 프린팅 반팔 티셔츠_블랙",
+        "brand": "제네럴웍스",
+        "price": 29000,
+        "gender": "남성",
+        "colorLabel": "블랙",
+        "category": "001001"
+      }
+    },
+    {
+      "itemId": "s07-4843752",
+      "queryId": "s07",
+      "bucket": "R1",
+      "rule": "참고 계열. 다른 계열과 같은 방식으로 매기되 종합 점수에서 제외된다.",
+      "query": "클럽에 갈때 입을옷 추천해줘 - 여자야",
+      "product": {
+        "title": "GS-N-SS-24-504 프린팅 반팔 티셔츠_블랙",
+        "brand": "제네럴웍스",
+        "price": 29000,
+        "gender": "남성",
+        "colorLabel": "블랙",
+        "category": "001001"
+      }
+    },
+    {
+      "itemId": "s03-5975885",
+      "queryId": "s03",
+      "bucket": "G2",
+      "rule": "짧은 키워드·속성. 속성이 모두 확인되면 2, 일부만 맞으면 1.",
+      "query": "동물로고 티셔츠",
+      "product": {
+        "title": "[17수] Retro Empathic Technology 반팔 티셔츠 - Polaroid",
+        "brand": "티셔츠 갤러리",
+        "price": 39000,
+        "gender": "남성",
+        "colorLabel": "화이트",
+        "category": "001001"
+      }
+    },
+    {
+      "itemId": "s08-6524245",
+      "queryId": "s08",
+      "bucket": "R1",
+      "rule": "참고 계열. 다른 계열과 같은 방식으로 매기되 종합 점수에서 제외된다.",
+      "query": "바다에서 비키니 위에 입을 얇은 티셔츠",
+      "product": {
+        "title": "비키니 아일렛 탑 (핑크)",
+        "brand": "드라이로즈",
+        "price": 62000,
+        "gender": "여성",
+        "colorLabel": "핑크",
+        "category": "001001"
+      }
+    },
+    {
+      "itemId": "s07-4843903",
+      "queryId": "s07",
+      "bucket": "R1",
+      "rule": "참고 계열. 다른 계열과 같은 방식으로 매기되 종합 점수에서 제외된다.",
+      "query": "클럽에 갈때 입을옷 추천해줘 - 여자야",
+      "product": {
+        "title": "GS-N-SS-24-505 프린팅 반팔 티셔츠_블랙",
+        "brand": "제네럴웍스",
+        "price": 29000,
+        "gender": "남성",
+        "colorLabel": "블랙",
+        "category": "001001"
+      }
+    },
+    {
+      "itemId": "s11-1980932",
+      "queryId": "s11",
+      "bucket": "R1",
+      "rule": "참고 계열. 다른 계열과 같은 방식으로 매기되 종합 점수에서 제외된다.",
+      "query": "싸이 흠뻑쇼갈때 입을옷",
+      "product": {
+        "title": "PP-BDST-BK",
+        "brand": "싸이코퍼플",
+        "price": 49000,
+        "gender": "남성",
+        "colorLabel": "블랙",
+        "category": "001001"
+      }
+    },
+    {
+      "itemId": "g05-770990",
+      "queryId": "g05",
+      "bucket": "R1",
+      "rule": "참고 계열. 다른 계열과 같은 방식으로 매기되 종합 점수에서 제외된다.",
+      "query": "내가 105 입는데 노란색 신발에 어울리는 티셔츠 추천해줘 나 남자야",
+      "product": {
+        "title": "OVER FIT POCKET NEON HALF SHIRTS LEMON 오버핏 포켓 형광 반팔티 레몬(이너겸용)",
+        "brand": "라울",
+        "price": 43000,
+        "gender": "남성",
+        "colorLabel": "옐로우",
+        "category": "001001"
+      }
+    },
+    {
+      "itemId": "s15-3377861",
+      "queryId": "s15",
+      "bucket": "R1",
+      "rule": "참고 계열. 다른 계열과 같은 방식으로 매기되 종합 점수에서 제외된다.",
+      "query": "데이트갈때 입을 여성스워보이는 티셔츠",
+      "product": {
+        "title": "BOSS 티셔츠 2팩(50497894960) 남자 반팔 티셔츠",
+        "brand": "보스 스포츠",
+        "price": 84000,
+        "gender": "남성",
+        "colorLabel": "블랙",
+        "category": "001001"
+      }
+    },
+    {
+      "itemId": "s15-5975885",
+      "queryId": "s15",
+      "bucket": "R1",
+      "rule": "참고 계열. 다른 계열과 같은 방식으로 매기되 종합 점수에서 제외된다.",
+      "query": "데이트갈때 입을 여성스워보이는 티셔츠",
+      "product": {
+        "title": "[17수] Retro Empathic Technology 반팔 티셔츠 - Polaroid",
+        "brand": "티셔츠 갤러리",
+        "price": 39000,
+        "gender": "남성",
+        "colorLabel": "화이트",
+        "category": "001001"
+      }
+    },
+    {
+      "itemId": "g05-565905",
+      "queryId": "g05",
+      "bucket": "R1",
+      "rule": "참고 계열. 다른 계열과 같은 방식으로 매기되 종합 점수에서 제외된다.",
+      "query": "내가 105 입는데 노란색 신발에 어울리는 티셔츠 추천해줘 나 남자야",
+      "product": {
+        "title": "STRIPE RAGLAN_TEE_YELLOW",
+        "brand": "콴토데로코스",
+        "price": 38000,
+        "gender": "남성",
+        "colorLabel": "옐로우",
+        "category": "001001"
+      }
+    },
+    {
+      "itemId": "s07-4843864",
+      "queryId": "s07",
+      "bucket": "R1",
+      "rule": "참고 계열. 다른 계열과 같은 방식으로 매기되 종합 점수에서 제외된다.",
+      "query": "클럽에 갈때 입을옷 추천해줘 - 여자야",
+      "product": {
+        "title": "GS-N-SS-24-504 프린팅 반팔 티셔츠_카키",
+        "brand": "제네럴웍스",
+        "price": 29000,
+        "gender": "남성",
+        "colorLabel": "카키",
+        "category": "001001"
+      }
+    },
+    {
+      "itemId": "s08-6706271",
+      "queryId": "s08",
+      "bucket": "R1",
+      "rule": "참고 계열. 다른 계열과 같은 방식으로 매기되 종합 점수에서 제외된다.",
+      "query": "바다에서 비키니 위에 입을 얇은 티셔츠",
+      "product": {
+        "title": "비키니 레이어드 티셔츠 (네이비)",
+        "brand": "포더웨더",
+        "price": 36540,
+        "gender": "여성",
+        "colorLabel": "네이비",
+        "category": "001001"
+      }
+    },
+    {
+      "itemId": "s08-4144548",
+      "queryId": "s08",
+      "bucket": "R1",
+      "rule": "참고 계열. 다른 계열과 같은 방식으로 매기되 종합 점수에서 제외된다.",
+      "query": "바다에서 비키니 위에 입을 얇은 티셔츠",
+      "product": {
+        "title": "그런지 위에브 반팔티 (다크블루)",
+        "brand": "넷소셜클럽",
+        "price": 18800,
+        "gender": "여성",
+        "colorLabel": "네이비",
+        "category": "001001"
+      }
+    },
+    {
+      "itemId": "s08-6605346",
+      "queryId": "s08",
+      "bucket": "R1",
+      "rule": "참고 계열. 다른 계열과 같은 방식으로 매기되 종합 점수에서 제외된다.",
+      "query": "바다에서 비키니 위에 입을 얇은 티셔츠",
+      "product": {
+        "title": "Lin stripe t- shirts ver. Light grey",
+        "brand": "위에버",
+        "price": 47200,
+        "gender": "여성",
+        "colorLabel": "아이보리/라이트 그레이/다크 그레이/브라운",
+        "category": "001001"
+      }
+    },
+    {
+      "itemId": "s08-6524151",
+      "queryId": "s08",
+      "bucket": "R1",
+      "rule": "참고 계열. 다른 계열과 같은 방식으로 매기되 종합 점수에서 제외된다.",
+      "query": "바다에서 비키니 위에 입을 얇은 티셔츠",
+      "product": {
+        "title": "비키니 아일렛 탑 (블랙)",
+        "brand": "드라이로즈",
+        "price": 58900,
+        "gender": "여성",
+        "colorLabel": "블랙",
+        "category": "001001"
+      }
+    },
+    {
+      "itemId": "g01-764511",
+      "queryId": "g01",
+      "bucket": "R1",
+      "rule": "참고 계열. 다른 계열과 같은 방식으로 매기되 종합 점수에서 제외된다.",
+      "query": "내가 105 입는데 노란색 신발에 어울리는 티셔츠 추천해줘",
+      "product": {
+        "title": "change game SST(mustard)",
+        "brand": "핍스",
+        "price": 39000,
+        "gender": "남성",
+        "colorLabel": "옐로우",
+        "category": "001001"
+      }
+    },
+    {
+      "itemId": "s07-6318222",
+      "queryId": "s07",
+      "bucket": "R1",
+      "rule": "참고 계열. 다른 계열과 같은 방식으로 매기되 종합 점수에서 제외된다.",
+      "query": "클럽에 갈때 입을옷 추천해줘 - 여자야",
+      "product": {
+        "title": "All-day Cotton V-neck T-shirt - Cotton-candy Pink",
+        "brand": "르바",
+        "price": 39900,
+        "gender": "여성",
+        "colorLabel": "라이트 핑크",
+        "category": "001001"
+      }
+    },
+    {
+      "itemId": "s11-1506520",
+      "queryId": "s11",
+      "bucket": "R1",
+      "rule": "참고 계열. 다른 계열과 같은 방식으로 매기되 종합 점수에서 제외된다.",
+      "query": "싸이 흠뻑쇼갈때 입을옷",
+      "product": {
+        "title": "PP-DST-PU",
+        "brand": "싸이코퍼플",
+        "price": 31000,
+        "gender": "남성",
+        "colorLabel": "퍼플",
+        "category": "001001"
+      }
+    },
+    {
+      "itemId": "g01-565931",
+      "queryId": "g01",
+      "bucket": "R1",
+      "rule": "참고 계열. 다른 계열과 같은 방식으로 매기되 종합 점수에서 제외된다.",
+      "query": "내가 105 입는데 노란색 신발에 어울리는 티셔츠 추천해줘",
+      "product": {
+        "title": "QDLS STRIPE TEE_YELLOW",
+        "brand": "콴토데로코스",
+        "price": 35000,
+        "gender": "남성",
+        "colorLabel": "옐로우",
+        "category": "001001"
+      }
+    },
+    {
+      "itemId": "s09-6725985",
+      "queryId": "s09",
+      "bucket": "R1",
+      "rule": "참고 계열. 다른 계열과 같은 방식으로 매기되 종합 점수에서 제외된다.",
+      "query": "요즘 유행하는옷",
+      "product": {
+        "title": "요즘 느낌 티셔츠 - 화이트",
+        "brand": "라퍼",
+        "price": 33520,
+        "gender": "공용",
+        "colorLabel": "화이트",
+        "category": "001001"
+      }
+    },
+    {
+      "itemId": "g01-565905",
+      "queryId": "g01",
+      "bucket": "R1",
+      "rule": "참고 계열. 다른 계열과 같은 방식으로 매기되 종합 점수에서 제외된다.",
+      "query": "내가 105 입는데 노란색 신발에 어울리는 티셔츠 추천해줘",
+      "product": {
+        "title": "STRIPE RAGLAN_TEE_YELLOW",
+        "brand": "콴토데로코스",
+        "price": 38000,
+        "gender": "남성",
+        "colorLabel": "옐로우",
+        "category": "001001"
+      }
+    },
+    {
+      "itemId": "s16-5096228",
+      "queryId": "s16",
+      "bucket": "R1",
+      "rule": "참고 계열. 다른 계열과 같은 방식으로 매기되 종합 점수에서 제외된다.",
+      "query": "팔뚝살 커버 여름 반팔 티셔츠",
+      "product": {
+        "title": "[커버낫X르망고] 우먼 그래픽 오버핏 티셔츠 Ivory",
+        "brand": "커버낫 우먼",
+        "price": 35400,
+        "gender": "여성",
+        "colorLabel": "아이보리",
+        "category": "001001"
+      }
+    },
+    {
+      "itemId": "s08-6605351",
+      "queryId": "s08",
+      "bucket": "R1",
+      "rule": "참고 계열. 다른 계열과 같은 방식으로 매기되 종합 점수에서 제외된다.",
+      "query": "바다에서 비키니 위에 입을 얇은 티셔츠",
+      "product": {
+        "title": "Lin stripe t- shirts ver. Ivory",
+        "brand": "위에버",
+        "price": 47200,
+        "gender": "여성",
+        "colorLabel": "아이보리/라이트 그레이/다크 그레이/브라운",
+        "category": "001001"
+      }
+    },
+    {
+      "itemId": "s16-4251884",
+      "queryId": "s16",
+      "bucket": "R1",
+      "rule": "참고 계열. 다른 계열과 같은 방식으로 매기되 종합 점수에서 제외된다.",
+      "query": "팔뚝살 커버 여름 반팔 티셔츠",
+      "product": {
+        "title": "[커버낫X랭글러] 모터사이클 피그먼트 티셔츠 블랙",
+        "brand": "커버낫",
+        "price": 29500,
+        "gender": "공용",
+        "colorLabel": "블랙",
+        "category": "001001"
+      }
+    },
+    {
+      "itemId": "g01-761259",
+      "queryId": "g01",
+      "bucket": "R1",
+      "rule": "참고 계열. 다른 계열과 같은 방식으로 매기되 종합 점수에서 제외된다.",
+      "query": "내가 105 입는데 노란색 신발에 어울리는 티셔츠 추천해줘",
+      "product": {
+        "title": "빈티지 서커스 02_CRCT",
+        "brand": "상상발전소",
+        "price": 24500,
+        "gender": "남성",
+        "colorLabel": "옐로우",
+        "category": "001001"
+      }
+    },
+    {
+      "itemId": "g05-5073382",
+      "queryId": "g05",
+      "bucket": "R1",
+      "rule": "참고 계열. 다른 계열과 같은 방식으로 매기되 종합 점수에서 제외된다.",
+      "query": "내가 105 입는데 노란색 신발에 어울리는 티셔츠 추천해줘 나 남자야",
+      "product": {
+        "title": "멀티컬러 라운드넥 니트 반팔 티셔츠 STEE105A",
+        "brand": "이카룩",
+        "price": 58700,
+        "gender": "남성",
+        "colorLabel": "화이트/블랙/옐로우",
+        "category": "001001"
+      }
+    },
+    {
+      "itemId": "s07-4843661",
+      "queryId": "s07",
+      "bucket": "R1",
+      "rule": "참고 계열. 다른 계열과 같은 방식으로 매기되 종합 점수에서 제외된다.",
+      "query": "클럽에 갈때 입을옷 추천해줘 - 여자야",
+      "product": {
+        "title": "GS-N-SS-24-503 프린팅 반팔 티셔츠_다크베이지",
+        "brand": "제네럴웍스",
+        "price": 29000,
+        "gender": "남성",
+        "colorLabel": "다크 베이지",
+        "category": "001001"
+      }
+    },
+    {
+      "itemId": "s16-6245391",
+      "queryId": "s16",
+      "bucket": "R1",
+      "rule": "참고 계열. 다른 계열과 같은 방식으로 매기되 종합 점수에서 제외된다.",
+      "query": "팔뚝살 커버 여름 반팔 티셔츠",
+      "product": {
+        "title": "[커버낫 X 미즈노] 쿨 코튼 쉘 그래픽 티셔츠 카키",
+        "brand": "커버낫",
+        "price": 47200,
+        "gender": "남성",
+        "colorLabel": "카키",
+        "category": "001001"
+      }
+    },
+    {
+      "itemId": "s07-4843906",
+      "queryId": "s07",
+      "bucket": "R1",
+      "rule": "참고 계열. 다른 계열과 같은 방식으로 매기되 종합 점수에서 제외된다.",
+      "query": "클럽에 갈때 입을옷 추천해줘 - 여자야",
+      "product": {
+        "title": "GS-N-SS-24-505 프린팅 반팔 티셔츠_화이트",
+        "brand": "제네럴웍스",
+        "price": 29000,
+        "gender": "남성",
+        "colorLabel": "화이트",
+        "category": "001001"
+      }
+    },
+    {
+      "itemId": "s15-4046482",
+      "queryId": "s15",
+      "bucket": "R1",
+      "rule": "참고 계열. 다른 계열과 같은 방식으로 매기되 종합 점수에서 제외된다.",
+      "query": "데이트갈때 입을 여성스워보이는 티셔츠",
+      "product": {
+        "title": "[SET]피그먼트 오버핏 반팔티셔츠+어드벤쳐 폰트 피그먼트 반팔티셔츠 (FST701+FST705)",
+        "brand": "플루크",
+        "price": 38800,
+        "gender": "남성",
+        "colorLabel": "화이트/오렌지/다크 그레이/그레이/카키/민트/네이비/스카이 블루/라이트 옐로우/라이트 핑크/블루/오트밀",
+        "category": "001001"
+      }
+    },
+    {
+      "itemId": "g05-764990",
+      "queryId": "g05",
+      "bucket": "R1",
+      "rule": "참고 계열. 다른 계열과 같은 방식으로 매기되 종합 점수에서 제외된다.",
+      "query": "내가 105 입는데 노란색 신발에 어울리는 티셔츠 추천해줘 나 남자야",
+      "product": {
+        "title": "FIRE CRACKER LOGO T-SHIRT - YELLOW",
+        "brand": "아임낫어휴먼비잉",
+        "price": 29250,
+        "gender": "남성",
+        "colorLabel": "옐로우",
+        "category": "001001"
+      }
+    },
+    {
+      "itemId": "s16-5096227",
+      "queryId": "s16",
+      "bucket": "R1",
+      "rule": "참고 계열. 다른 계열과 같은 방식으로 매기되 종합 점수에서 제외된다.",
+      "query": "팔뚝살 커버 여름 반팔 티셔츠",
+      "product": {
+        "title": "[커버낫X르망고] 우먼 그래픽 오버핏 티셔츠 Navy",
+        "brand": "커버낫 우먼",
+        "price": 35400,
+        "gender": "여성",
+        "colorLabel": "다크 네이비",
+        "category": "001001"
+      }
+    },
+    {
+      "itemId": "g01-777443",
+      "queryId": "g01",
+      "bucket": "R1",
+      "rule": "참고 계열. 다른 계열과 같은 방식으로 매기되 종합 점수에서 제외된다.",
+      "query": "내가 105 입는데 노란색 신발에 어울리는 티셔츠 추천해줘",
+      "product": {
+        "title": "언발란스 베이직 티셔츠",
+        "brand": "고디크",
+        "price": 39000,
+        "gender": "남성",
+        "colorLabel": "옐로우",
+        "category": "001001"
+      }
+    },
+    {
+      "itemId": "s08-6655416",
+      "queryId": "s08",
+      "bucket": "R1",
+      "rule": "참고 계열. 다른 계열과 같은 방식으로 매기되 종합 점수에서 제외된다.",
+      "query": "바다에서 비키니 위에 입을 얇은 티셔츠",
+      "product": {
+        "title": "Le tencel layered tee ver. ice mint",
+        "brand": "위에버",
+        "price": 72800,
+        "gender": "여성",
+        "colorLabel": "라이트 그레이/민트/네이비/블루",
+        "category": "001001"
+      }
+    },
+    {
+      "itemId": "s07-6318218",
+      "queryId": "s07",
+      "bucket": "R1",
+      "rule": "참고 계열. 다른 계열과 같은 방식으로 매기되 종합 점수에서 제외된다.",
+      "query": "클럽에 갈때 입을옷 추천해줘 - 여자야",
+      "product": {
+        "title": "All-day Cotton V-neck T-shirt - Polar Sky-Blue",
+        "brand": "르바",
+        "price": 39900,
+        "gender": "여성",
+        "colorLabel": "스카이 블루",
+        "category": "001001"
+      }
+    },
+    {
+      "itemId": "s15-1970658",
+      "queryId": "s15",
+      "bucket": "R1",
+      "rule": "참고 계열. 다른 계열과 같은 방식으로 매기되 종합 점수에서 제외된다.",
+      "query": "데이트갈때 입을 여성스워보이는 티셔츠",
+      "product": {
+        "title": "서퍼X서퍼 2 반팔 티셔츠 반팔 티셔츠  (블랙)",
+        "brand": "이모션플래닛",
+        "price": 15000,
+        "gender": "남성",
+        "colorLabel": "블랙",
+        "category": "001001"
+      }
+    },
+    {
+      "itemId": "s16-5305342",
+      "queryId": "s16",
+      "bucket": "R1",
+      "rule": "참고 계열. 다른 계열과 같은 방식으로 매기되 종합 점수에서 제외된다.",
+      "query": "팔뚝살 커버 여름 반팔 티셔츠",
+      "product": {
+        "title": "[커버낫X하이다나] 럭키 씨리얼 링거 티셔츠 Sky Blue",
+        "brand": "커버낫",
+        "price": 35400,
+        "gender": "여성",
+        "colorLabel": "스카이 블루",
+        "category": "001001"
+      }
+    },
+    {
+      "itemId": "s07-4843308",
+      "queryId": "s07",
+      "bucket": "R1",
+      "rule": "참고 계열. 다른 계열과 같은 방식으로 매기되 종합 점수에서 제외된다.",
+      "query": "클럽에 갈때 입을옷 추천해줘 - 여자야",
+      "product": {
+        "title": "GS-N-SS-24-501 프린팅 반팔 티셔츠_네이비",
+        "brand": "제네럴웍스",
+        "price": 29000,
+        "gender": "남성",
+        "colorLabel": "네이비",
+        "category": "001001"
+      }
+    },
+    {
+      "itemId": "g01-567853",
+      "queryId": "g01",
+      "bucket": "R1",
+      "rule": "참고 계열. 다른 계열과 같은 방식으로 매기되 종합 점수에서 제외된다.",
+      "query": "내가 105 입는데 노란색 신발에 어울리는 티셔츠 추천해줘",
+      "product": {
+        "title": "스트라이프 반팔티셔츠 (3 COLOR)",
+        "brand": "컨셉츄얼",
+        "price": 9900,
+        "gender": "남성",
+        "colorLabel": "핑크/그레이/옐로우",
+        "category": "001001"
+      }
+    },
+    {
+      "itemId": "g01-2606152",
+      "queryId": "g01",
+      "bucket": "R1",
+      "rule": "참고 계열. 다른 계열과 같은 방식으로 매기되 종합 점수에서 제외된다.",
+      "query": "내가 105 입는데 노란색 신발에 어울리는 티셔츠 추천해줘",
+      "product": {
+        "title": "슬램 로고 피그먼트 슬리브리스 레몬 FSL105",
+        "brand": "플루크",
+        "price": 20800,
+        "gender": "남성",
+        "colorLabel": "라이트 옐로우",
+        "category": "001011"
+      }
+    },
+    {
+      "itemId": "s11-2555572",
+      "queryId": "s11",
+      "bucket": "R1",
+      "rule": "참고 계열. 다른 계열과 같은 방식으로 매기되 종합 점수에서 제외된다.",
+      "query": "싸이 흠뻑쇼갈때 입을옷",
+      "product": {
+        "title": "(리싸이클)씽크 크루넥(아이보리)",
+        "brand": "이프지오",
+        "price": 43820,
+        "gender": "여성",
+        "colorLabel": "아이보리",
+        "category": "001001"
+      }
+    },
+    {
+      "itemId": "g01-532010",
+      "queryId": "g01",
+      "bucket": "R1",
+      "rule": "참고 계열. 다른 계열과 같은 방식으로 매기되 종합 점수에서 제외된다.",
+      "query": "내가 105 입는데 노란색 신발에 어울리는 티셔츠 추천해줘",
+      "product": {
+        "title": "래퍼 간디_BNCT",
+        "brand": "상상발전소",
+        "price": 24500,
+        "gender": "남성",
+        "colorLabel": "옐로우",
+        "category": "001001"
+      }
+    },
+    {
+      "itemId": "s11-3205960",
+      "queryId": "s11",
+      "bucket": "R1",
+      "rule": "참고 계열. 다른 계열과 같은 방식으로 매기되 종합 점수에서 제외된다.",
+      "query": "싸이 흠뻑쇼갈때 입을옷",
+      "product": {
+        "title": "모터 싸이클 다이어리 화이트 티셔츠",
+        "brand": "그란투리스모",
+        "price": 31200,
+        "gender": "남성",
+        "colorLabel": "화이트",
+        "category": "001001"
+      }
+    },
+    {
+      "itemId": "s15-5973697",
+      "queryId": "s15",
+      "bucket": "R1",
+      "rule": "참고 계열. 다른 계열과 같은 방식으로 매기되 종합 점수에서 제외된다.",
+      "query": "데이트갈때 입을 여성스워보이는 티셔츠",
+      "product": {
+        "title": "[17수] Retro Empathic Technology 반팔 티셔츠 - Speaker",
+        "brand": "티셔츠 갤러리",
+        "price": 39000,
+        "gender": "남성",
+        "colorLabel": "화이트",
+        "category": "001001"
+      }
+    },
+    {
+      "itemId": "s07-4843837",
+      "queryId": "s07",
+      "bucket": "R1",
+      "rule": "참고 계열. 다른 계열과 같은 방식으로 매기되 종합 점수에서 제외된다.",
+      "query": "클럽에 갈때 입을옷 추천해줘 - 여자야",
+      "product": {
+        "title": "GS-N-SS-24-504 프린팅 반팔 티셔츠_화이트",
+        "brand": "제네럴웍스",
+        "price": 29000,
+        "gender": "남성",
+        "colorLabel": "화이트",
+        "category": "001001"
+      }
+    },
+    {
+      "itemId": "s15-4259445",
+      "queryId": "s15",
+      "bucket": "R1",
+      "rule": "참고 계열. 다른 계열과 같은 방식으로 매기되 종합 점수에서 제외된다.",
+      "query": "데이트갈때 입을 여성스워보이는 티셔츠",
+      "product": {
+        "title": "[SET] 퍼펙트 특양면 오버핏 숄더 2중절개 무지 반팔 티셔츠_7Color + 퍼펙트 특양면 무지 머슬핏 반팔 티셔츠_7Color",
+        "brand": "바이젝",
+        "price": 68400,
+        "gender": "남성",
+        "colorLabel": "화이트/블랙/다크 그레이/카키/다크 그린/오트밀/다크 네이비",
+        "category": "001001"
+      }
+    },
+    {
+      "itemId": "s11-1980964",
+      "queryId": "s11",
+      "bucket": "R1",
+      "rule": "참고 계열. 다른 계열과 같은 방식으로 매기되 종합 점수에서 제외된다.",
+      "query": "싸이 흠뻑쇼갈때 입을옷",
+      "product": {
+        "title": "PP-SGST-WH",
+        "brand": "싸이코퍼플",
+        "price": 41000,
+        "gender": "남성",
+        "colorLabel": "화이트",
+        "category": "001001"
+      }
+    },
+    {
+      "itemId": "s07-4843586",
+      "queryId": "s07",
+      "bucket": "R1",
+      "rule": "참고 계열. 다른 계열과 같은 방식으로 매기되 종합 점수에서 제외된다.",
+      "query": "클럽에 갈때 입을옷 추천해줘 - 여자야",
+      "product": {
+        "title": "GS-N-SS-24-502 프린팅 반팔 티셔츠_카키",
+        "brand": "제네럴웍스",
+        "price": 29000,
+        "gender": "남성",
+        "colorLabel": "카키",
+        "category": "001001"
+      }
+    },
+    {
+      "itemId": "s08-6768513",
+      "queryId": "s08",
+      "bucket": "R1",
+      "rule": "참고 계열. 다른 계열과 같은 방식으로 매기되 종합 점수에서 제외된다.",
+      "query": "바다에서 비키니 위에 입을 얇은 티셔츠",
+      "product": {
+        "title": "Simple Line 스윔 탑 - Black",
+        "brand": "비키니밴더",
+        "price": 33000,
+        "gender": "여성",
+        "colorLabel": "블랙",
+        "category": "001001"
+      }
+    },
+    {
+      "itemId": "s16-5096231",
+      "queryId": "s16",
+      "bucket": "R1",
+      "rule": "참고 계열. 다른 계열과 같은 방식으로 매기되 종합 점수에서 제외된다.",
+      "query": "팔뚝살 커버 여름 반팔 티셔츠",
+      "product": {
+        "title": "[커버낫X르망고] 우먼 그래픽 크롭 티셔츠 Off White",
+        "brand": "커버낫 우먼",
+        "price": 31850,
+        "gender": "여성",
+        "colorLabel": "화이트",
+        "category": "001001"
+      }
+    },
+    {
+      "itemId": "g05-559111",
+      "queryId": "g05",
+      "bucket": "R1",
+      "rule": "참고 계열. 다른 계열과 같은 방식으로 매기되 종합 점수에서 제외된다.",
+      "query": "내가 105 입는데 노란색 신발에 어울리는 티셔츠 추천해줘 나 남자야",
+      "product": {
+        "title": "08:37 체크 포인트 반팔 티셔츠 (옐로우)",
+        "brand": "나우왓",
+        "price": 13900,
+        "gender": "남성",
+        "colorLabel": "옐로우",
+        "category": "001001"
+      }
+    },
+    {
+      "itemId": "s15-4954388",
+      "queryId": "s15",
+      "bucket": "R1",
+      "rule": "참고 계열. 다른 계열과 같은 방식으로 매기되 종합 점수에서 제외된다.",
+      "query": "데이트갈때 입을 여성스워보이는 티셔츠",
+      "product": {
+        "title": "PWX S225-3223-25 여성용 기능성 집업 반팔티셔츠 반소매 골프웨어 아웃도어 냉감티셔츠",
+        "brand": "프로월드컵",
+        "price": 18900,
+        "gender": "여성",
+        "colorLabel": "핑크/라벤더/다크 네이비",
+        "category": "001001"
+      }
+    },
+    {
+      "itemId": "s16-4251891",
+      "queryId": "s16",
+      "bucket": "R1",
+      "rule": "참고 계열. 다른 계열과 같은 방식으로 매기되 종합 점수에서 제외된다.",
+      "query": "팔뚝살 커버 여름 반팔 티셔츠",
+      "product": {
+        "title": "[커버낫X랭글러] 08 빈티지 티셔츠 블랙",
+        "brand": "커버낫",
+        "price": 35400,
+        "gender": "공용",
+        "colorLabel": "블랙",
+        "category": "001001"
+      }
+    },
+    {
+      "itemId": "g01-587120",
+      "queryId": "g01",
+      "bucket": "R1",
+      "rule": "참고 계열. 다른 계열과 같은 방식으로 매기되 종합 점수에서 제외된다.",
+      "query": "내가 105 입는데 노란색 신발에 어울리는 티셔츠 추천해줘",
+      "product": {
+        "title": "브러시 프린트 아이스크림 티셔츠 옐로우그린",
+        "brand": "발란트",
+        "price": 39200,
+        "gender": "남성",
+        "colorLabel": "라이트 옐로우",
+        "category": "001001"
+      }
+    },
+    {
+      "itemId": "g05-761259",
+      "queryId": "g05",
+      "bucket": "R1",
+      "rule": "참고 계열. 다른 계열과 같은 방식으로 매기되 종합 점수에서 제외된다.",
+      "query": "내가 105 입는데 노란색 신발에 어울리는 티셔츠 추천해줘 나 남자야",
+      "product": {
+        "title": "빈티지 서커스 02_CRCT",
+        "brand": "상상발전소",
+        "price": 24500,
+        "gender": "남성",
+        "colorLabel": "옐로우",
+        "category": "001001"
+      }
+    },
+    {
+      "itemId": "s11-1506524",
+      "queryId": "s11",
+      "bucket": "R1",
+      "rule": "참고 계열. 다른 계열과 같은 방식으로 매기되 종합 점수에서 제외된다.",
+      "query": "싸이 흠뻑쇼갈때 입을옷",
+      "product": {
+        "title": "PP-DST-BK",
+        "brand": "싸이코퍼플",
+        "price": 31000,
+        "gender": "남성",
+        "colorLabel": "블랙",
+        "category": "001001"
+      }
+    },
+    {
+      "itemId": "s16-5292805",
+      "queryId": "s16",
+      "bucket": "R1",
+      "rule": "참고 계열. 다른 계열과 같은 방식으로 매기되 종합 점수에서 제외된다.",
+      "query": "팔뚝살 커버 여름 반팔 티셔츠",
+      "product": {
+        "title": "커버 피크  그래픽 면 티셔츠 (WHITE)",
+        "brand": "커버라이즈",
+        "price": 19900,
+        "gender": "남성",
+        "colorLabel": "화이트",
+        "category": "001001"
+      }
+    },
+    {
+      "itemId": "s11-1506476",
+      "queryId": "s11",
+      "bucket": "R1",
+      "rule": "참고 계열. 다른 계열과 같은 방식으로 매기되 종합 점수에서 제외된다.",
+      "query": "싸이 흠뻑쇼갈때 입을옷",
+      "product": {
+        "title": "PP-NST-WH",
+        "brand": "싸이코퍼플",
+        "price": 31000,
+        "gender": "남성",
+        "colorLabel": "화이트",
+        "category": "001001"
+      }
+    },
+    {
+      "itemId": "s11-4092346",
+      "queryId": "s11",
+      "bucket": "R1",
+      "rule": "참고 계열. 다른 계열과 같은 방식으로 매기되 종합 점수에서 제외된다.",
+      "query": "싸이 흠뻑쇼갈때 입을옷",
+      "product": {
+        "title": "로미 래빗 리싸이클 링거티셔츠 _ 블랙",
+        "brand": "바이브린",
+        "price": 39000,
+        "gender": "여성",
+        "colorLabel": "블랙",
+        "category": "001001"
+      }
+    },
+    {
+      "itemId": "s08-6706272",
+      "queryId": "s08",
+      "bucket": "R1",
+      "rule": "참고 계열. 다른 계열과 같은 방식으로 매기되 종합 점수에서 제외된다.",
+      "query": "바다에서 비키니 위에 입을 얇은 티셔츠",
+      "product": {
+        "title": "비키니 레이어드 티셔츠 (챠콜)",
+        "brand": "포더웨더",
+        "price": 36540,
+        "gender": "여성",
+        "colorLabel": "다크 그레이",
+        "category": "001001"
+      }
+    },
+    {
+      "itemId": "s15-4046501",
+      "queryId": "s15",
+      "bucket": "R1",
+      "rule": "참고 계열. 다른 계열과 같은 방식으로 매기되 종합 점수에서 제외된다.",
+      "query": "데이트갈때 입을 여성스워보이는 티셔츠",
+      "product": {
+        "title": "[SET]어드벤쳐 트럭커 포켓 반팔티셔츠+무빙 쉐도우 반팔티셔츠 (FST141+FST149)",
+        "brand": "플루크",
+        "price": 30800,
+        "gender": "남성",
+        "colorLabel": "화이트/블랙/네이비/브라운",
+        "category": "001001"
+      }
+    },
+    {
+      "itemId": "s07-4843571",
+      "queryId": "s07",
+      "bucket": "R1",
+      "rule": "참고 계열. 다른 계열과 같은 방식으로 매기되 종합 점수에서 제외된다.",
+      "query": "클럽에 갈때 입을옷 추천해줘 - 여자야",
+      "product": {
+        "title": "GS-N-SS-24-502 프린팅 반팔 티셔츠_다크네이비",
+        "brand": "제네럴웍스",
+        "price": 29000,
+        "gender": "남성",
+        "colorLabel": "다크 네이비",
+        "category": "001001"
+      }
+    },
+    {
+      "itemId": "s15-4963596",
+      "queryId": "s15",
+      "bucket": "R1",
+      "rule": "참고 계열. 다른 계열과 같은 방식으로 매기되 종합 점수에서 제외된다.",
+      "query": "데이트갈때 입을 여성스워보이는 티셔츠",
+      "product": {
+        "title": "(W) 업사이클드 셔링 티셔츠 피티드 티셔츠 화이트 UPCYCLED SHIRRED T-SHIRTS FITTED T-SHIRT",
+        "brand": "마린 세르",
+        "price": 255600,
+        "gender": "여성",
+        "colorLabel": "화이트",
+        "category": "001001"
+      }
+    },
+    {
+      "itemId": "s11-1506522",
+      "queryId": "s11",
+      "bucket": "R1",
+      "rule": "참고 계열. 다른 계열과 같은 방식으로 매기되 종합 점수에서 제외된다.",
+      "query": "싸이 흠뻑쇼갈때 입을옷",
+      "product": {
+        "title": "PP-DST-WH",
+        "brand": "싸이코퍼플",
+        "price": 31000,
+        "gender": "남성",
+        "colorLabel": "화이트",
+        "category": "001001"
+      }
+    },
+    {
+      "itemId": "s11-1980962",
+      "queryId": "s11",
+      "bucket": "R1",
+      "rule": "참고 계열. 다른 계열과 같은 방식으로 매기되 종합 점수에서 제외된다.",
+      "query": "싸이 흠뻑쇼갈때 입을옷",
+      "product": {
+        "title": "PP-SGST-BK",
+        "brand": "싸이코퍼플",
+        "price": 41000,
+        "gender": "남성",
+        "colorLabel": "블랙",
+        "category": "001001"
+      }
+    },
+    {
+      "itemId": "g05-2606152",
+      "queryId": "g05",
+      "bucket": "R1",
+      "rule": "참고 계열. 다른 계열과 같은 방식으로 매기되 종합 점수에서 제외된다.",
+      "query": "내가 105 입는데 노란색 신발에 어울리는 티셔츠 추천해줘 나 남자야",
+      "product": {
+        "title": "슬램 로고 피그먼트 슬리브리스 레몬 FSL105",
+        "brand": "플루크",
+        "price": 20800,
+        "gender": "남성",
+        "colorLabel": "라이트 옐로우",
+        "category": "001011"
+      }
+    },
+    {
+      "itemId": "s08-3511798",
+      "queryId": "s08",
+      "bucket": "R1",
+      "rule": "참고 계열. 다른 계열과 같은 방식으로 매기되 종합 점수에서 제외된다.",
+      "query": "바다에서 비키니 위에 입을 얇은 티셔츠",
+      "product": {
+        "title": "비키니 드로잉 티, 화이트",
+        "brand": "류영",
+        "price": 18000,
+        "gender": "여성",
+        "colorLabel": "화이트",
+        "category": "001001"
+      }
+    },
+    {
+      "itemId": "s15-5210389",
+      "queryId": "s15",
+      "bucket": "R1",
+      "rule": "참고 계열. 다른 계열과 같은 방식으로 매기되 종합 점수에서 제외된다.",
+      "query": "데이트갈때 입을 여성스워보이는 티셔츠",
+      "product": {
+        "title": "BOSS 테니스 프린트 코튼 릴렉스 핏 티셔츠(50543905027) 휴고보스 반팔티셔츠",
+        "brand": "보스 스포츠",
+        "price": 115500,
+        "gender": "남성",
+        "colorLabel": "다크 그레이",
+        "category": "001001"
+      }
+    },
+    {
+      "itemId": "s15-3214647",
+      "queryId": "s15",
+      "bucket": "R1",
+      "rule": "참고 계열. 다른 계열과 같은 방식으로 매기되 종합 점수에서 제외된다.",
+      "query": "데이트갈때 입을 여성스워보이는 티셔츠",
+      "product": {
+        "title": "[SET] 매니지 반팔티셔츠 + 크랙 텍스쳐 반팔티셔츠 SET(SHST6690+SHST6689)",
+        "brand": "에즈카톤",
+        "price": 38900,
+        "gender": "남성",
+        "colorLabel": "블랙",
+        "category": "001001"
+      }
+    },
+    {
+      "itemId": "g01-534994",
+      "queryId": "g01",
+      "bucket": "R1",
+      "rule": "참고 계열. 다른 계열과 같은 방식으로 매기되 종합 점수에서 제외된다.",
+      "query": "내가 105 입는데 노란색 신발에 어울리는 티셔츠 추천해줘",
+      "product": {
+        "title": "CHARMING SWEAT CROP TEE (YELLOW)",
+        "brand": "피피피",
+        "price": 15600,
+        "gender": "여성",
+        "colorLabel": "옐로우",
+        "category": "001001"
+      }
+    },
+    {
+      "itemId": "s11-3213762",
+      "queryId": "s11",
+      "bucket": "R1",
+      "rule": "참고 계열. 다른 계열과 같은 방식으로 매기되 종합 점수에서 제외된다.",
+      "query": "싸이 흠뻑쇼갈때 입을옷",
+      "product": {
+        "title": "싸이코 [T-Shirt]",
+        "brand": "비볼드비쿨",
+        "price": 37600,
+        "gender": "남성",
+        "colorLabel": "화이트/블랙",
+        "category": "001001"
+      }
+    },
+    {
+      "itemId": "s16-5305345",
+      "queryId": "s16",
+      "bucket": "R1",
+      "rule": "참고 계열. 다른 계열과 같은 방식으로 매기되 종합 점수에서 제외된다.",
+      "query": "팔뚝살 커버 여름 반팔 티셔츠",
+      "product": {
+        "title": "[커버낫X하이다나] 럭키 씨리얼 링거 티셔츠 Navy",
+        "brand": "커버낫",
+        "price": 41300,
+        "gender": "여성",
+        "colorLabel": "네이비",
+        "category": "001001"
+      }
+    },
+    {
+      "itemId": "s15-5210387",
+      "queryId": "s15",
+      "bucket": "R1",
+      "rule": "참고 계열. 다른 계열과 같은 방식으로 매기되 종합 점수에서 제외된다.",
+      "query": "데이트갈때 입을 여성스워보이는 티셔츠",
+      "product": {
+        "title": "BOSS 테니스 프린트 코튼 릴렉스 핏 티셔츠(50543905337) 휴고보스 반팔티셔츠",
+        "brand": "보스 스포츠",
+        "price": 115500,
+        "gender": "남성",
+        "colorLabel": "라임",
+        "category": "001001"
+      }
+    }
+  ]
+}
