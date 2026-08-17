@@ -12,10 +12,11 @@
       "2026-08-17 C-2: 색 표현을 텍스트에서 빼내 색 라벨 필터로 (브랜드명 보호 포함)",
       "2026-08-17 C-3: 가격 표현을 텍스트에서 빼내 가격 범위 필터로",
       "2026-08-17 C-3 리뷰 반영: `미만` 경계·숫자 상한·5단어 절단 순서·단어 단위 자판 복원·역할어 조사 허용",
+      "2026-08-18 소프트 텍스트: 브랜드·카테고리를 하드 조건으로 빼내고, 제목 단어를 전 단어 AND에서 '하드 조건이 있으면 순위 신호'로 바꿈. G6 100%→40% (waiver, 기준서 §1-1). AND 먼저 시도 후 부족할 때만 OR로 넓힘.",
       "2026-08-17 C-3 리뷰 2차: 프론트·하네스의 선행 5단어 절단 제거, 자판 복원을 네 글자 이상으로 제한(xl→티 변질 차단), 오타 교정이 5단어로 자르던 것 제거(6번째 이후 조건 삭제 차단)"
     ],
     "topN": 20,
-    "collectedAt": "2026-08-17T16:50:57.995586+00:00",
+    "collectedAt": "2026-08-17T17:16:07.941147+00:00",
     "catalogSnapshot": {
       "c_goods_rows": 226320,
       "c_search_text_rows": 226304,
@@ -475,16 +476,6 @@
         },
         {
           "rank": 1,
-          "goodsNo": 5739715,
-          "title": "MEZMIC1829 주리 후드 면 티셔츠MEZMIC1829 주리 후드 티셔츠MEZMIC1829 주리 후드 면 티셔츠",
-          "brandName": "매즈믹",
-          "priceFinal": 69000,
-          "gender": "남성",
-          "colorLabel": "화이트",
-          "category": "001004"
-        },
-        {
-          "rank": 2,
           "goodsNo": 1970658,
           "title": "서퍼X서퍼 2 반팔 티셔츠 반팔 티셔츠  (블랙)",
           "brandName": "이모션플래닛",
@@ -494,7 +485,7 @@
           "category": "001001"
         },
         {
-          "rank": 3,
+          "rank": 2,
           "goodsNo": 3214029,
           "title": "GCR LOGO T-SHIRTS 로고 티셔츠 크롭 티셔츠",
           "brandName": "고코리",
@@ -504,7 +495,7 @@
           "category": "001001"
         },
         {
-          "rank": 4,
+          "rank": 3,
           "goodsNo": 3214647,
           "title": "[SET] 매니지 반팔티셔츠 + 크랙 텍스쳐 반팔티셔츠 SET(SHST6690+SHST6689)",
           "brandName": "에즈카톤",
@@ -514,7 +505,7 @@
           "category": "001001"
         },
         {
-          "rank": 5,
+          "rank": 4,
           "goodsNo": 3276155,
           "title": "[SET] 손더 반팔티셔츠 + 스페이스 반팔티셔츠 (KMST6693+KMST6696)",
           "brandName": "에즈카톤",
@@ -524,7 +515,7 @@
           "category": "001001"
         },
         {
-          "rank": 6,
+          "rank": 5,
           "goodsNo": 3377861,
           "title": "BOSS 티셔츠 2팩(50497894960) 남자 반팔 티셔츠",
           "brandName": "보스 스포츠",
@@ -534,7 +525,7 @@
           "category": "001001"
         },
         {
-          "rank": 7,
+          "rank": 6,
           "goodsNo": 4046482,
           "title": "[SET]피그먼트 오버핏 반팔티셔츠+어드벤쳐 폰트 피그먼트 반팔티셔츠 (FST701+FST705)",
           "brandName": "플루크",
@@ -544,7 +535,7 @@
           "category": "001001"
         },
         {
-          "rank": 8,
+          "rank": 7,
           "goodsNo": 4046501,
           "title": "[SET]어드벤쳐 트럭커 포켓 반팔티셔츠+무빙 쉐도우 반팔티셔츠 (FST141+FST149)",
           "brandName": "플루크",
@@ -554,7 +545,7 @@
           "category": "001001"
         },
         {
-          "rank": 9,
+          "rank": 8,
           "goodsNo": 4259445,
           "title": "[SET] 퍼펙트 특양면 오버핏 숄더 2중절개 무지 반팔 티셔츠_7Color + 퍼펙트 특양면 무지 머슬핏 반팔 티셔츠_7Color",
           "brandName": "바이젝",
@@ -564,7 +555,7 @@
           "category": "001001"
         },
         {
-          "rank": 10,
+          "rank": 9,
           "goodsNo": 4882562,
           "title": "PWX Q525-3614-15 여성용 기능성 마스크넥 귀걸이형 자외선차단 베이스레이어 티셔츠 쿨티셔츠",
           "brandName": "프로월드컵",
@@ -574,7 +565,7 @@
           "category": "001001"
         },
         {
-          "rank": 11,
+          "rank": 10,
           "goodsNo": 4954388,
           "title": "PWX S225-3223-25 여성용 기능성 집업 반팔티셔츠 반소매 골프웨어 아웃도어 냉감티셔츠",
           "brandName": "프로월드컵",
@@ -584,7 +575,7 @@
           "category": "001001"
         },
         {
-          "rank": 12,
+          "rank": 11,
           "goodsNo": 4963596,
           "title": "(W) 업사이클드 셔링 티셔츠 피티드 티셔츠 화이트 UPCYCLED SHIRRED T-SHIRTS FITTED T-SHIRT",
           "brandName": "마린 세르",
@@ -594,7 +585,7 @@
           "category": "001001"
         },
         {
-          "rank": 13,
+          "rank": 12,
           "goodsNo": 5073443,
           "title": "[2PACK] 오버핏 크루넥 로고 반팔 티셔츠 & 크루넥 오버핏 유니버셜 티셔츠",
           "brandName": "블론드나인",
@@ -604,7 +595,7 @@
           "category": "001001"
         },
         {
-          "rank": 14,
+          "rank": 13,
           "goodsNo": 5079932,
           "title": "[2PACK] 라이딩 바이크 티셔츠 & 글로브 티셔츠",
           "brandName": "라이크더모스트",
@@ -614,7 +605,7 @@
           "category": "001001"
         },
         {
-          "rank": 15,
+          "rank": 14,
           "goodsNo": 5155029,
           "title": "피치 핑크 반팔피치 핑크 반팔 티셔츠 Fleur Douce Tee T-Shirt피치 핑크 반팔 티셔츠 Fleur Douce Tee T-Shirt",
           "brandName": "에클라 디뱅",
@@ -624,7 +615,7 @@
           "category": "001001"
         },
         {
-          "rank": 16,
+          "rank": 15,
           "goodsNo": 5210387,
           "title": "BOSS 테니스 프린트 코튼 릴렉스 핏 티셔츠(50543905337) 휴고보스 반팔티셔츠",
           "brandName": "보스 스포츠",
@@ -634,7 +625,7 @@
           "category": "001001"
         },
         {
-          "rank": 17,
+          "rank": 16,
           "goodsNo": 5210389,
           "title": "BOSS 테니스 프린트 코튼 릴렉스 핏 티셔츠(50543905027) 휴고보스 반팔티셔츠",
           "brandName": "보스 스포츠",
@@ -644,7 +635,7 @@
           "category": "001001"
         },
         {
-          "rank": 18,
+          "rank": 17,
           "goodsNo": 5210390,
           "title": "BOSS 테니스 프린트 코튼 릴렉스 핏 티셔츠(50543905026) 휴고보스 반팔티셔츠",
           "brandName": "보스 스포츠",
@@ -654,9 +645,19 @@
           "category": "001001"
         },
         {
-          "rank": 19,
+          "rank": 18,
           "goodsNo": 5973697,
           "title": "[17수] Retro Empathic Technology 반팔 티셔츠 - Speaker",
+          "brandName": "티셔츠 갤러리",
+          "priceFinal": 39000,
+          "gender": "남성",
+          "colorLabel": "화이트",
+          "category": "001001"
+        },
+        {
+          "rank": 19,
+          "goodsNo": 5975885,
+          "title": "[17수] Retro Empathic Technology 반팔 티셔츠 - Polaroid",
           "brandName": "티셔츠 갤러리",
           "priceFinal": 39000,
           "gender": "남성",
@@ -696,16 +697,6 @@
         },
         {
           "rank": 2,
-          "goodsNo": 5739715,
-          "title": "MEZMIC1829 주리 후드 면 티셔츠MEZMIC1829 주리 후드 티셔츠MEZMIC1829 주리 후드 면 티셔츠",
-          "brandName": "매즈믹",
-          "priceFinal": 69000,
-          "gender": "남성",
-          "colorLabel": "화이트",
-          "category": "001004"
-        },
-        {
-          "rank": 3,
           "goodsNo": 474722,
           "title": "LAUL BOXY HALF SHIRTS GREY 라울 박시반팔셔츠 그레이(이너티셔츠)",
           "brandName": "라울",
@@ -715,7 +706,7 @@
           "category": "001001"
         },
         {
-          "rank": 4,
+          "rank": 3,
           "goodsNo": 1951631,
           "title": "셔츠 패널드 티셔츠 [GREY]",
           "brandName": "인터섹션",
@@ -725,7 +716,7 @@
           "category": "001001"
         },
         {
-          "rank": 5,
+          "rank": 4,
           "goodsNo": 1970658,
           "title": "서퍼X서퍼 2 반팔 티셔츠 반팔 티셔츠  (블랙)",
           "brandName": "이모션플래닛",
@@ -735,7 +726,7 @@
           "category": "001001"
         },
         {
-          "rank": 6,
+          "rank": 5,
           "goodsNo": 2535125,
           "title": "XL~4XL 빅사이즈 터치다운 불독 오버핏 반팔티 BE53865 (2 COLOR)",
           "brandName": "앨빈클로",
@@ -745,7 +736,7 @@
           "category": "001001"
         },
         {
-          "rank": 7,
+          "rank": 6,
           "goodsNo": 2543689,
           "title": "XL~4XL 빅사이즈 살몬 오버핏 반팔티 BE53761 (2 COLOR)",
           "brandName": "앨빈클로",
@@ -755,7 +746,7 @@
           "category": "001001"
         },
         {
-          "rank": 8,
+          "rank": 7,
           "goodsNo": 2544218,
           "title": "XL~4XL 빅사이즈 스케이트 곰돌이 오버핏 반팔티 BE53772 (3 COLOR)",
           "brandName": "앨빈클로",
@@ -765,7 +756,7 @@
           "category": "001001"
         },
         {
-          "rank": 9,
+          "rank": 8,
           "goodsNo": 2544280,
           "title": "XL~4XL 빅사이즈 마운티널스 서클 오버핏 반팔티 BE53805 (5 COLOR)",
           "brandName": "앨빈클로",
@@ -775,7 +766,7 @@
           "category": "001001"
         },
         {
-          "rank": 10,
+          "rank": 9,
           "goodsNo": 2544355,
           "title": "XL~4XL 빅사이즈 엠블럼 마운티널스 오버핏 반팔티 BE53809 (3 COLOR)",
           "brandName": "앨빈클로",
@@ -785,7 +776,7 @@
           "category": "001001"
         },
         {
-          "rank": 11,
+          "rank": 10,
           "goodsNo": 2544370,
           "title": "XL~4XL 빅사이즈 썸머 투칸 오버핏 반팔티 BE53951 (4 COLOR)",
           "brandName": "앨빈클로",
@@ -795,7 +786,7 @@
           "category": "001001"
         },
         {
-          "rank": 12,
+          "rank": 11,
           "goodsNo": 3153089,
           "title": "비치 하와이안 티셔츠 옐로우",
           "brandName": "커버낫",
@@ -805,7 +796,7 @@
           "category": "001001"
         },
         {
-          "rank": 13,
+          "rank": 12,
           "goodsNo": 3153097,
           "title": "아치 하와이안 티셔츠 에크루",
           "brandName": "커버낫",
@@ -815,7 +806,7 @@
           "category": "001001"
         },
         {
-          "rank": 14,
+          "rank": 13,
           "goodsNo": 3194499,
           "title": "2XL~4XL 빅사이즈  카모마일 오버핏 반팔티 BE54831 (2 COLOR)",
           "brandName": "앨빈클로",
@@ -825,7 +816,7 @@
           "category": "001001"
         },
         {
-          "rank": 15,
+          "rank": 14,
           "goodsNo": 3194902,
           "title": "2XL~4XL 빅사이즈 PLANO 로케이션 오버핏 반팔티 BE54867 (2 COLOR)",
           "brandName": "앨빈클로",
@@ -835,7 +826,7 @@
           "category": "001001"
         },
         {
-          "rank": 16,
+          "rank": 15,
           "goodsNo": 3214029,
           "title": "GCR LOGO T-SHIRTS 로고 티셔츠 크롭 티셔츠",
           "brandName": "고코리",
@@ -845,7 +836,7 @@
           "category": "001001"
         },
         {
-          "rank": 17,
+          "rank": 16,
           "goodsNo": 3214647,
           "title": "[SET] 매니지 반팔티셔츠 + 크랙 텍스쳐 반팔티셔츠 SET(SHST6690+SHST6689)",
           "brandName": "에즈카톤",
@@ -855,7 +846,7 @@
           "category": "001001"
         },
         {
-          "rank": 18,
+          "rank": 17,
           "goodsNo": 3276155,
           "title": "[SET] 손더 반팔티셔츠 + 스페이스 반팔티셔츠 (KMST6693+KMST6696)",
           "brandName": "에즈카톤",
@@ -865,13 +856,23 @@
           "category": "001001"
         },
         {
-          "rank": 19,
+          "rank": 18,
           "goodsNo": 3377861,
           "title": "BOSS 티셔츠 2팩(50497894960) 남자 반팔 티셔츠",
           "brandName": "보스 스포츠",
           "priceFinal": 84000,
           "gender": "남성",
           "colorLabel": "블랙",
+          "category": "001001"
+        },
+        {
+          "rank": 19,
+          "goodsNo": 3403156,
+          "title": "팀리가 멀티스포츠 셔츠(65839401) 남자 반팔 라운드 티셔츠",
+          "brandName": "푸마",
+          "priceFinal": 20400,
+          "gender": "남성",
+          "colorLabel": "라임",
           "category": "001001"
         }
       ]
@@ -1087,13 +1088,13 @@
         },
         {
           "rank": 19,
-          "goodsNo": 4572214,
-          "title": "베이직 오버핏 트랙 우먼 오버핏 후드티셔츠 3 Color [ULZI_4001]",
-          "brandName": "유라이프지",
-          "priceFinal": 37100,
-          "gender": "여성",
-          "colorLabel": "블랙",
-          "category": "001004"
+          "goodsNo": 282014,
+          "title": "스탠다드 럭비 7부 티셔츠 그레이",
+          "brandName": "세븐틴스",
+          "priceFinal": 16800,
+          "gender": "남성",
+          "colorLabel": "그레이",
+          "category": "001001"
         }
       ]
     },
@@ -1561,16 +1562,6 @@
         },
         {
           "rank": 1,
-          "goodsNo": 5739715,
-          "title": "MEZMIC1829 주리 후드 면 티셔츠MEZMIC1829 주리 후드 티셔츠MEZMIC1829 주리 후드 면 티셔츠",
-          "brandName": "매즈믹",
-          "priceFinal": 69000,
-          "gender": "남성",
-          "colorLabel": "화이트",
-          "category": "001004"
-        },
-        {
-          "rank": 2,
           "goodsNo": 823998,
           "title": "기본 무지 반팔티셔츠",
           "brandName": "댁스터",
@@ -1580,7 +1571,7 @@
           "category": "001001"
         },
         {
-          "rank": 3,
+          "rank": 2,
           "goodsNo": 1479314,
           "title": "기본 티셔츠",
           "brandName": "덴델",
@@ -1590,7 +1581,7 @@
           "category": "001001"
         },
         {
-          "rank": 4,
+          "rank": 3,
           "goodsNo": 1685307,
           "title": "[3팩]고밀도순면기본반팔티셔츠  MATS0101",
           "brandName": "마인드브릿지",
@@ -1600,7 +1591,7 @@
           "category": "001001"
         },
         {
-          "rank": 5,
+          "rank": 4,
           "goodsNo": 1929769,
           "title": "뒷판 가든 드로잉 기본핏 반팔 티셔츠/FM9WTS11F WHITE",
           "brandName": "피피라핀",
@@ -1610,7 +1601,7 @@
           "category": "001001"
         },
         {
-          "rank": 6,
+          "rank": 5,
           "goodsNo": 1935643,
           "title": "뒷판 가든 드로잉 기본핏 반팔 티셔츠/FM9WTS11F  PINK",
           "brandName": "피피라핀",
@@ -1620,7 +1611,7 @@
           "category": "001001"
         },
         {
-          "rank": 7,
+          "rank": 6,
           "goodsNo": 1948801,
           "title": "여성 레귤러핏 피피3일러스트 기본반팔티셔츠/FS1WTS913F MINT",
           "brandName": "피피라핀",
@@ -1630,7 +1621,7 @@
           "category": "001001"
         },
         {
-          "rank": 8,
+          "rank": 7,
           "goodsNo": 1948878,
           "title": "여성 레귤러핏 피피3일러스트 기본반팔티셔츠/FS1WTS913F WHITE",
           "brandName": "피피라핀",
@@ -1640,7 +1631,7 @@
           "category": "001001"
         },
         {
-          "rank": 9,
+          "rank": 8,
           "goodsNo": 1948892,
           "title": "여성 레귤러핏 피피3일러스트 기본반팔티셔츠/FS1WTS913F PINK",
           "brandName": "피피라핀",
@@ -1650,7 +1641,7 @@
           "category": "001001"
         },
         {
-          "rank": 10,
+          "rank": 9,
           "goodsNo": 1970658,
           "title": "서퍼X서퍼 2 반팔 티셔츠 반팔 티셔츠  (블랙)",
           "brandName": "이모션플래닛",
@@ -1660,7 +1651,7 @@
           "category": "001001"
         },
         {
-          "rank": 11,
+          "rank": 10,
           "goodsNo": 2506736,
           "title": "여성 원피스를 입은 피피들 드로잉 기본티셔츠/FS2WTS08W BLACK",
           "brandName": "피피라핀",
@@ -1670,7 +1661,7 @@
           "category": "001001"
         },
         {
-          "rank": 12,
+          "rank": 11,
           "goodsNo": 2506790,
           "title": "여성 원피스를 입은 피피들 드로잉 기본티셔츠/FS2WTS08W PINK",
           "brandName": "피피라핀",
@@ -1680,7 +1671,7 @@
           "category": "001001"
         },
         {
-          "rank": 13,
+          "rank": 12,
           "goodsNo": 2506855,
           "title": "여성 원피스를 입은 피피들 드로잉 기본티셔츠/FS2WTS08W  WHITE",
           "brandName": "피피라핀",
@@ -1690,7 +1681,7 @@
           "category": "001001"
         },
         {
-          "rank": 14,
+          "rank": 13,
           "goodsNo": 2506943,
           "title": "여성 여름원피스 피피 드로잉 기본 티셔츠/FS2WTS14W M-GRAY",
           "brandName": "피피라핀",
@@ -1700,7 +1691,7 @@
           "category": "001001"
         },
         {
-          "rank": 15,
+          "rank": 14,
           "goodsNo": 2507841,
           "title": "여성 마린룩 원피스 드로잉 기본티셔츠/FS2WTS18W BLUE",
           "brandName": "피피라핀",
@@ -1710,7 +1701,7 @@
           "category": "001001"
         },
         {
-          "rank": 16,
+          "rank": 15,
           "goodsNo": 2584289,
           "title": "세일러 린넨 스트라이프 기본 반팔 티셔츠_블루",
           "brandName": "에이리프",
@@ -1720,7 +1711,7 @@
           "category": "001001"
         },
         {
-          "rank": 17,
+          "rank": 16,
           "goodsNo": 3064141,
           "title": "남자 기본 무지 반팔 라운드 티셔츠 듀멧 (남) KST0561U",
           "brandName": "콜핑",
@@ -1730,7 +1721,7 @@
           "category": "001001"
         },
         {
-          "rank": 18,
+          "rank": 17,
           "goodsNo": 3092628,
           "title": "6.0oz 액티브 무지 기본 반팔 티셔츠_화이트",
           "brandName": "샤카웨어",
@@ -1740,12 +1731,22 @@
           "category": "001001"
         },
         {
-          "rank": 19,
+          "rank": 18,
           "goodsNo": 3092630,
           "title": "6.0oz 액티브 무지 기본 반팔 티셔츠_블랙",
           "brandName": "샤카웨어",
           "priceFinal": 11160,
           "gender": "공용",
+          "colorLabel": "블랙",
+          "category": "001001"
+        },
+        {
+          "rank": 19,
+          "goodsNo": 3092631,
+          "title": "6.0oz 액티브 무지 기본 반팔 티셔츠_네이비",
+          "brandName": "샤카웨어",
+          "priceFinal": 11160,
+          "gender": "남성",
           "colorLabel": "블랙",
           "category": "001001"
         }
@@ -2235,16 +2236,6 @@
         },
         {
           "rank": 1,
-          "goodsNo": 5739715,
-          "title": "MEZMIC1829 주리 후드 면 티셔츠MEZMIC1829 주리 후드 티셔츠MEZMIC1829 주리 후드 면 티셔츠",
-          "brandName": "매즈믹",
-          "priceFinal": 69000,
-          "gender": "남성",
-          "colorLabel": "화이트",
-          "category": "001004"
-        },
-        {
-          "rank": 2,
           "goodsNo": 1970658,
           "title": "서퍼X서퍼 2 반팔 티셔츠 반팔 티셔츠  (블랙)",
           "brandName": "이모션플래닛",
@@ -2254,7 +2245,7 @@
           "category": "001001"
         },
         {
-          "rank": 3,
+          "rank": 2,
           "goodsNo": 3214029,
           "title": "GCR LOGO T-SHIRTS 로고 티셔츠 크롭 티셔츠",
           "brandName": "고코리",
@@ -2264,7 +2255,7 @@
           "category": "001001"
         },
         {
-          "rank": 4,
+          "rank": 3,
           "goodsNo": 3214647,
           "title": "[SET] 매니지 반팔티셔츠 + 크랙 텍스쳐 반팔티셔츠 SET(SHST6690+SHST6689)",
           "brandName": "에즈카톤",
@@ -2274,7 +2265,7 @@
           "category": "001001"
         },
         {
-          "rank": 5,
+          "rank": 4,
           "goodsNo": 3276155,
           "title": "[SET] 손더 반팔티셔츠 + 스페이스 반팔티셔츠 (KMST6693+KMST6696)",
           "brandName": "에즈카톤",
@@ -2284,7 +2275,7 @@
           "category": "001001"
         },
         {
-          "rank": 6,
+          "rank": 5,
           "goodsNo": 3377861,
           "title": "BOSS 티셔츠 2팩(50497894960) 남자 반팔 티셔츠",
           "brandName": "보스 스포츠",
@@ -2294,7 +2285,7 @@
           "category": "001001"
         },
         {
-          "rank": 7,
+          "rank": 6,
           "goodsNo": 4046482,
           "title": "[SET]피그먼트 오버핏 반팔티셔츠+어드벤쳐 폰트 피그먼트 반팔티셔츠 (FST701+FST705)",
           "brandName": "플루크",
@@ -2304,7 +2295,7 @@
           "category": "001001"
         },
         {
-          "rank": 8,
+          "rank": 7,
           "goodsNo": 4046501,
           "title": "[SET]어드벤쳐 트럭커 포켓 반팔티셔츠+무빙 쉐도우 반팔티셔츠 (FST141+FST149)",
           "brandName": "플루크",
@@ -2314,7 +2305,7 @@
           "category": "001001"
         },
         {
-          "rank": 9,
+          "rank": 8,
           "goodsNo": 4259445,
           "title": "[SET] 퍼펙트 특양면 오버핏 숄더 2중절개 무지 반팔 티셔츠_7Color + 퍼펙트 특양면 무지 머슬핏 반팔 티셔츠_7Color",
           "brandName": "바이젝",
@@ -2324,7 +2315,7 @@
           "category": "001001"
         },
         {
-          "rank": 10,
+          "rank": 9,
           "goodsNo": 4882562,
           "title": "PWX Q525-3614-15 여성용 기능성 마스크넥 귀걸이형 자외선차단 베이스레이어 티셔츠 쿨티셔츠",
           "brandName": "프로월드컵",
@@ -2334,7 +2325,7 @@
           "category": "001001"
         },
         {
-          "rank": 11,
+          "rank": 10,
           "goodsNo": 4954388,
           "title": "PWX S225-3223-25 여성용 기능성 집업 반팔티셔츠 반소매 골프웨어 아웃도어 냉감티셔츠",
           "brandName": "프로월드컵",
@@ -2344,7 +2335,7 @@
           "category": "001001"
         },
         {
-          "rank": 12,
+          "rank": 11,
           "goodsNo": 4963596,
           "title": "(W) 업사이클드 셔링 티셔츠 피티드 티셔츠 화이트 UPCYCLED SHIRRED T-SHIRTS FITTED T-SHIRT",
           "brandName": "마린 세르",
@@ -2354,7 +2345,7 @@
           "category": "001001"
         },
         {
-          "rank": 13,
+          "rank": 12,
           "goodsNo": 5073443,
           "title": "[2PACK] 오버핏 크루넥 로고 반팔 티셔츠 & 크루넥 오버핏 유니버셜 티셔츠",
           "brandName": "블론드나인",
@@ -2364,7 +2355,7 @@
           "category": "001001"
         },
         {
-          "rank": 14,
+          "rank": 13,
           "goodsNo": 5079932,
           "title": "[2PACK] 라이딩 바이크 티셔츠 & 글로브 티셔츠",
           "brandName": "라이크더모스트",
@@ -2374,7 +2365,7 @@
           "category": "001001"
         },
         {
-          "rank": 15,
+          "rank": 14,
           "goodsNo": 5155029,
           "title": "피치 핑크 반팔피치 핑크 반팔 티셔츠 Fleur Douce Tee T-Shirt피치 핑크 반팔 티셔츠 Fleur Douce Tee T-Shirt",
           "brandName": "에클라 디뱅",
@@ -2384,7 +2375,7 @@
           "category": "001001"
         },
         {
-          "rank": 16,
+          "rank": 15,
           "goodsNo": 5210387,
           "title": "BOSS 테니스 프린트 코튼 릴렉스 핏 티셔츠(50543905337) 휴고보스 반팔티셔츠",
           "brandName": "보스 스포츠",
@@ -2394,7 +2385,7 @@
           "category": "001001"
         },
         {
-          "rank": 17,
+          "rank": 16,
           "goodsNo": 5210389,
           "title": "BOSS 테니스 프린트 코튼 릴렉스 핏 티셔츠(50543905027) 휴고보스 반팔티셔츠",
           "brandName": "보스 스포츠",
@@ -2404,7 +2395,7 @@
           "category": "001001"
         },
         {
-          "rank": 18,
+          "rank": 17,
           "goodsNo": 5210390,
           "title": "BOSS 테니스 프린트 코튼 릴렉스 핏 티셔츠(50543905026) 휴고보스 반팔티셔츠",
           "brandName": "보스 스포츠",
@@ -2414,9 +2405,19 @@
           "category": "001001"
         },
         {
-          "rank": 19,
+          "rank": 18,
           "goodsNo": 5973697,
           "title": "[17수] Retro Empathic Technology 반팔 티셔츠 - Speaker",
+          "brandName": "티셔츠 갤러리",
+          "priceFinal": 39000,
+          "gender": "남성",
+          "colorLabel": "화이트",
+          "category": "001001"
+        },
+        {
+          "rank": 19,
+          "goodsNo": 5975885,
+          "title": "[17수] Retro Empathic Technology 반팔 티셔츠 - Polaroid",
           "brandName": "티셔츠 갤러리",
           "priceFinal": 39000,
           "gender": "남성",
@@ -2657,16 +2658,6 @@
         },
         {
           "rank": 1,
-          "goodsNo": 5739715,
-          "title": "MEZMIC1829 주리 후드 면 티셔츠MEZMIC1829 주리 후드 티셔츠MEZMIC1829 주리 후드 면 티셔츠",
-          "brandName": "매즈믹",
-          "priceFinal": 69000,
-          "gender": "남성",
-          "colorLabel": "화이트",
-          "category": "001004"
-        },
-        {
-          "rank": 2,
           "goodsNo": 1970658,
           "title": "서퍼X서퍼 2 반팔 티셔츠 반팔 티셔츠  (블랙)",
           "brandName": "이모션플래닛",
@@ -2676,7 +2667,7 @@
           "category": "001001"
         },
         {
-          "rank": 3,
+          "rank": 2,
           "goodsNo": 3214029,
           "title": "GCR LOGO T-SHIRTS 로고 티셔츠 크롭 티셔츠",
           "brandName": "고코리",
@@ -2686,7 +2677,7 @@
           "category": "001001"
         },
         {
-          "rank": 4,
+          "rank": 3,
           "goodsNo": 3214647,
           "title": "[SET] 매니지 반팔티셔츠 + 크랙 텍스쳐 반팔티셔츠 SET(SHST6690+SHST6689)",
           "brandName": "에즈카톤",
@@ -2696,7 +2687,7 @@
           "category": "001001"
         },
         {
-          "rank": 5,
+          "rank": 4,
           "goodsNo": 3276155,
           "title": "[SET] 손더 반팔티셔츠 + 스페이스 반팔티셔츠 (KMST6693+KMST6696)",
           "brandName": "에즈카톤",
@@ -2706,7 +2697,7 @@
           "category": "001001"
         },
         {
-          "rank": 6,
+          "rank": 5,
           "goodsNo": 3377861,
           "title": "BOSS 티셔츠 2팩(50497894960) 남자 반팔 티셔츠",
           "brandName": "보스 스포츠",
@@ -2716,7 +2707,7 @@
           "category": "001001"
         },
         {
-          "rank": 7,
+          "rank": 6,
           "goodsNo": 4046482,
           "title": "[SET]피그먼트 오버핏 반팔티셔츠+어드벤쳐 폰트 피그먼트 반팔티셔츠 (FST701+FST705)",
           "brandName": "플루크",
@@ -2726,7 +2717,7 @@
           "category": "001001"
         },
         {
-          "rank": 8,
+          "rank": 7,
           "goodsNo": 4046501,
           "title": "[SET]어드벤쳐 트럭커 포켓 반팔티셔츠+무빙 쉐도우 반팔티셔츠 (FST141+FST149)",
           "brandName": "플루크",
@@ -2736,7 +2727,7 @@
           "category": "001001"
         },
         {
-          "rank": 9,
+          "rank": 8,
           "goodsNo": 4259445,
           "title": "[SET] 퍼펙트 특양면 오버핏 숄더 2중절개 무지 반팔 티셔츠_7Color + 퍼펙트 특양면 무지 머슬핏 반팔 티셔츠_7Color",
           "brandName": "바이젝",
@@ -2746,7 +2737,7 @@
           "category": "001001"
         },
         {
-          "rank": 10,
+          "rank": 9,
           "goodsNo": 4882562,
           "title": "PWX Q525-3614-15 여성용 기능성 마스크넥 귀걸이형 자외선차단 베이스레이어 티셔츠 쿨티셔츠",
           "brandName": "프로월드컵",
@@ -2756,7 +2747,7 @@
           "category": "001001"
         },
         {
-          "rank": 11,
+          "rank": 10,
           "goodsNo": 4954388,
           "title": "PWX S225-3223-25 여성용 기능성 집업 반팔티셔츠 반소매 골프웨어 아웃도어 냉감티셔츠",
           "brandName": "프로월드컵",
@@ -2766,7 +2757,7 @@
           "category": "001001"
         },
         {
-          "rank": 12,
+          "rank": 11,
           "goodsNo": 4963596,
           "title": "(W) 업사이클드 셔링 티셔츠 피티드 티셔츠 화이트 UPCYCLED SHIRRED T-SHIRTS FITTED T-SHIRT",
           "brandName": "마린 세르",
@@ -2776,7 +2767,7 @@
           "category": "001001"
         },
         {
-          "rank": 13,
+          "rank": 12,
           "goodsNo": 5073443,
           "title": "[2PACK] 오버핏 크루넥 로고 반팔 티셔츠 & 크루넥 오버핏 유니버셜 티셔츠",
           "brandName": "블론드나인",
@@ -2786,7 +2777,7 @@
           "category": "001001"
         },
         {
-          "rank": 14,
+          "rank": 13,
           "goodsNo": 5079932,
           "title": "[2PACK] 라이딩 바이크 티셔츠 & 글로브 티셔츠",
           "brandName": "라이크더모스트",
@@ -2796,7 +2787,7 @@
           "category": "001001"
         },
         {
-          "rank": 15,
+          "rank": 14,
           "goodsNo": 5155029,
           "title": "피치 핑크 반팔피치 핑크 반팔 티셔츠 Fleur Douce Tee T-Shirt피치 핑크 반팔 티셔츠 Fleur Douce Tee T-Shirt",
           "brandName": "에클라 디뱅",
@@ -2806,7 +2797,7 @@
           "category": "001001"
         },
         {
-          "rank": 16,
+          "rank": 15,
           "goodsNo": 5210387,
           "title": "BOSS 테니스 프린트 코튼 릴렉스 핏 티셔츠(50543905337) 휴고보스 반팔티셔츠",
           "brandName": "보스 스포츠",
@@ -2816,7 +2807,7 @@
           "category": "001001"
         },
         {
-          "rank": 17,
+          "rank": 16,
           "goodsNo": 5210389,
           "title": "BOSS 테니스 프린트 코튼 릴렉스 핏 티셔츠(50543905027) 휴고보스 반팔티셔츠",
           "brandName": "보스 스포츠",
@@ -2826,7 +2817,7 @@
           "category": "001001"
         },
         {
-          "rank": 18,
+          "rank": 17,
           "goodsNo": 5210390,
           "title": "BOSS 테니스 프린트 코튼 릴렉스 핏 티셔츠(50543905026) 휴고보스 반팔티셔츠",
           "brandName": "보스 스포츠",
@@ -2836,9 +2827,19 @@
           "category": "001001"
         },
         {
-          "rank": 19,
+          "rank": 18,
           "goodsNo": 5973697,
           "title": "[17수] Retro Empathic Technology 반팔 티셔츠 - Speaker",
+          "brandName": "티셔츠 갤러리",
+          "priceFinal": 39000,
+          "gender": "남성",
+          "colorLabel": "화이트",
+          "category": "001001"
+        },
+        {
+          "rank": 19,
+          "goodsNo": 5975885,
+          "title": "[17수] Retro Empathic Technology 반팔 티셔츠 - Polaroid",
           "brandName": "티셔츠 갤러리",
           "priceFinal": 39000,
           "gender": "남성",
@@ -3079,16 +3080,6 @@
         },
         {
           "rank": 1,
-          "goodsNo": 5739715,
-          "title": "MEZMIC1829 주리 후드 면 티셔츠MEZMIC1829 주리 후드 티셔츠MEZMIC1829 주리 후드 면 티셔츠",
-          "brandName": "매즈믹",
-          "priceFinal": 69000,
-          "gender": "남성",
-          "colorLabel": "화이트",
-          "category": "001004"
-        },
-        {
-          "rank": 2,
           "goodsNo": 166940,
           "title": "보트넥 스트라이프 티셔츠 3칼라 (V15TS011)",
           "brandName": "밴웍스",
@@ -3098,7 +3089,7 @@
           "category": "001001"
         },
         {
-          "rank": 3,
+          "rank": 2,
           "goodsNo": 994294,
           "title": "리본 보트넥 티셔츠 인디 핑크",
           "brandName": "디어피어",
@@ -3108,7 +3099,7 @@
           "category": "001001"
         },
         {
-          "rank": 4,
+          "rank": 3,
           "goodsNo": 1474691,
           "title": "20수 스트라이프 보트넥 티셔츠[BLUE]",
           "brandName": "펠스파브룩",
@@ -3118,7 +3109,7 @@
           "category": "001001"
         },
         {
-          "rank": 5,
+          "rank": 4,
           "goodsNo": 1474692,
           "title": "20수 스트라이프 보트넥 티셔츠[IVORY]",
           "brandName": "펠스파브룩",
@@ -3128,7 +3119,7 @@
           "category": "001001"
         },
         {
-          "rank": 6,
+          "rank": 5,
           "goodsNo": 1474693,
           "title": "20수 스트라이프 보트넥 티셔츠[KHAKI]",
           "brandName": "펠스파브룩",
@@ -3138,7 +3129,7 @@
           "category": "001001"
         },
         {
-          "rank": 7,
+          "rank": 6,
           "goodsNo": 1970658,
           "title": "서퍼X서퍼 2 반팔 티셔츠 반팔 티셔츠  (블랙)",
           "brandName": "이모션플래닛",
@@ -3148,7 +3139,7 @@
           "category": "001001"
         },
         {
-          "rank": 8,
+          "rank": 7,
           "goodsNo": 2996194,
           "title": "잇 슬립 캠핑 나염 티셔츠 (그린)",
           "brandName": "오쏠리",
@@ -3158,7 +3149,7 @@
           "category": "001001"
         },
         {
-          "rank": 9,
+          "rank": 8,
           "goodsNo": 2996204,
           "title": "잇 슬립 캠핑 나염 티셔츠 (화이트)",
           "brandName": "오쏠리",
@@ -3168,7 +3159,7 @@
           "category": "001001"
         },
         {
-          "rank": 10,
+          "rank": 9,
           "goodsNo": 2996216,
           "title": "스피릿 나염 티셔츠 (카키)",
           "brandName": "오쏠리",
@@ -3178,7 +3169,7 @@
           "category": "001001"
         },
         {
-          "rank": 11,
+          "rank": 10,
           "goodsNo": 2996220,
           "title": "스피릿 나염 티셔츠 (화이트)",
           "brandName": "오쏠리",
@@ -3188,7 +3179,7 @@
           "category": "001001"
         },
         {
-          "rank": 12,
+          "rank": 11,
           "goodsNo": 2996226,
           "title": "캠핑 라이프 나염 티셔츠 (머스타드)",
           "brandName": "오쏠리",
@@ -3198,7 +3189,7 @@
           "category": "001001"
         },
         {
-          "rank": 13,
+          "rank": 12,
           "goodsNo": 2996233,
           "title": "캠핑 라이프 나염 티셔츠 (화이트)",
           "brandName": "오쏠리",
@@ -3208,7 +3199,7 @@
           "category": "001001"
         },
         {
-          "rank": 14,
+          "rank": 13,
           "goodsNo": 3214029,
           "title": "GCR LOGO T-SHIRTS 로고 티셔츠 크롭 티셔츠",
           "brandName": "고코리",
@@ -3218,7 +3209,7 @@
           "category": "001001"
         },
         {
-          "rank": 15,
+          "rank": 14,
           "goodsNo": 3214647,
           "title": "[SET] 매니지 반팔티셔츠 + 크랙 텍스쳐 반팔티셔츠 SET(SHST6690+SHST6689)",
           "brandName": "에즈카톤",
@@ -3228,7 +3219,7 @@
           "category": "001001"
         },
         {
-          "rank": 16,
+          "rank": 15,
           "goodsNo": 3217878,
           "title": "W_보트넥 오버 핏 티셔츠 (180gsm) LJT1066",
           "brandName": "와이잭",
@@ -3238,7 +3229,7 @@
           "category": "001001"
         },
         {
-          "rank": 17,
+          "rank": 16,
           "goodsNo": 3276155,
           "title": "[SET] 손더 반팔티셔츠 + 스페이스 반팔티셔츠 (KMST6693+KMST6696)",
           "brandName": "에즈카톤",
@@ -3248,7 +3239,7 @@
           "category": "001001"
         },
         {
-          "rank": 18,
+          "rank": 17,
           "goodsNo": 3330827,
           "title": "보트넥 퍼프 티셔츠 블랙 [T42]",
           "brandName": "바이바이섭",
@@ -3258,12 +3249,22 @@
           "category": "001001"
         },
         {
-          "rank": 19,
+          "rank": 18,
           "goodsNo": 3377861,
           "title": "BOSS 티셔츠 2팩(50497894960) 남자 반팔 티셔츠",
           "brandName": "보스 스포츠",
           "priceFinal": 84000,
           "gender": "남성",
+          "colorLabel": "블랙",
+          "category": "001001"
+        },
+        {
+          "rank": 19,
+          "goodsNo": 3382589,
+          "title": "페미닌 보트넥 반팔 티셔츠 - 블랙",
+          "brandName": "로에일",
+          "priceFinal": 28000,
+          "gender": "여성",
           "colorLabel": "블랙",
           "category": "001001"
         }
@@ -3290,16 +3291,6 @@
         },
         {
           "rank": 1,
-          "goodsNo": 5739715,
-          "title": "MEZMIC1829 주리 후드 면 티셔츠MEZMIC1829 주리 후드 티셔츠MEZMIC1829 주리 후드 면 티셔츠",
-          "brandName": "매즈믹",
-          "priceFinal": 69000,
-          "gender": "남성",
-          "colorLabel": "화이트",
-          "category": "001004"
-        },
-        {
-          "rank": 2,
           "goodsNo": 1970658,
           "title": "서퍼X서퍼 2 반팔 티셔츠 반팔 티셔츠  (블랙)",
           "brandName": "이모션플래닛",
@@ -3309,7 +3300,7 @@
           "category": "001001"
         },
         {
-          "rank": 3,
+          "rank": 2,
           "goodsNo": 3214029,
           "title": "GCR LOGO T-SHIRTS 로고 티셔츠 크롭 티셔츠",
           "brandName": "고코리",
@@ -3319,7 +3310,7 @@
           "category": "001001"
         },
         {
-          "rank": 4,
+          "rank": 3,
           "goodsNo": 3214647,
           "title": "[SET] 매니지 반팔티셔츠 + 크랙 텍스쳐 반팔티셔츠 SET(SHST6690+SHST6689)",
           "brandName": "에즈카톤",
@@ -3329,7 +3320,7 @@
           "category": "001001"
         },
         {
-          "rank": 5,
+          "rank": 4,
           "goodsNo": 3276155,
           "title": "[SET] 손더 반팔티셔츠 + 스페이스 반팔티셔츠 (KMST6693+KMST6696)",
           "brandName": "에즈카톤",
@@ -3339,7 +3330,7 @@
           "category": "001001"
         },
         {
-          "rank": 6,
+          "rank": 5,
           "goodsNo": 3377861,
           "title": "BOSS 티셔츠 2팩(50497894960) 남자 반팔 티셔츠",
           "brandName": "보스 스포츠",
@@ -3349,7 +3340,7 @@
           "category": "001001"
         },
         {
-          "rank": 7,
+          "rank": 6,
           "goodsNo": 4046482,
           "title": "[SET]피그먼트 오버핏 반팔티셔츠+어드벤쳐 폰트 피그먼트 반팔티셔츠 (FST701+FST705)",
           "brandName": "플루크",
@@ -3359,7 +3350,7 @@
           "category": "001001"
         },
         {
-          "rank": 8,
+          "rank": 7,
           "goodsNo": 4046501,
           "title": "[SET]어드벤쳐 트럭커 포켓 반팔티셔츠+무빙 쉐도우 반팔티셔츠 (FST141+FST149)",
           "brandName": "플루크",
@@ -3369,7 +3360,7 @@
           "category": "001001"
         },
         {
-          "rank": 9,
+          "rank": 8,
           "goodsNo": 4259445,
           "title": "[SET] 퍼펙트 특양면 오버핏 숄더 2중절개 무지 반팔 티셔츠_7Color + 퍼펙트 특양면 무지 머슬핏 반팔 티셔츠_7Color",
           "brandName": "바이젝",
@@ -3379,7 +3370,7 @@
           "category": "001001"
         },
         {
-          "rank": 10,
+          "rank": 9,
           "goodsNo": 4882562,
           "title": "PWX Q525-3614-15 여성용 기능성 마스크넥 귀걸이형 자외선차단 베이스레이어 티셔츠 쿨티셔츠",
           "brandName": "프로월드컵",
@@ -3389,7 +3380,7 @@
           "category": "001001"
         },
         {
-          "rank": 11,
+          "rank": 10,
           "goodsNo": 4954388,
           "title": "PWX S225-3223-25 여성용 기능성 집업 반팔티셔츠 반소매 골프웨어 아웃도어 냉감티셔츠",
           "brandName": "프로월드컵",
@@ -3399,7 +3390,7 @@
           "category": "001001"
         },
         {
-          "rank": 12,
+          "rank": 11,
           "goodsNo": 4963596,
           "title": "(W) 업사이클드 셔링 티셔츠 피티드 티셔츠 화이트 UPCYCLED SHIRRED T-SHIRTS FITTED T-SHIRT",
           "brandName": "마린 세르",
@@ -3409,7 +3400,7 @@
           "category": "001001"
         },
         {
-          "rank": 13,
+          "rank": 12,
           "goodsNo": 5073443,
           "title": "[2PACK] 오버핏 크루넥 로고 반팔 티셔츠 & 크루넥 오버핏 유니버셜 티셔츠",
           "brandName": "블론드나인",
@@ -3419,7 +3410,7 @@
           "category": "001001"
         },
         {
-          "rank": 14,
+          "rank": 13,
           "goodsNo": 5079932,
           "title": "[2PACK] 라이딩 바이크 티셔츠 & 글로브 티셔츠",
           "brandName": "라이크더모스트",
@@ -3429,7 +3420,7 @@
           "category": "001001"
         },
         {
-          "rank": 15,
+          "rank": 14,
           "goodsNo": 5155029,
           "title": "피치 핑크 반팔피치 핑크 반팔 티셔츠 Fleur Douce Tee T-Shirt피치 핑크 반팔 티셔츠 Fleur Douce Tee T-Shirt",
           "brandName": "에클라 디뱅",
@@ -3439,7 +3430,7 @@
           "category": "001001"
         },
         {
-          "rank": 16,
+          "rank": 15,
           "goodsNo": 5210387,
           "title": "BOSS 테니스 프린트 코튼 릴렉스 핏 티셔츠(50543905337) 휴고보스 반팔티셔츠",
           "brandName": "보스 스포츠",
@@ -3449,7 +3440,7 @@
           "category": "001001"
         },
         {
-          "rank": 17,
+          "rank": 16,
           "goodsNo": 5210389,
           "title": "BOSS 테니스 프린트 코튼 릴렉스 핏 티셔츠(50543905027) 휴고보스 반팔티셔츠",
           "brandName": "보스 스포츠",
@@ -3459,7 +3450,7 @@
           "category": "001001"
         },
         {
-          "rank": 18,
+          "rank": 17,
           "goodsNo": 5210390,
           "title": "BOSS 테니스 프린트 코튼 릴렉스 핏 티셔츠(50543905026) 휴고보스 반팔티셔츠",
           "brandName": "보스 스포츠",
@@ -3469,9 +3460,19 @@
           "category": "001001"
         },
         {
-          "rank": 19,
+          "rank": 18,
           "goodsNo": 5973697,
           "title": "[17수] Retro Empathic Technology 반팔 티셔츠 - Speaker",
+          "brandName": "티셔츠 갤러리",
+          "priceFinal": 39000,
+          "gender": "남성",
+          "colorLabel": "화이트",
+          "category": "001001"
+        },
+        {
+          "rank": 19,
+          "goodsNo": 5975885,
+          "title": "[17수] Retro Empathic Technology 반팔 티셔츠 - Polaroid",
           "brandName": "티셔츠 갤러리",
           "priceFinal": 39000,
           "gender": "남성",
@@ -4989,16 +4990,6 @@
         },
         {
           "rank": 5,
-          "goodsNo": 5615802,
-          "title": "OG 그래피티 후드티 네이비 YHT-402",
-          "brandName": "요세미티",
-          "priceFinal": 29900,
-          "gender": "공용",
-          "colorLabel": "네이비",
-          "category": "001004"
-        },
-        {
-          "rank": 6,
           "goodsNo": 1095609,
           "title": "유틸리티 탄창 포켓 루즈핏 헨리넥 반팔티  블루",
           "brandName": "코드아이엠",
@@ -5008,7 +4999,7 @@
           "category": "001001"
         },
         {
-          "rank": 7,
+          "rank": 6,
           "goodsNo": 1958839,
           "title": "베이직 라인 루즈티 스카이블루",
           "brandName": "투어티",
@@ -5018,7 +5009,7 @@
           "category": "001001"
         },
         {
-          "rank": 8,
+          "rank": 7,
           "goodsNo": 1966243,
           "title": "코튼 더 투어티 스카이블루",
           "brandName": "투어티",
@@ -5028,7 +5019,7 @@
           "category": "001001"
         },
         {
-          "rank": 9,
+          "rank": 8,
           "goodsNo": 2631915,
           "title": "멀티 아크 반팔티 네이비 옐로우",
           "brandName": "크림소다랩",
@@ -5038,7 +5029,7 @@
           "category": "001001"
         },
         {
-          "rank": 10,
+          "rank": 9,
           "goodsNo": 3111324,
           "title": "[2 PACK] 웬디 반팔티 + 케이트 긴팔티 2종세트",
           "brandName": "녹족",
@@ -5048,7 +5039,7 @@
           "category": "001001"
         },
         {
-          "rank": 11,
+          "rank": 10,
           "goodsNo": 3212166,
           "title": "바시티 라운드 반팔 티셔츠 W_Navy",
           "brandName": "피레티",
@@ -5058,7 +5049,7 @@
           "category": "001001"
         },
         {
-          "rank": 12,
+          "rank": 11,
           "goodsNo": 3417373,
           "title": "세리프 루바티 로고 티셔츠_네이비",
           "brandName": "루바티",
@@ -5068,7 +5059,7 @@
           "category": "001001"
         },
         {
-          "rank": 13,
+          "rank": 12,
           "goodsNo": 3723707,
           "title": "크리티컬 로고 반팔티 네이비",
           "brandName": "크리티컬플렉스",
@@ -5078,7 +5069,7 @@
           "category": "001001"
         },
         {
-          "rank": 14,
+          "rank": 13,
           "goodsNo": 3723714,
           "title": "USA 크리티컬 로고 반팔티 네이비",
           "brandName": "크리티컬플렉스",
@@ -5088,7 +5079,7 @@
           "category": "001001"
         },
         {
-          "rank": 15,
+          "rank": 14,
           "goodsNo": 4046482,
           "title": "[SET]피그먼트 오버핏 반팔티셔츠+어드벤쳐 폰트 피그먼트 반팔티셔츠 (FST701+FST705)",
           "brandName": "플루크",
@@ -5098,7 +5089,7 @@
           "category": "001001"
         },
         {
-          "rank": 16,
+          "rank": 15,
           "goodsNo": 4046501,
           "title": "[SET]어드벤쳐 트럭커 포켓 반팔티셔츠+무빙 쉐도우 반팔티셔츠 (FST141+FST149)",
           "brandName": "플루크",
@@ -5108,7 +5099,7 @@
           "category": "001001"
         },
         {
-          "rank": 17,
+          "rank": 16,
           "goodsNo": 4069360,
           "title": "크랙 그래피티 로고 피그먼트 반팔티 스카이 FST731",
           "brandName": "플루크",
@@ -5118,7 +5109,7 @@
           "category": "001001"
         },
         {
-          "rank": 18,
+          "rank": 17,
           "goodsNo": 4069362,
           "title": "크랙 그래피티 로고 피그먼트 반팔티 라이트네이비 FST731",
           "brandName": "플루크",
@@ -5128,13 +5119,23 @@
           "category": "001001"
         },
         {
-          "rank": 19,
+          "rank": 18,
           "goodsNo": 4122647,
           "title": "그래피티 로고 오버핏 반팔 티셔츠 (블루네이비)",
           "brandName": "그랜디오시티",
           "priceFinal": 18900,
           "gender": "남성",
           "colorLabel": "네이비",
+          "category": "001001"
+        },
+        {
+          "rank": 19,
+          "goodsNo": 4188865,
+          "title": "[CP] Gorilla 골퍼 오버핏 반팔티 오버핏 반팔티 AST4596 (4 COLOR)",
+          "brandName": "앨빈클로",
+          "priceFinal": 24900,
+          "gender": "남성",
+          "colorLabel": "화이트/블랙/아이보리/다크 블루",
           "category": "001001"
         }
       ]
@@ -6929,16 +6930,6 @@
         },
         {
           "rank": 1,
-          "goodsNo": 5739715,
-          "title": "MEZMIC1829 주리 후드 면 티셔츠MEZMIC1829 주리 후드 티셔츠MEZMIC1829 주리 후드 면 티셔츠",
-          "brandName": "매즈믹",
-          "priceFinal": 69000,
-          "gender": "남성",
-          "colorLabel": "화이트",
-          "category": "001004"
-        },
-        {
-          "rank": 2,
           "goodsNo": 1970658,
           "title": "서퍼X서퍼 2 반팔 티셔츠 반팔 티셔츠  (블랙)",
           "brandName": "이모션플래닛",
@@ -6948,7 +6939,7 @@
           "category": "001001"
         },
         {
-          "rank": 3,
+          "rank": 2,
           "goodsNo": 3214029,
           "title": "GCR LOGO T-SHIRTS 로고 티셔츠 크롭 티셔츠",
           "brandName": "고코리",
@@ -6958,7 +6949,7 @@
           "category": "001001"
         },
         {
-          "rank": 4,
+          "rank": 3,
           "goodsNo": 3214647,
           "title": "[SET] 매니지 반팔티셔츠 + 크랙 텍스쳐 반팔티셔츠 SET(SHST6690+SHST6689)",
           "brandName": "에즈카톤",
@@ -6968,7 +6959,7 @@
           "category": "001001"
         },
         {
-          "rank": 5,
+          "rank": 4,
           "goodsNo": 3276155,
           "title": "[SET] 손더 반팔티셔츠 + 스페이스 반팔티셔츠 (KMST6693+KMST6696)",
           "brandName": "에즈카톤",
@@ -6978,7 +6969,7 @@
           "category": "001001"
         },
         {
-          "rank": 6,
+          "rank": 5,
           "goodsNo": 3377861,
           "title": "BOSS 티셔츠 2팩(50497894960) 남자 반팔 티셔츠",
           "brandName": "보스 스포츠",
@@ -6988,7 +6979,7 @@
           "category": "001001"
         },
         {
-          "rank": 7,
+          "rank": 6,
           "goodsNo": 4046482,
           "title": "[SET]피그먼트 오버핏 반팔티셔츠+어드벤쳐 폰트 피그먼트 반팔티셔츠 (FST701+FST705)",
           "brandName": "플루크",
@@ -6998,7 +6989,7 @@
           "category": "001001"
         },
         {
-          "rank": 8,
+          "rank": 7,
           "goodsNo": 4046501,
           "title": "[SET]어드벤쳐 트럭커 포켓 반팔티셔츠+무빙 쉐도우 반팔티셔츠 (FST141+FST149)",
           "brandName": "플루크",
@@ -7008,7 +6999,7 @@
           "category": "001001"
         },
         {
-          "rank": 9,
+          "rank": 8,
           "goodsNo": 4144853,
           "title": "스팽글무지개꽃 반팔티셔츠 남녀공용 빅사이즈 S~4XL",
           "brandName": "엘라모",
@@ -7018,7 +7009,7 @@
           "category": "001001"
         },
         {
-          "rank": 10,
+          "rank": 9,
           "goodsNo": 4259445,
           "title": "[SET] 퍼펙트 특양면 오버핏 숄더 2중절개 무지 반팔 티셔츠_7Color + 퍼펙트 특양면 무지 머슬핏 반팔 티셔츠_7Color",
           "brandName": "바이젝",
@@ -7028,7 +7019,7 @@
           "category": "001001"
         },
         {
-          "rank": 11,
+          "rank": 10,
           "goodsNo": 4882562,
           "title": "PWX Q525-3614-15 여성용 기능성 마스크넥 귀걸이형 자외선차단 베이스레이어 티셔츠 쿨티셔츠",
           "brandName": "프로월드컵",
@@ -7038,7 +7029,7 @@
           "category": "001001"
         },
         {
-          "rank": 12,
+          "rank": 11,
           "goodsNo": 4910459,
           "title": "FICO_tshirts-245 피코앵글러 낚시 브랜드 무지개송어 디자인 티셔츠 반팔티",
           "brandName": "돌돌",
@@ -7048,7 +7039,7 @@
           "category": "001001"
         },
         {
-          "rank": 13,
+          "rank": 12,
           "goodsNo": 4913962,
           "title": "FICO_tshirts-248 피코앵글러 낚시 브랜드 무지개송어 디자인 티셔츠 반팔티",
           "brandName": "돌돌",
@@ -7058,7 +7049,7 @@
           "category": "001001"
         },
         {
-          "rank": 14,
+          "rank": 13,
           "goodsNo": 4926867,
           "title": "FICO_tshirts-253 피코앵글러 낚시 브랜드 무지개송어 디자인 티셔츠 반팔티",
           "brandName": "돌돌",
@@ -7068,7 +7059,7 @@
           "category": "001001"
         },
         {
-          "rank": 15,
+          "rank": 14,
           "goodsNo": 4939109,
           "title": "FICO_tshirts-258 피코앵글러 낚시 브랜드 무지개송어 디자인 티셔츠 반팔티",
           "brandName": "돌돌",
@@ -7078,7 +7069,7 @@
           "category": "001001"
         },
         {
-          "rank": 16,
+          "rank": 15,
           "goodsNo": 4954388,
           "title": "PWX S225-3223-25 여성용 기능성 집업 반팔티셔츠 반소매 골프웨어 아웃도어 냉감티셔츠",
           "brandName": "프로월드컵",
@@ -7088,7 +7079,7 @@
           "category": "001001"
         },
         {
-          "rank": 17,
+          "rank": 16,
           "goodsNo": 4959517,
           "title": "FICO_tshirts-263 피코앵글러 낚시 브랜드 무지개송어 디자인 티셔츠 반팔티",
           "brandName": "돌돌",
@@ -7098,7 +7089,7 @@
           "category": "001001"
         },
         {
-          "rank": 18,
+          "rank": 17,
           "goodsNo": 4959539,
           "title": "FICO_tshirts-264 피코앵글러 낚시 브랜드 무지개송어 디자인 티셔츠 반팔티",
           "brandName": "돌돌",
@@ -7108,13 +7099,23 @@
           "category": "001001"
         },
         {
-          "rank": 19,
+          "rank": 18,
           "goodsNo": 4963596,
           "title": "(W) 업사이클드 셔링 티셔츠 피티드 티셔츠 화이트 UPCYCLED SHIRRED T-SHIRTS FITTED T-SHIRT",
           "brandName": "마린 세르",
           "priceFinal": 255600,
           "gender": "여성",
           "colorLabel": "화이트",
+          "category": "001001"
+        },
+        {
+          "rank": 19,
+          "goodsNo": 4980898,
+          "title": "FICO_tshirts-267 피코앵글러 낚시 브랜드 무지개송어 디자인 티셔츠 반팔티",
+          "brandName": "돌돌",
+          "priceFinal": 45000,
+          "gender": "남성",
+          "colorLabel": "화이트/블랙/라이트 그레이",
           "category": "001001"
         }
       ]
@@ -14204,86 +14205,6 @@
         },
         {
           "rank": 9,
-          "goodsNo": 2157797,
-          "title": "[2PACK] 하비스트 오버핏 기모 후드 OYHD2393 + 코드 오버핏 기모 후드 OYHD2378",
-          "brandName": "제멋",
-          "priceFinal": 74900,
-          "gender": "남성",
-          "colorLabel": "블랙/다크 그레이/그레이/네이비/그린",
-          "category": "001004"
-        },
-        {
-          "rank": 10,
-          "goodsNo": 4572214,
-          "title": "베이직 오버핏 트랙 우먼 오버핏 후드티셔츠 3 Color [ULZI_4001]",
-          "brandName": "유라이프지",
-          "priceFinal": 37100,
-          "gender": "여성",
-          "colorLabel": "블랙",
-          "category": "001004"
-        },
-        {
-          "rank": 11,
-          "goodsNo": 5641283,
-          "title": "[SET] 피그먼트 오버핏 절개 후드티 + 피그먼트 오버핏 와이드 스트링 조거 팬츠 (3COLOR)",
-          "brandName": "페르메논",
-          "priceFinal": 104670,
-          "gender": "남성",
-          "colorLabel": "블랙/그레이/브라운",
-          "category": "001004"
-        },
-        {
-          "rank": 12,
-          "goodsNo": 5673610,
-          "title": "[2PACK] MELLOW 트랙 오버핏 후드티 SANCTUARY 트랙 오버핏 후드티 2종 패키지",
-          "brandName": "앨빈클로",
-          "priceFinal": 74800,
-          "gender": "남성",
-          "colorLabel": "그레이",
-          "category": "001004"
-        },
-        {
-          "rank": 13,
-          "goodsNo": 5868441,
-          "title": "[2PACK] 피그먼트 오버핏 절개 2WAY 후드 집업 + 피그먼트 오버핏 절개 후드티 (3COLOR)",
-          "brandName": "페르메논",
-          "priceFinal": 112320,
-          "gender": "남성",
-          "colorLabel": "블랙/그레이/카키",
-          "category": "001004"
-        },
-        {
-          "rank": 14,
-          "goodsNo": 5868497,
-          "title": "[2PACK] 피그먼트 오버핏 절개 2WAY 후드 집업 + 피그먼트 오버핏 절개 스트링 맨투맨 (3COLOR)",
-          "brandName": "페르메논",
-          "priceFinal": 103320,
-          "gender": "남성",
-          "colorLabel": "블랙/그레이/카키",
-          "category": "001004"
-        },
-        {
-          "rank": 15,
-          "goodsNo": 5868510,
-          "title": "[2PACK] 피그먼트 오버핏 절개 후드티 + 피그먼트 오버핏 절개 스트링 맨투맨 (3COLOR)",
-          "brandName": "페르메논",
-          "priceFinal": 98820,
-          "gender": "남성",
-          "colorLabel": "블랙/그레이/브라운",
-          "category": "001004"
-        },
-        {
-          "rank": 16,
-          "goodsNo": 6096761,
-          "title": "[SET]  오버핏 크롭 스웨트 후드 티셔츠 + 오버핏 와이드 스웨트 팬츠 (3COLOR)",
-          "brandName": "페르메논",
-          "priceFinal": 80910,
-          "gender": "남성",
-          "colorLabel": "블랙/네이비/오트밀",
-          "category": "001004"
-        },
-        {
-          "rank": 17,
           "goodsNo": 401056,
           "title": "7부 오버핏 긴팔 티셔츠 화이트",
           "brandName": "세븐틴스",
@@ -14293,7 +14214,7 @@
           "category": "001001"
         },
         {
-          "rank": 18,
+          "rank": 10,
           "goodsNo": 401811,
           "title": "7부 오버핏 스웨트셔츠 블랙",
           "brandName": "세븐틴스",
@@ -14303,13 +14224,93 @@
           "category": "001001"
         },
         {
-          "rank": 19,
+          "rank": 11,
           "goodsNo": 500914,
           "title": "[레이쿠] reiku overfit roll-up short sleeve gray 오버핏 롤업 슬리브",
           "brandName": "레이쿠",
           "priceFinal": 37000,
           "gender": "남성",
           "colorLabel": "그레이",
+          "category": "001001"
+        },
+        {
+          "rank": 12,
+          "goodsNo": 500915,
+          "title": "[레이쿠] reiku overfit roll-up short sleeve black 오버핏 롤업 슬리브",
+          "brandName": "레이쿠",
+          "priceFinal": 37000,
+          "gender": "남성",
+          "colorLabel": "블랙",
+          "category": "001001"
+        },
+        {
+          "rank": 13,
+          "goodsNo": 503399,
+          "title": "[16수] 레터링 타투 오버핏 티셔츠 화이트",
+          "brandName": "꼼파뇨",
+          "priceFinal": 28000,
+          "gender": "공용",
+          "colorLabel": "화이트",
+          "category": "001001"
+        },
+        {
+          "rank": 14,
+          "goodsNo": 503413,
+          "title": "[16수] 레터링 타투 오버핏 티셔츠 블랙",
+          "brandName": "꼼파뇨",
+          "priceFinal": 28000,
+          "gender": "공용",
+          "colorLabel": "블랙",
+          "category": "001001"
+        },
+        {
+          "rank": 15,
+          "goodsNo": 532246,
+          "title": "[UNISEX] 45수 특양면 옆트임 오버핏 반팔티 (블랙)",
+          "brandName": "티아즈",
+          "priceFinal": 16800,
+          "gender": "남성",
+          "colorLabel": "블랙",
+          "category": "001001"
+        },
+        {
+          "rank": 16,
+          "goodsNo": 538836,
+          "title": "헤비 오버핏 무지 반팔티 블랙",
+          "brandName": "꼼파뇨",
+          "priceFinal": 26880,
+          "gender": "공용",
+          "colorLabel": "블랙",
+          "category": "001001"
+        },
+        {
+          "rank": 17,
+          "goodsNo": 540420,
+          "title": "오리지널 로고 오버핏 반팔티 (RL001 OG LOGO TEE) - BLACK",
+          "brandName": "로얄라이프",
+          "priceFinal": 25600,
+          "gender": "공용",
+          "colorLabel": "블랙",
+          "category": "001001"
+        },
+        {
+          "rank": 18,
+          "goodsNo": 540421,
+          "title": "오리지널 로고 오버핏 반팔티 (RL001 OG LOGO TEE) - WHITE",
+          "brandName": "로얄라이프",
+          "priceFinal": 25600,
+          "gender": "공용",
+          "colorLabel": "화이트",
+          "category": "001001"
+        },
+        {
+          "rank": 19,
+          "goodsNo": 546361,
+          "title": "[오버핏] 넘버플랜트 로고 반팔 블랙 no.2",
+          "brandName": "넘버플랜트",
+          "priceFinal": 19800,
+          "gender": "남성",
+          "colorLabel": "블랙",
           "category": "001001"
         }
       ]
@@ -16536,43 +16537,43 @@
         },
         {
           "rank": 16,
-          "goodsNo": 4478476,
-          "title": "티글레이크 레터링 오버핏 기모 후드티셔츠 그레이",
-          "brandName": "티글레이크",
-          "priceFinal": 32900,
-          "gender": "남성",
-          "colorLabel": "라이트 그레이",
-          "category": "001004"
+          "goodsNo": 503399,
+          "title": "[16수] 레터링 타투 오버핏 티셔츠 화이트",
+          "brandName": "꼼파뇨",
+          "priceFinal": 28000,
+          "gender": "공용",
+          "colorLabel": "화이트",
+          "category": "001001"
         },
         {
           "rank": 17,
-          "goodsNo": 4478477,
-          "title": "티글레이크 레터링 오버핏 기모 후드티셔츠 블랙",
-          "brandName": "티글레이크",
-          "priceFinal": 32900,
-          "gender": "남성",
+          "goodsNo": 503413,
+          "title": "[16수] 레터링 타투 오버핏 티셔츠 블랙",
+          "brandName": "꼼파뇨",
+          "priceFinal": 28000,
+          "gender": "공용",
           "colorLabel": "블랙",
-          "category": "001004"
+          "category": "001001"
         },
         {
           "rank": 18,
-          "goodsNo": 4650101,
-          "title": "원형 레터링 기모 오버핏 후드티 [그레이]",
-          "brandName": "비마이티",
-          "priceFinal": 48300,
+          "goodsNo": 589618,
+          "title": "[UNISEX] 비욘드 레터링 특양면 반팔티(블랙)",
+          "brandName": "티아즈",
+          "priceFinal": 28700,
           "gender": "남성",
-          "colorLabel": "그레이",
-          "category": "001004"
+          "colorLabel": "블랙",
+          "category": "001001"
         },
         {
           "rank": 19,
-          "goodsNo": 4650109,
-          "title": "원형 레터링 기모 오버핏 후드티 [네이비]",
-          "brandName": "비마이티",
-          "priceFinal": 48300,
-          "gender": "남성",
-          "colorLabel": "네이비",
-          "category": "001004"
+          "goodsNo": 784770,
+          "title": "레터링 티셔츠_다크 오렌지",
+          "brandName": "비유비피",
+          "priceFinal": 15600,
+          "gender": "여성",
+          "colorLabel": "오렌지",
+          "category": "001001"
         }
       ]
     },
@@ -17019,193 +17020,193 @@
         },
         {
           "rank": 1,
-          "goodsNo": 1634554,
-          "title": "DMK_HOODY_81 그래피티 아티스트 데빌몽키 dmk 타투 캐릭터 그래피티 그래픽 디자인 후드티 후디",
-          "brandName": "돌돌",
-          "priceFinal": 76000,
+          "goodsNo": 1494631,
+          "title": "[그래픽스 X 모노하 Gold Label] 이 또한 지나가리라 Premium 반팔 티셔츠",
+          "brandName": "그래픽스",
+          "priceFinal": 27840,
           "gender": "남성",
-          "colorLabel": "블랙/라이트 그레이/다크 그레이",
-          "category": "001004"
+          "colorLabel": "화이트",
+          "category": "001001"
         },
         {
           "rank": 2,
-          "goodsNo": 1634555,
-          "title": "DMK_HOODY_82 그래피티 아티스트 데빌몽키 dmk 타투 캐릭터 그래피티 그래픽 디자인 후드티 후디",
-          "brandName": "돌돌",
-          "priceFinal": 76000,
+          "goodsNo": 1494689,
+          "title": "[그래픽스 X 모노하 Gold Label] 스케이트 보드 Premium 반팔 티셔츠",
+          "brandName": "그래픽스",
+          "priceFinal": 27840,
           "gender": "남성",
-          "colorLabel": "블랙/라이트 그레이/다크 그레이",
-          "category": "001004"
+          "colorLabel": "화이트",
+          "category": "001001"
         },
         {
           "rank": 3,
-          "goodsNo": 1634556,
-          "title": "DMK_HOODY_83 그래피티 아티스트 데빌몽키 dmk 타투 캐릭터 그래피티 그래픽 디자인 후드티 후디",
-          "brandName": "돌돌",
-          "priceFinal": 76000,
+          "goodsNo": 1494722,
+          "title": "[그래픽스 X 미스터 머스타드 스튜디오 Gold Label] 2 in 1 Premium 반팔 티셔츠",
+          "brandName": "그래픽스",
+          "priceFinal": 27840,
           "gender": "남성",
-          "colorLabel": "블랙/라이트 그레이/다크 그레이",
-          "category": "001004"
+          "colorLabel": "블랙",
+          "category": "001001"
         },
         {
           "rank": 4,
-          "goodsNo": 1637437,
-          "title": "DMK_HOODY_84 그래피티 아티스트 데빌몽키 dmk 타투 캐릭터 그래피티 그래픽 디자인 후드티 후디",
-          "brandName": "돌돌",
-          "priceFinal": 76000,
+          "goodsNo": 1494737,
+          "title": "[그래픽스 X 미스터 머스타드 스튜디오 Gold Label] Love Together Premium 반팔 티셔츠",
+          "brandName": "그래픽스",
+          "priceFinal": 27840,
           "gender": "남성",
-          "colorLabel": "블랙/라이트 그레이/다크 그레이",
-          "category": "001004"
+          "colorLabel": "블랙",
+          "category": "001001"
         },
         {
           "rank": 5,
-          "goodsNo": 1637439,
-          "title": "DMK_HOODY_86 그래피티 아티스트 데빌몽키 dmk 타투 캐릭터 그래피티 그래픽 디자인 후드티 후디",
+          "goodsNo": 1628496,
+          "title": "Lily-tshirts-16 러블리 릴리 여자 북극곰 스노우보드 선수 익스트림 캐릭터 그래픽 그래피티 디자인 티셔츠 티",
           "brandName": "돌돌",
-          "priceFinal": 76000,
+          "priceFinal": 38000,
           "gender": "남성",
-          "colorLabel": "블랙/라이트 그레이/다크 그레이",
-          "category": "001004"
+          "colorLabel": "화이트/블랙/라이트 그레이",
+          "category": "001001"
         },
         {
           "rank": 6,
-          "goodsNo": 1640198,
-          "title": "DMK_HOODY_85 그래피티 아티스트 데빌몽키 dmk 타투 캐릭터 그래피티 그래픽 디자인 후드티 후디",
+          "goodsNo": 1628497,
+          "title": "Lily-tshirts-17 러블리 릴리 여자 북극곰 스노우보드 선수 익스트림 캐릭터 그래픽 그래피티 디자인 티셔츠 티",
           "brandName": "돌돌",
-          "priceFinal": 76000,
+          "priceFinal": 38000,
           "gender": "남성",
-          "colorLabel": "블랙/라이트 그레이/다크 그레이",
-          "category": "001004"
+          "colorLabel": "화이트/블랙/라이트 그레이",
+          "category": "001001"
         },
         {
           "rank": 7,
-          "goodsNo": 1640199,
-          "title": "DMK_HOODY_87 그래피티 아티스트 데빌몽키 dmk 타투 캐릭터 그래피티 그래픽 디자인 후드티 후디",
+          "goodsNo": 1628499,
+          "title": "Lily-tshirts-18 러블리 릴리 여자 북극곰 스노우보드 선수 익스트림 캐릭터 그래픽 그래피티 디자인 티셔츠 티",
           "brandName": "돌돌",
-          "priceFinal": 76000,
+          "priceFinal": 38000,
           "gender": "남성",
-          "colorLabel": "블랙/라이트 그레이/다크 그레이",
-          "category": "001004"
+          "colorLabel": "화이트/블랙/라이트 그레이",
+          "category": "001001"
         },
         {
           "rank": 8,
-          "goodsNo": 1640200,
-          "title": "DMK_HOODY_88 그래피티 아티스트 데빌몽키 dmk 타투 캐릭터 그래피티 그래픽 디자인 후드티 후디",
+          "goodsNo": 1817553,
+          "title": "Lily-tshirts-25 러블리 릴리 여자 북극곰 스노우보드 선수 익스트림 캐릭터 그래픽 디자인 그래피티 디자이너 티셔츠 티",
           "brandName": "돌돌",
-          "priceFinal": 76000,
+          "priceFinal": 38000,
           "gender": "남성",
-          "colorLabel": "블랙/라이트 그레이/다크 그레이",
-          "category": "001004"
+          "colorLabel": "화이트/블랙/라이트 그레이",
+          "category": "001001"
         },
         {
           "rank": 9,
-          "goodsNo": 1640201,
-          "title": "DMK_HOODY_89 그래피티 아티스트 데빌몽키 dmk 타투 캐릭터 그래피티 그래픽 디자인 후드티 후디",
+          "goodsNo": 1817554,
+          "title": "Lily-tshirts-26 러블리 릴리 여자 북극곰 스노우보드 선수 익스트림 캐릭터 그래픽 디자인 그래피티 디자이너 티셔츠 티",
           "brandName": "돌돌",
-          "priceFinal": 76000,
+          "priceFinal": 38000,
           "gender": "남성",
-          "colorLabel": "블랙/라이트 그레이/다크 그레이",
-          "category": "001004"
+          "colorLabel": "화이트/블랙/라이트 그레이",
+          "category": "001001"
         },
         {
           "rank": 10,
-          "goodsNo": 1643042,
-          "title": "DMK_HOODY_90 그래피티 아티스트 데빌몽키 dmk 타투 캐릭터 그래피티 그래픽 디자인 후드티 후디",
+          "goodsNo": 1817555,
+          "title": "Lily-tshirts-27 러블리 릴리 여자 북극곰 스노우보드 선수 익스트림 캐릭터 그래픽 디자인 그래피티 디자이너 티셔츠 티",
           "brandName": "돌돌",
-          "priceFinal": 76000,
+          "priceFinal": 38000,
           "gender": "남성",
-          "colorLabel": "블랙/라이트 그레이/다크 그레이",
-          "category": "001004"
+          "colorLabel": "화이트/블랙/라이트 그레이",
+          "category": "001001"
         },
         {
           "rank": 11,
-          "goodsNo": 1643043,
-          "title": "DMK_HOODY_91 그래피티 아티스트 데빌몽키 dmk 타투 캐릭터 그래피티 그래픽 디자인 후드티 후디",
+          "goodsNo": 1820563,
+          "title": "Lily-tshirts-28 러블리 릴리 여자 북극곰 스노우보드 선수 익스트림 캐릭터 그래픽 디자인 그래피티 디자이너 티셔츠 티",
           "brandName": "돌돌",
-          "priceFinal": 79000,
+          "priceFinal": 38000,
           "gender": "남성",
-          "colorLabel": "블랙/라이트 그레이/다크 그레이",
-          "category": "001004"
+          "colorLabel": "화이트/블랙/라이트 그레이",
+          "category": "001001"
         },
         {
           "rank": 12,
-          "goodsNo": 1643044,
-          "title": "DMK_HOODY_92 그래피티 아티스트 데빌몽키 dmk 타투 캐릭터 그래피티 그래픽 디자인 후드티 후디",
+          "goodsNo": 1820564,
+          "title": "Lily-tshirts-29 러블리 릴리 여자 북극곰 스노우보드 선수 익스트림 캐릭터 그래픽 디자인 그래피티 디자이너 티셔츠 티",
           "brandName": "돌돌",
-          "priceFinal": 79000,
+          "priceFinal": 38000,
           "gender": "남성",
-          "colorLabel": "블랙/라이트 그레이/다크 그레이",
-          "category": "001004"
+          "colorLabel": "화이트/블랙/라이트 그레이",
+          "category": "001001"
         },
         {
           "rank": 13,
-          "goodsNo": 1645004,
-          "title": "DMK_HOODY_93 그래피티 아티스트 데빌몽키 dmk 타투 캐릭터 그래피티 그래픽 디자인 후드티 후디",
+          "goodsNo": 1820565,
+          "title": "Lily-tshirts-30 러블리 릴리 여자 북극곰 스노우보드 선수 익스트림 캐릭터 그래픽 디자인 그래피티 디자이너 티셔츠 티",
           "brandName": "돌돌",
-          "priceFinal": 79000,
+          "priceFinal": 38000,
           "gender": "남성",
-          "colorLabel": "블랙/라이트 그레이/다크 그레이",
-          "category": "001004"
+          "colorLabel": "화이트/블랙/라이트 그레이",
+          "category": "001001"
         },
         {
           "rank": 14,
-          "goodsNo": 1645005,
-          "title": "DMK_HOODY_94 그래피티 아티스트 데빌몽키 dmk 타투 캐릭터 그래피티 그래픽 디자인 후드티 후디",
+          "goodsNo": 1822346,
+          "title": "Lily-tshirts-31 러블리 릴리 여자 북극곰 스노우보드 선수 익스트림 캐릭터 그래픽 디자인 그래피티 디자이너 티셔츠 티",
           "brandName": "돌돌",
-          "priceFinal": 79000,
+          "priceFinal": 38000,
           "gender": "남성",
-          "colorLabel": "블랙/라이트 그레이/다크 그레이",
-          "category": "001004"
+          "colorLabel": "화이트/블랙/라이트 그레이",
+          "category": "001001"
         },
         {
           "rank": 15,
-          "goodsNo": 1645006,
-          "title": "DMK_HOODY_95 그래피티 아티스트 데빌몽키 dmk 타투 캐릭터 그래피티 그래픽 디자인 후드티 후디",
+          "goodsNo": 1822347,
+          "title": "Lily-tshirts-32 러블리 릴리 여자 북극곰 스노우보드 선수 익스트림 캐릭터 그래픽 디자인 그래피티 디자이너 티셔츠 티",
           "brandName": "돌돌",
-          "priceFinal": 79000,
+          "priceFinal": 38000,
           "gender": "남성",
-          "colorLabel": "블랙/라이트 그레이/다크 그레이",
-          "category": "001004"
+          "colorLabel": "화이트/블랙/라이트 그레이",
+          "category": "001001"
         },
         {
           "rank": 16,
-          "goodsNo": 1647217,
-          "title": "DMK_HOODY_96 그래피티 아티스트 데빌몽키 dmk 타투 캐릭터 그래피티 그래픽 디자인 후드티 후디",
-          "brandName": "돌돌",
-          "priceFinal": 79000,
+          "goodsNo": 2038810,
+          "title": "[UNISEX]빅 라이프로고 멀티 그래픽 반팔티_화이트",
+          "brandName": "그레이버",
+          "priceFinal": 22500,
           "gender": "남성",
-          "colorLabel": "블랙/라이트 그레이/다크 그레이",
-          "category": "001004"
+          "colorLabel": "화이트",
+          "category": "001001"
         },
         {
           "rank": 17,
-          "goodsNo": 1647218,
-          "title": "DMK_HOODY_97 그래피티 아티스트 데빌몽키 dmk 타투 캐릭터 그래피티 그래픽 디자인 후드티 후디",
-          "brandName": "돌돌",
-          "priceFinal": 79000,
+          "goodsNo": 2038812,
+          "title": "[UNISEX]빅 라이프로고 멀티 그래픽 반팔티_블랙",
+          "brandName": "그레이버",
+          "priceFinal": 22500,
           "gender": "남성",
-          "colorLabel": "블랙/라이트 그레이/다크 그레이",
-          "category": "001004"
+          "colorLabel": "블랙",
+          "category": "001001"
         },
         {
           "rank": 18,
-          "goodsNo": 1647219,
-          "title": "DMK_HOODY_98 그래피티 아티스트 데빌몽키 dmk 타투 캐릭터 그래피티 그래픽 디자인 후드티 후디",
+          "goodsNo": 3144973,
+          "title": "DMK_T-shirts_60 그래피티 아티스트 데빌몽키 dmk 캐릭터 그래픽 티셔츠 반팔티",
           "brandName": "돌돌",
-          "priceFinal": 79000,
+          "priceFinal": 43000,
           "gender": "남성",
-          "colorLabel": "블랙/라이트 그레이/다크 그레이",
-          "category": "001004"
+          "colorLabel": "화이트/블랙/라이트 그레이",
+          "category": "001001"
         },
         {
           "rank": 19,
-          "goodsNo": 1652977,
-          "title": "DMK_HOODY_99 그래피티 아티스트 데빌몽키 dmk 타투 캐릭터 그래피티 그래픽 디자인 후드티 후디",
+          "goodsNo": 3144975,
+          "title": "DMK_T-shirts_61 그래피티 아티스트 데빌몽키 dmk 캐릭터 그래픽 티셔츠 반팔티",
           "brandName": "돌돌",
-          "priceFinal": 79000,
+          "priceFinal": 43000,
           "gender": "남성",
-          "colorLabel": "블랙/라이트 그레이/다크 그레이",
-          "category": "001004"
+          "colorLabel": "화이트/블랙/라이트 그레이",
+          "category": "001001"
         }
       ]
     },
@@ -19139,16 +19140,6 @@
         },
         {
           "rank": 2,
-          "goodsNo": 5857098,
-          "title": "제니스 블랙 빅로고 로고 오버핏 후드 MELANGE GREY",
-          "brandName": "지블랙",
-          "priceFinal": 68000,
-          "gender": "남성",
-          "colorLabel": "라이트 그레이",
-          "category": "001004"
-        },
-        {
-          "rank": 3,
           "goodsNo": 1417984,
           "title": "유니섹스 오버핏 로고 반팔티셔츠 (VNBTS231) 그레이",
           "brandName": "밴웍스",
@@ -19158,7 +19149,7 @@
           "category": "001001"
         },
         {
-          "rank": 4,
+          "rank": 3,
           "goodsNo": 2353436,
           "title": "메인로고 오버핏 반팔티 XN21FWSSTS02 [M/GRAY]",
           "brandName": "엑스네지",
@@ -19168,7 +19159,7 @@
           "category": "001001"
         },
         {
-          "rank": 5,
+          "rank": 4,
           "goodsNo": 2353440,
           "title": "스몰로고 오버핏 반팔티 XN21FWSSTS01 [M/GRAY]",
           "brandName": "엑스네지",
@@ -19178,7 +19169,7 @@
           "category": "001001"
         },
         {
-          "rank": 6,
+          "rank": 5,
           "goodsNo": 2353442,
           "title": "스몰로고 오버핏 반팔티 XN21FWSSTS01 [CHARCOAL]",
           "brandName": "엑스네지",
@@ -19188,7 +19179,7 @@
           "category": "001001"
         },
         {
-          "rank": 7,
+          "rank": 6,
           "goodsNo": 2534000,
           "title": "피그먼트 레터링 블랙 로고 오버핏 반팔티",
           "brandName": "저스트행",
@@ -19198,7 +19189,7 @@
           "category": "001001"
         },
         {
-          "rank": 8,
+          "rank": 7,
           "goodsNo": 2534496,
           "title": "피그먼트 레터링 화이트 로고 오버핏 반팔티",
           "brandName": "저스트행",
@@ -19208,7 +19199,7 @@
           "category": "001001"
         },
         {
-          "rank": 9,
+          "rank": 8,
           "goodsNo": 2620626,
           "title": "피그먼트 스퀘어 로고 오버핏 반팔티",
           "brandName": "저스트행",
@@ -19218,7 +19209,7 @@
           "category": "001001"
         },
         {
-          "rank": 10,
+          "rank": 9,
           "goodsNo": 3085484,
           "title": "아치로고 오버핏 반팔티셔츠 백메란지",
           "brandName": "모즈모즈",
@@ -19228,7 +19219,7 @@
           "category": "001001"
         },
         {
-          "rank": 11,
+          "rank": 10,
           "goodsNo": 3085485,
           "title": "아치로고 오버핏 반팔티셔츠 그레이",
           "brandName": "모즈모즈",
@@ -19238,7 +19229,7 @@
           "category": "001001"
         },
         {
-          "rank": 12,
+          "rank": 11,
           "goodsNo": 3086241,
           "title": "[SET] 아치로고 오버핏 원턱 트레이닝쇼츠 셋업 백메란지",
           "brandName": "모즈모즈",
@@ -19248,7 +19239,7 @@
           "category": "001001"
         },
         {
-          "rank": 13,
+          "rank": 12,
           "goodsNo": 3086243,
           "title": "[SET] 아치로고 오버핏 원턱 트레이닝쇼츠 셋업 그레이",
           "brandName": "모즈모즈",
@@ -19258,7 +19249,7 @@
           "category": "001001"
         },
         {
-          "rank": 14,
+          "rank": 13,
           "goodsNo": 3088523,
           "title": "SAC 로고 오버핏 크롭 티셔츠 차콜 4W2311002",
           "brandName": "솔트앤초콜릿",
@@ -19268,7 +19259,7 @@
           "category": "001001"
         },
         {
-          "rank": 15,
+          "rank": 14,
           "goodsNo": 3210502,
           "title": "피그먼트 스몰로고 오버핏 반팔티셔츠 MST145 [DARK GRAY]",
           "brandName": "미니멀프로젝트",
@@ -19278,7 +19269,7 @@
           "category": "001001"
         },
         {
-          "rank": 16,
+          "rank": 15,
           "goodsNo": 3283601,
           "title": "[2PACK]라운딩 로고 오버핏 반소매",
           "brandName": "웨이든",
@@ -19288,7 +19279,7 @@
           "category": "001001"
         },
         {
-          "rank": 17,
+          "rank": 16,
           "goodsNo": 3381052,
           "title": "S2.LM  001 그레이 로고 오버핏 반팔티 (라이트 멜란지)",
           "brandName": "저스트행",
@@ -19298,7 +19289,7 @@
           "category": "001001"
         },
         {
-          "rank": 18,
+          "rank": 17,
           "goodsNo": 3381053,
           "title": "S2.LM  004 그레이 로고 오버핏 반팔티 (라이트 멜란지)",
           "brandName": "저스트행",
@@ -19308,11 +19299,21 @@
           "category": "001001"
         },
         {
-          "rank": 19,
+          "rank": 18,
           "goodsNo": 3393045,
           "title": "스퀘어 레터링 로고 오버핏 멜란지 반팔",
           "brandName": "저스트행",
           "priceFinal": 37000,
+          "gender": "남성",
+          "colorLabel": "라이트 그레이",
+          "category": "001001"
+        },
+        {
+          "rank": 19,
+          "goodsNo": 3393046,
+          "title": "HNG  아이스 로고 오버핏 반팔티 (멜란지)",
+          "brandName": "저스트행",
+          "priceFinal": 42000,
           "gender": "남성",
           "colorLabel": "라이트 그레이",
           "category": "001001"
@@ -22083,16 +22084,6 @@
         },
         {
           "rank": 1,
-          "goodsNo": 5739715,
-          "title": "MEZMIC1829 주리 후드 면 티셔츠MEZMIC1829 주리 후드 티셔츠MEZMIC1829 주리 후드 면 티셔츠",
-          "brandName": "매즈믹",
-          "priceFinal": 69000,
-          "gender": "남성",
-          "colorLabel": "화이트",
-          "category": "001004"
-        },
-        {
-          "rank": 2,
           "goodsNo": 823998,
           "title": "기본 무지 반팔티셔츠",
           "brandName": "댁스터",
@@ -22102,7 +22093,7 @@
           "category": "001001"
         },
         {
-          "rank": 3,
+          "rank": 2,
           "goodsNo": 1479314,
           "title": "기본 티셔츠",
           "brandName": "덴델",
@@ -22112,7 +22103,7 @@
           "category": "001001"
         },
         {
-          "rank": 4,
+          "rank": 3,
           "goodsNo": 1685307,
           "title": "[3팩]고밀도순면기본반팔티셔츠  MATS0101",
           "brandName": "마인드브릿지",
@@ -22122,7 +22113,7 @@
           "category": "001001"
         },
         {
-          "rank": 5,
+          "rank": 4,
           "goodsNo": 1929769,
           "title": "뒷판 가든 드로잉 기본핏 반팔 티셔츠/FM9WTS11F WHITE",
           "brandName": "피피라핀",
@@ -22132,7 +22123,7 @@
           "category": "001001"
         },
         {
-          "rank": 6,
+          "rank": 5,
           "goodsNo": 1935643,
           "title": "뒷판 가든 드로잉 기본핏 반팔 티셔츠/FM9WTS11F  PINK",
           "brandName": "피피라핀",
@@ -22142,7 +22133,7 @@
           "category": "001001"
         },
         {
-          "rank": 7,
+          "rank": 6,
           "goodsNo": 1948801,
           "title": "여성 레귤러핏 피피3일러스트 기본반팔티셔츠/FS1WTS913F MINT",
           "brandName": "피피라핀",
@@ -22152,7 +22143,7 @@
           "category": "001001"
         },
         {
-          "rank": 8,
+          "rank": 7,
           "goodsNo": 1948878,
           "title": "여성 레귤러핏 피피3일러스트 기본반팔티셔츠/FS1WTS913F WHITE",
           "brandName": "피피라핀",
@@ -22162,7 +22153,7 @@
           "category": "001001"
         },
         {
-          "rank": 9,
+          "rank": 8,
           "goodsNo": 1948892,
           "title": "여성 레귤러핏 피피3일러스트 기본반팔티셔츠/FS1WTS913F PINK",
           "brandName": "피피라핀",
@@ -22172,7 +22163,7 @@
           "category": "001001"
         },
         {
-          "rank": 10,
+          "rank": 9,
           "goodsNo": 1970658,
           "title": "서퍼X서퍼 2 반팔 티셔츠 반팔 티셔츠  (블랙)",
           "brandName": "이모션플래닛",
@@ -22182,7 +22173,7 @@
           "category": "001001"
         },
         {
-          "rank": 11,
+          "rank": 10,
           "goodsNo": 2506736,
           "title": "여성 원피스를 입은 피피들 드로잉 기본티셔츠/FS2WTS08W BLACK",
           "brandName": "피피라핀",
@@ -22192,7 +22183,7 @@
           "category": "001001"
         },
         {
-          "rank": 12,
+          "rank": 11,
           "goodsNo": 2506790,
           "title": "여성 원피스를 입은 피피들 드로잉 기본티셔츠/FS2WTS08W PINK",
           "brandName": "피피라핀",
@@ -22202,7 +22193,7 @@
           "category": "001001"
         },
         {
-          "rank": 13,
+          "rank": 12,
           "goodsNo": 2506855,
           "title": "여성 원피스를 입은 피피들 드로잉 기본티셔츠/FS2WTS08W  WHITE",
           "brandName": "피피라핀",
@@ -22212,7 +22203,7 @@
           "category": "001001"
         },
         {
-          "rank": 14,
+          "rank": 13,
           "goodsNo": 2506943,
           "title": "여성 여름원피스 피피 드로잉 기본 티셔츠/FS2WTS14W M-GRAY",
           "brandName": "피피라핀",
@@ -22222,7 +22213,7 @@
           "category": "001001"
         },
         {
-          "rank": 15,
+          "rank": 14,
           "goodsNo": 2507841,
           "title": "여성 마린룩 원피스 드로잉 기본티셔츠/FS2WTS18W BLUE",
           "brandName": "피피라핀",
@@ -22232,7 +22223,7 @@
           "category": "001001"
         },
         {
-          "rank": 16,
+          "rank": 15,
           "goodsNo": 2584289,
           "title": "세일러 린넨 스트라이프 기본 반팔 티셔츠_블루",
           "brandName": "에이리프",
@@ -22242,7 +22233,7 @@
           "category": "001001"
         },
         {
-          "rank": 17,
+          "rank": 16,
           "goodsNo": 3064141,
           "title": "남자 기본 무지 반팔 라운드 티셔츠 듀멧 (남) KST0561U",
           "brandName": "콜핑",
@@ -22252,7 +22243,7 @@
           "category": "001001"
         },
         {
-          "rank": 18,
+          "rank": 17,
           "goodsNo": 3092628,
           "title": "6.0oz 액티브 무지 기본 반팔 티셔츠_화이트",
           "brandName": "샤카웨어",
@@ -22262,12 +22253,22 @@
           "category": "001001"
         },
         {
-          "rank": 19,
+          "rank": 18,
           "goodsNo": 3092630,
           "title": "6.0oz 액티브 무지 기본 반팔 티셔츠_블랙",
           "brandName": "샤카웨어",
           "priceFinal": 11160,
           "gender": "공용",
+          "colorLabel": "블랙",
+          "category": "001001"
+        },
+        {
+          "rank": 19,
+          "goodsNo": 3092631,
+          "title": "6.0oz 액티브 무지 기본 반팔 티셔츠_네이비",
+          "brandName": "샤카웨어",
+          "priceFinal": 11160,
+          "gender": "남성",
           "colorLabel": "블랙",
           "category": "001001"
         }

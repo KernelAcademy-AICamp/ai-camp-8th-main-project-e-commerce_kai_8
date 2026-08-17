@@ -11,16 +11,16 @@
     "G2": {
       "metric": "p_at_20",
       "queries": 22,
-      "score": 0.4431818181818182,
-      "ndcg": 0.684210439700186,
+      "score": 0.48636363636363633,
+      "ndcg": 0.6982062630285865,
       "unjudgedRate": 0.2,
       "zeroResultRate": 0.045454545454545456
     },
     "G3": {
       "metric": "p_at_20",
       "queries": 18,
-      "score": 0.5972222222222222,
-      "ndcg": 0.7199298477191101,
+      "score": 0.6194444444444445,
+      "ndcg": 0.7279935860896127,
       "unjudgedRate": 0.20833333333333334,
       "zeroResultRate": 0.0
     },
@@ -35,8 +35,8 @@
     "G5": {
       "metric": "p_at_20",
       "queries": 16,
-      "score": 0.05,
-      "ndcg": 0.3540510356945119,
+      "score": 0.053125,
+      "ndcg": 0.35519598263138397,
       "unjudgedRate": 0.4375,
       "zeroResultRate": 0.0625
     },
@@ -58,26 +58,26 @@
     "dev": {
       "perBucket": {
         "G1": 0.9444444444444444,
-        "G2": 0.40454545454545454,
-        "G3": 0.6909090909090909,
+        "G2": 0.4727272727272727,
+        "G3": 0.7272727272727273,
         "G4": 0.6272727272727273,
-        "G5": 0.1,
+        "G5": 0.10625,
         "G6": 0.75,
         "R1": 0.0
       },
-      "gate": 0.5534343434343435
+      "gate": 0.5755934343434344
     },
     "holdout": {
       "perBucket": {
         "G1": 0.77,
-        "G2": 0.39999999999999997,
+        "G2": 0.43333333333333335,
         "G3": 0.42000000000000004,
         "G4": 0.0,
         "G5": 0.0,
         "G6": 0.0,
         "R1": 0.0
       },
-      "gate": 0.318
+      "gate": 0.3246666666666667
     },
     "progress": {
       "perBucket": {
@@ -144,7 +144,7 @@
     ],
     "verdict": "재풀링 필요"
   },
-  "overallGate": 0.4391414141414141,
+  "overallGate": 0.4528472222222222,
   "gateBuckets": [
     "G1",
     "G2",
@@ -184,7 +184,7 @@
       "partition": "dev",
       "kind": "ranked",
       "p_at_k": 0.0,
-      "ndcg": 0.9228408509487926,
+      "ndcg": 0.9838723353546899,
       "unjudgedRate": 0.0,
       "zero": false
     },
@@ -562,7 +562,7 @@
       "partition": "dev",
       "kind": "ranked",
       "p_at_k": 0.05,
-      "ndcg": 0.508918305119305,
+      "ndcg": 0.53722230154694,
       "unjudgedRate": 0.0,
       "zero": false
     },
@@ -911,8 +911,8 @@
       "bucket": "G3",
       "partition": "dev",
       "kind": "ranked",
-      "p_at_k": 0.35,
-      "ndcg": 0.6704511943527914,
+      "p_at_k": 0.75,
+      "ndcg": 0.8155984850218403,
       "unjudgedRate": 0.0,
       "zero": false
     },
@@ -1031,8 +1031,8 @@
       "bucket": "G2",
       "partition": "holdout",
       "kind": "ranked",
-      "p_at_k": 0.8,
-      "ndcg": 0.9336481373217035,
+      "p_at_k": 1.0,
+      "ndcg": 1.0,
       "unjudgedRate": 0.0,
       "zero": false
     },
@@ -1061,8 +1061,8 @@
       "bucket": "G2",
       "partition": "dev",
       "kind": "ranked",
-      "p_at_k": 0.05,
-      "ndcg": 0.5710200198168286,
+      "p_at_k": 0.8,
+      "ndcg": 0.7232407895298102,
       "unjudgedRate": 0.0,
       "zero": false
     },
@@ -1301,8 +1301,8 @@
       "bucket": "G5",
       "partition": "dev",
       "kind": "ranked",
-      "p_at_k": 0.4,
-      "ndcg": 0.9361758817032209,
+      "p_at_k": 0.45,
+      "ndcg": 0.9544950326931738,
       "unjudgedRate": 0.0,
       "zero": false
     },
@@ -1395,7 +1395,7 @@
       "../docs/atee/eval/grading-codex-typo.json",
       "../docs/atee/eval/grading-claude-color-width.json"
     ],
-    "judgedItems": 2583,
+    "judgedItems": 2586,
     "k": 20,
     "note": "등급 1은 P@20에서 적합이 아니다(기준서 §1). G6은 질의 단위 zero-result 정확도. nDCG의 ideal은 질의별 판정 풀 전체 상위 K다 — 현재 시스템 반환분으로 만들면 등급 1만 반환한 질의가 nDCG 1.0이 된다(구현 리뷰 M8 정정)."
   }

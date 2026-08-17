@@ -4073,5 +4073,29 @@
   "source": "독립 2회 일치",
   "rubric": "v3.2",
   "grader": "codex"
+ },
+ {
+  "itemId": "s03-5975885",
+  "grade": 1,
+  "needsImage": false,
+  "rubric": "v3.2",
+  "grader": "codex",
+  "source": "독립 2회 일치"
+ },
+ {
+  "itemId": "g03-4188865",
+  "grade": 1,
+  "needsImage": false,
+  "rubric": "v3.2",
+  "grader": "codex",
+  "source": "독립 2회 일치"
+ },
+ {
+  "itemId": "a-g5-09-3092631",
+  "grade": 2,
+  "needsImage": false,
+  "rubric": "v3.2",
+  "grader": "codex",
+  "source": "독립 2회 일치"
  }
 ]

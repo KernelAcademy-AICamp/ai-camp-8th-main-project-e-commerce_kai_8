@@ -231,15 +231,15 @@ begin
           and (v_words[4] is null or s.doc &@ v_words[4])
           and (v_words[5] is null or s.doc &@ v_words[5])
           and (p_after_score is null
-               or (100 + 10 * pgroonga_score(s.tableoid, s.ctid) - s.cat_rank)::real < p_after_score
-               or ((100 + 10 * pgroonga_score(s.tableoid, s.ctid) - s.cat_rank)::real = p_after_score
+               or (100 + 3 * pgroonga_score(s.tableoid, s.ctid) - s.cat_rank)::real < p_after_score
+               or ((100 + 3 * pgroonga_score(s.tableoid, s.ctid) - s.cat_rank)::real = p_after_score
                    and s.goods_no > p_after))
         limit v_size) t;
     end if;
 
     return query
   with hit as (
-    select s.goods_no, (100 + 10 * pgroonga_score(s.tableoid, s.ctid) - s.cat_rank)::real as sc
+    select s.goods_no, (100 + 3 * pgroonga_score(s.tableoid, s.ctid) - s.cat_rank)::real as sc
     from c_search_docs s
     where true
       and (v_brand is null or s.brand = v_brand)
@@ -269,8 +269,8 @@ begin
             -- 질의 문법을 해석하지 않는다 — 사용자 입력을 문법으로 넘기면 주입이 된다.
             else s.doc &@| v_words end
       and (p_after_score is null
-           or (100 + 10 * pgroonga_score(s.tableoid, s.ctid) - s.cat_rank)::real < p_after_score
-           or ((100 + 10 * pgroonga_score(s.tableoid, s.ctid) - s.cat_rank)::real = p_after_score and s.goods_no > p_after))
+           or (100 + 3 * pgroonga_score(s.tableoid, s.ctid) - s.cat_rank)::real < p_after_score
+           or ((100 + 3 * pgroonga_score(s.tableoid, s.ctid) - s.cat_rank)::real = p_after_score and s.goods_no > p_after))
     order by 2 desc, 1
     limit v_size
   )
