@@ -48,6 +48,8 @@ GRADED_FILES = (
     "grading-codex-color3.json",
     "grading-codex-range.json",   # 기준서 v3.1 (제품 범위 명시)
     "grading-codex-price.json",   # C-3 가격 조건
+    # 색 넓이 정렬로 상위 20에 새로 들어온 1건 (기준서 v3.2 — 명암 수식 규칙)
+    "grading-claude-color-width.json",
 )
 
 # 세지 않는 파일과 그 이유 — 지우지 말고 여기 남긴다

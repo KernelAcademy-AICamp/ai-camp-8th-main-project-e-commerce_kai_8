@@ -99,6 +99,38 @@ def cur():
                 "revoke all on function c_search_price_parse",
             ),
         ]
+        # 색 파서는 표 두 개(색 표현·브랜드)를 읽는다. 카탈로그는 필요 없으므로
+        # **작은 픽스처 표**를 깔고 CI에서 규칙을 돌린다.
+        #
+        # ⚠️ 이 표는 **실 배포 표가 아니다.** 여기서 확인하는 것은 파서의 규칙
+        # (조사·브랜드 보호·역할어·두 단어 색 이름·색이 둘이면 포기)이고,
+        # 실제 항목 커버리지는 실 DB 테스트(test_search_fallback.py)가 본다.
+        # 파서 규칙은 CI가 못 잡으면 아무도 못 잡는다 — 실 DB 테스트는 건너뛴다.
+        c.execute(
+            "create table c_search_color_terms (term text primary key, codes text[] not null)"
+        )
+        c.execute(
+            "insert into c_search_color_terms values"
+            " ('검정', array['2']), ('블랙', array['2']), ('흰', array['1']),"
+            " ('주황', array['12','75','76']), ('주황색', array['12','75','76']),"
+            " ('orange', array['12','75','76']), ('카멜', array['26']),"
+            " ('그레이', array['3','24','25']), ('라이트 그레이', array['24'])"
+        )
+        c.execute("create table c_search_vocab (term text primary key)")
+        c.execute("insert into c_search_vocab values ('블랙야크'), ('카멜로')")
+        chunks += [
+            extract(
+                "20260817900000_search_color_terms.sql",
+                "create or replace function c_search_color_lookup",
+                "revoke all on function c_search_color_lookup",
+            ),
+            extract(
+                "20260817900000_search_color_terms.sql",
+                "create or replace function c_search_color_parse",
+                "revoke all on function c_search_color_parse",
+            ),
+        ]
+
         for chunk in chunks:
             # 주석을 걷어낸 실행문만 본다 — 주석에는 c_search_docs 얘기가 나온다
             statements = re.sub(r"--[^\n]*", "", chunk)
@@ -274,3 +306,53 @@ def test_like_patterns_escape_wildcards(cur):
 def test_like_patterns_lowercase_each_word(cur):
     got = scalar(cur, "select c_like_all_patterns(array[%s, %s])", "Nike", "Tee")
     assert got == ["%nike%", "%tee%"]
+
+
+# ── 색 파서 규칙 (픽스처 표 위에서 돈다) ────────────────────────────────────
+# 실 DB 테스트가 CI에서 건너뛰므로, **규칙 회귀는 여기서만 잡힌다.**
+
+
+@pytest.mark.parametrize(
+    "words,codes,rest",
+    [
+        # 조사가 붙어도 색이다. 붙기 전에는 `주황색이`가 제목 조건이 되어 0건이었다
+        (["주황색이", "들어간", "티"], ["12", "75", "76"], ["들어간", "티"]),
+        (["주황색을", "찾아"], ["12", "75", "76"], ["찾아"]),
+        (["주황색으로"], ["12", "75", "76"], None),
+        (["주황색의", "반팔"], ["12", "75", "76"], ["반팔"]),
+        # 영문도 같은 색이고 대소문자를 가리지 않는다
+        (["ORANGE", "반팔"], ["12", "75", "76"], ["반팔"]),
+        # 브랜드로 저장된 말은 조사를 떼지 않는다 — 떼면 `카멜`(색)이 된다
+        (["카멜로", "반팔"], None, ["카멜로", "반팔"]),
+        # 조사처럼 보이지만 조사가 아닌 끝소리는 건드리지 않는다
+        (["주황새"], None, ["주황새"]),
+        # 두 단어짜리 색 이름을 먼저 본다
+        (["라이트", "그레이", "반팔"], ["24"], ["반팔"]),
+        # 브랜드 이름 안의 색은 색이 아니다 (띄어쓰기가 달라도 보호한다)
+        (["블랙", "야크", "반팔"], None, ["블랙", "야크", "반팔"]),
+        # 서로 다른 색이 둘이면 손대지 않는다
+        (["검정", "흰", "반팔"], None, ["검정", "흰", "반팔"]),
+        # 같은 색을 동의어로 두 번 말한 것은 포기하지 않는다
+        (["검정", "블랙", "반팔"], ["2"], ["반팔"]),
+        # 바로 뒤가 역할어면 본체 색이 아니다
+        (["검정", "로고", "반팔"], None, ["검정", "로고", "반팔"]),
+        (["검정", "로고가", "있는", "반팔"], None, ["검정", "로고가", "있는", "반팔"]),
+        # 표에 없는 색 표현은 아무것도 하지 않는다
+        (["형광연두빛", "반팔"], None, ["형광연두빛", "반팔"]),
+    ],
+)
+def test_color_parse(cur, words, codes, rest):
+    cur.execute("select codes, rest from c_search_color_parse(%s)", (words,))
+    got_codes, got_rest = cur.fetchone()
+    assert (sorted(got_codes) if got_codes else None) == codes
+    assert got_rest == rest
+
+
+def test_color_lookup_returns_the_canonical_term(cur):
+    """조사를 뗀 **정본**을 돌려줘야 한다.
+
+    호출자가 이 값으로 "몇 가지 색을 말했나"를 센다. 조사가 붙은 형태를 그대로
+    돌려주면 `주황색 주황색이`가 서로 다른 색 둘로 세어져 색 조건이 통째로 사라진다.
+    """
+    cur.execute("select term, codes from c_search_color_lookup('주황색이')")
+    assert cur.fetchone() == ("주황색", ["12", "75", "76"])
