@@ -41,6 +41,15 @@ def dcg(gains: list[int]) -> float:
 def compute(pool: dict, grades: dict[str, int], low_conf: set[str]) -> dict:
     per_query: list[dict] = []
 
+    # 질의별 **판정 풀 전체**의 등급 — nDCG의 ideal은 여기서 만든다.
+    # 현재 시스템이 반환한 20개 안에서만 ideal을 만들면, 등급 1만 20개 반환한
+    # 질의가 P@20 0인데 nDCG 1.0이 된다(실측: '그래픽 티'). 다른 시스템이 이미
+    # 찾아 판정된 등급 2 상품이 ideal에 들어가야 시스템 간 비교가 성립한다.
+    judged_by_query: dict[str, list[int]] = {}
+    for item_id, grade in grades.items():
+        qid = item_id.rsplit("-", 1)[0]
+        judged_by_query.setdefault(qid, []).append(grade)
+
     for q in pool["queries"]:
         qid = q["id"]
         if qid in low_conf:
@@ -78,7 +87,8 @@ def compute(pool: dict, grades: dict[str, int], low_conf: set[str]) -> dict:
         # 질의가 과대평가된다 — 실측: 결과 1개짜리가 P@20 1.00으로 잡혔다.
         p = sum(1 for g in known if g == 2) / K
         gains = [g for _, g in judged if g is not None]
-        ideal = sorted(gains, reverse=True)
+        # ideal은 이 질의의 **판정 풀 전체**에서 상위 K개다 (현재 반환분이 아니다)
+        ideal = sorted(judged_by_query.get(qid, []), reverse=True)[:K]
         n = (dcg(gains) / dcg(ideal)) if ideal and dcg(ideal) > 0 else 0.0
 
         per_query.append(
@@ -191,7 +201,11 @@ def main() -> int:
         "gradeFiles": args.grades.split(","),
         "judgedItems": len(grades),
         "k": K,
-        "note": "등급 1은 P@20에서 적합이 아니다(기준서 §1). G6은 질의 단위 zero-result 정확도.",
+        "note": (
+            "등급 1은 P@20에서 적합이 아니다(기준서 §1). G6은 질의 단위 zero-result 정확도. "
+            "nDCG의 ideal은 질의별 판정 풀 전체 상위 K다 — 현재 시스템 반환분으로 만들면 "
+            "등급 1만 반환한 질의가 nDCG 1.0이 된다(구현 리뷰 M8 정정)."
+        ),
     }
     Path(args.out).write_text(json.dumps(result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
 

@@ -33,11 +33,14 @@ TOP_N = 20  # 판정 대상 상위 개수 — P@20·nDCG@20의 K와 같게 맞�
 SYSTEMS = {
     "baseline": {
         "name": "baseline-c_search_page",
-        "sql": "select goods_no, title, brand_name, price_final, gender from c_search_page(%s, null, %s)",
+        # 구 검색은 폴백이 없어 실제로 쓴 질의가 늘 원문이다 — 자리를 맞춰 둔다
+        "sql": "select goods_no, title, brand_name, price_final, gender, %s::text from c_search_page(%s, null, %s)",
+        "args": lambda q, n: (q, q, n),
     },
     "a": {
         "name": "a-c_search_page_v2-pgroonga-bigram",
-        "sql": "select goods_no, title, brand_name, price_final, gender from c_search_page_v2(%s, null, null, %s)",
+        "sql": "select goods_no, title, brand_name, price_final, gender, query_used from c_search_page_v2(%s, null, null, %s)",
+        "args": lambda q, n: (q, n),
     },
 }
 
@@ -65,95 +68,10 @@ def normalize_query(raw: str) -> str:
     return " ".join(words[:MAX_QUERY_WORDS])
 
 
-# ⚠️ 프론트의 hangul-keyboard.ts와 같은 규칙이다. 두 곳에 있으므로 한쪽만 고치면
-# 평가와 실제 검색이 어긋난다 — 바꿀 때 반드시 함께 고친다.
-KEY_TO_JAMO = {
-    "r": "ㄱ", "R": "ㄲ", "s": "ㄴ", "e": "ㄷ", "E": "ㄸ", "f": "ㄹ", "a": "ㅁ",
-    "q": "ㅂ", "Q": "ㅃ", "t": "ㅅ", "T": "ㅆ", "d": "ㅇ", "w": "ㅈ", "W": "ㅉ",
-    "c": "ㅊ", "z": "ㅋ", "x": "ㅌ", "v": "ㅍ", "g": "ㅎ",
-    "k": "ㅏ", "o": "ㅐ", "i": "ㅑ", "O": "ㅒ", "j": "ㅓ", "p": "ㅔ", "u": "ㅕ",
-    "P": "ㅖ", "h": "ㅗ", "y": "ㅛ", "n": "ㅜ", "b": "ㅠ", "m": "ㅡ", "l": "ㅣ",
-}
-CHO = "ㄱㄲㄴㄷㄸㄹㅁㅂㅃㅅㅆㅇㅈㅉㅊㅋㅌㅍㅎ"
-JUNG = "ㅏㅐㅑㅒㅓㅔㅕㅖㅗㅘㅙㅚㅛㅜㅝㅞㅟㅠㅡㅢㅣ"
-JONG = " ㄱㄲㄳㄴㄵㄶㄷㄹㄺㄻㄼㄽㄾㄿㅀㅁㅂㅄㅅㅆㅇㅈㅊㅋㅌㅍㅎ"
-VOWEL_PAIRS = {"ㅗㅏ": "ㅘ", "ㅗㅐ": "ㅙ", "ㅗㅣ": "ㅚ", "ㅜㅓ": "ㅝ",
-               "ㅜㅔ": "ㅞ", "ㅜㅣ": "ㅟ", "ㅡㅣ": "ㅢ"}
-CODA_PAIRS = {"ㄱㅅ": "ㄳ", "ㄴㅈ": "ㄵ", "ㄴㅎ": "ㄶ", "ㄹㄱ": "ㄺ", "ㄹㅁ": "ㄻ",
-              "ㄹㅂ": "ㄼ", "ㄹㅅ": "ㄽ", "ㄹㅌ": "ㄾ", "ㄹㅍ": "ㄿ", "ㄹㅎ": "ㅀ",
-              "ㅂㅅ": "ㅄ"}
-
-
-def qwerty_to_hangul(text: str) -> str:
-    jamos = [KEY_TO_JAMO.get(ch, ch) for ch in text]
-    out: list[str] = []
-    cho = jung = jong = ""
-
-    def flush() -> None:
-        nonlocal cho, jung, jong
-        if cho and jung:
-            ki = JONG.index(jong) if jong else 0
-            out.append(chr(0xAC00 + CHO.index(cho) * 588 + JUNG.index(jung) * 28 + ki))
-        else:
-            out.append(cho + jung + jong)
-        cho = jung = jong = ""
-
-    for idx, jamo in enumerate(jamos):
-        nxt_vowel = idx + 1 < len(jamos) and jamos[idx + 1] in JUNG
-        if jamo not in CHO and jamo not in JUNG:
-            if cho or jung or jong:
-                flush()
-            out.append(jamo)
-            continue
-        if jamo in JUNG:
-            if jong:
-                moved, jong = jong, ""
-                flush()
-                cho, jung = moved, jamo
-            elif jung:
-                pair = VOWEL_PAIRS.get(jung + jamo)
-                if pair:
-                    jung = pair
-                else:
-                    flush()
-                    jung = jamo
-            else:
-                jung = jamo
-            continue
-        if not cho and not jung:
-            cho = jamo
-        elif cho and not jung:
-            flush()
-            cho = jamo
-        elif jong:
-            pair = CODA_PAIRS.get(jong + jamo)
-            if pair and not nxt_vowel:
-                jong = pair
-            else:
-                flush()
-                cho = jamo
-        elif jamo in JONG and not nxt_vowel:
-            jong = jamo
-        else:
-            flush()
-            cho = jamo
-    if cho or jung or jong:
-        flush()
-    return "".join(out)
-
-
-def restore_hangul_typing(query: str) -> str | None:
-    """원문이 0건일 때만 쓰는 폴백. 대상이 아니면 None."""
-    t = query.strip()
-    letters = [c for c in t if c != " "]
-    if not t or len(letters) < 2:
-        return None
-    if re.search(r"[가-힣ㄱ-ㅎㅏ-ㅣ]", t):
-        return None
-    if not all(c in KEY_TO_JAMO for c in letters):
-        return None
-    restored = qwerty_to_hangul(t)
-    return restored if re.search(r"[가-힣]", restored) else None
+# 한영 자판 복원·오타 교정은 **서버(c_search_page_v2)에 있다.** 예전엔 여기에
+# 파이썬으로 같은 규칙을 한 벌 더 갖고 있었는데, 그러면 평가가 재는 것과 서버가
+# 실제로 하는 일이 갈린다 — 실제로 RPC 직접 호출은 `zjqjskt`가 0건이었는데
+# 평가는 30건으로 재고 있었다(2026-08-17). 미러를 지우고 서버 결과를 그대로 쓴다.
 
 
 def load_db_url() -> str:
@@ -188,17 +106,12 @@ def build(system: str) -> dict:
 
             for e in entries:
                 norm = normalize_query(e["query"])
-                cur.execute(spec["sql"], (norm, TOP_N))
+                cur.execute(spec["sql"], spec["args"](norm, TOP_N))
                 rows = cur.fetchall()
-                used = norm
-                # 한영 자판 폴백 — 프론트와 같은 규칙(원문 0건일 때만)
-                if not rows and system == "a":
-                    restored = restore_hangul_typing(norm)
-                    if restored:
-                        cur.execute(spec["sql"], (restored, TOP_N))
-                        rows = cur.fetchall()
-                        if rows:
-                            used = restored
+                # 폴백(자판·오타)은 서버 안에서 일어난다. 무엇으로 찾았는지는
+                # 서버가 query_used로 알려주므로 그대로 받는다 — 여기서 다시
+                # 계산하면 평가와 서버가 갈린다.
+                used = rows[0][5] if rows else norm
                 results.append(
                     {
                         "id": e["id"],

@@ -13,30 +13,31 @@ import {
   useSearchFeed,
 } from "@/features/feed/search/presentation/view-model/use-search-feed";
 
-// 첫 페이지는 자판 폴백 경로를 타므로 둘 다 세운다. 폴백은 원문 호출로 위임해
-// 기존 단언(호출 인자·경합·오류 처리)이 그대로 의미를 갖게 한다.
+// 첫 페이지는 래퍼를 타므로 둘 다 세운다. 래퍼는 원문 호출로 위임해 기존
+// 단언(호출 인자·경합·오류 처리)이 그대로 의미를 갖게 한다.
+//
+// 표기 폴백(자판·오타) 자체는 여기서 검증하지 않는다 — 서버 안에서 일어나므로
+// backend/tests/test_search_fallback.py가 실제 DB를 상대로 검증한다.
 vi.mock("@/features/feed/search/data/search-api", () => {
-  const fetchSearchPage = vi.fn();
+  const fetchSearchPage = vi.fn<(...args: unknown[]) => Promise<unknown>>();
   return {
     fetchSearchPage,
-    fetchSearchPageWithFallback: vi.fn(async (query: string, size: number) => ({
-      ...((await fetchSearchPage(query, null, size)) as {
-        products: Product[];
-        nextCursor: unknown;
-      }),
-      usedQuery: query,
-    })),
+    fetchSearchPageWithFallback: vi.fn((query: string, size: number) =>
+      fetchSearchPage(query, null, size),
+    ),
   };
 });
 
 const fetchSearchPageMock = vi.mocked(fetchSearchPage);
 
 /** 상품 배열을 새 페이지 계약(SearchPage)으로 감싼다 — 커서는 마지막 행에서 만든다 */
-const page = (products: Product[]) => {
+const page = (products: Product[], usedQuery = "질의") => {
   const last = products.at(-1);
   return {
     products,
     nextCursor: last ? { score: 0, goodsNo: last.goodsNo } : null,
+    // 서버가 실제로 쓴 질의. 폴백이 안 걸리면 원문과 같다.
+    usedQuery,
   };
 };
 
@@ -139,6 +140,7 @@ describe("useSearchFeed", () => {
       .mockResolvedValueOnce({
         products: [product(1), product(2)],
         nextCursor: { score: 4.5, goodsNo: 2 },
+        usedQuery: "나이키",
       })
       .mockResolvedValueOnce(page([product(3)]))
       .mockResolvedValue(page([]));

@@ -152,19 +152,19 @@ export function useSearchFeed({ query, submission, paused }: SearchFeedOptions) 
         logId,
         queryRaw: sub.queryRaw,
         queryNorm: sub.queryNorm,
-        // 자판 폴백이 걸렸으면 정규화 질의와 다르다 — 무엇으로 찾았는지 남긴다
+        // 서버가 자판 복원·오타 교정을 걸었으면 정규화 질의와 다르다.
+        // 그 값은 서버만 알기 때문에 응답(usedQuery)으로 받아 남긴다.
         queryUsed: usedQueryRef.current ?? sub.queryNorm,
         resultCount,
         sessionId: sub.sessionId,
         occurredAt: sub.occurredAt,
       });
     };
-    // 첫 페이지만 자판 폴백을 태운다. 이후 페이지는 확정된 질의로 이어간다.
+    // 이후 페이지는 첫 페이지에서 확정된 질의로 이어간다 — 매 페이지 폴백을
+    // 다시 태우면 도중에 다른 질의로 갈아탈 수 있다.
     const request = isFirstPage
       ? fetchSearchPageWithFallback(query, PAGE_SIZE)
-      : fetchSearchPage(usedQueryRef.current ?? query, progress.cursor, PAGE_SIZE).then(
-          (page) => ({ ...page, usedQuery: usedQueryRef.current ?? query }),
-        );
+      : fetchSearchPage(usedQueryRef.current ?? query, progress.cursor, PAGE_SIZE);
     request
       .then(({ products, nextCursor, usedQuery }) => {
         if (generation !== generationRef.current) return; // 늦은 응답 폐기

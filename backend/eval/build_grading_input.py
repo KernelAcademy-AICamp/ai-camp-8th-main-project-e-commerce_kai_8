@@ -6,9 +6,16 @@
 
 지표는 채점이 끝난 뒤 실제 순위와 대조해 계산한다(compute_baseline.py).
 
+⚠️ 풀 경로는 **반드시 지정한다**. 예전엔 pool-baseline.json이 하드코딩돼 있어서
+A단계 풀을 넘겨도 조용히 기준선 풀을 읽었다(2026-08-17 발견). 새 시스템의 후보가
+채점 입력에서 통째로 빠지는데 실행은 성공하므로 알아채기 어렵다.
+
+--exclude-graded를 주면 이미 채점된 항목을 빼고 **새로 판정할 것만** 남긴다.
+풀을 다시 만들 때마다 전부 재채점하지 않기 위한 것이다.
+
 실행:
-  python backend/eval/build_grading_input.py --partition dev
-  python backend/eval/build_grading_input.py --partition progress,holdout
+  python backend/eval/build_grading_input.py --pool pool-a.json --partition dev
+  python backend/eval/build_grading_input.py --pool pool-a.json --partition dev --exclude-graded
 """
 
 from __future__ import annotations
@@ -20,7 +27,10 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
 EVAL_DIR = ROOT / "docs" / "atee" / "eval"
-POOL_PATH = EVAL_DIR / "pool-baseline.json"
+DEFAULT_POOL = "pool-baseline.json"
+
+# 이미 채점된 등급이 실린 파일들 — --exclude-graded가 여기서 읽는다
+GRADED_GLOBS = ("grading-codex-*.json", "grading-claude-*.json")
 
 # 계열별 규칙 요약 — 채점자가 기준서를 못 읽는 경우에도 최소 규칙은 입력에 실린다
 BUCKET_RULE = {
@@ -34,8 +44,23 @@ BUCKET_RULE = {
 }
 
 
-def build(partitions: set[str]) -> dict:
-    pool = json.loads(POOL_PATH.read_text(encoding="utf-8"))
+def already_graded() -> set[str]:
+    """등급이 매겨진 itemId 집합. 형식이 다른 파일이 섞여 있어 방어적으로 읽는다."""
+    done: set[str] = set()
+    for pattern in GRADED_GLOBS:
+        for path in sorted(EVAL_DIR.glob(pattern)):
+            doc = json.loads(path.read_text(encoding="utf-8"))
+            rows = doc if isinstance(doc, list) else doc.get("items", [])
+            for row in rows:
+                if isinstance(row, dict) and row.get("grade") is not None:
+                    done.add(row["itemId"])
+    return done
+
+
+def build(partitions: set[str], pool_name: str, exclude_graded: bool) -> dict:
+    pool_path = EVAL_DIR / pool_name
+    pool = json.loads(pool_path.read_text(encoding="utf-8"))
+    skip = already_graded() if exclude_graded else set()
     items: list[dict] = []
 
     for q in pool["queries"]:
@@ -44,6 +69,8 @@ def build(partitions: set[str]) -> dict:
         if q["bucket"] == "G6":
             continue  # 질의 단위 지표 — 상품 판정 대상이 아니다 (기준서 §3 G6)
         for cand in q["candidates"]:
+            if f"{q['id']}-{cand['goodsNo']}" in skip:
+                continue
             items.append(
                 {
                     # itemId는 질의·상품을 잇는 키지만 순위는 담지 않는다
@@ -78,6 +105,8 @@ def build(partitions: set[str]) -> dict:
             "purpose": "블라인드 채점 입력. 시스템·순위 정보를 담지 않고 순서를 섞었다.",
             "rubric": "docs/atee/eval/rubric.md — 이 문서를 읽고 채점한다",
             "partitions": sorted(partitions),
+            "pool": pool_name,
+            "excludeGraded": exclude_graded,
             "count": len(items),
             "gradeScale": {
                 "2": "질의가 명시한 조건을 전부 만족",
@@ -94,11 +123,17 @@ def build(partitions: set[str]) -> dict:
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--partition", required=True, help="dev 또는 progress,holdout")
+    parser.add_argument("--pool", default=DEFAULT_POOL, help="docs/atee/eval 아래 풀 파일명")
+    parser.add_argument(
+        "--exclude-graded",
+        action="store_true",
+        help="이미 채점된 항목을 빼고 새 후보만 남긴다",
+    )
     parser.add_argument("--out", default=None)
     args = parser.parse_args()
 
     partitions = {p.strip() for p in args.partition.split(",")}
-    doc = build(partitions)
+    doc = build(partitions, args.pool, args.exclude_graded)
     name = args.out or f"grading-input-{'-'.join(sorted(partitions))}.json"
     out = EVAL_DIR / name
     out.write_text(json.dumps(doc, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")

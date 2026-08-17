@@ -128,6 +128,28 @@ comment on table c_search_docs is
 --   · `&@`는 문자열 전체를 **하나의 키워드**로 본다. 문법 해석이 없어 예약어가
 --     무력화되고, bigram 부분 일치는 그대로라 띄어쓰기 변형도 산다.
 -- 단어 사이 AND는 조건을 이어 붙여 만든다(최대 5단어라 펼쳐 쓴다).
+-- 이 단어들로 걸리는 문서가 하나라도 있는가. 폴백을 단계마다 검증하려고 뺐다.
+-- `&@`(단일 키워드)를 쓰는 이유는 본 검색과 같다 — `&@~`는 질의 구문을 파싱해
+-- 사용자 입력이 연산자로 해석된다.
+create or replace function c_search_has_hit(p_words text[])
+returns boolean
+language sql stable security definer
+set search_path = public, extensions, pg_temp
+as $$
+  select exists (
+    select 1 from c_search_docs s
+    where s.doc &@ p_words[1]
+      and (p_words[2] is null or s.doc &@ p_words[2])
+      and (p_words[3] is null or s.doc &@ p_words[3])
+      and (p_words[4] is null or s.doc &@ p_words[4])
+      and (p_words[5] is null or s.doc &@ p_words[5])
+    limit 1
+  );
+$$;
+
+-- 역할 명시 필수 — 열어 두면 anon이 임의 단어의 존재 여부를 무제한 물을 수 있다.
+revoke all on function c_search_has_hit(text[]) from public, anon, authenticated;
+
 create or replace function c_search_page_v2(
   p_query   text,
   p_after_score real   default null,
@@ -144,7 +166,11 @@ returns table (
   thumbnail   text,
   width       int,
   height      int,
-  score       real
+  score       real,
+  -- 실제로 검색에 쓰인 질의. 폴백이 서버 안에서 일어나므로 밖에서는 보이지
+  -- 않는다 — 이 값이 없으면 검색 로그의 queryUsed가 늘 원문이 되어 조용히
+  -- 거짓이 되고, 평가도 무엇이 실행됐는지 모른 채 숫자만 본다.
+  query_used  text
 )
 language plpgsql stable security definer
 set search_path = public, extensions, pg_temp
@@ -153,6 +179,8 @@ declare
   v_size  int := least(greatest(coalesce(p_size, 30), 1), 60);
   v_words text[];
   v_chosung boolean;
+  v_alt text;
+  v_alt_words text[];
 begin
   -- 커서 쌍 검증 — 한쪽만 온 요청은 받지 않는다
   if (p_after_score is null) <> (p_after is null) then
@@ -176,6 +204,36 @@ begin
                and length(array_to_string(v_words, '')) >= 2;
 
 
+  -- 표기 폴백 (A단계 3단계). **원문이 0건일 때만** 순서대로 시도한다 —
+  -- 결과가 있으면 그게 사용자 의도이고, 멀쩡한 질의를 고치면 의도를 덮어쓴다.
+  --   1) 한영 자판 복원 (zjqjskt → 커버낫) — 자판 배열이 정해져 있어 결정론적
+  --   2) 어휘 사전 편집거리 오타 교정 (커버났 → 커버낫) — 사전에 있으면 손대지 않는다
+  -- 자판을 먼저 두는 이유: 영문 나열은 사전에 없어 오타 교정이 엉뚱한 답을 낸다.
+  if not v_chosung and not c_search_has_hit(v_words) then
+    v_alt := c_restore_hangul_typing(p_query);
+    if v_alt is null then
+      v_alt := c_search_correct_query(p_query);
+    end if;
+    if v_alt is not null then
+      select array_agg(w) into v_alt_words
+      from (select w from regexp_split_to_table(v_alt, '\s+') w where w <> '' limit 5) t;
+      -- 자판 복원 결과도 0건일 수 있다(예: 진짜 영어 브랜드). 그때는 원문을 지킨다.
+      if v_alt_words is not null and c_search_has_hit(v_alt_words) then
+        v_words := v_alt_words;
+      elsif v_alt_words is not null then
+        -- 자판이 헛돌면 오타 교정을 한 번 더 본다
+        v_alt := c_search_correct_query(p_query);
+        if v_alt is not null then
+          select array_agg(w) into v_alt_words
+          from (select w from regexp_split_to_table(v_alt, '\s+') w where w <> '' limit 5) t;
+          if v_alt_words is not null and c_search_has_hit(v_alt_words) then
+            v_words := v_alt_words;
+          end if;
+        end if;
+      end if;
+    end if;
+  end if;
+
   return query
   -- ⚠️ 후보를 **조인 전에** 자른다. 처음엔 매칭 전체(예: '반팔' 103,221건)를
   -- c_feed_products와 조인한 뒤 정렬해 37초가 걸렸다. 색인 스캔 + top-N 정렬
@@ -183,9 +241,15 @@ begin
   with hit as (
     select
       s.goods_no,
-      pgroonga_score(s.tableoid, s.ctid)::real as sc
+      -- 티셔츠 제품군이 아니면 **후순위로 밀되 침묵시키지 않는다.**
+      -- 기준서 §3-1 ④는 "최대 1점"이지 "제외"가 아니다. hard filter로 두면
+      -- 노출 자격 22.6만 중 2.8만을 제목 정규식으로 검색에서 지우는
+      -- 정책 변경이 되고, 위양성('후드집업 저지 반팔')까지 함께 사라진다
+      -- (구현 리뷰 M11). 티셔츠가 부족할 때만 아래에 나타난다.
+      (pgroonga_score(s.tableoid, s.ctid)
+        - case when s.is_tee then 0 else 1000 end)::real as sc
     from c_search_docs s
-    where s.is_tee                      -- 기준서 §3-1 ④ — 티셔츠 제품군만
+    where true
       and (case when v_chosung
                 -- 초성은 **모든 단어**를 만족해야 한다. `&&`(겹침)는 OR라서
                 -- 'ㄴㅇㅋ ㅂㅍ'가 두 조건의 AND가 아니게 된다.
@@ -206,7 +270,8 @@ begin
   )
   -- c_feed_products의 width/height는 smallint라 명시 캐스트가 필요하다
   select v.goods_no, v.title, v.brand_name, v.price_final, v.gender,
-         v.gallery, v.thumbnail, v.width::int, v.height::int, h.sc
+         v.gallery, v.thumbnail, v.width::int, v.height::int, h.sc,
+         array_to_string(v_words, ' ')
   from hit h
   join c_feed_products v using (goods_no)
   order by h.sc desc, h.goods_no;

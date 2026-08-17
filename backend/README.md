@@ -62,12 +62,15 @@ venv/bin/python run_c_ingest.py status --run-id r1
 
 `c_goods` 재수집이나 `c_thumb_dims.card_ok` 재분류 후에는 **검색 파생 테이블을 반드시 재생성**해야 한다. 재생성하지 않으면 **자격을 잃은 상품이 검색에 다시 노출되거나 신규 상품이 검색에서 빠진다.**
 
-재생성 대상이 **둘**이다. 하나만 돌리면 나머지가 낡는다.
+재생성 대상이 **셋**이다. 하나만 돌리면 나머지가 낡는다. **순서가 있다** — `c_search_vocab`은 `c_search_docs`에서 파생되므로 뒤에 돌린다.
 
-| 대상 | 재실행할 마이그레이션 | 쓰는 곳 |
-|---|---|---|
-| `c_search_text` (2026-08-16) | `20260816240000_c_search_page.sql` | 구 검색 `c_search_page` |
-| **`c_search_docs`** (2026-08-17) | **`20260817200000_c_search_docs.sql`** | 새 검색 `c_search_page_v2` (PGroonga 색인·초성) |
+| 순서 | 대상 | 재실행할 마이그레이션 | 쓰는 곳 |
+|---|---|---|---|
+| — | `c_search_text` (2026-08-16) | `20260816240000_c_search_page.sql` | 구 검색 `c_search_page` |
+| 1 | **`c_search_docs`** (2026-08-17) | **`20260817200000_c_search_docs.sql`** | 새 검색 `c_search_page_v2` (PGroonga 색인·초성) |
+| 2 | **`c_search_vocab`** (2026-08-17) | **`20260817600000_search_typo.sql`** | 오타 교정 `c_search_correct_query` |
+
+`c_search_vocab`은 `c_search_docs`의 브랜드·제목에서 5회 이상 나온 2~12자 단어만 뽑은 어휘 사전이다(현재 14,360항목). **낡으면 새 브랜드의 오타가 안 고쳐지고, 사라진 브랜드로 잘못 고친다.** 재생성은 10초 내에 끝난다.
 
 `c_search_docs` 재실행은 shadow table을 새로 만들어 색인·권한까지 구성한 뒤 원자적으로 교체하고 의존 RPC를 같은 트랜잭션에서 재작성한다. **재실행 가능함을 2회 연속 실행으로 실증했다**(2026-08-17). 소요는 약 2분이고 `statement_timeout`을 넉넉히 잡아야 한다.
 

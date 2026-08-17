@@ -1,6 +1,5 @@
 import { type FeedProductDto, mapFeedDto } from "@/features/feed/data/feed-api";
 import type { Product } from "@/features/feed/domain/product";
-import { restoreHangulTyping } from "@/features/feed/search/domain/hangul-keyboard";
 import { rpcPost } from "@/shared/supabase-rpc";
 
 // 서버 anon statement_timeout(8초)보다 살짝 길게 — 연결이 조용히 정지해도
@@ -11,8 +10,8 @@ const SEARCH_TIMEOUT_MS = 10_000;
  * 새 검색 경로(A단계 — PGroonga 한국어 색인·관련도 정렬)를 쓸지.
  *
  * **기본은 꺼짐(구 경로).** `NEXT_PUBLIC_SEARCH_V2=on`을 명시해야 켜진다.
- * A단계가 완료 기준 5개 중 2개만 충족했고(오타 교정 미구현·띄어쓰기 미해결·G2 회귀),
- * 성능 게이트 3개가 미측정이라 기본 활성은 이르다.
+ * A단계 완료 기준 중 오타 교정·자판 복원은 서버로 들어갔지만(2026-08-17),
+ * 띄어쓰기 변형이 남았고 성능 게이트 3개가 미측정이라 기본 활성은 이르다.
  *
  * ⚠️ **이 값은 빌드 시 번들에 고정된다.** `NEXT_PUBLIC_*`는 런타임 환경변수가
  * 아니므로 끄고 켜려면 **재빌드·재배포가 필요하다.** 이전 주석이 "환경변수만으로
@@ -41,10 +40,18 @@ export interface SearchPage {
   products: Product[];
   /** 다음 페이지 요청에 그대로 넘길 커서. null이면 더 없다 */
   nextCursor: SearchCursor | null;
+  /**
+   * 서버가 실제로 검색에 쓴 질의. 자판 복원·오타 교정이 붙으면 원문과 달라진다.
+   * 결과가 없으면 원문 그대로다. 화면이 "무엇으로 찾았는지" 알리고, 검색 로그가
+   * 무엇이 실행됐는지 남기는 데 쓴다.
+   */
+  usedQuery: string;
 }
 
 interface SearchProductDto extends FeedProductDto {
   score: number;
+  /** 서버가 실제로 검색에 쓴 질의 — 폴백이 서버 안에서 일어나 밖에선 안 보인다 */
+  query_used: string;
 }
 
 /**
@@ -65,8 +72,12 @@ export async function fetchSearchPage(
     );
     const products = dtos.map(mapFeedDto);
     const last = products.at(-1);
-    // 구 경로는 점수가 없다 — 자리를 0으로 채워 커서 모양을 통일한다
-    return { products, nextCursor: last ? { score: 0, goodsNo: last.goodsNo } : null };
+    // 구 경로는 점수도 폴백도 없다 — 자리를 채워 커서·질의 모양을 통일한다
+    return {
+      products,
+      nextCursor: last ? { score: 0, goodsNo: last.goodsNo } : null,
+      usedQuery: query,
+    };
   }
 
   const dtos = await rpcPost<SearchProductDto[]>(
@@ -84,30 +95,24 @@ export async function fetchSearchPage(
   return {
     products,
     nextCursor: lastDto ? { score: lastDto.score, goodsNo: lastDto.goods_no } : null,
+    // 0건이면 행이 없어 서버가 무엇을 시도했는지 알 수 없다 — 원문으로 둔다
+    usedQuery: dtos[0]?.query_used ?? query,
   };
 }
 
 /**
- * 한영 자판 폴백 (A단계 3단계).
+ * 첫 페이지를 가져온다.
  *
- * `skdlzl`처럼 한글 입력기를 안 켜고 친 검색어를 되돌린다. **바로 치환하지 않고
- * 원문이 0건일 때만** 시도하는 이유는 `nike` 같은 영어 단어도 전부 자판 글자라
- * 구분이 안 되기 때문이다 — 원문에 결과가 있으면 그게 사용자 의도다.
+ * 예전엔 여기서 한영 자판 복원을 하고 0건이면 **두 번째 요청**을 보냈다. 지금은
+ * 자판 복원과 오타 교정이 모두 서버(`c_search_page_v2`) 안에 있어서 한 번의
+ * 요청으로 끝난다. 클라이언트에 같은 규칙을 한 벌 더 두면 서버와 갈리고,
+ * 실제로 평가 하네스의 파이썬 사본과 서버가 갈려 있었다(2026-08-17).
  *
- * 반환의 usedQuery가 원문과 다르면 화면이 "무엇으로 찾았는지" 알릴 수 있다.
+ * 무엇으로 찾았는지는 서버가 `usedQuery`로 알려준다.
  */
 export async function fetchSearchPageWithFallback(
   query: string,
   size: number,
-): Promise<SearchPage & { usedQuery: string }> {
-  const page = await fetchSearchPage(query, null, size);
-  if (page.products.length > 0) return { ...page, usedQuery: query };
-
-  const restored = restoreHangulTyping(query);
-  if (restored === null || restored === query) return { ...page, usedQuery: query };
-
-  const retried = await fetchSearchPage(restored, null, size);
-  return retried.products.length > 0
-    ? { ...retried, usedQuery: restored }
-    : { ...page, usedQuery: query };
+): Promise<SearchPage> {
+  return fetchSearchPage(query, null, size);
 }
