@@ -1,4 +1,5 @@
 import type { Product } from "@/features/feed/domain/product";
+import { rpcPost } from "@/shared/supabase-rpc";
 
 // Supabase RPC c_feed_page 응답 행 (snake_case)
 export interface FeedProductDto {
@@ -41,21 +42,10 @@ export async function fetchFeedPage(
   after: number | null,
   size: number,
 ): Promise<Product[]> {
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const key = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
-  if (!url || !key) {
-    throw new Error(
-      "NEXT_PUBLIC_SUPABASE_URL / NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY 환경변수가 필요합니다 (frontend/.env.example 참고)",
-    );
-  }
-  const res = await fetch(`${url}/rest/v1/rpc/c_feed_page`, {
-    method: "POST",
-    headers: { apikey: key, "Content-Type": "application/json" },
-    body: JSON.stringify({ p_seed: seed, p_after: after, p_size: size }),
+  const dtos = await rpcPost<FeedProductDto[]>("c_feed_page", {
+    p_seed: seed,
+    p_after: after,
+    p_size: size,
   });
-  if (!res.ok) {
-    throw new Error(`피드 로드 실패: HTTP ${String(res.status)}`);
-  }
-  const dtos = (await res.json()) as FeedProductDto[];
   return dtos.map(mapFeedDto);
 }

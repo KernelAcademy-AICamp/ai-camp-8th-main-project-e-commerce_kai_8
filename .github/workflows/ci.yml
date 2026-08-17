@@ -33,6 +33,19 @@ jobs:
     defaults:
       run:
         working-directory: backend
+    # 검색 SQL 함수(자판 상태기계·자모 분해·LIKE 이스케이프)를 실제로 돌려 본다.
+    # 카탈로그가 필요 없는 함수만 올리므로 빈 Postgres로 충분하다.
+    # 이게 없으면 그 로직은 CI가 한 줄도 검증하지 않는다.
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_PASSWORD: postgres
+        options: >-
+          --health-cmd pg_isready --health-interval 10s
+          --health-timeout 5s --health-retries 5
+        ports:
+          - 5432:5432
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -41,5 +54,9 @@ jobs:
           cache: pip
           cache-dependency-path: backend/requirements.txt
       - run: pip install -r requirements.txt
-      # DB 통합 테스트(test_c_upsert)는 C_TEST_DSN이 없어 자동 skip — 유닛만 돈다
+      # test_c_upsert·test_search_fallback은 각각 C_TEST_DSN·SEARCH_TEST_DSN이
+      # 없어 자동 skip된다(전자는 적재 스키마, 후자는 22.6만 건 카탈로그가 필요).
+      # test_search_functions는 아래 PG_TEST_DSN으로 **실제로 돈다.**
       - run: pytest -v
+        env:
+          PG_TEST_DSN: postgresql://postgres:postgres@127.0.0.1:5432/postgres

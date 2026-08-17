@@ -1,0 +1,3888 @@
+{
+  "meta": {
+    "purpose": "태그 제거·초성 교정 후 신규 후보",
+    "rubric": "rubric.md v2",
+    "count": 288,
+    "outputFormat": "[{\"itemId\":\"...\",\"grade\":0|1|2,\"needsImage\":true|false}]"
+  },
+  "items": [
+    {
+      "itemId": "x01-6874822",
+      "queryId": "x01",
+      "bucket": "G3",
+      "rule": "표기 변형. 원본 질의 기준으로 판정하고 변형 자체로 감점하지 않는다.",
+      "query": "ㅁㄴㅇㄹ",
+      "product": {
+        "title": "핀 스트라이프  끈나시_네이비 슬리브리스 탑",
+        "brand": "모노에라",
+        "price": 29400,
+        "gender": "여성"
+      }
+    },
+    {
+      "itemId": "b17-6571314",
+      "queryId": "b17",
+      "bucket": "G1",
+      "rule": "브랜드 질의. 그 브랜드가 아니면 무조건 0.",
+      "query": "아디다스",
+      "product": {
+        "title": "아디다스X코카콜라 팀가이스트 26 저지 KY2104",
+        "brand": "아디다스",
+        "price": 129000,
+        "gender": "남성"
+      }
+    },
+    {
+      "itemId": "v04-3449394",
+      "queryId": "v04",
+      "bucket": "G3",
+      "rule": "표기 변형. 원본 질의 기준으로 판정하고 변형 자체로 감점하지 않는다.",
+      "query": "wprtlalrtm",
+      "product": {
+        "title": "아이스페더 숏슬리브 2.0 라임크림",
+        "brand": "젝시믹스",
+        "price": 17400,
+        "gender": "여성"
+      },
+      "origin": "젝시믹스"
+    },
+    {
+      "itemId": "v12-3214647",
+      "queryId": "v12",
+      "bucket": "G3",
+      "rule": "표기 변형. 원본 질의 기준으로 판정하고 변형 자체로 감점하지 않는다.",
+      "query": "반팔티",
+      "product": {
+        "title": "[SET] 매니지 반팔티셔츠 + 크랙 텍스쳐 반팔티셔츠 SET(SHST6690+SHST6689)",
+        "brand": "에즈카톤",
+        "price": 38900,
+        "gender": "남성"
+      },
+      "origin": "반팔 티"
+    },
+    {
+      "itemId": "a-g2-11-1647217",
+      "queryId": "a-g2-11",
+      "bucket": "G2",
+      "rule": "짧은 키워드·속성. 속성이 모두 확인되면 2, 일부만 맞으면 1.",
+      "query": "그래픽 티",
+      "product": {
+        "title": "DMK_HOODY_96 그래피티 아티스트 데빌몽키 dmk 타투 캐릭터 그래피티 그래픽 디자인 후드티 후디",
+        "brand": "돌돌",
+        "price": 79000,
+        "gender": "남성"
+      }
+    },
+    {
+      "itemId": "v12-6409652",
+      "queryId": "v12",
+      "bucket": "G3",
+      "rule": "표기 변형. 원본 질의 기준으로 판정하고 변형 자체로 감점하지 않는다.",
+      "query": "반팔티",
+      "product": {
+        "title": "[2PACK] 리버티 반팔티셔츠 + 뮤티드 반팔티셔츠 (SJST6951+HSST6953)",
+        "brand": "에즈카톤",
+        "price": 34900,
+        "gender": "남성"
+      },
+      "origin": "반팔 티"
+    },
+    {
+      "itemId": "v01-6222078",
+      "queryId": "v01",
+      "bucket": "G3",
+      "rule": "표기 변형. 원본 질의 기준으로 판정하고 변형 자체로 감점하지 않는다.",
+      "query": "dkelektm",
+      "product": {
+        "title": "스케이트보딩 아디다스 코르포 솔루션 후디 KC2261",
+        "brand": "아디다스",
+        "price": 109000,
+        "gender": "남성"
+      },
+      "origin": "아디다스"
+    },
+    {
+      "itemId": "v14-5868510",
+      "queryId": "v14",
+      "bucket": "G3",
+      "rule": "표기 변형. 원본 질의 기준으로 판정하고 변형 자체로 감점하지 않는다.",
+      "query": "오버핏",
+      "product": {
+        "title": "[2PACK] 피그먼트 오버핏 절개 후드티 + 피그먼트 오버핏 절개 스트링 맨투맨 (3COLOR)",
+        "brand": "페르메논",
+        "price": 98820,
+        "gender": "남성"
+      },
+      "origin": "오버 핏"
+    },
+    {
+      "itemId": "v11-438202",
+      "queryId": "v11",
+      "bucket": "G3",
+      "rule": "표기 변형. 원본 질의 기준으로 판정하고 변형 자체로 감점하지 않는다.",
+      "query": "ㅇㅂㅍ",
+      "product": {
+        "title": "오버핏 후드맨투맨 베이직(기모)",
+        "brand": "플라스틱",
+        "price": 72000,
+        "gender": "남성"
+      },
+      "origin": "오버핏"
+    },
+    {
+      "itemId": "a-g2-06-6517027",
+      "queryId": "a-g2-06",
+      "bucket": "G2",
+      "rule": "짧은 키워드·속성. 속성이 모두 확인되면 2, 일부만 맞으면 1.",
+      "query": "스트라이프 티셔츠",
+      "product": {
+        "title": "릴렉스드 하프 스트라이프 스트링 티셔츠 (스트라이프 차콜)",
+        "brand": "해브해드",
+        "price": 48300,
+        "gender": "남성"
+      }
+    },
+    {
+      "itemId": "b13-3342688",
+      "queryId": "b13",
+      "bucket": "G1",
+      "rule": "브랜드 질의. 그 브랜드가 아니면 무조건 0.",
+      "query": "크림소다랩",
+      "product": {
+        "title": "크림소다랩 타이다이 박스 반팔티 블랙",
+        "brand": "크림소다랩",
+        "price": 22000,
+        "gender": "남성"
+      }
+    },
+    {
+      "itemId": "v14-5641283",
+      "queryId": "v14",
+      "bucket": "G3",
+      "rule": "표기 변형. 원본 질의 기준으로 판정하고 변형 자체로 감점하지 않는다.",
+      "query": "오버핏",
+      "product": {
+        "title": "[SET] 피그먼트 오버핏 절개 후드티 + 피그먼트 오버핏 와이드 스트링 조거 팬츠 (3COLOR)",
+        "brand": "페르메논",
+        "price": 104670,
+        "gender": "남성"
+      },
+      "origin": "오버 핏"
+    },
+    {
+      "itemId": "v12-3111239",
+      "queryId": "v12",
+      "bucket": "G3",
+      "rule": "표기 변형. 원본 질의 기준으로 판정하고 변형 자체로 감점하지 않는다.",
+      "query": "반팔티",
+      "product": {
+        "title": "[2 PACK] 웬디 반팔티 + 어뮤즈 옆트임 반팔티 세트",
+        "brand": "녹족",
+        "price": 24900,
+        "gender": "여성"
+      },
+      "origin": "반팔 티"
+    },
+    {
+      "itemId": "a-g2-04-1952875",
+      "queryId": "a-g2-04",
+      "bucket": "G2",
+      "rule": "짧은 키워드·속성. 속성이 모두 확인되면 2, 일부만 맞으면 1.",
+      "query": "오버핏 반팔",
+      "product": {
+        "title": "WOMEN 오버핏 타이다이 순면 반팔티 [LIGHT_GRAY] 반팔",
+        "brand": "콜릿",
+        "price": 20800,
+        "gender": "여성"
+      }
+    },
+    {
+      "itemId": "a-g2-09-4925421",
+      "queryId": "a-g2-09",
+      "bucket": "G2",
+      "rule": "짧은 키워드·속성. 속성이 모두 확인되면 2, 일부만 맞으면 1.",
+      "query": "포켓 티셔츠",
+      "product": {
+        "title": "그리드 X 아워포켓츠 콜라보 티셔츠(Z블랙)",
+        "brand": "아워포켓츠",
+        "price": 22500,
+        "gender": "공용"
+      }
+    },
+    {
+      "itemId": "v12-6354700",
+      "queryId": "v12",
+      "bucket": "G3",
+      "rule": "표기 변형. 원본 질의 기준으로 판정하고 변형 자체로 감점하지 않는다.",
+      "query": "반팔티",
+      "product": {
+        "title": "[2PACK] 브림리 반팔티셔츠 + 세이버 스타 반팔티셔츠 (JUST7867+JIST7862)",
+        "brand": "더블유브이프로젝트",
+        "price": 38900,
+        "gender": "남성"
+      },
+      "origin": "반팔 티"
+    },
+    {
+      "itemId": "a-g2-09-4046501",
+      "queryId": "a-g2-09",
+      "bucket": "G2",
+      "rule": "짧은 키워드·속성. 속성이 모두 확인되면 2, 일부만 맞으면 1.",
+      "query": "포켓 티셔츠",
+      "product": {
+        "title": "[SET]어드벤쳐 트럭커 포켓 반팔티셔츠+무빙 쉐도우 반팔티셔츠 (FST141+FST149)",
+        "brand": "플루크",
+        "price": 30800,
+        "gender": "남성"
+      }
+    },
+    {
+      "itemId": "b18-5305337",
+      "queryId": "b18",
+      "bucket": "G1",
+      "rule": "브랜드 질의. 그 브랜드가 아니면 무조건 0.",
+      "query": "커버낫",
+      "product": {
+        "title": "[커버낫X하이다나] 럭키 씨리얼 로고 티셔츠 Heather Gray",
+        "brand": "커버낫",
+        "price": 47200,
+        "gender": "남성"
+      }
+    },
+    {
+      "itemId": "x01-6925061",
+      "queryId": "x01",
+      "bucket": "G3",
+      "rule": "표기 변형. 원본 질의 기준으로 판정하고 변형 자체로 감점하지 않는다.",
+      "query": "ㅁㄴㅇㄹ",
+      "product": {
+        "title": "피그먼트 워싱 코스탈 보트넥 티셔츠_차콜 그레이",
+        "brand": "모노에라",
+        "price": 47600,
+        "gender": "여성"
+      }
+    },
+    {
+      "itemId": "a-g2-06-4901933",
+      "queryId": "a-g2-06",
+      "bucket": "G2",
+      "rule": "짧은 키워드·속성. 속성이 모두 확인되면 2, 일부만 맞으면 1.",
+      "query": "스트라이프 티셔츠",
+      "product": {
+        "title": "스트라이프 하프 슬리브 티셔츠 / 네이비 스트라이프",
+        "brand": "아이에이치알",
+        "price": 71100,
+        "gender": "여성"
+      }
+    },
+    {
+      "itemId": "v14-3306615",
+      "queryId": "v14",
+      "bucket": "G3",
+      "rule": "표기 변형. 원본 질의 기준으로 판정하고 변형 자체로 감점하지 않는다.",
+      "query": "오버핏",
+      "product": {
+        "title": "[SETUP] 애슬레틱 오버핏 반팔티셔츠 & 오버핏 하프팬츠",
+        "brand": "라이크더모스트",
+        "price": 33950,
+        "gender": "공용"
+      },
+      "origin": "오버 핏"
+    },
+    {
+      "itemId": "a-g2-11-1647218",
+      "queryId": "a-g2-11",
+      "bucket": "G2",
+      "rule": "짧은 키워드·속성. 속성이 모두 확인되면 2, 일부만 맞으면 1.",
+      "query": "그래픽 티",
+      "product": {
+        "title": "DMK_HOODY_97 그래피티 아티스트 데빌몽키 dmk 타투 캐릭터 그래피티 그래픽 디자인 후드티 후디",
+        "brand": "돌돌",
+        "price": 79000,
+        "gender": "남성"
+      }
+    },
+    {
+      "itemId": "v11-489550",
+      "queryId": "v11",
+      "bucket": "G3",
+      "rule": "표기 변형. 원본 질의 기준으로 판정하고 변형 자체로 감점하지 않는다.",
+      "query": "ㅇㅂㅍ",
+      "product": {
+        "title": "[한량] HANRYANG HOODIE OVER FIT GRAY 쭈리 오버핏 무지 후드티 후디",
+        "brand": "한량 컬렉티브",
+        "price": 57000,
+        "gender": "남성"
+      },
+      "origin": "오버핏"
+    },
+    {
+      "itemId": "x01-6925065",
+      "queryId": "x01",
+      "bucket": "G3",
+      "rule": "표기 변형. 원본 질의 기준으로 판정하고 변형 자체로 감점하지 않는다.",
+      "query": "ㅁㄴㅇㄹ",
+      "product": {
+        "title": "모노 블룸 오버핏 그래픽 피그먼트 티셔츠_그레이",
+        "brand": "모노에라",
+        "price": 39900,
+        "gender": "여성"
+      }
+    },
+    {
+      "itemId": "b13-3348674",
+      "queryId": "b13",
+      "bucket": "G1",
+      "rule": "브랜드 질의. 그 브랜드가 아니면 무조건 0.",
+      "query": "크림소다랩",
+      "product": {
+        "title": "FC 크림소다랩 오버핏 슬리브리스 블랙",
+        "brand": "크림소다랩",
+        "price": 20670,
+        "gender": "공용"
+      }
+    },
+    {
+      "itemId": "v08-3132095",
+      "queryId": "v08",
+      "bucket": "G3",
+      "rule": "표기 변형. 원본 질의 기준으로 판정하고 변형 자체로 감점하지 않는다.",
+      "query": "ㅋㅂㄴ",
+      "product": {
+        "title": "아치 C 로고 레이어 티셔츠 블루",
+        "brand": "커버낫",
+        "price": 25000,
+        "gender": "공용"
+      },
+      "origin": "커버낫"
+    },
+    {
+      "itemId": "a-g2-08-4650109",
+      "queryId": "a-g2-08",
+      "bucket": "G2",
+      "rule": "짧은 키워드·속성. 속성이 모두 확인되면 2, 일부만 맞으면 1.",
+      "query": "레터링 티",
+      "product": {
+        "title": "원형 레터링 기모 오버핏 후드티 [네이비]",
+        "brand": "비마이티",
+        "price": 48300,
+        "gender": "남성"
+      }
+    },
+    {
+      "itemId": "v01-6968738",
+      "queryId": "v01",
+      "bucket": "G3",
+      "rule": "표기 변형. 원본 질의 기준으로 판정하고 변형 자체로 감점하지 않는다.",
+      "query": "dkelektm",
+      "product": {
+        "title": "adi365 아디다스 러너스 티셔츠 KT4847",
+        "brand": "아디다스",
+        "price": 69000,
+        "gender": "남성"
+      },
+      "origin": "아디다스"
+    },
+    {
+      "itemId": "b18-5506394",
+      "queryId": "b18",
+      "bucket": "G1",
+      "rule": "브랜드 질의. 그 브랜드가 아니면 무조건 0.",
+      "query": "커버낫",
+      "product": {
+        "title": "[커버낫 X 요시고] 플라스틱 스틸 라이프 레이어드 롱슬리브 Off White",
+        "brand": "커버낫",
+        "price": 55200,
+        "gender": "공용"
+      }
+    },
+    {
+      "itemId": "a-g2-11-1640200",
+      "queryId": "a-g2-11",
+      "bucket": "G2",
+      "rule": "짧은 키워드·속성. 속성이 모두 확인되면 2, 일부만 맞으면 1.",
+      "query": "그래픽 티",
+      "product": {
+        "title": "DMK_HOODY_88 그래피티 아티스트 데빌몽키 dmk 타투 캐릭터 그래피티 그래픽 디자인 후드티 후디",
+        "brand": "돌돌",
+        "price": 76000,
+        "gender": "남성"
+      }
+    },
+    {
+      "itemId": "a-g2-11-1640198",
+      "queryId": "a-g2-11",
+      "bucket": "G2",
+      "rule": "짧은 키워드·속성. 속성이 모두 확인되면 2, 일부만 맞으면 1.",
+      "query": "그래픽 티",
+      "product": {
+        "title": "DMK_HOODY_85 그래피티 아티스트 데빌몽키 dmk 타투 캐릭터 그래피티 그래픽 디자인 후드티 후디",
+        "brand": "돌돌",
+        "price": 76000,
+        "gender": "남성"
+      }
+    },
+    {
+      "itemId": "b01-694916",
+      "queryId": "b01",
+      "bucket": "G1",
+      "rule": "브랜드 질의. 그 브랜드가 아니면 무조건 0.",
+      "query": "돌돌",
+      "product": {
+        "title": "[돌돌 스페샬 후디] ALLY_HOODY_19 숲속의 mtb 바이커 사슴 엘리 자전거 캠핑 캐릭터 후디 후드티",
+        "brand": "돌돌",
+        "price": 85000,
+        "gender": "남성"
+      }
+    },
+    {
+      "itemId": "v12-6354950",
+      "queryId": "v12",
+      "bucket": "G3",
+      "rule": "표기 변형. 원본 질의 기준으로 판정하고 변형 자체로 감점하지 않는다.",
+      "query": "반팔티",
+      "product": {
+        "title": "[2PACK] 하버 패치 반팔티셔츠 + 도크 워치 반팔티셔츠 (JUST4767+JUST4768)",
+        "brand": "퍼스텝",
+        "price": 37900,
+        "gender": "남성"
+      },
+      "origin": "반팔 티"
+    },
+    {
+      "itemId": "a-g2-08-4478476",
+      "queryId": "a-g2-08",
+      "bucket": "G2",
+      "rule": "짧은 키워드·속성. 속성이 모두 확인되면 2, 일부만 맞으면 1.",
+      "query": "레터링 티",
+      "product": {
+        "title": "티글레이크 레터링 오버핏 기모 후드티셔츠 그레이",
+        "brand": "티글레이크",
+        "price": 32900,
+        "gender": "남성"
+      }
+    },
+    {
+      "itemId": "v03-996179",
+      "queryId": "v03",
+      "bucket": "G3",
+      "rule": "표기 변형. 원본 질의 기준으로 판정하고 변형 자체로 감점하지 않는다.",
+      "query": "antlstk tmxosekem",
+      "product": {
+        "title": "릴렉스 핏 크루 넥 티셔츠 [다크 그레이]",
+        "brand": "무신사 스탠다드",
+        "price": 11690,
+        "gender": "남성"
+      },
+      "origin": "무신사 스탠다드"
+    },
+    {
+      "itemId": "v11-441686",
+      "queryId": "v11",
+      "bucket": "G3",
+      "rule": "표기 변형. 원본 질의 기준으로 판정하고 변형 자체로 감점하지 않는다.",
+      "query": "ㅇㅂㅍ",
+      "product": {
+        "title": "오버핏 후드맨투맨 너바나(기모)",
+        "brand": "플라스틱",
+        "price": 78000,
+        "gender": "남성"
+      },
+      "origin": "오버핏"
+    },
+    {
+      "itemId": "a-g2-11-1645004",
+      "queryId": "a-g2-11",
+      "bucket": "G2",
+      "rule": "짧은 키워드·속성. 속성이 모두 확인되면 2, 일부만 맞으면 1.",
+      "query": "그래픽 티",
+      "product": {
+        "title": "DMK_HOODY_93 그래피티 아티스트 데빌몽키 dmk 타투 캐릭터 그래피티 그래픽 디자인 후드티 후디",
+        "brand": "돌돌",
+        "price": 79000,
+        "gender": "남성"
+      }
+    },
+    {
+      "itemId": "v02-5305342",
+      "queryId": "v02",
+      "bucket": "G3",
+      "rule": "표기 변형. 원본 질의 기준으로 판정하고 변형 자체로 감점하지 않는다.",
+      "query": "zjqjskt",
+      "product": {
+        "title": "[커버낫X하이다나] 럭키 씨리얼 링거 티셔츠 Sky Blue",
+        "brand": "커버낫",
+        "price": 35400,
+        "gender": "여성"
+      },
+      "origin": "커버낫"
+    },
+    {
+      "itemId": "v03-996189",
+      "queryId": "v03",
+      "bucket": "G3",
+      "rule": "표기 변형. 원본 질의 기준으로 판정하고 변형 자체로 감점하지 않는다.",
+      "query": "antlstk tmxosekem",
+      "product": {
+        "title": "릴렉스 핏 크루 넥 티셔츠 [라이트 그레이]",
+        "brand": "무신사 스탠다드",
+        "price": 10290,
+        "gender": "남성"
+      },
+      "origin": "무신사 스탠다드"
+    },
+    {
+      "itemId": "a-g2-04-4878154",
+      "queryId": "a-g2-04",
+      "bucket": "G2",
+      "rule": "짧은 키워드·속성. 속성이 모두 확인되면 2, 일부만 맞으면 1.",
+      "query": "오버핏 반팔",
+      "product": {
+        "title": "[SET] 슈퍼 오버핏 로고 반팔 티셔츠 + 에센셜 오버핏 버뮤다 쇼츠",
+        "brand": "페르메논",
+        "price": 41930,
+        "gender": "남성"
+      }
+    },
+    {
+      "itemId": "x01-6925010",
+      "queryId": "x01",
+      "bucket": "G3",
+      "rule": "표기 변형. 원본 질의 기준으로 판정하고 변형 자체로 감점하지 않는다.",
+      "query": "ㅁㄴㅇㄹ",
+      "product": {
+        "title": "스퀘어넥  나시 니트 탑_블랙 슬리브리스",
+        "brand": "모노에라",
+        "price": 33600,
+        "gender": "여성"
+      }
+    },
+    {
+      "itemId": "v04-3449465",
+      "queryId": "v04",
+      "bucket": "G3",
+      "rule": "표기 변형. 원본 질의 기준으로 판정하고 변형 자체로 감점하지 않는다.",
+      "query": "wprtlalrtm",
+      "product": {
+        "title": "코튼라이크 퍼펙트핏 숏슬리브 파우더블루",
+        "brand": "젝시믹스",
+        "price": 34000,
+        "gender": "여성"
+      },
+      "origin": "젝시믹스"
+    },
+    {
+      "itemId": "v03-996180",
+      "queryId": "v03",
+      "bucket": "G3",
+      "rule": "표기 변형. 원본 질의 기준으로 판정하고 변형 자체로 감점하지 않는다.",
+      "query": "antlstk tmxosekem",
+      "product": {
+        "title": "릴렉스 핏 크루 넥 티셔츠 [네이비]",
+        "brand": "무신사 스탠다드",
+        "price": 11090,
+        "gender": "남성"
+      },
+      "origin": "무신사 스탠다드"
+    },
+    {
+      "itemId": "v03-996177",
+      "queryId": "v03",
+      "bucket": "G3",
+      "rule": "표기 변형. 원본 질의 기준으로 판정하고 변형 자체로 감점하지 않는다.",
+      "query": "antlstk tmxosekem",
+      "product": {
+        "title": "릴렉스 핏 크루 넥 티셔츠 [화이트]",
+        "brand": "무신사 스탠다드",
+        "price": 11090,
+        "gender": "남성"
+      },
+      "origin": "무신사 스탠다드"
+    },
+    {
+      "itemId": "a-g2-08-3591288",
+      "queryId": "a-g2-08",
+      "bucket": "G2",
+      "rule": "짧은 키워드·속성. 속성이 모두 확인되면 2, 일부만 맞으면 1.",
+      "query": "레터링 티",
+      "product": {
+        "title": "ATTITUDE LETTERING LONG SLEEVE-SKYBLUE(에티튜드 레터링 긴팔티-스카이블루)",
+        "brand": "오픈 에티튜드",
+        "price": 25200,
+        "gender": "공용"
+      }
+    },
+    {
+      "itemId": "b17-6571350",
+      "queryId": "b17",
+      "bucket": "G1",
+      "rule": "브랜드 질의. 그 브랜드가 아니면 무조건 0.",
+      "query": "아디다스",
+      "product": {
+        "title": "아디다스X코카콜라 클래식 스포츠 그래픽 트레피 티 KY2109",
+        "brand": "아디다스",
+        "price": 69000,
+        "gender": "남성"
+      }
+    },
+    {
+      "itemId": "v01-6571318",
+      "queryId": "v01",
+      "bucket": "G3",
+      "rule": "표기 변형. 원본 질의 기준으로 판정하고 변형 자체로 감점하지 않는다.",
+      "query": "dkelektm",
+      "product": {
+        "title": "아디다스X코카콜라 팀가이스트 26 저지 KY2103",
+        "brand": "아디다스",
+        "price": 129000,
+        "gender": "남성"
+      },
+      "origin": "아디다스"
+    },
+    {
+      "itemId": "x01-6880735",
+      "queryId": "x01",
+      "bucket": "G3",
+      "rule": "표기 변형. 원본 질의 기준으로 판정하고 변형 자체로 감점하지 않는다.",
+      "query": "ㅁㄴㅇㄹ",
+      "product": {
+        "title": "스퀘어넥  펀칭 니트 나시_그레이 슬리브리스",
+        "brand": "모노에라",
+        "price": 34300,
+        "gender": "여성"
+      }
+    },
+    {
+      "itemId": "b01-694912",
+      "queryId": "b01",
+      "bucket": "G1",
+      "rule": "브랜드 질의. 그 브랜드가 아니면 무조건 0.",
+      "query": "돌돌",
+      "product": {
+        "title": "[돌돌 스페샬 후디] LK-AFRICA_HOODY-10 엘케이 아프리카 캠핑 여행 아웃도어 캐릭터 후드티 후디",
+        "brand": "돌돌",
+        "price": 85000,
+        "gender": "남성"
+      }
+    },
+    {
+      "itemId": "x01-6838599",
+      "queryId": "x01",
+      "bucket": "G3",
+      "rule": "표기 변형. 원본 질의 기준으로 판정하고 변형 자체로 감점하지 않는다.",
+      "query": "ㅁㄴㅇㄹ",
+      "product": {
+        "title": "바이오 스퀘어넥 버튼 슬리브리스 탑_나시",
+        "brand": "모노에라",
+        "price": 39900,
+        "gender": "여성"
+      }
+    },
+    {
+      "itemId": "a-g2-11-1634554",
+      "queryId": "a-g2-11",
+      "bucket": "G2",
+      "rule": "짧은 키워드·속성. 속성이 모두 확인되면 2, 일부만 맞으면 1.",
+      "query": "그래픽 티",
+      "product": {
+        "title": "DMK_HOODY_81 그래피티 아티스트 데빌몽키 dmk 타투 캐릭터 그래피티 그래픽 디자인 후드티 후디",
+        "brand": "돌돌",
+        "price": 76000,
+        "gender": "남성"
+      }
+    },
+    {
+      "itemId": "v04-3449492",
+      "queryId": "v04",
+      "bucket": "G3",
+      "rule": "표기 변형. 원본 질의 기준으로 판정하고 변형 자체로 감점하지 않는다.",
+      "query": "wprtlalrtm",
+      "product": {
+        "title": "젤라 인텐션 스퀘어 크롭탑 울트라바이올렛",
+        "brand": "젝시믹스",
+        "price": 16300,
+        "gender": "여성"
+      },
+      "origin": "젝시믹스"
+    },
+    {
+      "itemId": "b17-6571352",
+      "queryId": "b17",
+      "bucket": "G1",
+      "rule": "브랜드 질의. 그 브랜드가 아니면 무조건 0.",
+      "query": "아디다스",
+      "product": {
+        "title": "아디다스X코카콜라 클래식 스포츠 캘리 티 KY2114",
+        "brand": "아디다스",
+        "price": 65000,
+        "gender": "남성"
+      }
+    },
+    {
+      "itemId": "v02-5305344",
+      "queryId": "v02",
+      "bucket": "G3",
+      "rule": "표기 변형. 원본 질의 기준으로 판정하고 변형 자체로 감점하지 않는다.",
+      "query": "zjqjskt",
+      "product": {
+        "title": "[커버낫X하이다나] 럭키 씨리얼 링거 티셔츠 Off White",
+        "brand": "커버낫",
+        "price": 35400,
+        "gender": "남성"
+      },
+      "origin": "커버낫"
+    },
+    {
+      "itemId": "a-g2-09-4925419",
+      "queryId": "a-g2-09",
+      "bucket": "G2",
+      "rule": "짧은 키워드·속성. 속성이 모두 확인되면 2, 일부만 맞으면 1.",
+      "query": "포켓 티셔츠",
+      "product": {
+        "title": "그리드 피자맨 X 아워포켓츠 샛별 콜라보 티셔츠(Z블랙)",
+        "brand": "아워포켓츠",
+        "price": 33250,
+        "gender": "공용"
+      }
+    },
+    {
+      "itemId": "x01-6880726",
+      "queryId": "x01",
+      "bucket": "G3",
+      "rule": "표기 변형. 원본 질의 기준으로 판정하고 변형 자체로 감점하지 않는다.",
+      "query": "ㅁㄴㅇㄹ",
+      "product": {
+        "title": "써니데이 핫픽스 끈나시_브라운",
+        "brand": "모노에라",
+        "price": 30800,
+        "gender": "여성"
+      }
+    },
+    {
+      "itemId": "v07-3666400",
+      "queryId": "v07",
+      "bucket": "G3",
+      "rule": "표기 변형. 원본 질의 기준으로 판정하고 변형 자체로 감점하지 않는다.",
+      "query": "ㅇㄷㄷㅅ",
+      "product": {
+        "title": "Z.N.E. 오버헤드 후디 - 실버그레이 / IN5124",
+        "brand": "아디다스",
+        "price": 50990,
+        "gender": "여성"
+      },
+      "origin": "아디다스"
+    },
+    {
+      "itemId": "a-g2-08-4650112",
+      "queryId": "a-g2-08",
+      "bucket": "G2",
+      "rule": "짧은 키워드·속성. 속성이 모두 확인되면 2, 일부만 맞으면 1.",
+      "query": "레터링 티",
+      "product": {
+        "title": "원형 레터링 기모 오버핏 후드티 [블랙]",
+        "brand": "비마이티",
+        "price": 48300,
+        "gender": "남성"
+      }
+    },
+    {
+      "itemId": "v11-546361",
+      "queryId": "v11",
+      "bucket": "G3",
+      "rule": "표기 변형. 원본 질의 기준으로 판정하고 변형 자체로 감점하지 않는다.",
+      "query": "ㅇㅂㅍ",
+      "product": {
+        "title": "[오버핏] 넘버플랜트 로고 반팔 블랙 no.2",
+        "brand": "넘버플랜트",
+        "price": 19800,
+        "gender": "남성"
+      },
+      "origin": "오버핏"
+    },
+    {
+      "itemId": "v12-5113279",
+      "queryId": "v12",
+      "bucket": "G3",
+      "rule": "표기 변형. 원본 질의 기준으로 판정하고 변형 자체로 감점하지 않는다.",
+      "query": "반팔티",
+      "product": {
+        "title": "[2PACK]_카라반팔티셔츠_C42셀럽PK레터링카라반팔티+C43두줄테이프카라반팔티 2종",
+        "brand": "오실롯",
+        "price": 38010,
+        "gender": "공용"
+      },
+      "origin": "반팔 티"
+    },
+    {
+      "itemId": "v11-540420",
+      "queryId": "v11",
+      "bucket": "G3",
+      "rule": "표기 변형. 원본 질의 기준으로 판정하고 변형 자체로 감점하지 않는다.",
+      "query": "ㅇㅂㅍ",
+      "product": {
+        "title": "오리지널 로고 오버핏 반팔티 (RL001 OG LOGO TEE) - BLACK",
+        "brand": "로얄라이프",
+        "price": 25600,
+        "gender": "공용"
+      },
+      "origin": "오버핏"
+    },
+    {
+      "itemId": "b17-6222117",
+      "queryId": "b17",
+      "bucket": "G1",
+      "rule": "브랜드 질의. 그 브랜드가 아니면 무조건 0.",
+      "query": "아디다스",
+      "product": {
+        "title": "아디다스 헤리티지 그래픽 티셔츠 KB9442",
+        "brand": "아디다스",
+        "price": 31500,
+        "gender": "남성"
+      }
+    },
+    {
+      "itemId": "v07-3488551",
+      "queryId": "v07",
+      "bucket": "G3",
+      "rule": "표기 변형. 원본 질의 기준으로 판정하고 변형 자체로 감점하지 않는다.",
+      "query": "ㅇㄷㄷㅅ",
+      "product": {
+        "title": "3S 긴팔 티 - 화이트 / IA4879",
+        "brand": "아디다스",
+        "price": 38990,
+        "gender": "남성"
+      },
+      "origin": "아디다스"
+    },
+    {
+      "itemId": "v08-3132078",
+      "queryId": "v08",
+      "bucket": "G3",
+      "rule": "표기 변형. 원본 질의 기준으로 판정하고 변형 자체로 감점하지 않는다.",
+      "query": "ㅋㅂㄴ",
+      "product": {
+        "title": "다잉 피케 티셔츠 차콜",
+        "brand": "커버낫",
+        "price": 34500,
+        "gender": "공용"
+      },
+      "origin": "커버낫"
+    },
+    {
+      "itemId": "v12-4046482",
+      "queryId": "v12",
+      "bucket": "G3",
+      "rule": "표기 변형. 원본 질의 기준으로 판정하고 변형 자체로 감점하지 않는다.",
+      "query": "반팔티",
+      "product": {
+        "title": "[SET]피그먼트 오버핏 반팔티셔츠+어드벤쳐 폰트 피그먼트 반팔티셔츠 (FST701+FST705)",
+        "brand": "플루크",
+        "price": 38800,
+        "gender": "남성"
+      },
+      "origin": "반팔 티"
+    },
+    {
+      "itemId": "a-g2-11-1640199",
+      "queryId": "a-g2-11",
+      "bucket": "G2",
+      "rule": "짧은 키워드·속성. 속성이 모두 확인되면 2, 일부만 맞으면 1.",
+      "query": "그래픽 티",
+      "product": {
+        "title": "DMK_HOODY_87 그래피티 아티스트 데빌몽키 dmk 타투 캐릭터 그래피티 그래픽 디자인 후드티 후디",
+        "brand": "돌돌",
+        "price": 76000,
+        "gender": "남성"
+      }
+    },
+    {
+      "itemId": "v08-3132081",
+      "queryId": "v08",
+      "bucket": "G3",
+      "rule": "표기 변형. 원본 질의 기준으로 판정하고 변형 자체로 감점하지 않는다.",
+      "query": "ㅋㅂㄴ",
+      "product": {
+        "title": "다잉 피케 티셔츠 에크루",
+        "brand": "커버낫",
+        "price": 34500,
+        "gender": "공용"
+      },
+      "origin": "커버낫"
+    },
+    {
+      "itemId": "a-g2-04-4119353",
+      "queryId": "a-g2-04",
+      "bucket": "G2",
+      "rule": "짧은 키워드·속성. 속성이 모두 확인되면 2, 일부만 맞으면 1.",
+      "query": "오버핏 반팔",
+      "product": {
+        "title": "[4colors] 아이스 쿨링 여름 냉장고 무지 반팔 [MEN] 오버핏 반팔티 ver.",
+        "brand": "콜릿",
+        "price": 21000,
+        "gender": "남성"
+      }
+    },
+    {
+      "itemId": "a-g2-11-1652978",
+      "queryId": "a-g2-11",
+      "bucket": "G2",
+      "rule": "짧은 키워드·속성. 속성이 모두 확인되면 2, 일부만 맞으면 1.",
+      "query": "그래픽 티",
+      "product": {
+        "title": "DMK_HOODY_100 그래피티 아티스트 데빌몽키 dmk 타투 캐릭터 그래피티 그래픽 디자인 후드티 후디",
+        "brand": "돌돌",
+        "price": 79000,
+        "gender": "남성"
+      }
+    },
+    {
+      "itemId": "v14-5868497",
+      "queryId": "v14",
+      "bucket": "G3",
+      "rule": "표기 변형. 원본 질의 기준으로 판정하고 변형 자체로 감점하지 않는다.",
+      "query": "오버핏",
+      "product": {
+        "title": "[2PACK] 피그먼트 오버핏 절개 2WAY 후드 집업 + 피그먼트 오버핏 절개 스트링 맨투맨 (3COLOR)",
+        "brand": "페르메논",
+        "price": 103320,
+        "gender": "남성"
+      },
+      "origin": "오버 핏"
+    },
+    {
+      "itemId": "a-g2-11-1643043",
+      "queryId": "a-g2-11",
+      "bucket": "G2",
+      "rule": "짧은 키워드·속성. 속성이 모두 확인되면 2, 일부만 맞으면 1.",
+      "query": "그래픽 티",
+      "product": {
+        "title": "DMK_HOODY_91 그래피티 아티스트 데빌몽키 dmk 타투 캐릭터 그래피티 그래픽 디자인 후드티 후디",
+        "brand": "돌돌",
+        "price": 79000,
+        "gender": "남성"
+      }
+    },
+    {
+      "itemId": "v07-3817474",
+      "queryId": "v07",
+      "bucket": "G3",
+      "rule": "표기 변형. 원본 질의 기준으로 판정하고 변형 자체로 감점하지 않는다.",
+      "query": "ㅇㄷㄷㅅ",
+      "product": {
+        "title": "AOP 3S 크롭 탑 - 베이지 / IY0780",
+        "brand": "아디다스",
+        "price": 23990,
+        "gender": "여성"
+      },
+      "origin": "아디다스"
+    },
+    {
+      "itemId": "a-g2-04-5589905",
+      "queryId": "a-g2-04",
+      "bucket": "G2",
+      "rule": "짧은 키워드·속성. 속성이 모두 확인되면 2, 일부만 맞으면 1.",
+      "query": "오버핏 반팔",
+      "product": {
+        "title": "시그니처 그래피티 오버핏 반팔 기능성 짐웨어 헬스 러닝 운동복 반팔 W (3컬러)",
+        "brand": "레이지비",
+        "price": 34900,
+        "gender": "공용"
+      }
+    },
+    {
+      "itemId": "v01-6246984",
+      "queryId": "v01",
+      "bucket": "G3",
+      "rule": "표기 변형. 원본 질의 기준으로 판정하고 변형 자체로 감점하지 않는다.",
+      "query": "dkelektm",
+      "product": {
+        "title": "스케이트보딩 아디다스 코르포 솔루션 후디 KC2260",
+        "brand": "아디다스",
+        "price": 76300,
+        "gender": "남성"
+      },
+      "origin": "아디다스"
+    },
+    {
+      "itemId": "b13-3342739",
+      "queryId": "b13",
+      "bucket": "G1",
+      "rule": "브랜드 질의. 그 브랜드가 아니면 무조건 0.",
+      "query": "크림소다랩",
+      "product": {
+        "title": "크림소다랩 페이즐리 박스 반팔티 블랙 화이트",
+        "brand": "크림소다랩",
+        "price": 22000,
+        "gender": "공용"
+      }
+    },
+    {
+      "itemId": "v01-6584336",
+      "queryId": "v01",
+      "bucket": "G3",
+      "rule": "표기 변형. 원본 질의 기준으로 판정하고 변형 자체로 감점하지 않는다.",
+      "query": "dkelektm",
+      "product": {
+        "title": "아디다스X코카콜라 클래식 스포츠 매쉬 업 저지 KY2106",
+        "brand": "아디다스",
+        "price": 129000,
+        "gender": "남성"
+      },
+      "origin": "아디다스"
+    },
+    {
+      "itemId": "v04-3449501",
+      "queryId": "v04",
+      "bucket": "G3",
+      "rule": "표기 변형. 원본 질의 기준으로 판정하고 변형 자체로 감점하지 않는다.",
+      "query": "wprtlalrtm",
+      "product": {
+        "title": "젤라 인텐션 스퀘어 크롭탑 마멀레이즈",
+        "brand": "젝시믹스",
+        "price": 16300,
+        "gender": "여성"
+      },
+      "origin": "젝시믹스"
+    },
+    {
+      "itemId": "v02-5305337",
+      "queryId": "v02",
+      "bucket": "G3",
+      "rule": "표기 변형. 원본 질의 기준으로 판정하고 변형 자체로 감점하지 않는다.",
+      "query": "zjqjskt",
+      "product": {
+        "title": "[커버낫X하이다나] 럭키 씨리얼 로고 티셔츠 Heather Gray",
+        "brand": "커버낫",
+        "price": 47200,
+        "gender": "남성"
+      },
+      "origin": "커버낫"
+    },
+    {
+      "itemId": "x01-6925067",
+      "queryId": "x01",
+      "bucket": "G3",
+      "rule": "표기 변형. 원본 질의 기준으로 판정하고 변형 자체로 감점하지 않는다.",
+      "query": "ㅁㄴㅇㄹ",
+      "product": {
+        "title": "모노 블룸 오버핏 그래픽 피그먼트 티셔츠_차콜 그레이",
+        "brand": "모노에라",
+        "price": 39900,
+        "gender": "여성"
+      }
+    },
+    {
+      "itemId": "v04-3449445",
+      "queryId": "v04",
+      "bucket": "G3",
+      "rule": "표기 변형. 원본 질의 기준으로 판정하고 변형 자체로 감점하지 않는다.",
+      "query": "wprtlalrtm",
+      "product": {
+        "title": "모크넥 핑거홀 베이직 티셔츠 블루밍그레이",
+        "brand": "젝시믹스",
+        "price": 39000,
+        "gender": "여성"
+      },
+      "origin": "젝시믹스"
+    },
+    {
+      "itemId": "v11-538836",
+      "queryId": "v11",
+      "bucket": "G3",
+      "rule": "표기 변형. 원본 질의 기준으로 판정하고 변형 자체로 감점하지 않는다.",
+      "query": "ㅇㅂㅍ",
+      "product": {
+        "title": "헤비 오버핏 무지 반팔티 블랙",
+        "brand": "꼼파뇨",
+        "price": 26880,
+        "gender": "공용"
+      },
+      "origin": "오버핏"
+    },
+    {
+      "itemId": "v02-5305345",
+      "queryId": "v02",
+      "bucket": "G3",
+      "rule": "표기 변형. 원본 질의 기준으로 판정하고 변형 자체로 감점하지 않는다.",
+      "query": "zjqjskt",
+      "product": {
+        "title": "[커버낫X하이다나] 럭키 씨리얼 링거 티셔츠 Navy",
+        "brand": "커버낫",
+        "price": 41300,
+        "gender": "여성"
+      },
+      "origin": "커버낫"
+    },
+    {
+      "itemId": "v08-3153089",
+      "queryId": "v08",
+      "bucket": "G3",
+      "rule": "표기 변형. 원본 질의 기준으로 판정하고 변형 자체로 감점하지 않는다.",
+      "query": "ㅋㅂㄴ",
+      "product": {
+        "title": "비치 하와이안 티셔츠 옐로우",
+        "brand": "커버낫",
+        "price": 29400,
+        "gender": "공용"
+      },
+      "origin": "커버낫"
+    },
+    {
+      "itemId": "a-g2-09-4925325",
+      "queryId": "a-g2-09",
+      "bucket": "G2",
+      "rule": "짧은 키워드·속성. 속성이 모두 확인되면 2, 일부만 맞으면 1.",
+      "query": "포켓 티셔츠",
+      "product": {
+        "title": "아워포켓츠 시그니처 지구별 티셔츠(베이지)",
+        "brand": "아워포켓츠",
+        "price": 17150,
+        "gender": "공용"
+      }
+    },
+    {
+      "itemId": "a-g2-11-1637439",
+      "queryId": "a-g2-11",
+      "bucket": "G2",
+      "rule": "짧은 키워드·속성. 속성이 모두 확인되면 2, 일부만 맞으면 1.",
+      "query": "그래픽 티",
+      "product": {
+        "title": "DMK_HOODY_86 그래피티 아티스트 데빌몽키 dmk 타투 캐릭터 그래피티 그래픽 디자인 후드티 후디",
+        "brand": "돌돌",
+        "price": 76000,
+        "gender": "남성"
+      }
+    },
+    {
+      "itemId": "v03-996237",
+      "queryId": "v03",
+      "bucket": "G3",
+      "rule": "표기 변형. 원본 질의 기준으로 판정하고 변형 자체로 감점하지 않는다.",
+      "query": "antlstk tmxosekem",
+      "product": {
+        "title": "크루 넥 긴소매 티셔츠 [다크 그레이]",
+        "brand": "무신사 스탠다드",
+        "price": 18890,
+        "gender": "남성"
+      },
+      "origin": "무신사 스탠다드"
+    },
+    {
+      "itemId": "b17-6121494",
+      "queryId": "b17",
+      "bucket": "G1",
+      "rule": "브랜드 질의. 그 브랜드가 아니면 무조건 0.",
+      "query": "아디다스",
+      "product": {
+        "title": "아디다스컴뱃스포츠 반팔 티셔츠 트레이닝 S23ATMTS1",
+        "brand": "아디다스 컴뱃 스포츠",
+        "price": 55000,
+        "gender": "남성"
+      }
+    },
+    {
+      "itemId": "v01-6571329",
+      "queryId": "v01",
+      "bucket": "G3",
+      "rule": "표기 변형. 원본 질의 기준으로 판정하고 변형 자체로 감점하지 않는다.",
+      "query": "dkelektm",
+      "product": {
+        "title": "아디다스X코카콜라 크롭 저지 KY7571",
+        "brand": "아디다스",
+        "price": 69000,
+        "gender": "여성"
+      },
+      "origin": "아디다스"
+    },
+    {
+      "itemId": "b13-3342698",
+      "queryId": "b13",
+      "bucket": "G1",
+      "rule": "브랜드 질의. 그 브랜드가 아니면 무조건 0.",
+      "query": "크림소다랩",
+      "product": {
+        "title": "크림소다랩 타이다이 박스 반팔티 네이비",
+        "brand": "크림소다랩",
+        "price": 22000,
+        "gender": "남성"
+      }
+    },
+    {
+      "itemId": "a-g2-04-5519930",
+      "queryId": "a-g2-04",
+      "bucket": "G2",
+      "rule": "짧은 키워드·속성. 속성이 모두 확인되면 2, 일부만 맞으면 1.",
+      "query": "오버핏 반팔",
+      "product": {
+        "title": "시그니처 그래피티 오버핏 반팔 기능성 짐웨어 헬스 러닝 운동복 반팔 M 블랙",
+        "brand": "레이지비",
+        "price": 34900,
+        "gender": "공용"
+      }
+    },
+    {
+      "itemId": "a-g2-08-4075338",
+      "queryId": "a-g2-08",
+      "bucket": "G2",
+      "rule": "짧은 키워드·속성. 속성이 모두 확인되면 2, 일부만 맞으면 1.",
+      "query": "레터링 티",
+      "product": {
+        "title": "레터링 로고 티셔츠_세레니티 블루",
+        "brand": "루바티",
+        "price": 35200,
+        "gender": "여성"
+      }
+    },
+    {
+      "itemId": "b01-694915",
+      "queryId": "b01",
+      "bucket": "G1",
+      "rule": "브랜드 질의. 그 브랜드가 아니면 무조건 0.",
+      "query": "돌돌",
+      "product": {
+        "title": "[돌돌 스페샬 후디] RODUCK_HOODY_12 로드바이크 오리 로덕 캐릭터 후디 후드티",
+        "brand": "돌돌",
+        "price": 85000,
+        "gender": "남성"
+      }
+    },
+    {
+      "itemId": "v14-4878154",
+      "queryId": "v14",
+      "bucket": "G3",
+      "rule": "표기 변형. 원본 질의 기준으로 판정하고 변형 자체로 감점하지 않는다.",
+      "query": "오버핏",
+      "product": {
+        "title": "[SET] 슈퍼 오버핏 로고 반팔 티셔츠 + 에센셜 오버핏 버뮤다 쇼츠",
+        "brand": "페르메논",
+        "price": 41930,
+        "gender": "남성"
+      },
+      "origin": "오버 핏"
+    },
+    {
+      "itemId": "b01-694914",
+      "queryId": "b01",
+      "bucket": "G1",
+      "rule": "브랜드 질의. 그 브랜드가 아니면 무조건 0.",
+      "query": "돌돌",
+      "product": {
+        "title": "[돌돌 스페샬 후디] RUNCH-HOODY-41 런닝 치타 런치 캐릭터 후드티 후디",
+        "brand": "돌돌",
+        "price": 85000,
+        "gender": "남성"
+      }
+    },
+    {
+      "itemId": "v14-6508607",
+      "queryId": "v14",
+      "bucket": "G3",
+      "rule": "표기 변형. 원본 질의 기준으로 판정하고 변형 자체로 감점하지 않는다.",
+      "query": "오버핏",
+      "product": {
+        "title": "[2PACK]_C73 머쉬룸트윈즈 오버핏 반팔+C77 핫도그프렌즈 오버핏 반팔",
+        "brand": "오실롯",
+        "price": 33660,
+        "gender": "공용"
+      },
+      "origin": "오버 핏"
+    },
+    {
+      "itemId": "v07-3662253",
+      "queryId": "v07",
+      "bucket": "G3",
+      "rule": "표기 변형. 원본 질의 기준으로 판정하고 변형 자체로 감점하지 않는다.",
+      "query": "ㅇㄷㄷㅅ",
+      "product": {
+        "title": "ADILENIUM 반팔 탑 - 그레이 / IV9322",
+        "brand": "아디다스",
+        "price": 30990,
+        "gender": "여성"
+      },
+      "origin": "아디다스"
+    },
+    {
+      "itemId": "a-g2-09-4925332",
+      "queryId": "a-g2-09",
+      "bucket": "G2",
+      "rule": "짧은 키워드·속성. 속성이 모두 확인되면 2, 일부만 맞으면 1.",
+      "query": "포켓 티셔츠",
+      "product": {
+        "title": "아워포켓츠 빅 지구별 티셔츠(Z블랙)",
+        "brand": "아워포켓츠",
+        "price": 27650,
+        "gender": "공용"
+      }
+    },
+    {
+      "itemId": "v02-5506399",
+      "queryId": "v02",
+      "bucket": "G3",
+      "rule": "표기 변형. 원본 질의 기준으로 판정하고 변형 자체로 감점하지 않는다.",
+      "query": "zjqjskt",
+      "product": {
+        "title": "[커버낫 X 요시고] 미드나잇 시티 폴라로이드 그래픽 후디 Dark Navy",
+        "brand": "커버낫",
+        "price": 69300,
+        "gender": "공용"
+      },
+      "origin": "커버낫"
+    },
+    {
+      "itemId": "v03-996236",
+      "queryId": "v03",
+      "bucket": "G3",
+      "rule": "표기 변형. 원본 질의 기준으로 판정하고 변형 자체로 감점하지 않는다.",
+      "query": "antlstk tmxosekem",
+      "product": {
+        "title": "크루 넥 긴소매 티셔츠 [네이비]",
+        "brand": "무신사 스탠다드",
+        "price": 18890,
+        "gender": "남성"
+      },
+      "origin": "무신사 스탠다드"
+    },
+    {
+      "itemId": "v12-3111230",
+      "queryId": "v12",
+      "bucket": "G3",
+      "rule": "표기 변형. 원본 질의 기준으로 판정하고 변형 자체로 감점하지 않는다.",
+      "query": "반팔티",
+      "product": {
+        "title": "[2 PACK] 엠버 반팔티 + 아이비 오버핏 반팔티 세트",
+        "brand": "녹족",
+        "price": 25900,
+        "gender": "여성"
+      },
+      "origin": "반팔 티"
+    },
+    {
+      "itemId": "v03-947080",
+      "queryId": "v03",
+      "bucket": "G3",
+      "rule": "표기 변형. 원본 질의 기준으로 판정하고 변형 자체로 감점하지 않는다.",
+      "query": "antlstk tmxosekem",
+      "product": {
+        "title": "후디드 스웨트셔츠 [오트밀]",
+        "brand": "무신사 스탠다드",
+        "price": 37890,
+        "gender": "남성"
+      },
+      "origin": "무신사 스탠다드"
+    },
+    {
+      "itemId": "v04-3449444",
+      "queryId": "v04",
+      "bucket": "G3",
+      "rule": "표기 변형. 원본 질의 기준으로 판정하고 변형 자체로 감점하지 않는다.",
+      "query": "wprtlalrtm",
+      "product": {
+        "title": "모크넥 핑거홀 베이직 티셔츠 카페라떼",
+        "brand": "젝시믹스",
+        "price": 22100,
+        "gender": "여성"
+      },
+      "origin": "젝시믹스"
+    },
+    {
+      "itemId": "a-g2-08-4223658",
+      "queryId": "a-g2-08",
+      "bucket": "G2",
+      "rule": "짧은 키워드·속성. 속성이 모두 확인되면 2, 일부만 맞으면 1.",
+      "query": "레터링 티",
+      "product": {
+        "title": "[브러쉬 그래피티 레터링 로고]코튼 루즈핏 반팔 티셔츠_더스티 민트",
+        "brand": "아스트랄 프로젝션",
+        "price": 15900,
+        "gender": "남성"
+      }
+    },
+    {
+      "itemId": "v08-3132094",
+      "queryId": "v08",
+      "bucket": "G3",
+      "rule": "표기 변형. 원본 질의 기준으로 판정하고 변형 자체로 감점하지 않는다.",
+      "query": "ㅋㅂㄴ",
+      "product": {
+        "title": "C 로고 캡 카라 티셔츠 화이트",
+        "brand": "커버낫",
+        "price": 39500,
+        "gender": "공용"
+      },
+      "origin": "커버낫"
+    },
+    {
+      "itemId": "b18-5506392",
+      "queryId": "b18",
+      "bucket": "G1",
+      "rule": "브랜드 질의. 그 브랜드가 아니면 무조건 0.",
+      "query": "커버낫",
+      "product": {
+        "title": "[커버낫 X 요시고] 온 더 루트 레이어드 롱슬리브 올리브",
+        "brand": "커버낫",
+        "price": 55200,
+        "gender": "공용"
+      }
+    },
+    {
+      "itemId": "v03-996178",
+      "queryId": "v03",
+      "bucket": "G3",
+      "rule": "표기 변형. 원본 질의 기준으로 판정하고 변형 자체로 감점하지 않는다.",
+      "query": "antlstk tmxosekem",
+      "product": {
+        "title": "릴렉스 핏 크루 넥 티셔츠 [블랙]",
+        "brand": "무신사 스탠다드",
+        "price": 13290,
+        "gender": "남성"
+      },
+      "origin": "무신사 스탠다드"
+    },
+    {
+      "itemId": "a-g2-11-1634556",
+      "queryId": "a-g2-11",
+      "bucket": "G2",
+      "rule": "짧은 키워드·속성. 속성이 모두 확인되면 2, 일부만 맞으면 1.",
+      "query": "그래픽 티",
+      "product": {
+        "title": "DMK_HOODY_83 그래피티 아티스트 데빌몽키 dmk 타투 캐릭터 그래피티 그래픽 디자인 후드티 후디",
+        "brand": "돌돌",
+        "price": 76000,
+        "gender": "남성"
+      }
+    },
+    {
+      "itemId": "a-g2-08-4651318",
+      "queryId": "a-g2-08",
+      "bucket": "G2",
+      "rule": "짧은 키워드·속성. 속성이 모두 확인되면 2, 일부만 맞으면 1.",
+      "query": "레터링 티",
+      "product": {
+        "title": "낙서 레터링 기모 오버핏 후드티 [오트밀]",
+        "brand": "비마이티",
+        "price": 43400,
+        "gender": "남성"
+      }
+    },
+    {
+      "itemId": "g02-3111254",
+      "queryId": "g02",
+      "bucket": "G2",
+      "rule": "짧은 키워드·속성. 속성이 모두 확인되면 2, 일부만 맞으면 1.",
+      "query": "크롭티",
+      "product": {
+        "title": "[2PACK] 플레인 크롭티 + 메리엘 긴팔 크롭티 세트",
+        "brand": "녹족",
+        "price": 26900,
+        "gender": "여성"
+      }
+    },
+    {
+      "itemId": "a-g2-04-6508607",
+      "queryId": "a-g2-04",
+      "bucket": "G2",
+      "rule": "짧은 키워드·속성. 속성이 모두 확인되면 2, 일부만 맞으면 1.",
+      "query": "오버핏 반팔",
+      "product": {
+        "title": "[2PACK]_C73 머쉬룸트윈즈 오버핏 반팔+C77 핫도그프렌즈 오버핏 반팔",
+        "brand": "오실롯",
+        "price": 33660,
+        "gender": "공용"
+      }
+    },
+    {
+      "itemId": "x01-6889226",
+      "queryId": "x01",
+      "bucket": "G3",
+      "rule": "표기 변형. 원본 질의 기준으로 판정하고 변형 자체로 감점하지 않는다.",
+      "query": "ㅁㄴㅇㄹ",
+      "product": {
+        "title": "바이오 스퀘어넥 버튼 슬리브리스 탑_화이트 나시",
+        "brand": "모노에라",
+        "price": 39900,
+        "gender": "여성"
+      }
+    },
+    {
+      "itemId": "v08-3097386",
+      "queryId": "v08",
+      "bucket": "G3",
+      "rule": "표기 변형. 원본 질의 기준으로 판정하고 변형 자체로 감점하지 않는다.",
+      "query": "ㅋㅂㄴ",
+      "product": {
+        "title": "C 로고 카라 티셔츠 블루",
+        "brand": "커버낫",
+        "price": 35400,
+        "gender": "공용"
+      },
+      "origin": "커버낫"
+    },
+    {
+      "itemId": "v14-4878150",
+      "queryId": "v14",
+      "bucket": "G3",
+      "rule": "표기 변형. 원본 질의 기준으로 판정하고 변형 자체로 감점하지 않는다.",
+      "query": "오버핏",
+      "product": {
+        "title": "[SET] 에센셜 오버핏 롱 슬리브  + 에센셜 오버핏 버뮤다 쇼츠",
+        "brand": "페르메논",
+        "price": 47920,
+        "gender": "남성"
+      },
+      "origin": "오버 핏"
+    },
+    {
+      "itemId": "b18-5305345",
+      "queryId": "b18",
+      "bucket": "G1",
+      "rule": "브랜드 질의. 그 브랜드가 아니면 무조건 0.",
+      "query": "커버낫",
+      "product": {
+        "title": "[커버낫X하이다나] 럭키 씨리얼 링거 티셔츠 Navy",
+        "brand": "커버낫",
+        "price": 41300,
+        "gender": "여성"
+      }
+    },
+    {
+      "itemId": "a-g2-04-5073443",
+      "queryId": "a-g2-04",
+      "bucket": "G2",
+      "rule": "짧은 키워드·속성. 속성이 모두 확인되면 2, 일부만 맞으면 1.",
+      "query": "오버핏 반팔",
+      "product": {
+        "title": "[2PACK] 오버핏 크루넥 로고 반팔 티셔츠 & 크루넥 오버핏 유니버셜 티셔츠",
+        "brand": "블론드나인",
+        "price": 32600,
+        "gender": "공용"
+      }
+    },
+    {
+      "itemId": "v01-6928934",
+      "queryId": "v01",
+      "bucket": "G3",
+      "rule": "표기 변형. 원본 질의 기준으로 판정하고 변형 자체로 감점하지 않는다.",
+      "query": "dkelektm",
+      "product": {
+        "title": "아디다스 Z.N.E. 루즈 핏 티셔츠 KF3818",
+        "brand": "아디다스",
+        "price": 59000,
+        "gender": "남성"
+      },
+      "origin": "아디다스"
+    },
+    {
+      "itemId": "v04-3449468",
+      "queryId": "v04",
+      "bucket": "G3",
+      "rule": "표기 변형. 원본 질의 기준으로 판정하고 변형 자체로 감점하지 않는다.",
+      "query": "wprtlalrtm",
+      "product": {
+        "title": "코튼라이크 퍼펙트핏 숏슬리브 이비스핑크블럼",
+        "brand": "젝시믹스",
+        "price": 34000,
+        "gender": "여성"
+      },
+      "origin": "젝시믹스"
+    },
+    {
+      "itemId": "b13-3342727",
+      "queryId": "b13",
+      "bucket": "G1",
+      "rule": "브랜드 질의. 그 브랜드가 아니면 무조건 0.",
+      "query": "크림소다랩",
+      "product": {
+        "title": "크림소다랩 페이즐리 박스 반팔티 블랙",
+        "brand": "크림소다랩",
+        "price": 20000,
+        "gender": "남성"
+      }
+    },
+    {
+      "itemId": "v14-5868441",
+      "queryId": "v14",
+      "bucket": "G3",
+      "rule": "표기 변형. 원본 질의 기준으로 판정하고 변형 자체로 감점하지 않는다.",
+      "query": "오버핏",
+      "product": {
+        "title": "[2PACK] 피그먼트 오버핏 절개 2WAY 후드 집업 + 피그먼트 오버핏 절개 후드티 (3COLOR)",
+        "brand": "페르메논",
+        "price": 112320,
+        "gender": "남성"
+      },
+      "origin": "오버 핏"
+    },
+    {
+      "itemId": "v04-3449387",
+      "queryId": "v04",
+      "bucket": "G3",
+      "rule": "표기 변형. 원본 질의 기준으로 판정하고 변형 자체로 감점하지 않는다.",
+      "query": "wprtlalrtm",
+      "product": {
+        "title": "아이스페더 숏슬리브 2.0 애시드오렌지",
+        "brand": "젝시믹스",
+        "price": 21750,
+        "gender": "여성"
+      },
+      "origin": "젝시믹스"
+    },
+    {
+      "itemId": "v01-6571352",
+      "queryId": "v01",
+      "bucket": "G3",
+      "rule": "표기 변형. 원본 질의 기준으로 판정하고 변형 자체로 감점하지 않는다.",
+      "query": "dkelektm",
+      "product": {
+        "title": "아디다스X코카콜라 클래식 스포츠 캘리 티 KY2114",
+        "brand": "아디다스",
+        "price": 65000,
+        "gender": "남성"
+      },
+      "origin": "아디다스"
+    },
+    {
+      "itemId": "a-g2-11-1643044",
+      "queryId": "a-g2-11",
+      "bucket": "G2",
+      "rule": "짧은 키워드·속성. 속성이 모두 확인되면 2, 일부만 맞으면 1.",
+      "query": "그래픽 티",
+      "product": {
+        "title": "DMK_HOODY_92 그래피티 아티스트 데빌몽키 dmk 타투 캐릭터 그래피티 그래픽 디자인 후드티 후디",
+        "brand": "돌돌",
+        "price": 79000,
+        "gender": "남성"
+      }
+    },
+    {
+      "itemId": "v14-4572214",
+      "queryId": "v14",
+      "bucket": "G3",
+      "rule": "표기 변형. 원본 질의 기준으로 판정하고 변형 자체로 감점하지 않는다.",
+      "query": "오버핏",
+      "product": {
+        "title": "베이직 오버핏 트랙 우먼 오버핏 후드티셔츠 3 Color [ULZI_4001]",
+        "brand": "유라이프지",
+        "price": 37100,
+        "gender": "여성"
+      },
+      "origin": "오버 핏"
+    },
+    {
+      "itemId": "b18-5506397",
+      "queryId": "b18",
+      "bucket": "G1",
+      "rule": "브랜드 질의. 그 브랜드가 아니면 무조건 0.",
+      "query": "커버낫",
+      "product": {
+        "title": "[커버낫 X 요시고] 벌룬 페스티벌 링거 롱슬리브 Ivory",
+        "brand": "커버낫",
+        "price": 55200,
+        "gender": "공용"
+      }
+    },
+    {
+      "itemId": "a-g2-04-4259445",
+      "queryId": "a-g2-04",
+      "bucket": "G2",
+      "rule": "짧은 키워드·속성. 속성이 모두 확인되면 2, 일부만 맞으면 1.",
+      "query": "오버핏 반팔",
+      "product": {
+        "title": "[SET] 퍼펙트 특양면 오버핏 숄더 2중절개 무지 반팔 티셔츠_7Color + 퍼펙트 특양면 무지 머슬핏 반팔 티셔츠_7Color",
+        "brand": "바이젝",
+        "price": 68400,
+        "gender": "남성"
+      }
+    },
+    {
+      "itemId": "v01-6571350",
+      "queryId": "v01",
+      "bucket": "G3",
+      "rule": "표기 변형. 원본 질의 기준으로 판정하고 변형 자체로 감점하지 않는다.",
+      "query": "dkelektm",
+      "product": {
+        "title": "아디다스X코카콜라 클래식 스포츠 그래픽 트레피 티 KY2109",
+        "brand": "아디다스",
+        "price": 69000,
+        "gender": "남성"
+      },
+      "origin": "아디다스"
+    },
+    {
+      "itemId": "a-g2-08-4980373",
+      "queryId": "a-g2-08",
+      "bucket": "G2",
+      "rule": "짧은 키워드·속성. 속성이 모두 확인되면 2, 일부만 맞으면 1.",
+      "query": "레터링 티",
+      "product": {
+        "title": "레터링 폰테 레터링 반팔 티셔츠 블랙",
+        "brand": "와키윌리",
+        "price": 39000,
+        "gender": "공용"
+      }
+    },
+    {
+      "itemId": "v11-555040",
+      "queryId": "v11",
+      "bucket": "G3",
+      "rule": "표기 변형. 원본 질의 기준으로 판정하고 변형 자체로 감점하지 않는다.",
+      "query": "ㅇㅂㅍ",
+      "product": {
+        "title": "psln 런던 오버핏 반팔티셔츠 네이비 남녀공용",
+        "brand": "아타르",
+        "price": 31980,
+        "gender": "여성"
+      },
+      "origin": "오버핏"
+    },
+    {
+      "itemId": "v08-3132092",
+      "queryId": "v08",
+      "bucket": "G3",
+      "rule": "표기 변형. 원본 질의 기준으로 판정하고 변형 자체로 감점하지 않는다.",
+      "query": "ㅋㅂㄴ",
+      "product": {
+        "title": "C 로고 캡 카라 티셔츠 네이비",
+        "brand": "커버낫",
+        "price": 39500,
+        "gender": "공용"
+      },
+      "origin": "커버낫"
+    },
+    {
+      "itemId": "a-g2-04-5516654",
+      "queryId": "a-g2-04",
+      "bucket": "G2",
+      "rule": "짧은 키워드·속성. 속성이 모두 확인되면 2, 일부만 맞으면 1.",
+      "query": "오버핏 반팔",
+      "product": {
+        "title": "시그니처 그래피티 오버핏 반팔 기능성 짐웨어 헬스 러닝 운동복 반팔 W 화이트",
+        "brand": "레이지비",
+        "price": 34900,
+        "gender": "공용"
+      }
+    },
+    {
+      "itemId": "v01-6193424",
+      "queryId": "v01",
+      "bucket": "G3",
+      "rule": "표기 변형. 원본 질의 기준으로 판정하고 변형 자체로 감점하지 않는다.",
+      "query": "dkelektm",
+      "product": {
+        "title": "아디다스 헤리티지 그래픽 티셔츠 KB9443",
+        "brand": "아디다스",
+        "price": 31500,
+        "gender": "남성"
+      },
+      "origin": "아디다스"
+    },
+    {
+      "itemId": "v11-500915",
+      "queryId": "v11",
+      "bucket": "G3",
+      "rule": "표기 변형. 원본 질의 기준으로 판정하고 변형 자체로 감점하지 않는다.",
+      "query": "ㅇㅂㅍ",
+      "product": {
+        "title": "[레이쿠] reiku overfit roll-up short sleeve black 오버핏 롤업 슬리브",
+        "brand": "레이쿠",
+        "price": 37000,
+        "gender": "남성"
+      },
+      "origin": "오버핏"
+    },
+    {
+      "itemId": "v08-3038965",
+      "queryId": "v08",
+      "bucket": "G3",
+      "rule": "표기 변형. 원본 질의 기준으로 판정하고 변형 자체로 감점하지 않는다.",
+      "query": "ㅋㅂㄴ",
+      "product": {
+        "title": "어센틱 로고 후디 라벤더",
+        "brand": "커버낫",
+        "price": 47400,
+        "gender": "공용"
+      },
+      "origin": "커버낫"
+    },
+    {
+      "itemId": "v11-532246",
+      "queryId": "v11",
+      "bucket": "G3",
+      "rule": "표기 변형. 원본 질의 기준으로 판정하고 변형 자체로 감점하지 않는다.",
+      "query": "ㅇㅂㅍ",
+      "product": {
+        "title": "[UNISEX] 45수 특양면 옆트임 오버핏 반팔티 (블랙)",
+        "brand": "티아즈",
+        "price": 16800,
+        "gender": "남성"
+      },
+      "origin": "오버핏"
+    },
+    {
+      "itemId": "x01-6889071",
+      "queryId": "x01",
+      "bucket": "G3",
+      "rule": "표기 변형. 원본 질의 기준으로 판정하고 변형 자체로 감점하지 않는다.",
+      "query": "ㅁㄴㅇㄹ",
+      "product": {
+        "title": "커브 컷팅 라운드넥 나시_스카이 블루 슬리브리스 탑",
+        "brand": "모노에라",
+        "price": 30800,
+        "gender": "여성"
+      }
+    },
+    {
+      "itemId": "b13-3342735",
+      "queryId": "b13",
+      "bucket": "G1",
+      "rule": "브랜드 질의. 그 브랜드가 아니면 무조건 0.",
+      "query": "크림소다랩",
+      "product": {
+        "title": "크림소다랩 페이즐리 박스 반팔티 화이트 블루",
+        "brand": "크림소다랩",
+        "price": 20000,
+        "gender": "공용"
+      }
+    },
+    {
+      "itemId": "v04-3449464",
+      "queryId": "v04",
+      "bucket": "G3",
+      "rule": "표기 변형. 원본 질의 기준으로 판정하고 변형 자체로 감점하지 않는다.",
+      "query": "wprtlalrtm",
+      "product": {
+        "title": "코튼라이크 퍼펙트핏 숏슬리브 핑크우드",
+        "brand": "젝시믹스",
+        "price": 17000,
+        "gender": "여성"
+      },
+      "origin": "젝시믹스"
+    },
+    {
+      "itemId": "x01-6889149",
+      "queryId": "x01",
+      "bucket": "G3",
+      "rule": "표기 변형. 원본 질의 기준으로 판정하고 변형 자체로 감점하지 않는다.",
+      "query": "ㅁㄴㅇㄹ",
+      "product": {
+        "title": "커브 컷팅 라운드넥 나시_화이트 슬리브리스 탑",
+        "brand": "모노에라",
+        "price": 30800,
+        "gender": "여성"
+      }
+    },
+    {
+      "itemId": "a-g2-09-4925328",
+      "queryId": "a-g2-09",
+      "bucket": "G2",
+      "rule": "짧은 키워드·속성. 속성이 모두 확인되면 2, 일부만 맞으면 1.",
+      "query": "포켓 티셔츠",
+      "product": {
+        "title": "아워포켓츠 시그니처 로고 티셔츠(Z블랙)",
+        "brand": "아워포켓츠",
+        "price": 24150,
+        "gender": "공용"
+      }
+    },
+    {
+      "itemId": "a-g2-08-3591296",
+      "queryId": "a-g2-08",
+      "bucket": "G2",
+      "rule": "짧은 키워드·속성. 속성이 모두 확인되면 2, 일부만 맞으면 1.",
+      "query": "레터링 티",
+      "product": {
+        "title": "ATTITUDE LETTERING LONG SLEEVE-BLACK(에티튜드 레터링 긴팔티-블랙)",
+        "brand": "오픈 에티튜드",
+        "price": 23400,
+        "gender": "남성"
+      }
+    },
+    {
+      "itemId": "b18-5305340",
+      "queryId": "b18",
+      "bucket": "G1",
+      "rule": "브랜드 질의. 그 브랜드가 아니면 무조건 0.",
+      "query": "커버낫",
+      "product": {
+        "title": "[커버낫X하이다나] 럭키 씨리얼 로고 티셔츠 Off White",
+        "brand": "커버낫",
+        "price": 41300,
+        "gender": "여성"
+      }
+    },
+    {
+      "itemId": "v11-503399",
+      "queryId": "v11",
+      "bucket": "G3",
+      "rule": "표기 변형. 원본 질의 기준으로 판정하고 변형 자체로 감점하지 않는다.",
+      "query": "ㅇㅂㅍ",
+      "product": {
+        "title": "[16수] 레터링 타투 오버핏 티셔츠 화이트",
+        "brand": "꼼파뇨",
+        "price": 28000,
+        "gender": "공용"
+      },
+      "origin": "오버핏"
+    },
+    {
+      "itemId": "v07-3662254",
+      "queryId": "v07",
+      "bucket": "G3",
+      "rule": "표기 변형. 원본 질의 기준으로 판정하고 변형 자체로 감점하지 않는다.",
+      "query": "ㅇㄷㄷㅅ",
+      "product": {
+        "title": "ADILENIUM 반팔 탑 - 블랙 / IV9323",
+        "brand": "아디다스",
+        "price": 30990,
+        "gender": "여성"
+      },
+      "origin": "아디다스"
+    },
+    {
+      "itemId": "x01-7038173",
+      "queryId": "x01",
+      "bucket": "G3",
+      "rule": "표기 변형. 원본 질의 기준으로 판정하고 변형 자체로 감점하지 않는다.",
+      "query": "ㅁㄴㅇㄹ",
+      "product": {
+        "title": "홀터넥 나시 레이어드 탑_5컬러",
+        "brand": "모노에라",
+        "price": 27300,
+        "gender": "여성"
+      }
+    },
+    {
+      "itemId": "v11-503413",
+      "queryId": "v11",
+      "bucket": "G3",
+      "rule": "표기 변형. 원본 질의 기준으로 판정하고 변형 자체로 감점하지 않는다.",
+      "query": "ㅇㅂㅍ",
+      "product": {
+        "title": "[16수] 레터링 타투 오버핏 티셔츠 블랙",
+        "brand": "꼼파뇨",
+        "price": 28000,
+        "gender": "공용"
+      },
+      "origin": "오버핏"
+    },
+    {
+      "itemId": "a-g2-09-4925327",
+      "queryId": "a-g2-09",
+      "bucket": "G2",
+      "rule": "짧은 키워드·속성. 속성이 모두 확인되면 2, 일부만 맞으면 1.",
+      "query": "포켓 티셔츠",
+      "product": {
+        "title": "아워포켓츠 시그니처 로고 티셔츠(그레이)",
+        "brand": "아워포켓츠",
+        "price": 24150,
+        "gender": "공용"
+      }
+    },
+    {
+      "itemId": "b17-6968738",
+      "queryId": "b17",
+      "bucket": "G1",
+      "rule": "브랜드 질의. 그 브랜드가 아니면 무조건 0.",
+      "query": "아디다스",
+      "product": {
+        "title": "adi365 아디다스 러너스 티셔츠 KT4847",
+        "brand": "아디다스",
+        "price": 69000,
+        "gender": "남성"
+      }
+    },
+    {
+      "itemId": "b13-3342731",
+      "queryId": "b13",
+      "bucket": "G1",
+      "rule": "브랜드 질의. 그 브랜드가 아니면 무조건 0.",
+      "query": "크림소다랩",
+      "product": {
+        "title": "크림소다랩 페이즐리 박스 반팔티 그레이",
+        "brand": "크림소다랩",
+        "price": 22000,
+        "gender": "남성"
+      }
+    },
+    {
+      "itemId": "v03-947081",
+      "queryId": "v03",
+      "bucket": "G3",
+      "rule": "표기 변형. 원본 질의 기준으로 판정하고 변형 자체로 감점하지 않는다.",
+      "query": "antlstk tmxosekem",
+      "product": {
+        "title": "후디드 스웨트셔츠 [네이비]",
+        "brand": "무신사 스탠다드",
+        "price": 37890,
+        "gender": "남성"
+      },
+      "origin": "무신사 스탠다드"
+    },
+    {
+      "itemId": "v07-3873779",
+      "queryId": "v07",
+      "bucket": "G3",
+      "rule": "표기 변형. 원본 질의 기준으로 판정하고 변형 자체로 감점하지 않는다.",
+      "query": "ㅇㄷㄷㅅ",
+      "product": {
+        "title": "3S 새틴 긴팔 티 - 블랙 / IR6099",
+        "brand": "아디다스",
+        "price": 64990,
+        "gender": "여성"
+      },
+      "origin": "아디다스"
+    },
+    {
+      "itemId": "a-g2-09-4925420",
+      "queryId": "a-g2-09",
+      "bucket": "G2",
+      "rule": "짧은 키워드·속성. 속성이 모두 확인되면 2, 일부만 맞으면 1.",
+      "query": "포켓 티셔츠",
+      "product": {
+        "title": "그리드 X 아워포켓츠 콜라보 티셔츠(화이트)",
+        "brand": "아워포켓츠",
+        "price": 22500,
+        "gender": "공용"
+      }
+    },
+    {
+      "itemId": "v11-438203",
+      "queryId": "v11",
+      "bucket": "G3",
+      "rule": "표기 변형. 원본 질의 기준으로 판정하고 변형 자체로 감점하지 않는다.",
+      "query": "ㅇㅂㅍ",
+      "product": {
+        "title": "오버핏 후드맨투맨 프랑켄슈타인 회색(기모)",
+        "brand": "플라스틱",
+        "price": 78000,
+        "gender": "남성"
+      },
+      "origin": "오버핏"
+    },
+    {
+      "itemId": "a-g2-06-6595730",
+      "queryId": "a-g2-06",
+      "bucket": "G2",
+      "rule": "짧은 키워드·속성. 속성이 모두 확인되면 2, 일부만 맞으면 1.",
+      "query": "스트라이프 티셔츠",
+      "product": {
+        "title": "스트라이프 코튼 티셔츠 - 라이트 아이보리 / 플래시 레드 스트라이프",
+        "brand": "토리버치",
+        "price": 398000,
+        "gender": "여성"
+      }
+    },
+    {
+      "itemId": "v11-441684",
+      "queryId": "v11",
+      "bucket": "G3",
+      "rule": "표기 변형. 원본 질의 기준으로 판정하고 변형 자체로 감점하지 않는다.",
+      "query": "ㅇㅂㅍ",
+      "product": {
+        "title": "오버핏 후드맨투맨 프랑켄 블루(기모)",
+        "brand": "플라스틱",
+        "price": 78000,
+        "gender": "남성"
+      },
+      "origin": "오버핏"
+    },
+    {
+      "itemId": "v04-3449500",
+      "queryId": "v04",
+      "bucket": "G3",
+      "rule": "표기 변형. 원본 질의 기준으로 판정하고 변형 자체로 감점하지 않는다.",
+      "query": "wprtlalrtm",
+      "product": {
+        "title": "젤라 인텐션 스퀘어 크롭탑 마젠타헤이즈",
+        "brand": "젝시믹스",
+        "price": 27000,
+        "gender": "여성"
+      },
+      "origin": "젝시믹스"
+    },
+    {
+      "itemId": "b01-694913",
+      "queryId": "b01",
+      "bucket": "G1",
+      "rule": "브랜드 질의. 그 브랜드가 아니면 무조건 0.",
+      "query": "돌돌",
+      "product": {
+        "title": "[돌돌 스페샬 후디] DMK_HOODY_28 그래피티 아티스트 데빌몽키 dmk 캐릭터 후드티 후디",
+        "brand": "돌돌",
+        "price": 85000,
+        "gender": "남성"
+      }
+    },
+    {
+      "itemId": "x01-6888949",
+      "queryId": "x01",
+      "bucket": "G3",
+      "rule": "표기 변형. 원본 질의 기준으로 판정하고 변형 자체로 감점하지 않는다.",
+      "query": "ㅁㄴㅇㄹ",
+      "product": {
+        "title": "커브 컷팅 라운드넥 나시_핑크 슬리브리스 탑",
+        "brand": "모노에라",
+        "price": 30800,
+        "gender": "여성"
+      }
+    },
+    {
+      "itemId": "v01-6222117",
+      "queryId": "v01",
+      "bucket": "G3",
+      "rule": "표기 변형. 원본 질의 기준으로 판정하고 변형 자체로 감점하지 않는다.",
+      "query": "dkelektm",
+      "product": {
+        "title": "아디다스 헤리티지 그래픽 티셔츠 KB9442",
+        "brand": "아디다스",
+        "price": 31500,
+        "gender": "남성"
+      },
+      "origin": "아디다스"
+    },
+    {
+      "itemId": "a-g2-11-1637437",
+      "queryId": "a-g2-11",
+      "bucket": "G2",
+      "rule": "짧은 키워드·속성. 속성이 모두 확인되면 2, 일부만 맞으면 1.",
+      "query": "그래픽 티",
+      "product": {
+        "title": "DMK_HOODY_84 그래피티 아티스트 데빌몽키 dmk 타투 캐릭터 그래피티 그래픽 디자인 후드티 후디",
+        "brand": "돌돌",
+        "price": 76000,
+        "gender": "남성"
+      }
+    },
+    {
+      "itemId": "v04-3449443",
+      "queryId": "v04",
+      "bucket": "G3",
+      "rule": "표기 변형. 원본 질의 기준으로 판정하고 변형 자체로 감점하지 않는다.",
+      "query": "wprtlalrtm",
+      "product": {
+        "title": "모크넥 핑거홀 베이직 티셔츠 코퍼로즈",
+        "brand": "젝시믹스",
+        "price": 39000,
+        "gender": "여성"
+      },
+      "origin": "젝시믹스"
+    },
+    {
+      "itemId": "v14-6096761",
+      "queryId": "v14",
+      "bucket": "G3",
+      "rule": "표기 변형. 원본 질의 기준으로 판정하고 변형 자체로 감점하지 않는다.",
+      "query": "오버핏",
+      "product": {
+        "title": "[SET]  오버핏 크롭 스웨트 후드 티셔츠 + 오버핏 와이드 스웨트 팬츠 (3COLOR)",
+        "brand": "페르메논",
+        "price": 80910,
+        "gender": "남성"
+      },
+      "origin": "오버 핏"
+    },
+    {
+      "itemId": "v08-2530546",
+      "queryId": "v08",
+      "bucket": "G3",
+      "rule": "표기 변형. 원본 질의 기준으로 판정하고 변형 자체로 감점하지 않는다.",
+      "query": "ㅋㅂㄴ",
+      "product": {
+        "title": "카바나 반팔 티셔츠 - 네이비 클라우드",
+        "brand": "케이튼",
+        "price": 44370,
+        "gender": "남성"
+      },
+      "origin": "커버낫"
+    },
+    {
+      "itemId": "v04-3449470",
+      "queryId": "v04",
+      "bucket": "G3",
+      "rule": "표기 변형. 원본 질의 기준으로 판정하고 변형 자체로 감점하지 않는다.",
+      "query": "wprtlalrtm",
+      "product": {
+        "title": "코튼라이크 퍼펙트핏 숏슬리브 아이스피치",
+        "brand": "젝시믹스",
+        "price": 34000,
+        "gender": "여성"
+      },
+      "origin": "젝시믹스"
+    },
+    {
+      "itemId": "v07-3496628",
+      "queryId": "v07",
+      "bucket": "G3",
+      "rule": "표기 변형. 원본 질의 기준으로 판정하고 변형 자체로 감점하지 않는다.",
+      "query": "ㅇㄷㄷㅅ",
+      "product": {
+        "title": "3S 긴팔 티 - 블랙 / IA4877",
+        "brand": "아디다스",
+        "price": 51990,
+        "gender": "남성"
+      },
+      "origin": "아디다스"
+    },
+    {
+      "itemId": "a-g2-06-5230944",
+      "queryId": "a-g2-06",
+      "bucket": "G2",
+      "rule": "짧은 키워드·속성. 속성이 모두 확인되면 2, 일부만 맞으면 1.",
+      "query": "스트라이프 티셔츠",
+      "product": {
+        "title": "스트라이프 티셔츠_블랙 스트라이프",
+        "brand": "호노 리포트",
+        "price": 39200,
+        "gender": "공용"
+      }
+    },
+    {
+      "itemId": "v14-4188865",
+      "queryId": "v14",
+      "bucket": "G3",
+      "rule": "표기 변형. 원본 질의 기준으로 판정하고 변형 자체로 감점하지 않는다.",
+      "query": "오버핏",
+      "product": {
+        "title": "[CP] Gorilla 골퍼 오버핏 반팔티 오버핏 반팔티 AST4596 (4 COLOR)",
+        "brand": "앨빈클로",
+        "price": 24900,
+        "gender": "남성"
+      },
+      "origin": "오버 핏"
+    },
+    {
+      "itemId": "a-g2-08-4224085",
+      "queryId": "a-g2-08",
+      "bucket": "G2",
+      "rule": "짧은 키워드·속성. 속성이 모두 확인되면 2, 일부만 맞으면 1.",
+      "query": "레터링 티",
+      "product": {
+        "title": "[팬 그래피티 레터링 로고]코튼 루즈핏 반팔 티셔츠_더스티 민트",
+        "brand": "아스트랄 프로젝션",
+        "price": 15900,
+        "gender": "남성"
+      }
+    },
+    {
+      "itemId": "v04-3449493",
+      "queryId": "v04",
+      "bucket": "G3",
+      "rule": "표기 변형. 원본 질의 기준으로 판정하고 변형 자체로 감점하지 않는다.",
+      "query": "wprtlalrtm",
+      "product": {
+        "title": "젤라 인텐션 스퀘어 크롭탑 옐로우오렌지",
+        "brand": "젝시믹스",
+        "price": 27000,
+        "gender": "여성"
+      },
+      "origin": "젝시믹스"
+    },
+    {
+      "itemId": "v08-3057791",
+      "queryId": "v08",
+      "bucket": "G3",
+      "rule": "표기 변형. 원본 질의 기준으로 판정하고 변형 자체로 감점하지 않는다.",
+      "query": "ㅋㅂㄴ",
+      "product": {
+        "title": "엠블럼 아치 로고 후디 옐로우",
+        "brand": "커버낫",
+        "price": 51000,
+        "gender": "공용"
+      },
+      "origin": "커버낫"
+    },
+    {
+      "itemId": "b17-6246984",
+      "queryId": "b17",
+      "bucket": "G1",
+      "rule": "브랜드 질의. 그 브랜드가 아니면 무조건 0.",
+      "query": "아디다스",
+      "product": {
+        "title": "스케이트보딩 아디다스 코르포 솔루션 후디 KC2260",
+        "brand": "아디다스",
+        "price": 76300,
+        "gender": "남성"
+      }
+    },
+    {
+      "itemId": "a-g2-06-5295788",
+      "queryId": "a-g2-06",
+      "bucket": "G2",
+      "rule": "짧은 키워드·속성. 속성이 모두 확인되면 2, 일부만 맞으면 1.",
+      "query": "스트라이프 티셔츠",
+      "product": {
+        "title": "럭비티셔츠 스트라이프 긴팔 티셔츠 (아이보리)",
+        "brand": "바이서우",
+        "price": 109000,
+        "gender": "여성"
+      }
+    },
+    {
+      "itemId": "a-g2-09-4925418",
+      "queryId": "a-g2-09",
+      "bucket": "G2",
+      "rule": "짧은 키워드·속성. 속성이 모두 확인되면 2, 일부만 맞으면 1.",
+      "query": "포켓 티셔츠",
+      "product": {
+        "title": "그리드 피자맨 X 아워포켓츠 샛별 콜라보 티셔츠(블루)",
+        "brand": "아워포켓츠",
+        "price": 33250,
+        "gender": "공용"
+      }
+    },
+    {
+      "itemId": "a-g2-09-5033221",
+      "queryId": "a-g2-09",
+      "bucket": "G2",
+      "rule": "짧은 키워드·속성. 속성이 모두 확인되면 2, 일부만 맞으면 1.",
+      "query": "포켓 티셔츠",
+      "product": {
+        "title": "유디 포켓 티셔츠 그레이",
+        "brand": "파운드포켓",
+        "price": 46800,
+        "gender": "남성"
+      }
+    },
+    {
+      "itemId": "v14-5673610",
+      "queryId": "v14",
+      "bucket": "G3",
+      "rule": "표기 변형. 원본 질의 기준으로 판정하고 변형 자체로 감점하지 않는다.",
+      "query": "오버핏",
+      "product": {
+        "title": "[2PACK] MELLOW 트랙 오버핏 후드티 SANCTUARY 트랙 오버핏 후드티 2종 패키지",
+        "brand": "앨빈클로",
+        "price": 74800,
+        "gender": "남성"
+      },
+      "origin": "오버 핏"
+    },
+    {
+      "itemId": "v12-4046501",
+      "queryId": "v12",
+      "bucket": "G3",
+      "rule": "표기 변형. 원본 질의 기준으로 판정하고 변형 자체로 감점하지 않는다.",
+      "query": "반팔티",
+      "product": {
+        "title": "[SET]어드벤쳐 트럭커 포켓 반팔티셔츠+무빙 쉐도우 반팔티셔츠 (FST141+FST149)",
+        "brand": "플루크",
+        "price": 30800,
+        "gender": "남성"
+      },
+      "origin": "반팔 티"
+    },
+    {
+      "itemId": "v11-500914",
+      "queryId": "v11",
+      "bucket": "G3",
+      "rule": "표기 변형. 원본 질의 기준으로 판정하고 변형 자체로 감점하지 않는다.",
+      "query": "ㅇㅂㅍ",
+      "product": {
+        "title": "[레이쿠] reiku overfit roll-up short sleeve gray 오버핏 롤업 슬리브",
+        "brand": "레이쿠",
+        "price": 37000,
+        "gender": "남성"
+      },
+      "origin": "오버핏"
+    },
+    {
+      "itemId": "x01-6883761",
+      "queryId": "x01",
+      "bucket": "G3",
+      "rule": "표기 변형. 원본 질의 기준으로 판정하고 변형 자체로 감점하지 않는다.",
+      "query": "ㅁㄴㅇㄹ",
+      "product": {
+        "title": "핀 스트라이프  끈나시_레드 슬리브리스 탑",
+        "brand": "모노에라",
+        "price": 29400,
+        "gender": "여성"
+      }
+    },
+    {
+      "itemId": "v01-6859609",
+      "queryId": "v01",
+      "bucket": "G3",
+      "rule": "표기 변형. 원본 질의 기준으로 판정하고 변형 자체로 감점하지 않는다.",
+      "query": "dkelektm",
+      "product": {
+        "title": "아디다스 Z.N.E. 루즈 핏 티셔츠 KF3823",
+        "brand": "아디다스",
+        "price": 59000,
+        "gender": "남성"
+      },
+      "origin": "아디다스"
+    },
+    {
+      "itemId": "v04-3449526",
+      "queryId": "v04",
+      "bucket": "G3",
+      "rule": "표기 변형. 원본 질의 기준으로 판정하고 변형 자체로 감점하지 않는다.",
+      "query": "wprtlalrtm",
+      "product": {
+        "title": "아이스페더 숏슬리브 크림레몬",
+        "brand": "젝시믹스",
+        "price": 21000,
+        "gender": "여성"
+      },
+      "origin": "젝시믹스"
+    },
+    {
+      "itemId": "v04-3449430",
+      "queryId": "v04",
+      "bucket": "G3",
+      "rule": "표기 변형. 원본 질의 기준으로 판정하고 변형 자체로 감점하지 않는다.",
+      "query": "wprtlalrtm",
+      "product": {
+        "title": "스포티 테리 배색 티셔츠 살몬핑크",
+        "brand": "젝시믹스",
+        "price": 40400,
+        "gender": "여성"
+      },
+      "origin": "젝시믹스"
+    },
+    {
+      "itemId": "v12-3276155",
+      "queryId": "v12",
+      "bucket": "G3",
+      "rule": "표기 변형. 원본 질의 기준으로 판정하고 변형 자체로 감점하지 않는다.",
+      "query": "반팔티",
+      "product": {
+        "title": "[SET] 손더 반팔티셔츠 + 스페이스 반팔티셔츠 (KMST6693+KMST6696)",
+        "brand": "에즈카톤",
+        "price": 39800,
+        "gender": "공용"
+      },
+      "origin": "반팔 티"
+    },
+    {
+      "itemId": "a-g2-09-4925326",
+      "queryId": "a-g2-09",
+      "bucket": "G2",
+      "rule": "짧은 키워드·속성. 속성이 모두 확인되면 2, 일부만 맞으면 1.",
+      "query": "포켓 티셔츠",
+      "product": {
+        "title": "아워포켓츠 시그니처 지구별 티셔츠(Z블랙)",
+        "brand": "아워포켓츠",
+        "price": 17150,
+        "gender": "공용"
+      }
+    },
+    {
+      "itemId": "a-g2-04-4046482",
+      "queryId": "a-g2-04",
+      "bucket": "G2",
+      "rule": "짧은 키워드·속성. 속성이 모두 확인되면 2, 일부만 맞으면 1.",
+      "query": "오버핏 반팔",
+      "product": {
+        "title": "[SET]피그먼트 오버핏 반팔티셔츠+어드벤쳐 폰트 피그먼트 반팔티셔츠 (FST701+FST705)",
+        "brand": "플루크",
+        "price": 38800,
+        "gender": "남성"
+      }
+    },
+    {
+      "itemId": "v01-6121494",
+      "queryId": "v01",
+      "bucket": "G3",
+      "rule": "표기 변형. 원본 질의 기준으로 판정하고 변형 자체로 감점하지 않는다.",
+      "query": "dkelektm",
+      "product": {
+        "title": "아디다스컴뱃스포츠 반팔 티셔츠 트레이닝 S23ATMTS1",
+        "brand": "아디다스 컴뱃 스포츠",
+        "price": 55000,
+        "gender": "남성"
+      },
+      "origin": "아디다스"
+    },
+    {
+      "itemId": "a-g2-09-5030278",
+      "queryId": "a-g2-09",
+      "bucket": "G2",
+      "rule": "짧은 키워드·속성. 속성이 모두 확인되면 2, 일부만 맞으면 1.",
+      "query": "포켓 티셔츠",
+      "product": {
+        "title": "엘에스 포켓 티셔츠 그레이",
+        "brand": "파운드포켓",
+        "price": 62100,
+        "gender": "남성"
+      }
+    },
+    {
+      "itemId": "a-g2-06-6564805",
+      "queryId": "a-g2-06",
+      "bucket": "G2",
+      "rule": "짧은 키워드·속성. 속성이 모두 확인되면 2, 일부만 맞으면 1.",
+      "query": "스트라이프 티셔츠",
+      "product": {
+        "title": "스트라이프 코튼 티셔츠 - 라이트 아이보리 / 블루 스트라이프",
+        "brand": "토리버치",
+        "price": 398000,
+        "gender": "여성"
+      }
+    },
+    {
+      "itemId": "v03-996234",
+      "queryId": "v03",
+      "bucket": "G3",
+      "rule": "표기 변형. 원본 질의 기준으로 판정하고 변형 자체로 감점하지 않는다.",
+      "query": "antlstk tmxosekem",
+      "product": {
+        "title": "크루 넥 긴소매 티셔츠 [블랙]",
+        "brand": "무신사 스탠다드",
+        "price": 18890,
+        "gender": "남성"
+      },
+      "origin": "무신사 스탠다드"
+    },
+    {
+      "itemId": "a-g2-08-3591292",
+      "queryId": "a-g2-08",
+      "bucket": "G2",
+      "rule": "짧은 키워드·속성. 속성이 모두 확인되면 2, 일부만 맞으면 1.",
+      "query": "레터링 티",
+      "product": {
+        "title": "ATTITUDE LETTERING LONG SLEEVE-CHARCOAL(에티튜드 레터링 긴팔티-차콜)",
+        "brand": "오픈 에티튜드",
+        "price": 25200,
+        "gender": "공용"
+      }
+    },
+    {
+      "itemId": "x01-6889291",
+      "queryId": "x01",
+      "bucket": "G3",
+      "rule": "표기 변형. 원본 질의 기준으로 판정하고 변형 자체로 감점하지 않는다.",
+      "query": "ㅁㄴㅇㄹ",
+      "product": {
+        "title": "바이오 스퀘어넥 버튼 슬리브리스 탑_블랙 나시",
+        "brand": "모노에라",
+        "price": 39900,
+        "gender": "여성"
+      }
+    },
+    {
+      "itemId": "b17-6571318",
+      "queryId": "b17",
+      "bucket": "G1",
+      "rule": "브랜드 질의. 그 브랜드가 아니면 무조건 0.",
+      "query": "아디다스",
+      "product": {
+        "title": "아디다스X코카콜라 팀가이스트 26 저지 KY2103",
+        "brand": "아디다스",
+        "price": 129000,
+        "gender": "남성"
+      }
+    },
+    {
+      "itemId": "a-g2-08-4980372",
+      "queryId": "a-g2-08",
+      "bucket": "G2",
+      "rule": "짧은 키워드·속성. 속성이 모두 확인되면 2, 일부만 맞으면 1.",
+      "query": "레터링 티",
+      "product": {
+        "title": "레터링 폰테 레터링 반팔 티셔츠 화이트",
+        "brand": "와키윌리",
+        "price": 44100,
+        "gender": "공용"
+      }
+    },
+    {
+      "itemId": "v01-6571343",
+      "queryId": "v01",
+      "bucket": "G3",
+      "rule": "표기 변형. 원본 질의 기준으로 판정하고 변형 자체로 감점하지 않는다.",
+      "query": "dkelektm",
+      "product": {
+        "title": "아디다스X코카콜라 3-스트라이프 티 KY7558",
+        "brand": "아디다스",
+        "price": 65000,
+        "gender": "여성"
+      },
+      "origin": "아디다스"
+    },
+    {
+      "itemId": "a-g2-08-4650101",
+      "queryId": "a-g2-08",
+      "bucket": "G2",
+      "rule": "짧은 키워드·속성. 속성이 모두 확인되면 2, 일부만 맞으면 1.",
+      "query": "레터링 티",
+      "product": {
+        "title": "원형 레터링 기모 오버핏 후드티 [그레이]",
+        "brand": "비마이티",
+        "price": 48300,
+        "gender": "남성"
+      }
+    },
+    {
+      "itemId": "v11-550020",
+      "queryId": "v11",
+      "bucket": "G3",
+      "rule": "표기 변형. 원본 질의 기준으로 판정하고 변형 자체로 감점하지 않는다.",
+      "query": "ㅇㅂㅍ",
+      "product": {
+        "title": "[20수] 헤비 오버핏 보더 반팔티 레드",
+        "brand": "꼼파뇨",
+        "price": 26000,
+        "gender": "공용"
+      },
+      "origin": "오버핏"
+    },
+    {
+      "itemId": "v08-3097388",
+      "queryId": "v08",
+      "bucket": "G3",
+      "rule": "표기 변형. 원본 질의 기준으로 판정하고 변형 자체로 감점하지 않는다.",
+      "query": "ㅋㅂㄴ",
+      "product": {
+        "title": "C 로고 카라 티셔츠 브라운",
+        "brand": "커버낫",
+        "price": 35400,
+        "gender": "공용"
+      },
+      "origin": "커버낫"
+    },
+    {
+      "itemId": "v14-6508611",
+      "queryId": "v14",
+      "bucket": "G3",
+      "rule": "표기 변형. 원본 질의 기준으로 판정하고 변형 자체로 감점하지 않는다.",
+      "query": "오버핏",
+      "product": {
+        "title": "[2PACK]_C76 치즈케이크 오버핏 반팔+C81 컬러 두들링 오버핏 반팔",
+        "brand": "오실롯",
+        "price": 36800,
+        "gender": "공용"
+      },
+      "origin": "오버 핏"
+    },
+    {
+      "itemId": "a-g2-11-1647219",
+      "queryId": "a-g2-11",
+      "bucket": "G2",
+      "rule": "짧은 키워드·속성. 속성이 모두 확인되면 2, 일부만 맞으면 1.",
+      "query": "그래픽 티",
+      "product": {
+        "title": "DMK_HOODY_98 그래피티 아티스트 데빌몽키 dmk 타투 캐릭터 그래피티 그래픽 디자인 후드티 후디",
+        "brand": "돌돌",
+        "price": 79000,
+        "gender": "남성"
+      }
+    },
+    {
+      "itemId": "v03-996498",
+      "queryId": "v03",
+      "bucket": "G3",
+      "rule": "표기 변형. 원본 질의 기준으로 판정하고 변형 자체로 감점하지 않는다.",
+      "query": "antlstk tmxosekem",
+      "product": {
+        "title": "베이식 크루 넥 티셔츠 [블랙]",
+        "brand": "무신사 스탠다드",
+        "price": 12690,
+        "gender": "남성"
+      },
+      "origin": "무신사 스탠다드"
+    },
+    {
+      "itemId": "v02-5305340",
+      "queryId": "v02",
+      "bucket": "G3",
+      "rule": "표기 변형. 원본 질의 기준으로 판정하고 변형 자체로 감점하지 않는다.",
+      "query": "zjqjskt",
+      "product": {
+        "title": "[커버낫X하이다나] 럭키 씨리얼 로고 티셔츠 Off White",
+        "brand": "커버낫",
+        "price": 41300,
+        "gender": "여성"
+      },
+      "origin": "커버낫"
+    },
+    {
+      "itemId": "b17-6571343",
+      "queryId": "b17",
+      "bucket": "G1",
+      "rule": "브랜드 질의. 그 브랜드가 아니면 무조건 0.",
+      "query": "아디다스",
+      "product": {
+        "title": "아디다스X코카콜라 3-스트라이프 티 KY7558",
+        "brand": "아디다스",
+        "price": 65000,
+        "gender": "여성"
+      }
+    },
+    {
+      "itemId": "v02-5506394",
+      "queryId": "v02",
+      "bucket": "G3",
+      "rule": "표기 변형. 원본 질의 기준으로 판정하고 변형 자체로 감점하지 않는다.",
+      "query": "zjqjskt",
+      "product": {
+        "title": "[커버낫 X 요시고] 플라스틱 스틸 라이프 레이어드 롱슬리브 Off White",
+        "brand": "커버낫",
+        "price": 55200,
+        "gender": "공용"
+      },
+      "origin": "커버낫"
+    },
+    {
+      "itemId": "v03-996233",
+      "queryId": "v03",
+      "bucket": "G3",
+      "rule": "표기 변형. 원본 질의 기준으로 판정하고 변형 자체로 감점하지 않는다.",
+      "query": "antlstk tmxosekem",
+      "product": {
+        "title": "크루 넥 긴소매 티셔츠 [화이트]",
+        "brand": "무신사 스탠다드",
+        "price": 18890,
+        "gender": "남성"
+      },
+      "origin": "무신사 스탠다드"
+    },
+    {
+      "itemId": "b13-4684893",
+      "queryId": "b13",
+      "bucket": "G1",
+      "rule": "브랜드 질의. 그 브랜드가 아니면 무조건 0.",
+      "query": "크림소다랩",
+      "product": {
+        "title": "크림소다랩 스마일 라이트그레이 스웨트 셔츠",
+        "brand": "크림소다랩",
+        "price": 27750,
+        "gender": "공용"
+      }
+    },
+    {
+      "itemId": "v14-4878160",
+      "queryId": "v14",
+      "bucket": "G3",
+      "rule": "표기 변형. 원본 질의 기준으로 판정하고 변형 자체로 감점하지 않는다.",
+      "query": "오버핏",
+      "product": {
+        "title": "[SET] 슈퍼 오버핏 무지 반팔 티셔츠 + 에센셜 오버핏 버뮤다 쇼츠",
+        "brand": "페르메논",
+        "price": 40600,
+        "gender": "남성"
+      },
+      "origin": "오버 핏"
+    },
+    {
+      "itemId": "b13-3342719",
+      "queryId": "b13",
+      "bucket": "G1",
+      "rule": "브랜드 질의. 그 브랜드가 아니면 무조건 0.",
+      "query": "크림소다랩",
+      "product": {
+        "title": "크림소다랩 타이다이 박스 반팔티 화이트 멀티",
+        "brand": "크림소다랩",
+        "price": 20000,
+        "gender": "남성"
+      }
+    },
+    {
+      "itemId": "a-g2-08-4651382",
+      "queryId": "a-g2-08",
+      "bucket": "G2",
+      "rule": "짧은 키워드·속성. 속성이 모두 확인되면 2, 일부만 맞으면 1.",
+      "query": "레터링 티",
+      "product": {
+        "title": "낙서 레터링 기모 오버핏 후드티 [네이비]",
+        "brand": "비마이티",
+        "price": 43400,
+        "gender": "남성"
+      }
+    },
+    {
+      "itemId": "v08-3132090",
+      "queryId": "v08",
+      "bucket": "G3",
+      "rule": "표기 변형. 원본 질의 기준으로 판정하고 변형 자체로 감점하지 않는다.",
+      "query": "ㅋㅂㄴ",
+      "product": {
+        "title": "우븐 믹스 티셔츠 화이트",
+        "brand": "커버낫",
+        "price": 45500,
+        "gender": "공용"
+      },
+      "origin": "커버낫"
+    },
+    {
+      "itemId": "v02-5506392",
+      "queryId": "v02",
+      "bucket": "G3",
+      "rule": "표기 변형. 원본 질의 기준으로 판정하고 변형 자체로 감점하지 않는다.",
+      "query": "zjqjskt",
+      "product": {
+        "title": "[커버낫 X 요시고] 온 더 루트 레이어드 롱슬리브 올리브",
+        "brand": "커버낫",
+        "price": 55200,
+        "gender": "공용"
+      },
+      "origin": "커버낫"
+    },
+    {
+      "itemId": "v12-4188865",
+      "queryId": "v12",
+      "bucket": "G3",
+      "rule": "표기 변형. 원본 질의 기준으로 판정하고 변형 자체로 감점하지 않는다.",
+      "query": "반팔티",
+      "product": {
+        "title": "[CP] Gorilla 골퍼 오버핏 반팔티 오버핏 반팔티 AST4596 (4 COLOR)",
+        "brand": "앨빈클로",
+        "price": 24900,
+        "gender": "남성"
+      },
+      "origin": "반팔 티"
+    },
+    {
+      "itemId": "x01-6880732",
+      "queryId": "x01",
+      "bucket": "G3",
+      "rule": "표기 변형. 원본 질의 기준으로 판정하고 변형 자체로 감점하지 않는다.",
+      "query": "ㅁㄴㅇㄹ",
+      "product": {
+        "title": "써니데이 핫픽스 끈나시_화이트",
+        "brand": "모노에라",
+        "price": 30800,
+        "gender": "여성"
+      }
+    },
+    {
+      "itemId": "b18-5506399",
+      "queryId": "b18",
+      "bucket": "G1",
+      "rule": "브랜드 질의. 그 브랜드가 아니면 무조건 0.",
+      "query": "커버낫",
+      "product": {
+        "title": "[커버낫 X 요시고] 미드나잇 시티 폴라로이드 그래픽 후디 Dark Navy",
+        "brand": "커버낫",
+        "price": 69300,
+        "gender": "공용"
+      }
+    },
+    {
+      "itemId": "b17-6222078",
+      "queryId": "b17",
+      "bucket": "G1",
+      "rule": "브랜드 질의. 그 브랜드가 아니면 무조건 0.",
+      "query": "아디다스",
+      "product": {
+        "title": "스케이트보딩 아디다스 코르포 솔루션 후디 KC2261",
+        "brand": "아디다스",
+        "price": 109000,
+        "gender": "남성"
+      }
+    },
+    {
+      "itemId": "b13-3348691",
+      "queryId": "b13",
+      "bucket": "G1",
+      "rule": "브랜드 질의. 그 브랜드가 아니면 무조건 0.",
+      "query": "크림소다랩",
+      "product": {
+        "title": "FC 크림소다랩 오버핏 슬리브리스 화이트",
+        "brand": "크림소다랩",
+        "price": 22620,
+        "gender": "공용"
+      }
+    },
+    {
+      "itemId": "v12-4120400",
+      "queryId": "v12",
+      "bucket": "G3",
+      "rule": "표기 변형. 원본 질의 기준으로 판정하고 변형 자체로 감점하지 않는다.",
+      "query": "반팔티",
+      "product": {
+        "title": "[SET] 듀어러블 헤비 메테오 투플라이 반팔티+포켓 반팔티 (KHST1474+KHST1475)",
+        "brand": "페플",
+        "price": 42900,
+        "gender": "남성"
+      },
+      "origin": "반팔 티"
+    },
+    {
+      "itemId": "a-g2-09-4925331",
+      "queryId": "a-g2-09",
+      "bucket": "G2",
+      "rule": "짧은 키워드·속성. 속성이 모두 확인되면 2, 일부만 맞으면 1.",
+      "query": "포켓 티셔츠",
+      "product": {
+        "title": "아워포켓츠 빅 지구별 티셔츠(블루)",
+        "brand": "아워포켓츠",
+        "price": 27650,
+        "gender": "공용"
+      }
+    },
+    {
+      "itemId": "b18-5305344",
+      "queryId": "b18",
+      "bucket": "G1",
+      "rule": "브랜드 질의. 그 브랜드가 아니면 무조건 0.",
+      "query": "커버낫",
+      "product": {
+        "title": "[커버낫X하이다나] 럭키 씨리얼 링거 티셔츠 Off White",
+        "brand": "커버낫",
+        "price": 35400,
+        "gender": "남성"
+      }
+    },
+    {
+      "itemId": "a-g2-04-5265754",
+      "queryId": "a-g2-04",
+      "bucket": "G2",
+      "rule": "짧은 키워드·속성. 속성이 모두 확인되면 2, 일부만 맞으면 1.",
+      "query": "오버핏 반팔",
+      "product": {
+        "title": "프리미엄 반팔 블랙 빅로고 오버핏 반팔티",
+        "brand": "저스트행",
+        "price": 43020,
+        "gender": "남성"
+      }
+    },
+    {
+      "itemId": "v11-540421",
+      "queryId": "v11",
+      "bucket": "G3",
+      "rule": "표기 변형. 원본 질의 기준으로 판정하고 변형 자체로 감점하지 않는다.",
+      "query": "ㅇㅂㅍ",
+      "product": {
+        "title": "오리지널 로고 오버핏 반팔티 (RL001 OG LOGO TEE) - WHITE",
+        "brand": "로얄라이프",
+        "price": 25600,
+        "gender": "공용"
+      },
+      "origin": "오버핏"
+    },
+    {
+      "itemId": "b13-3205516",
+      "queryId": "b13",
+      "bucket": "G1",
+      "rule": "브랜드 질의. 그 브랜드가 아니면 무조건 0.",
+      "query": "크림소다랩",
+      "product": {
+        "title": "FC 크림소다랩 반팔티 블랙 화이트",
+        "brand": "크림소다랩",
+        "price": 22680,
+        "gender": "남성"
+      }
+    },
+    {
+      "itemId": "v04-3449525",
+      "queryId": "v04",
+      "bucket": "G3",
+      "rule": "표기 변형. 원본 질의 기준으로 판정하고 변형 자체로 감점하지 않는다.",
+      "query": "wprtlalrtm",
+      "product": {
+        "title": "아이스페더 숏슬리브 트로피칼핑크",
+        "brand": "젝시믹스",
+        "price": 21000,
+        "gender": "여성"
+      },
+      "origin": "젝시믹스"
+    },
+    {
+      "itemId": "b13-3342746",
+      "queryId": "b13",
+      "bucket": "G1",
+      "rule": "브랜드 질의. 그 브랜드가 아니면 무조건 0.",
+      "query": "크림소다랩",
+      "product": {
+        "title": "크림소다랩 페이즐리 박스 반팔티 화이트 블랙",
+        "brand": "크림소다랩",
+        "price": 22000,
+        "gender": "공용"
+      }
+    },
+    {
+      "itemId": "v03-996235",
+      "queryId": "v03",
+      "bucket": "G3",
+      "rule": "표기 변형. 원본 질의 기준으로 판정하고 변형 자체로 감점하지 않는다.",
+      "query": "antlstk tmxosekem",
+      "product": {
+        "title": "크루 넥 긴소매 티셔츠 [오트밀]",
+        "brand": "무신사 스탠다드",
+        "price": 18890,
+        "gender": "남성"
+      },
+      "origin": "무신사 스탠다드"
+    },
+    {
+      "itemId": "v07-3791164",
+      "queryId": "v07",
+      "bucket": "G3",
+      "rule": "표기 변형. 원본 질의 기준으로 판정하고 변형 자체로 감점하지 않는다.",
+      "query": "ㅇㄷㄷㅅ",
+      "product": {
+        "title": "3S 브라탑 - 화이트 / IN8365",
+        "brand": "아디다스",
+        "price": 21990,
+        "gender": "여성"
+      },
+      "origin": "아디다스"
+    },
+    {
+      "itemId": "a-g2-04-5519923",
+      "queryId": "a-g2-04",
+      "bucket": "G2",
+      "rule": "짧은 키워드·속성. 속성이 모두 확인되면 2, 일부만 맞으면 1.",
+      "query": "오버핏 반팔",
+      "product": {
+        "title": "시그니처 그래피티 오버핏 반팔 기능성 짐웨어 헬스 러닝 운동복 반팔 M 블랙2",
+        "brand": "레이지비",
+        "price": 34900,
+        "gender": "공용"
+      }
+    },
+    {
+      "itemId": "a-g2-11-1643042",
+      "queryId": "a-g2-11",
+      "bucket": "G2",
+      "rule": "짧은 키워드·속성. 속성이 모두 확인되면 2, 일부만 맞으면 1.",
+      "query": "그래픽 티",
+      "product": {
+        "title": "DMK_HOODY_90 그래피티 아티스트 데빌몽키 dmk 타투 캐릭터 그래피티 그래픽 디자인 후드티 후디",
+        "brand": "돌돌",
+        "price": 76000,
+        "gender": "남성"
+      }
+    },
+    {
+      "itemId": "a-g2-11-1652977",
+      "queryId": "a-g2-11",
+      "bucket": "G2",
+      "rule": "짧은 키워드·속성. 속성이 모두 확인되면 2, 일부만 맞으면 1.",
+      "query": "그래픽 티",
+      "product": {
+        "title": "DMK_HOODY_99 그래피티 아티스트 데빌몽키 dmk 타투 캐릭터 그래피티 그래픽 디자인 후드티 후디",
+        "brand": "돌돌",
+        "price": 79000,
+        "gender": "남성"
+      }
+    },
+    {
+      "itemId": "v03-996238",
+      "queryId": "v03",
+      "bucket": "G3",
+      "rule": "표기 변형. 원본 질의 기준으로 판정하고 변형 자체로 감점하지 않는다.",
+      "query": "antlstk tmxosekem",
+      "product": {
+        "title": "크루 넥 긴소매 티셔츠 [카키]",
+        "brand": "무신사 스탠다드",
+        "price": 12790,
+        "gender": "남성"
+      },
+      "origin": "무신사 스탠다드"
+    },
+    {
+      "itemId": "a-g2-09-4925330",
+      "queryId": "a-g2-09",
+      "bucket": "G2",
+      "rule": "짧은 키워드·속성. 속성이 모두 확인되면 2, 일부만 맞으면 1.",
+      "query": "포켓 티셔츠",
+      "product": {
+        "title": "아워포켓츠 빅 지구별 티셔츠(화이트)",
+        "brand": "아워포켓츠",
+        "price": 27650,
+        "gender": "공용"
+      }
+    },
+    {
+      "itemId": "v14-5073443",
+      "queryId": "v14",
+      "bucket": "G3",
+      "rule": "표기 변형. 원본 질의 기준으로 판정하고 변형 자체로 감점하지 않는다.",
+      "query": "오버핏",
+      "product": {
+        "title": "[2PACK] 오버핏 크루넥 로고 반팔 티셔츠 & 크루넥 오버핏 유니버셜 티셔츠",
+        "brand": "블론드나인",
+        "price": 32600,
+        "gender": "공용"
+      },
+      "origin": "오버 핏"
+    },
+    {
+      "itemId": "b13-4684904",
+      "queryId": "b13",
+      "bucket": "G1",
+      "rule": "브랜드 질의. 그 브랜드가 아니면 무조건 0.",
+      "query": "크림소다랩",
+      "product": {
+        "title": "크림소다랩 스마일 오트밀 스웨트 셔츠",
+        "brand": "크림소다랩",
+        "price": 27750,
+        "gender": "공용"
+      }
+    },
+    {
+      "itemId": "a-g2-06-6517070",
+      "queryId": "a-g2-06",
+      "bucket": "G2",
+      "rule": "짧은 키워드·속성. 속성이 모두 확인되면 2, 일부만 맞으면 1.",
+      "query": "스트라이프 티셔츠",
+      "product": {
+        "title": "릴렉스드 하프 스트라이프 스트링 티셔츠 (스트라이프 화이트)",
+        "brand": "해브해드",
+        "price": 48300,
+        "gender": "남성"
+      }
+    },
+    {
+      "itemId": "v08-3132089",
+      "queryId": "v08",
+      "bucket": "G3",
+      "rule": "표기 변형. 원본 질의 기준으로 판정하고 변형 자체로 감점하지 않는다.",
+      "query": "ㅋㅂㄴ",
+      "product": {
+        "title": "우븐 믹스 티셔츠 블랙",
+        "brand": "커버낫",
+        "price": 45500,
+        "gender": "공용"
+      },
+      "origin": "커버낫"
+    },
+    {
+      "itemId": "a-g2-04-5516656",
+      "queryId": "a-g2-04",
+      "bucket": "G2",
+      "rule": "짧은 키워드·속성. 속성이 모두 확인되면 2, 일부만 맞으면 1.",
+      "query": "오버핏 반팔",
+      "product": {
+        "title": "시그니처 그래피티 오버핏 반팔 기능성 짐웨어 헬스 러닝 운동복 반팔 M 화이트",
+        "brand": "레이지비",
+        "price": 34900,
+        "gender": "공용"
+      }
+    },
+    {
+      "itemId": "a-g2-04-3111230",
+      "queryId": "a-g2-04",
+      "bucket": "G2",
+      "rule": "짧은 키워드·속성. 속성이 모두 확인되면 2, 일부만 맞으면 1.",
+      "query": "오버핏 반팔",
+      "product": {
+        "title": "[2 PACK] 엠버 반팔티 + 아이비 오버핏 반팔티 세트",
+        "brand": "녹족",
+        "price": 25900,
+        "gender": "여성"
+      }
+    },
+    {
+      "itemId": "v08-3060056",
+      "queryId": "v08",
+      "bucket": "G3",
+      "rule": "표기 변형. 원본 질의 기준으로 판정하고 변형 자체로 감점하지 않는다.",
+      "query": "ㅋㅂㄴ",
+      "product": {
+        "title": "피케 웨일 로고 롱슬리브 화이트",
+        "brand": "커버낫",
+        "price": 49770,
+        "gender": "공용"
+      },
+      "origin": "커버낫"
+    },
+    {
+      "itemId": "v12-6313392",
+      "queryId": "v12",
+      "bucket": "G3",
+      "rule": "표기 변형. 원본 질의 기준으로 판정하고 변형 자체로 감점하지 않는다.",
+      "query": "반팔티",
+      "product": {
+        "title": "[2PACK] 웨이드 반팔티셔츠 + 썬커브 반팔티셔츠 (JIST7860+JIST7863)",
+        "brand": "더블유브이프로젝트",
+        "price": 35900,
+        "gender": "남성"
+      },
+      "origin": "반팔 티"
+    },
+    {
+      "itemId": "a-g2-04-3306615",
+      "queryId": "a-g2-04",
+      "bucket": "G2",
+      "rule": "짧은 키워드·속성. 속성이 모두 확인되면 2, 일부만 맞으면 1.",
+      "query": "오버핏 반팔",
+      "product": {
+        "title": "[SETUP] 애슬레틱 오버핏 반팔티셔츠 & 오버핏 하프팬츠",
+        "brand": "라이크더모스트",
+        "price": 33950,
+        "gender": "공용"
+      }
+    },
+    {
+      "itemId": "a-g2-08-4651025",
+      "queryId": "a-g2-08",
+      "bucket": "G2",
+      "rule": "짧은 키워드·속성. 속성이 모두 확인되면 2, 일부만 맞으면 1.",
+      "query": "레터링 티",
+      "product": {
+        "title": "낙서 레터링 기모 오버핏 후드티 [그레이]",
+        "brand": "비마이티",
+        "price": 43400,
+        "gender": "남성"
+      }
+    },
+    {
+      "itemId": "b17-6928934",
+      "queryId": "b17",
+      "bucket": "G1",
+      "rule": "브랜드 질의. 그 브랜드가 아니면 무조건 0.",
+      "query": "아디다스",
+      "product": {
+        "title": "아디다스 Z.N.E. 루즈 핏 티셔츠 KF3818",
+        "brand": "아디다스",
+        "price": 59000,
+        "gender": "남성"
+      }
+    },
+    {
+      "itemId": "a-g2-06-5295818",
+      "queryId": "a-g2-06",
+      "bucket": "G2",
+      "rule": "짧은 키워드·속성. 속성이 모두 확인되면 2, 일부만 맞으면 1.",
+      "query": "스트라이프 티셔츠",
+      "product": {
+        "title": "럭비티셔츠 스트라이프 긴팔 티셔츠 (그린)",
+        "brand": "바이서우",
+        "price": 109000,
+        "gender": "여성"
+      }
+    },
+    {
+      "itemId": "v03-996187",
+      "queryId": "v03",
+      "bucket": "G3",
+      "rule": "표기 변형. 원본 질의 기준으로 판정하고 변형 자체로 감점하지 않는다.",
+      "query": "antlstk tmxosekem",
+      "product": {
+        "title": "릴렉스 핏 크루 넥 티셔츠 [블루]",
+        "brand": "무신사 스탠다드",
+        "price": 11090,
+        "gender": "남성"
+      },
+      "origin": "무신사 스탠다드"
+    },
+    {
+      "itemId": "v07-3545301",
+      "queryId": "v07",
+      "bucket": "G3",
+      "rule": "표기 변형. 원본 질의 기준으로 판정하고 변형 자체로 감점하지 않는다.",
+      "query": "ㅇㄷㄷㅅ",
+      "product": {
+        "title": "아가일 플러피 티 - 블루:그린 / IL2444",
+        "brand": "아디다스",
+        "price": 19990,
+        "gender": "여성"
+      },
+      "origin": "아디다스"
+    },
+    {
+      "itemId": "a-g2-06-6517083",
+      "queryId": "a-g2-06",
+      "bucket": "G2",
+      "rule": "짧은 키워드·속성. 속성이 모두 확인되면 2, 일부만 맞으면 1.",
+      "query": "스트라이프 티셔츠",
+      "product": {
+        "title": "릴렉스드 하프 스트라이프 스트링 티셔츠 (스트라이프 네이비)",
+        "brand": "해브해드",
+        "price": 48300,
+        "gender": "남성"
+      }
+    },
+    {
+      "itemId": "a-g2-06-4901932",
+      "queryId": "a-g2-06",
+      "bucket": "G2",
+      "rule": "짧은 키워드·속성. 속성이 모두 확인되면 2, 일부만 맞으면 1.",
+      "query": "스트라이프 티셔츠",
+      "product": {
+        "title": "스트라이프 하프 슬리브 티셔츠 / 카키 스트라이프",
+        "brand": "아이에이치알",
+        "price": 71100,
+        "gender": "여성"
+      }
+    },
+    {
+      "itemId": "v07-3817473",
+      "queryId": "v07",
+      "bucket": "G3",
+      "rule": "표기 변형. 원본 질의 기준으로 판정하고 변형 자체로 감점하지 않는다.",
+      "query": "ㅇㄷㄷㅅ",
+      "product": {
+        "title": "AOP 3S 크롭 탑 - 원더클레이 / IY0779",
+        "brand": "아디다스",
+        "price": 23990,
+        "gender": "여성"
+      },
+      "origin": "아디다스"
+    },
+    {
+      "itemId": "a-g2-11-1640201",
+      "queryId": "a-g2-11",
+      "bucket": "G2",
+      "rule": "짧은 키워드·속성. 속성이 모두 확인되면 2, 일부만 맞으면 1.",
+      "query": "그래픽 티",
+      "product": {
+        "title": "DMK_HOODY_89 그래피티 아티스트 데빌몽키 dmk 타투 캐릭터 그래피티 그래픽 디자인 후드티 후디",
+        "brand": "돌돌",
+        "price": 76000,
+        "gender": "남성"
+      }
+    },
+    {
+      "itemId": "b17-6571329",
+      "queryId": "b17",
+      "bucket": "G1",
+      "rule": "브랜드 질의. 그 브랜드가 아니면 무조건 0.",
+      "query": "아디다스",
+      "product": {
+        "title": "아디다스X코카콜라 크롭 저지 KY7571",
+        "brand": "아디다스",
+        "price": 69000,
+        "gender": "여성"
+      }
+    },
+    {
+      "itemId": "b18-5305342",
+      "queryId": "b18",
+      "bucket": "G1",
+      "rule": "브랜드 질의. 그 브랜드가 아니면 무조건 0.",
+      "query": "커버낫",
+      "product": {
+        "title": "[커버낫X하이다나] 럭키 씨리얼 링거 티셔츠 Sky Blue",
+        "brand": "커버낫",
+        "price": 35400,
+        "gender": "여성"
+      }
+    },
+    {
+      "itemId": "b17-6859609",
+      "queryId": "b17",
+      "bucket": "G1",
+      "rule": "브랜드 질의. 그 브랜드가 아니면 무조건 0.",
+      "query": "아디다스",
+      "product": {
+        "title": "아디다스 Z.N.E. 루즈 핏 티셔츠 KF3823",
+        "brand": "아디다스",
+        "price": 59000,
+        "gender": "남성"
+      }
+    },
+    {
+      "itemId": "b13-3382117",
+      "queryId": "b13",
+      "bucket": "G1",
+      "rule": "브랜드 질의. 그 브랜드가 아니면 무조건 0.",
+      "query": "크림소다랩",
+      "product": {
+        "title": "FC 크림소다랩 오버핏 슬리브리스 라이트 그레이",
+        "brand": "크림소다랩",
+        "price": 22620,
+        "gender": "공용"
+      }
+    },
+    {
+      "itemId": "v14-4878145",
+      "queryId": "v14",
+      "bucket": "G3",
+      "rule": "표기 변형. 원본 질의 기준으로 판정하고 변형 자체로 감점하지 않는다.",
+      "query": "오버핏",
+      "product": {
+        "title": "[SET] 에센셜 오버핏 숏 슬리브  + 에센셜 오버핏 버뮤다 쇼츠",
+        "brand": "페르메논",
+        "price": 46400,
+        "gender": "남성"
+      },
+      "origin": "오버 핏"
+    },
+    {
+      "itemId": "a-g2-09-4925333",
+      "queryId": "a-g2-09",
+      "bucket": "G2",
+      "rule": "짧은 키워드·속성. 속성이 모두 확인되면 2, 일부만 맞으면 1.",
+      "query": "포켓 티셔츠",
+      "product": {
+        "title": "아워포켓츠 시그니처 샛별 티셔츠(화이트)",
+        "brand": "아워포켓츠",
+        "price": 20650,
+        "gender": "공용"
+      }
+    },
+    {
+      "itemId": "x01-6852471",
+      "queryId": "x01",
+      "bucket": "G3",
+      "rule": "표기 변형. 원본 질의 기준으로 판정하고 변형 자체로 감점하지 않는다.",
+      "query": "ㅁㄴㅇㄹ",
+      "product": {
+        "title": "피그먼트 워싱 코스탈 보트넥 티셔츠_블랙 차콜",
+        "brand": "모노에라",
+        "price": 47600,
+        "gender": "여성"
+      }
+    },
+    {
+      "itemId": "a-g2-11-1645005",
+      "queryId": "a-g2-11",
+      "bucket": "G2",
+      "rule": "짧은 키워드·속성. 속성이 모두 확인되면 2, 일부만 맞으면 1.",
+      "query": "그래픽 티",
+      "product": {
+        "title": "DMK_HOODY_94 그래피티 아티스트 데빌몽키 dmk 타투 캐릭터 그래피티 그래픽 디자인 후드티 후디",
+        "brand": "돌돌",
+        "price": 79000,
+        "gender": "남성"
+      }
+    },
+    {
+      "itemId": "b13-4684331",
+      "queryId": "b13",
+      "bucket": "G1",
+      "rule": "브랜드 질의. 그 브랜드가 아니면 무조건 0.",
+      "query": "크림소다랩",
+      "product": {
+        "title": "크림소다랩 스마일 블랙 스웨트 셔츠",
+        "brand": "크림소다랩",
+        "price": 27750,
+        "gender": "공용"
+      }
+    },
+    {
+      "itemId": "v03-996497",
+      "queryId": "v03",
+      "bucket": "G3",
+      "rule": "표기 변형. 원본 질의 기준으로 판정하고 변형 자체로 감점하지 않는다.",
+      "query": "antlstk tmxosekem",
+      "product": {
+        "title": "베이식 크루 넥 티셔츠 [화이트]",
+        "brand": "무신사 스탠다드",
+        "price": 12690,
+        "gender": "남성"
+      },
+      "origin": "무신사 스탠다드"
+    },
+    {
+      "itemId": "v02-5506397",
+      "queryId": "v02",
+      "bucket": "G3",
+      "rule": "표기 변형. 원본 질의 기준으로 판정하고 변형 자체로 감점하지 않는다.",
+      "query": "zjqjskt",
+      "product": {
+        "title": "[커버낫 X 요시고] 벌룬 페스티벌 링거 롱슬리브 Ivory",
+        "brand": "커버낫",
+        "price": 55200,
+        "gender": "공용"
+      },
+      "origin": "커버낫"
+    },
+    {
+      "itemId": "v11-489549",
+      "queryId": "v11",
+      "bucket": "G3",
+      "rule": "표기 변형. 원본 질의 기준으로 판정하고 변형 자체로 감점하지 않는다.",
+      "query": "ㅇㅂㅍ",
+      "product": {
+        "title": "[한량] HANRYANG HOODIE OVER FIT BLACK 쭈리 오버핏 무지 후드티 후디",
+        "brand": "한량 컬렉티브",
+        "price": 57000,
+        "gender": "남성"
+      },
+      "origin": "오버핏"
+    },
+    {
+      "itemId": "a-g2-04-5519927",
+      "queryId": "a-g2-04",
+      "bucket": "G2",
+      "rule": "짧은 키워드·속성. 속성이 모두 확인되면 2, 일부만 맞으면 1.",
+      "query": "오버핏 반팔",
+      "product": {
+        "title": "시그니처 그래피티 오버핏 반팔 기능성 짐웨어 헬스 러닝 운동복 반팔 W 블랙",
+        "brand": "레이지비",
+        "price": 30100,
+        "gender": "공용"
+      }
+    },
+    {
+      "itemId": "a-g2-06-5230940",
+      "queryId": "a-g2-06",
+      "bucket": "G2",
+      "rule": "짧은 키워드·속성. 속성이 모두 확인되면 2, 일부만 맞으면 1.",
+      "query": "스트라이프 티셔츠",
+      "product": {
+        "title": "스트라이프 티셔츠_블루 스트라이프",
+        "brand": "호노 리포트",
+        "price": 39200,
+        "gender": "공용"
+      }
+    },
+    {
+      "itemId": "v03-996184",
+      "queryId": "v03",
+      "bucket": "G3",
+      "rule": "표기 변형. 원본 질의 기준으로 판정하고 변형 자체로 감점하지 않는다.",
+      "query": "antlstk tmxosekem",
+      "product": {
+        "title": "릴렉스 핏 크루 넥 티셔츠 [베이지]",
+        "brand": "무신사 스탠다드",
+        "price": 10290,
+        "gender": "남성"
+      },
+      "origin": "무신사 스탠다드"
+    },
+    {
+      "itemId": "a-g2-04-5519916",
+      "queryId": "a-g2-04",
+      "bucket": "G2",
+      "rule": "짧은 키워드·속성. 속성이 모두 확인되면 2, 일부만 맞으면 1.",
+      "query": "오버핏 반팔",
+      "product": {
+        "title": "시그니처 그래피티 오버핏 반팔 기능성 짐웨어 헬스 러닝 운동복 반팔 W 블랙2",
+        "brand": "레이지비",
+        "price": 34900,
+        "gender": "공용"
+      }
+    },
+    {
+      "itemId": "v01-6571314",
+      "queryId": "v01",
+      "bucket": "G3",
+      "rule": "표기 변형. 원본 질의 기준으로 판정하고 변형 자체로 감점하지 않는다.",
+      "query": "dkelektm",
+      "product": {
+        "title": "아디다스X코카콜라 팀가이스트 26 저지 KY2104",
+        "brand": "아디다스",
+        "price": 129000,
+        "gender": "남성"
+      },
+      "origin": "아디다스"
+    },
+    {
+      "itemId": "b17-6584336",
+      "queryId": "b17",
+      "bucket": "G1",
+      "rule": "브랜드 질의. 그 브랜드가 아니면 무조건 0.",
+      "query": "아디다스",
+      "product": {
+        "title": "아디다스X코카콜라 클래식 스포츠 매쉬 업 저지 KY2106",
+        "brand": "아디다스",
+        "price": 129000,
+        "gender": "남성"
+      }
+    },
+    {
+      "itemId": "a-g2-08-4478477",
+      "queryId": "a-g2-08",
+      "bucket": "G2",
+      "rule": "짧은 키워드·속성. 속성이 모두 확인되면 2, 일부만 맞으면 1.",
+      "query": "레터링 티",
+      "product": {
+        "title": "티글레이크 레터링 오버핏 기모 후드티셔츠 블랙",
+        "brand": "티글레이크",
+        "price": 32900,
+        "gender": "남성"
+      }
+    },
+    {
+      "itemId": "a-g2-06-5264765",
+      "queryId": "a-g2-06",
+      "bucket": "G2",
+      "rule": "짧은 키워드·속성. 속성이 모두 확인되면 2, 일부만 맞으면 1.",
+      "query": "스트라이프 티셔츠",
+      "product": {
+        "title": "스트라이프 티셔츠_그레이 스트라이프",
+        "brand": "호노 리포트",
+        "price": 39200,
+        "gender": "공용"
+      }
+    },
+    {
+      "itemId": "a-g2-11-1645006",
+      "queryId": "a-g2-11",
+      "bucket": "G2",
+      "rule": "짧은 키워드·속성. 속성이 모두 확인되면 2, 일부만 맞으면 1.",
+      "query": "그래픽 티",
+      "product": {
+        "title": "DMK_HOODY_95 그래피티 아티스트 데빌몽키 dmk 타투 캐릭터 그래피티 그래픽 디자인 후드티 후디",
+        "brand": "돌돌",
+        "price": 79000,
+        "gender": "남성"
+      }
+    },
+    {
+      "itemId": "a-g2-08-5401757",
+      "queryId": "a-g2-08",
+      "bucket": "G2",
+      "rule": "짧은 키워드·속성. 속성이 모두 확인되면 2, 일부만 맞으면 1.",
+      "query": "레터링 티",
+      "product": {
+        "title": "핸드레터링 소매 시보리 긴팔티 [블랙]",
+        "brand": "비마이티",
+        "price": 39200,
+        "gender": "남성"
+      }
+    },
+    {
+      "itemId": "a-g2-09-4925329",
+      "queryId": "a-g2-09",
+      "bucket": "G2",
+      "rule": "짧은 키워드·속성. 속성이 모두 확인되면 2, 일부만 맞으면 1.",
+      "query": "포켓 티셔츠",
+      "product": {
+        "title": "아워포켓츠 시그니처 로고 티셔츠(화이트)",
+        "brand": "아워포켓츠",
+        "price": 24150,
+        "gender": "공용"
+      }
+    },
+    {
+      "itemId": "b13-3342711",
+      "queryId": "b13",
+      "bucket": "G1",
+      "rule": "브랜드 질의. 그 브랜드가 아니면 무조건 0.",
+      "query": "크림소다랩",
+      "product": {
+        "title": "크림소다랩 타이다이 박스 반팔티 화이트 블루",
+        "brand": "크림소다랩",
+        "price": 22000,
+        "gender": "남성"
+      }
+    },
+    {
+      "itemId": "v03-996499",
+      "queryId": "v03",
+      "bucket": "G3",
+      "rule": "표기 변형. 원본 질의 기준으로 판정하고 변형 자체로 감점하지 않는다.",
+      "query": "antlstk tmxosekem",
+      "product": {
+        "title": "베이식 크루 넥 티셔츠 [오트밀]",
+        "brand": "무신사 스탠다드",
+        "price": 11090,
+        "gender": "남성"
+      },
+      "origin": "무신사 스탠다드"
+    },
+    {
+      "itemId": "b17-6193424",
+      "queryId": "b17",
+      "bucket": "G1",
+      "rule": "브랜드 질의. 그 브랜드가 아니면 무조건 0.",
+      "query": "아디다스",
+      "product": {
+        "title": "아디다스 헤리티지 그래픽 티셔츠 KB9443",
+        "brand": "아디다스",
+        "price": 31500,
+        "gender": "남성"
+      }
+    },
+    {
+      "itemId": "v07-3870366",
+      "queryId": "v07",
+      "bucket": "G3",
+      "rule": "표기 변형. 원본 질의 기준으로 판정하고 변형 자체로 감점하지 않는다.",
+      "query": "ㅇㄷㄷㅅ",
+      "product": {
+        "title": "3S 새틴 긴팔 티 - 화이트:블루 / IR6100",
+        "brand": "아디다스",
+        "price": 70990,
+        "gender": "여성"
+      },
+      "origin": "아디다스"
+    },
+    {
+      "itemId": "a-g2-04-4878160",
+      "queryId": "a-g2-04",
+      "bucket": "G2",
+      "rule": "짧은 키워드·속성. 속성이 모두 확인되면 2, 일부만 맞으면 1.",
+      "query": "오버핏 반팔",
+      "product": {
+        "title": "[SET] 슈퍼 오버핏 무지 반팔 티셔츠 + 에센셜 오버핏 버뮤다 쇼츠",
+        "brand": "페르메논",
+        "price": 40600,
+        "gender": "남성"
+      }
+    },
+    {
+      "itemId": "x01-6880739",
+      "queryId": "x01",
+      "bucket": "G3",
+      "rule": "표기 변형. 원본 질의 기준으로 판정하고 변형 자체로 감점하지 않는다.",
+      "query": "ㅁㄴㅇㄹ",
+      "product": {
+        "title": "스퀘어넥 펀칭 니트 나시_핑크 슬리브리스",
+        "brand": "모노에라",
+        "price": 34300,
+        "gender": "여성"
+      }
+    },
+    {
+      "itemId": "a-g2-06-6202723",
+      "queryId": "a-g2-06",
+      "bucket": "G2",
+      "rule": "짧은 키워드·속성. 속성이 모두 확인되면 2, 일부만 맞으면 1.",
+      "query": "스트라이프 티셔츠",
+      "product": {
+        "title": "브리즈 스트라이프 티셔츠 (블루 스트라이프)",
+        "brand": "모우트",
+        "price": 36480,
+        "gender": "여성"
+      }
+    },
+    {
+      "itemId": "a-g2-08-4651327",
+      "queryId": "a-g2-08",
+      "bucket": "G2",
+      "rule": "짧은 키워드·속성. 속성이 모두 확인되면 2, 일부만 맞으면 1.",
+      "query": "레터링 티",
+      "product": {
+        "title": "낙서 레터링 기모 오버핏 후드티 [블랙]",
+        "brand": "비마이티",
+        "price": 43400,
+        "gender": "남성"
+      }
+    },
+    {
+      "itemId": "v04-3449446",
+      "queryId": "v04",
+      "bucket": "G3",
+      "rule": "표기 변형. 원본 질의 기준으로 판정하고 변형 자체로 감점하지 않는다.",
+      "query": "wprtlalrtm",
+      "product": {
+        "title": "모크넥 핑거홀 베이직 티셔츠 라일락브리즈",
+        "brand": "젝시믹스",
+        "price": 22100,
+        "gender": "여성"
+      },
+      "origin": "젝시믹스"
+    },
+    {
+      "itemId": "v08-2783058",
+      "queryId": "v08",
+      "bucket": "G3",
+      "rule": "표기 변형. 원본 질의 기준으로 판정하고 변형 자체로 감점하지 않는다.",
+      "query": "ㅋㅂㄴ",
+      "product": {
+        "title": "스포츠클럽 컬러 블록 후디 그린",
+        "brand": "커버낫",
+        "price": 49500,
+        "gender": "공용"
+      },
+      "origin": "커버낫"
+    },
+    {
+      "itemId": "a-g2-08-3592556",
+      "queryId": "a-g2-08",
+      "bucket": "G2",
+      "rule": "짧은 키워드·속성. 속성이 모두 확인되면 2, 일부만 맞으면 1.",
+      "query": "레터링 티",
+      "product": {
+        "title": "ATTITUDE LETTERING LONG SLEEVE-FRENCH GRAY(에티튜드 레터링 긴팔티-프렌치 그레이)",
+        "brand": "오픈 에티튜드",
+        "price": 25200,
+        "gender": "공용"
+      }
+    },
+    {
+      "itemId": "a-g2-04-6508611",
+      "queryId": "a-g2-04",
+      "bucket": "G2",
+      "rule": "짧은 키워드·속성. 속성이 모두 확인되면 2, 일부만 맞으면 1.",
+      "query": "오버핏 반팔",
+      "product": {
+        "title": "[2PACK]_C76 치즈케이크 오버핏 반팔+C81 컬러 두들링 오버핏 반팔",
+        "brand": "오실롯",
+        "price": 36800,
+        "gender": "공용"
+      }
+    },
+    {
+      "itemId": "v03-947077",
+      "queryId": "v03",
+      "bucket": "G3",
+      "rule": "표기 변형. 원본 질의 기준으로 판정하고 변형 자체로 감점하지 않는다.",
+      "query": "antlstk tmxosekem",
+      "product": {
+        "title": "후디드 스웨트셔츠 [블랙]",
+        "brand": "무신사 스탠다드",
+        "price": 37890,
+        "gender": "남성"
+      },
+      "origin": "무신사 스탠다드"
+    },
+    {
+      "itemId": "a-g2-09-4925334",
+      "queryId": "a-g2-09",
+      "bucket": "G2",
+      "rule": "짧은 키워드·속성. 속성이 모두 확인되면 2, 일부만 맞으면 1.",
+      "query": "포켓 티셔츠",
+      "product": {
+        "title": "아워포켓츠 시그니처 샛별 티셔츠(Z블랙)",
+        "brand": "아워포켓츠",
+        "price": 20650,
+        "gender": "공용"
+      }
+    },
+    {
+      "itemId": "x01-6880733",
+      "queryId": "x01",
+      "bucket": "G3",
+      "rule": "표기 변형. 원본 질의 기준으로 판정하고 변형 자체로 감점하지 않는다.",
+      "query": "ㅁㄴㅇㄹ",
+      "product": {
+        "title": "써니데이 핫픽스 끈나시_블랙",
+        "brand": "모노에라",
+        "price": 30800,
+        "gender": "여성"
+      }
+    },
+    {
+      "itemId": "a-g2-08-3591291",
+      "queryId": "a-g2-08",
+      "bucket": "G2",
+      "rule": "짧은 키워드·속성. 속성이 모두 확인되면 2, 일부만 맞으면 1.",
+      "query": "레터링 티",
+      "product": {
+        "title": "ATTITUDE LETTERING LONG SLEEVE-GREEN GRAY(에티튜드 레터링 긴팔티-그린 그레이)",
+        "brand": "오픈 에티튜드",
+        "price": 25200,
+        "gender": "공용"
+      }
+    },
+    {
+      "itemId": "a-g2-11-1634555",
+      "queryId": "a-g2-11",
+      "bucket": "G2",
+      "rule": "짧은 키워드·속성. 속성이 모두 확인되면 2, 일부만 맞으면 1.",
+      "query": "그래픽 티",
+      "product": {
+        "title": "DMK_HOODY_82 그래피티 아티스트 데빌몽키 dmk 타투 캐릭터 그래피티 그래픽 디자인 후드티 후디",
+        "brand": "돌돌",
+        "price": 76000,
+        "gender": "남성"
+      }
+    },
+    {
+      "itemId": "v03-947078",
+      "queryId": "v03",
+      "bucket": "G3",
+      "rule": "표기 변형. 원본 질의 기준으로 판정하고 변형 자체로 감점하지 않는다.",
+      "query": "antlstk tmxosekem",
+      "product": {
+        "title": "후디드 스웨트셔츠 [멜란지 그레이]",
+        "brand": "무신사 스탠다드",
+        "price": 37890,
+        "gender": "남성"
+      },
+      "origin": "무신사 스탠다드"
+    },
+    {
+      "itemId": "v14-2157797",
+      "queryId": "v14",
+      "bucket": "G3",
+      "rule": "표기 변형. 원본 질의 기준으로 판정하고 변형 자체로 감점하지 않는다.",
+      "query": "오버핏",
+      "product": {
+        "title": "[2PACK] 하비스트 오버핏 기모 후드 OYHD2393 + 코드 오버핏 기모 후드 OYHD2378",
+        "brand": "제멋",
+        "price": 74900,
+        "gender": "남성"
+      },
+      "origin": "오버 핏"
+    }
+  ]
+}

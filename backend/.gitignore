@@ -12,3 +12,4 @@ backups/
 
 # Supabase CLI 로컬 상태
 supabase/.temp/
+embed/data/

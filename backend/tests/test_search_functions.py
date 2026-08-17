@@ -1,0 +1,443 @@
+"""검색 순수 함수 테스트 — **CI에서 실제로 도는 몫.**
+
+`test_search_fallback.py`는 카탈로그가 실린 실 DB가 필요해 CI에서 건너뛴다.
+그러면 자판 상태기계 같은 핵심 로직의 회귀를 아무도 못 잡는다(리뷰 M5).
+
+이 파일은 카탈로그가 필요 없는 함수만 **빈 Postgres**에 올려서 확인한다.
+CI는 postgres 서비스 컨테이너를 띄우고 PG_TEST_DSN을 준다.
+
+로컬 실행:
+  PG_TEST_DSN="postgresql://postgres:postgres@127.0.0.1:5432/postgres" \
+    venv/bin/python -m pytest tests/test_search_functions.py -v
+"""
+import json
+import os
+import re
+from pathlib import Path
+
+import pytest
+
+psycopg = pytest.importorskip("psycopg")
+
+DSN = os.environ.get("PG_TEST_DSN")
+pytestmark = pytest.mark.skipif(not DSN, reason="PG_TEST_DSN 미설정 — Postgres 필요")
+
+MIGRATIONS = Path(__file__).resolve().parents[1] / "supabase" / "migrations"
+
+
+def extract(path: str, start: str, end: str) -> str:
+    """마이그레이션 파일에서 함수 정의 구간만 떼어 온다.
+
+    정의를 여기 베껴 두면 마이그레이션과 갈려서, 테스트는 통과하는데 서버는
+    틀리게 된다. 그래서 마이그레이션 파일에서 떼어 온다.
+
+    다만 **배포되는 것과 완전히 같지는 않다** — 권한문(`revoke`)은 걷어내고
+    함수의 고정 `search_path`는 테스트 스키마로 바꾼다. 여기서 확인하는 것은
+    "이 함수들이 빈 DB에서 자립해 올바른 값을 내는가"이지 배포 SQL 동치가 아니다.
+
+    ⚠️ 끝 표식은 **필수**다. 예전엔 생략하면 파일 끝까지 가져왔는데, 그 파일
+    끝에 카탈로그를 건드리는 DDL이 붙어 있어 빈 DB에서 setup부터 깨졌다.
+    끝 표식은 시작 지점 **이후**에서 찾는다 — 같은 문구가 앞쪽 주석에 다시
+    나오면 범위가 조용히 달라진다.
+    """
+    text = (MIGRATIONS / path).read_text(encoding="utf-8")
+    i = text.index(start)
+    j = text.index(end, i + len(start))
+    return text[i:j]
+
+
+@pytest.fixture(scope="module")
+def cur():
+    with psycopg.connect(DSN, autocommit=True) as conn, conn.cursor() as c:
+        # 격리 스키마에서 돈다. CI는 빈 Postgres를 주지만 로컬에서 실 DB를
+        # 가리키면 기존 함수를 덮어써 버린다 — 그러면 "빈 DB에서도 되는가"를
+        # 검증하지 못한 채 통과한다(리뷰 B2가 잡은 실패가 정확히 그것이었다).
+        c.execute("drop schema if exists search_fn_test cascade")
+        c.execute("create schema search_fn_test")
+
+        # levenshtein(fuzzystrmatch)이 어느 스키마에 있는지는 환경마다 다르다 —
+        # Supabase는 `extensions`, 맨 Postgres는 `public`. 찾아서 경로에 넣는다.
+        c.execute(
+            "select n.nspname from pg_proc p"
+            " join pg_namespace n on n.oid = p.pronamespace"
+            " where p.proname = 'levenshtein' limit 1"
+        )
+        row = c.fetchone()
+        if row is None:
+            c.execute("create extension fuzzystrmatch with schema search_fn_test")
+            ext_schema = "search_fn_test"
+        else:
+            ext_schema = row[0]
+        c.execute(f"set search_path = search_fn_test, {ext_schema}, pg_catalog")
+        # 카탈로그가 필요 없는 함수만 올린다. revoke 대상 역할(anon 등)이 없는
+        # 빈 Postgres이므로 revoke 줄은 걷어낸다.
+        chunks = [
+            extract(
+                "20260817150000_search_chosung.sql",
+                "create or replace function c_chosung",
+                "revoke all on function c_chosung",
+            ),
+            extract(
+                "20260817700000_search_qwerty.sql",
+                "create or replace function c_compose_hangul",
+                "revoke all on function c_compose_hangul",
+            ),
+            extract(
+                "20260817600000_search_typo.sql",
+                "create or replace function c_jamo",
+                "revoke all on function c_jamo",
+            ),
+            extract(
+                "20260817800000_v1_search_fallback.sql",
+                "create or replace function c_like_all_patterns",
+                "revoke all on function c_like_all_patterns",
+            ),
+            # 가격 파서는 카탈로그가 필요 없다 — CI에서 실제로 돌린다.
+            # 실 DB 테스트에만 뒀더니 `미만` 경계·큰 수 오버플로를 CI가 못 잡았다.
+            extract(
+                "20260818000000_search_price_terms.sql",
+                "create or replace function c_search_price_parse",
+                "revoke all on function c_search_price_parse",
+            ),
+        ]
+        # 검색 로그 RPC는 카탈로그가 필요 없다 — **실제 DDL을 떼어 와** CI에서 돌린다.
+        # 픽스처 표를 손으로 쓰면 스키마가 갈려도 통과한다.
+        chunks += [
+            extract(
+                "20260817100000_c_search_logs.sql",
+                "create table if not exists c_search_logs",
+                "comment on table c_search_logs",
+            ),
+            'alter table c_search_logs add column if not exists query_used text',
+            extract(
+                "20260818100000_search_replacement_logging.sql",
+                "alter table c_search_logs add column if not exists replacement_shown",
+                "comment on column c_search_logs.replacement_shown",
+            ),
+            extract(
+                "20260818100000_search_replacement_logging.sql",
+                "create or replace function c_log_search",
+                "revoke all on function c_log_search",
+            ),
+        ]
+        # 색 파서는 표 두 개(색 표현·브랜드)를 읽는다. 카탈로그는 필요 없으므로
+        # **작은 픽스처 표**를 깔고 CI에서 규칙을 돌린다.
+        #
+        # ⚠️ 이 표는 **실 배포 표가 아니다.** 여기서 확인하는 것은 파서의 규칙
+        # (조사·브랜드 보호·역할어·두 단어 색 이름·색이 둘이면 포기)이고,
+        # 실제 항목 커버리지는 실 DB 테스트(test_search_fallback.py)가 본다.
+        # 파서 규칙은 CI가 못 잡으면 아무도 못 잡는다 — 실 DB 테스트는 건너뛴다.
+        c.execute(
+            "create table c_search_color_terms (term text primary key, codes text[] not null)"
+        )
+        c.execute(
+            "insert into c_search_color_terms values"
+            " ('검정', array['2']), ('블랙', array['2']), ('흰', array['1']),"
+            " ('주황', array['12','75','76']), ('주황색', array['12','75','76']),"
+            " ('orange', array['12','75','76']), ('카멜', array['26']),"
+            " ('그레이', array['3','24','25']), ('라이트 그레이', array['24'])"
+        )
+        c.execute("create table c_search_vocab (term text primary key)")
+        c.execute("insert into c_search_vocab values ('블랙야크'), ('카멜로')")
+        chunks += [
+            extract(
+                "20260817900000_search_color_terms.sql",
+                "create or replace function c_search_color_lookup",
+                "revoke all on function c_search_color_lookup",
+            ),
+            extract(
+                "20260817900000_search_color_terms.sql",
+                "create or replace function c_search_color_parse",
+                "revoke all on function c_search_color_parse",
+            ),
+        ]
+
+        for chunk in chunks:
+            # 주석을 걷어낸 실행문만 본다 — 주석에는 c_search_docs 얘기가 나온다
+            statements = re.sub(r"--[^\n]*", "", chunk)
+            assert "c_search_docs" not in statements, (
+                "카탈로그 테이블을 건드리는 SQL이 섞였다 — 이 테스트는 빈 DB에서 돈다"
+            )
+            sql = re.sub(r"^revoke .*$", "", chunk, flags=re.MULTILINE)
+            # 함수 본문에 `set search_path = public, ...`이 박혀 있다. 그대로
+            # 두면 함수가 자기 스키마가 아니라 public의 실물을 빌려 써서,
+            # 이 테스트가 실 DB에서만 통과하고 빈 CI에서는 깨진다. 치환해서
+            # **테스트 스키마 안에서 자립하는지**를 실제로 확인한다.
+            sql = sql.replace("set search_path = public,", "set search_path = search_fn_test,")
+            c.execute(sql)
+        yield c
+        c.execute("drop schema if exists search_fn_test cascade")
+
+
+def scalar(cur, sql, *args):
+    cur.execute(sql, args)
+    return cur.fetchone()[0]
+
+
+# ── 한영 자판 복원 ──────────────────────────────────────────────────────────
+@pytest.mark.parametrize(
+    "keys,expected",
+    [
+        ("skdlzl", "나이키"),
+        ("wprtlalrtm", "젝시믹스"),   # 겹받침(ㄱㅅ)을 앞서 합치면 '제ㄳㅣ미ㄳㅡ'가 된다
+        ("xmflqtus", "트립션"),
+        ("dkelektm", "아디다스"),
+        ("zjqjskt", "커버낫"),
+        ("qksvkf", "반팔"),
+        ("dhqjvlt", "오버핏"),
+        ("qksvkf xl", "반팔 티"),      # 순수 변환기 — 공백은 유지한다
+        ("antlstk tmxosekem", "무신사 스탠다드"),
+        ("nike", "ㅜㅑㅏㄷ"),          # 순수 변환기라 여기서는 바꾼다
+    ],
+)
+def test_qwerty_to_hangul(cur, keys, expected):
+    assert scalar(cur, "select c_qwerty_to_hangul(%s)", keys) == expected
+
+
+@pytest.mark.parametrize(
+    "query,reason",
+    [
+        ("나이키", "이미 한글이라 손대지 않는다"),
+        ("MLB", "자판에 없는 글자가 섞였다"),
+        ("r", "한 글자는 대상이 아니다"),
+        ("rrrr", "자모만 나와 한글 음절이 안 만들어진다"),
+        ("nike", "ㅜㅑㅏㄷ — 자판 글자지만 음절이 안 된다"),
+        # ⚠️ **세 글자 이하는 바꾸지 않는다.** 두벌식은 한 음절에 보통 2~3타라
+        # 짧은 영문은 사이즈 표기일 가능성이 크다. 이 규칙이 없으면
+        # `하와이안 셔츠 xl`이 `하와이안 셔츠 티`가 되어 0건이어야 할 질의가
+        # 13건을 냈고, `금색 xl`도 `금색 티`가 됐다(교차 리뷰).
+        ("xl", "두 글자 — 사이즈 표기일 수 있다"),
+        ("fit", "세 글자"),
+        ("xxl", "세 글자"),
+        ("하와이안 셔츠 xl", "짧은 영문만 남으므로 바꿀 것이 없다"),
+        ("금색 xl", "색 표현이 섞여도 마찬가지다"),
+    ],
+)
+def test_restore_returns_null_when_not_applicable(cur, query, reason):
+    assert scalar(cur, "select c_restore_hangul_typing(%s)", query) is None, reason
+
+
+@pytest.mark.parametrize(
+    "query,restored",
+    [
+        ("qksvkf xl", "반팔 xl"),        # 긴 단어만 바꾸고 짧은 영문은 그대로
+        ("dkelektm 반팔", "아디다스 반팔"),  # 한글이 섞여도 긴 영문은 바꾼다
+    ],
+)
+def test_restore_only_touches_long_enough_words(cur, query, restored):
+    assert scalar(cur, "select c_restore_hangul_typing(%s)", query) == restored
+
+
+def test_restore_applies_to_mistyped(cur):
+    assert scalar(cur, "select c_restore_hangul_typing(%s)", "skdlzl") == "나이키"
+
+
+# ── 자모 분해 ───────────────────────────────────────────────────────────────
+# 오타 교정이 음절이 아니라 자모 거리로 재는 근거. 이 값이 틀리면 `모자`가
+# `모달`로 고쳐지는 식으로 다른 품목이 딸려 온다.
+@pytest.mark.parametrize(
+    "word,jamo",
+    [
+        ("아디다스", "ㅇㅏㄷㅣㄷㅏㅅㅡ"),
+        ("커버낫", "ㅋㅓㅂㅓㄴㅏㅅ"),
+        ("모자", "ㅁㅗㅈㅏ"),
+        ("값", "ㄱㅏㅄ"),              # 겹받침
+        ("무지 티", "ㅁㅜㅈㅣ ㅌㅣ"),   # 공백 유지
+        ("nike", "nike"),              # 한글이 아니면 그대로
+    ],
+)
+def test_jamo_decomposition(cur, word, jamo):
+    assert scalar(cur, "select c_jamo(%s)", word) == jamo
+
+
+@pytest.mark.parametrize(
+    "a,b,syllable_dist,jamo_dist",
+    [
+        ("아디다드", "아디다스", 1, 1),   # 진짜 오타 — 자모로도 1
+        ("커버났", "커버낫", 1, 1),       # 진짜 오타
+        ("모자", "모달", 1, 2),           # 다른 물건 — 자모로는 2라 걸러진다
+        ("슬리퍼", "슬리브", 1, 2),       # 다른 물건
+        ("백팩", "백씨", 1, 3),           # 다른 물건
+    ],
+)
+def test_jamo_distance_separates_typos_from_other_words(cur, a, b, syllable_dist, jamo_dist):
+    """음절 거리로는 전부 1이라 구분이 안 된다 — 자모 거리라야 갈린다."""
+    assert scalar(cur, "select levenshtein(%s, %s)", a, b) == syllable_dist
+    assert scalar(cur, "select levenshtein(c_jamo(%s), c_jamo(%s))", a, b) == jamo_dist
+
+
+# ── 초성 ────────────────────────────────────────────────────────────────────
+@pytest.mark.parametrize(
+    "text,chosung",
+    [
+        ("나이키", "ㄴㅇㅋ"),
+        ("커버낫 반팔", "ㅋㅂㄴ ㅂㅍ"),
+        ("nike 티", " ㅌ"),   # 한글이 아닌 글자는 버리고 공백은 남는다
+    ],
+)
+def test_chosung(cur, text, chosung):
+    assert scalar(cur, "select c_chosung(%s)", text) == chosung
+
+
+# ── 가격 해석 ───────────────────────────────────────────────────────────────
+@pytest.mark.parametrize(
+    "words,pmin,pmax,rest",
+    [
+        # 개발셋에 실제로 나오는 두 형태
+        (["3만원", "이하", "반팔"], None, 30000, ["반팔"]),
+        (["2만원대", "남성", "반팔"], 20000, 29999, ["남성", "반팔"]),
+        # `미만`은 그 값을 **포함하지 않는다**. 한 갈래로 묶었더니 3만원 상품이
+        # 통과해 기준서 G4의 하드 조건을 어겼다.
+        (["3만원", "미만", "반팔"], None, 29999, ["반팔"]),
+        (["3만원", "이내", "반팔"], None, 30000, ["반팔"]),
+        # 조사는 열거한 것만 받는다
+        (["2만원", "이하에", "반팔"], None, 20000, ["반팔"]),
+        (["2만원대에", "반팔"], 20000, 29999, ["반팔"]),
+        (["3만원", "미만족", "반팔"], None, None, ["3만원", "미만족", "반팔"]),
+        # 숫자는 4자리까지. 그 위는 int 곱셈이 넘쳐 공개 RPC가 5xx로 죽었다.
+        (["214748만원대", "반팔"], None, None, ["214748만원대", "반팔"]),
+        (["99999만원", "이하", "반팔"], None, None, ["99999만원", "이하", "반팔"]),
+        # 지원하지 않는 형태는 손대지 않는다
+        (["30000원", "이하", "반팔"], None, None, ["30000원", "이하", "반팔"]),
+        (["반팔티"], None, None, ["반팔티"]),
+        # 빈 입력은 rest도 null — `{}`를 돌려주면 호출자의 "텍스트 조건 없음"이 깨진다
+        ([], None, None, None),
+    ],
+)
+def test_price_parse(cur, words, pmin, pmax, rest):
+    cur.execute("select min_price, max_price, rest from c_search_price_parse(%s)", (words,))
+    assert cur.fetchone() == (pmin, pmax, rest)
+
+
+def test_price_parse_never_overflows(cur):
+    """공개 RPC가 사용자 입력 하나로 죽으면 안 된다."""
+    for n in ["9999", "10000", "99999", "214748", "999999999999"]:
+        cur.execute("select max_price from c_search_price_parse(%s)", ([f"{n}만원", "이하"],))
+        cur.fetchone()  # 예외가 나지 않는 것 자체가 검사다
+
+
+# ── LIKE 이스케이프 (v1 경로) ────────────────────────────────────────────────
+def test_like_patterns_escape_wildcards(cur):
+    """사용자가 친 %와 _가 와일드카드로 해석되면 전체 스캔이 된다."""
+    # 리터럴로 쓰면 psycopg가 %_를 자리표시자로 읽는다 — 값으로 넘긴다
+    got = scalar(cur, "select c_like_all_patterns(array[%s])", "50%_할인")
+    assert got == [r"%50\%\_할인%"]
+
+
+def test_like_patterns_lowercase_each_word(cur):
+    got = scalar(cur, "select c_like_all_patterns(array[%s, %s])", "Nike", "Tee")
+    assert got == ["%nike%", "%tee%"]
+
+
+# ── 색 파서 규칙 (픽스처 표 위에서 돈다) ────────────────────────────────────
+# 실 DB 테스트가 CI에서 건너뛰므로, **규칙 회귀는 여기서만 잡힌다.**
+
+
+@pytest.mark.parametrize(
+    "words,codes,rest",
+    [
+        # 조사가 붙어도 색이다. 붙기 전에는 `주황색이`가 제목 조건이 되어 0건이었다
+        (["주황색이", "들어간", "티"], ["12", "75", "76"], ["들어간", "티"]),
+        (["주황색을", "찾아"], ["12", "75", "76"], ["찾아"]),
+        (["주황색으로"], ["12", "75", "76"], None),
+        (["주황색의", "반팔"], ["12", "75", "76"], ["반팔"]),
+        # 영문도 같은 색이고 대소문자를 가리지 않는다
+        (["ORANGE", "반팔"], ["12", "75", "76"], ["반팔"]),
+        # 브랜드로 저장된 말은 조사를 떼지 않는다 — 떼면 `카멜`(색)이 된다
+        (["카멜로", "반팔"], None, ["카멜로", "반팔"]),
+        # 조사처럼 보이지만 조사가 아닌 끝소리는 건드리지 않는다
+        (["주황새"], None, ["주황새"]),
+        # 두 단어짜리 색 이름을 먼저 본다
+        (["라이트", "그레이", "반팔"], ["24"], ["반팔"]),
+        # 브랜드 이름 안의 색은 색이 아니다 (띄어쓰기가 달라도 보호한다)
+        (["블랙", "야크", "반팔"], None, ["블랙", "야크", "반팔"]),
+        # 서로 다른 색이 둘이면 손대지 않는다
+        (["검정", "흰", "반팔"], None, ["검정", "흰", "반팔"]),
+        # 같은 색을 동의어로 두 번 말한 것은 포기하지 않는다
+        (["검정", "블랙", "반팔"], ["2"], ["반팔"]),
+        # 바로 뒤가 역할어면 본체 색이 아니다
+        (["검정", "로고", "반팔"], None, ["검정", "로고", "반팔"]),
+        (["검정", "로고가", "있는", "반팔"], None, ["검정", "로고가", "있는", "반팔"]),
+        # 표에 없는 색 표현은 아무것도 하지 않는다
+        (["형광연두빛", "반팔"], None, ["형광연두빛", "반팔"]),
+    ],
+)
+def test_color_parse(cur, words, codes, rest):
+    cur.execute("select codes, rest from c_search_color_parse(%s)", (words,))
+    got_codes, got_rest = cur.fetchone()
+    assert (sorted(got_codes) if got_codes else None) == codes
+    assert got_rest == rest
+
+
+def test_color_lookup_returns_the_canonical_term(cur):
+    """조사를 뗀 **정본**을 돌려줘야 한다.
+
+    호출자가 이 값으로 "몇 가지 색을 말했나"를 센다. 조사가 붙은 형태를 그대로
+    돌려주면 `주황색 주황색이`가 서로 다른 색 둘로 세어져 색 조건이 통째로 사라진다.
+    """
+    cur.execute("select term, codes from c_search_color_lookup('주황색이')")
+    assert cur.fetchone() == ("주황색", ["12", "75", "76"])
+# ── 검색 로그의 대체 피드 보정 (계측 0단계) ────────────────────────────────
+# 이 계약이 깨지면 **매칭 수 정본이 오염되거나** 대체 피드 기록이 사라진다.
+# 둘 다 조용히 일어나므로 여기서 고정한다.
+
+_DEV = "11111111-1111-1111-1111-111111111111"
+_SES = "bbbbbbbb-1111-1111-1111-111111111111"
+
+
+def _log(cur, log_id: str, **extra) -> int:
+    payload = {
+        "log_id": log_id,
+        "session_id": _SES,
+        "query_raw": "감자",
+        "query_norm": "감자",
+        "query_used": "감자",
+        "result_count": "6",
+        "occurred_at": "2026-08-18T00:00:00Z",
+        "model_ver": "test",
+        **extra,
+    }
+    cur.execute("select c_log_search(%s::uuid, %s::jsonb)", (_DEV, json.dumps([payload])))
+    return cur.fetchone()[0]
+
+
+def _row(cur, log_id: str):
+    cur.execute(
+        "select result_count, replacement_shown from c_search_logs where log_id = %s::uuid",
+        (log_id,),
+    )
+    return cur.fetchone()
+
+
+def test_replacement_shown_is_corrected_without_touching_result_count(cur):
+    """검색 직후에는 대체 여부를 모른다 — 같은 log_id로 나중에 보정한다.
+
+    ⚠️ **result_count는 매칭 수의 정본이다.** 화면에 보인 수로 덮이면 G6·0건율이
+    통째로 오염된다. 보정이 그것을 건드리지 않는지 본다.
+    """
+    lid = "aaaaaaaa-0001-1111-1111-111111111111"
+    _log(cur, lid)
+    assert _row(cur, lid) == (6, None), "검색 직후에는 아직 모른다"
+
+    _log(cur, lid, replacement_shown=True)
+    assert _row(cur, lid) == (6, True), "대체 여부만 보정되고 결과 수는 그대로"
+
+
+def test_replacement_shown_never_goes_back_to_false(cur):
+    """늦게 도착한 기록이 참을 지우면 "보여줬는데 안 보여준 것으로" 남는다."""
+    lid = "aaaaaaaa-0002-1111-1111-111111111111"
+    _log(cur, lid, replacement_shown=True)
+    _log(cur, lid, replacement_shown=False)
+    assert _row(cur, lid)[1] is True
+
+
+def test_result_count_is_filled_only_when_it_was_missing(cur):
+    """실패로 결과 수 없이 먼저 기록됐다가 재시도가 성공하면 그때만 채운다."""
+    lid = "aaaaaaaa-0003-1111-1111-111111111111"
+    _log(cur, lid, result_count="")
+    assert _row(cur, lid)[0] is None
+    _log(cur, lid, result_count="6")
+    assert _row(cur, lid)[0] == 6
+    # 이미 채워진 뒤에는 다른 값이 와도 덮지 않는다 — 정본이 흔들리면 안 된다
+    _log(cur, lid, result_count="9")
+    assert _row(cur, lid)[0] == 6
