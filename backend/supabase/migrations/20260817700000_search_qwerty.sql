@@ -153,9 +153,17 @@ $$;
 -- 표현 때문에 자판 복원이 막혀 0건이 됐다(교차 리뷰 M4). 사람은 한 단어만
 -- 잘못 치기도 한다.
 --
--- ⚠️ 단어 하나만으로는 영어 단어와 구분할 수 없다(`nike`도 자판 글자다).
--- 그래서 ⓐ 한글 음절이 실제로 만들어질 때만 바꾸고 ⓑ **원문이 0건일 때만**
--- 폴백으로 쓴다. 결과가 있으면 그게 사용자 의도다.
+-- ⚠️ 영어 단어·사이즈 표기와 구분해야 한다. 세 가지로 거른다:
+--   ⓐ **네 글자 이상**만 본다. 두벌식은 한 음절에 보통 2~3타라 세 글자 이하로는
+--      한 음절밖에 안 나온다 — `xl`→`티`, `fit`→`럇`, `xxl`→`ㅌ티`가 그래서
+--      생겼고, `하와이안 셔츠 xl`이 `하와이안 셔츠 티`가 되어 0건이어야 할
+--      질의가 13건을 냈다(교차 리뷰). 반대로 진짜 자판 오타는 길다:
+--      `qksvkf`(6)·`skdlzl`(6)·`zjqjskt`(7)·`dkelektm`(8).
+--   ⓑ 한글 음절이 실제로 만들어질 때만 바꾼다(`nike`→`ㅜㅑㅏㄷ`은 아니다).
+--   ⓒ **원문이 0건일 때만** 폴백으로 쓴다. 결과가 있으면 그게 사용자 의도다.
+--
+-- ⓐ 때문에 `qksvkf xl`은 `반팔 티`가 아니라 `반팔 xl`이 된다. 두 글자 영문이
+-- 한글인지 사이즈인지는 가릴 수 없으므로, **모르면 손대지 않는** 쪽을 고른다.
 create or replace function c_restore_hangul_typing(p_query text)
 returns text
 language plpgsql immutable
@@ -172,7 +180,7 @@ begin
   end if;
 
   foreach w in array regexp_split_to_array(btrim(p_query), '\s+') loop
-    if length(w) >= 2                                        -- 한 글자는 대상이 아니다
+    if length(w) >= 4                                        -- 세 글자 이하는 한 음절뿐이다
        and w !~ '[가-힣ㄱ-ㅎㅏ-ㅣ]'                            -- 이미 한글이면 손대지 않는다
        and w ~ '^[rRseEfaqQtTdwWczxvgkoiOjpuPhynbml]+$' then  -- 두벌식 자판 글자만
       restored := c_qwerty_to_hangul(w);

@@ -165,10 +165,17 @@ declare
   w      text;
   fixed  text;
 begin
+  -- ⚠️ **단어 수를 자르지 않는다.** 앞 5단어만 모아 그것만 돌려주면, 원문
+  -- 여섯 번째 이후의 색·가격 조건이 흔적 없이 사라진다 — 호출자가 이 반환값을
+  -- 다시 조건 파서에 넣기 때문이다. 실측: `아디다드 반팔 반팔 반팔 반팔 1만원대`가
+  -- `아디다스 반팔 반팔 반팔 반팔`이 되어 3만~7만원대 상품을 냈고,
+  -- `... 금색`은 상위 13건이 **전부 금색이 아니었다**(교차 리뷰 B1).
+  -- 텍스트 단어 수 제한은 조건을 뽑은 **뒤에** 호출자가 한다.
   foreach w in array (
-    select array_agg(x) from (
-      select x from regexp_split_to_table(left(lower(coalesce(p_query,'')), 60), '\s+') x
-      where x <> '' limit 5
+    select array_agg(x order by i) from (
+      select x, i from regexp_split_to_table(left(lower(coalesce(p_query,'')), 60), '\s+')
+        with ordinality as u(x, i)
+      where x <> ''
     ) t
   ) loop
     if exists (select 1 from c_search_vocab where term = w) then

@@ -61,6 +61,11 @@ begin
   -- 정규화(60자·5단어)를 먼저 하고 **그 결과로** 폴백을 판단한다. 원문을 넘기면
   -- 상한이 이 경로만 비켜 간다(v2와 같은 이유 — 리뷰 M2).
   v_words := c_search_split(p_query);
+  -- ⚠️ 텍스트 단어를 5개로 자른다. `c_search_split`이 60자 안의 **모든** 단어를
+  -- 주도록 바뀌었는데(v2가 구조화 조건을 놓치지 않으려고) v1은 조건을 뽑지
+  -- 않으므로 그대로 두면 색인 없는 22.6만 행에 패턴 30개짜리 `like all`이 걸린다 —
+  -- 실측으로 같은 단어 5회 17ms 대 20회 279~392ms였다(교차 리뷰 M3).
+  v_words := c_search_cap_words(v_words);
   if v_words is null then
     return;  -- 빈 검색어: 전체 카탈로그 스캔 금지
   end if;
@@ -84,12 +89,13 @@ begin
                  else c_search_correct_query(v_norm)
                end;
       continue when v_alt is null or v_alt = v_norm;
-      v_words := c_search_split(v_alt);
+      v_words := c_search_cap_words(c_search_split(v_alt));
       continue when v_words is null;
     end if;
 
-    -- ⚠️ 패턴은 **미리 만들어** 넘긴다. where 절 안에서 c_like_all_patterns를
-    -- 부르면 상수로 접히지 않고 22.6만 행마다 다시 계산돼 timeout까지 갔다.
+    -- ⚠️ `c_like_all_patterns`는 immutable이라 plpgsql 변수를 넘기면 실행당 한 번
+    -- 접힌다. 예전에 이 식을 **SQL 함수의 매개변수**로 넘겼을 때는 접히지 않아
+    -- 22.6만 행마다 다시 계산돼 timeout까지 갔다 — 그때의 교훈이다.
     return query
     select v.goods_no, v.title, v.brand_name, v.price_final, v.thumbnail,
            v.gender, v.gallery, v.width, v.height,

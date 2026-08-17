@@ -132,9 +132,9 @@ def scalar(cur, sql, *args):
         ("zjqjskt", "커버낫"),
         ("qksvkf", "반팔"),
         ("dhqjvlt", "오버핏"),
-        ("qksvkf xl", "반팔 티"),      # 공백은 유지한다
+        ("qksvkf xl", "반팔 티"),      # 순수 변환기 — 공백은 유지한다
         ("antlstk tmxosekem", "무신사 스탠다드"),
-        ("nike", "ㅜㅑㅏㄷ"),          # 음절이 안 만들어진다 — 폴백 대상이 아니다
+        ("nike", "ㅜㅑㅏㄷ"),          # 순수 변환기라 여기서는 바꾼다
     ],
 )
 def test_qwerty_to_hangul(cur, keys, expected):
@@ -149,10 +149,30 @@ def test_qwerty_to_hangul(cur, keys, expected):
         ("r", "한 글자는 대상이 아니다"),
         ("rrrr", "자모만 나와 한글 음절이 안 만들어진다"),
         ("nike", "ㅜㅑㅏㄷ — 자판 글자지만 음절이 안 된다"),
+        # ⚠️ **세 글자 이하는 바꾸지 않는다.** 두벌식은 한 음절에 보통 2~3타라
+        # 짧은 영문은 사이즈 표기일 가능성이 크다. 이 규칙이 없으면
+        # `하와이안 셔츠 xl`이 `하와이안 셔츠 티`가 되어 0건이어야 할 질의가
+        # 13건을 냈고, `금색 xl`도 `금색 티`가 됐다(교차 리뷰).
+        ("xl", "두 글자 — 사이즈 표기일 수 있다"),
+        ("fit", "세 글자"),
+        ("xxl", "세 글자"),
+        ("하와이안 셔츠 xl", "짧은 영문만 남으므로 바꿀 것이 없다"),
+        ("금색 xl", "색 표현이 섞여도 마찬가지다"),
     ],
 )
 def test_restore_returns_null_when_not_applicable(cur, query, reason):
     assert scalar(cur, "select c_restore_hangul_typing(%s)", query) is None, reason
+
+
+@pytest.mark.parametrize(
+    "query,restored",
+    [
+        ("qksvkf xl", "반팔 xl"),        # 긴 단어만 바꾸고 짧은 영문은 그대로
+        ("dkelektm 반팔", "아디다스 반팔"),  # 한글이 섞여도 긴 영문은 바꾼다
+    ],
+)
+def test_restore_only_touches_long_enough_words(cur, query, restored):
+    assert scalar(cur, "select c_restore_hangul_typing(%s)", query) == restored
 
 
 def test_restore_applies_to_mistyped(cur):
