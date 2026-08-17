@@ -10,6 +10,7 @@ CI는 postgres 서비스 컨테이너를 띄우고 PG_TEST_DSN을 준다.
   PG_TEST_DSN="postgresql://postgres:postgres@127.0.0.1:5432/postgres" \
     venv/bin/python -m pytest tests/test_search_functions.py -v
 """
+import json
 import os
 import re
 from pathlib import Path
@@ -97,6 +98,26 @@ def cur():
                 "20260818000000_search_price_terms.sql",
                 "create or replace function c_search_price_parse",
                 "revoke all on function c_search_price_parse",
+            ),
+        ]
+        # 검색 로그 RPC는 카탈로그가 필요 없다 — **실제 DDL을 떼어 와** CI에서 돌린다.
+        # 픽스처 표를 손으로 쓰면 스키마가 갈려도 통과한다.
+        chunks += [
+            extract(
+                "20260817100000_c_search_logs.sql",
+                "create table if not exists c_search_logs",
+                "comment on table c_search_logs",
+            ),
+            'alter table c_search_logs add column if not exists query_used text',
+            extract(
+                "20260818100000_search_replacement_logging.sql",
+                "alter table c_search_logs add column if not exists replacement_shown",
+                "comment on column c_search_logs.replacement_shown",
+            ),
+            extract(
+                "20260818100000_search_replacement_logging.sql",
+                "create or replace function c_log_search",
+                "revoke all on function c_log_search",
             ),
         ]
         # 색 파서는 표 두 개(색 표현·브랜드)를 읽는다. 카탈로그는 필요 없으므로
@@ -356,3 +377,67 @@ def test_color_lookup_returns_the_canonical_term(cur):
     """
     cur.execute("select term, codes from c_search_color_lookup('주황색이')")
     assert cur.fetchone() == ("주황색", ["12", "75", "76"])
+# ── 검색 로그의 대체 피드 보정 (계측 0단계) ────────────────────────────────
+# 이 계약이 깨지면 **매칭 수 정본이 오염되거나** 대체 피드 기록이 사라진다.
+# 둘 다 조용히 일어나므로 여기서 고정한다.
+
+_DEV = "11111111-1111-1111-1111-111111111111"
+_SES = "bbbbbbbb-1111-1111-1111-111111111111"
+
+
+def _log(cur, log_id: str, **extra) -> int:
+    payload = {
+        "log_id": log_id,
+        "session_id": _SES,
+        "query_raw": "감자",
+        "query_norm": "감자",
+        "query_used": "감자",
+        "result_count": "6",
+        "occurred_at": "2026-08-18T00:00:00Z",
+        "model_ver": "test",
+        **extra,
+    }
+    cur.execute("select c_log_search(%s::uuid, %s::jsonb)", (_DEV, json.dumps([payload])))
+    return cur.fetchone()[0]
+
+
+def _row(cur, log_id: str):
+    cur.execute(
+        "select result_count, replacement_shown from c_search_logs where log_id = %s::uuid",
+        (log_id,),
+    )
+    return cur.fetchone()
+
+
+def test_replacement_shown_is_corrected_without_touching_result_count(cur):
+    """검색 직후에는 대체 여부를 모른다 — 같은 log_id로 나중에 보정한다.
+
+    ⚠️ **result_count는 매칭 수의 정본이다.** 화면에 보인 수로 덮이면 G6·0건율이
+    통째로 오염된다. 보정이 그것을 건드리지 않는지 본다.
+    """
+    lid = "aaaaaaaa-0001-1111-1111-111111111111"
+    _log(cur, lid)
+    assert _row(cur, lid) == (6, None), "검색 직후에는 아직 모른다"
+
+    _log(cur, lid, replacement_shown=True)
+    assert _row(cur, lid) == (6, True), "대체 여부만 보정되고 결과 수는 그대로"
+
+
+def test_replacement_shown_never_goes_back_to_false(cur):
+    """늦게 도착한 기록이 참을 지우면 "보여줬는데 안 보여준 것으로" 남는다."""
+    lid = "aaaaaaaa-0002-1111-1111-111111111111"
+    _log(cur, lid, replacement_shown=True)
+    _log(cur, lid, replacement_shown=False)
+    assert _row(cur, lid)[1] is True
+
+
+def test_result_count_is_filled_only_when_it_was_missing(cur):
+    """실패로 결과 수 없이 먼저 기록됐다가 재시도가 성공하면 그때만 채운다."""
+    lid = "aaaaaaaa-0003-1111-1111-111111111111"
+    _log(cur, lid, result_count="")
+    assert _row(cur, lid)[0] is None
+    _log(cur, lid, result_count="6")
+    assert _row(cur, lid)[0] == 6
+    # 이미 채워진 뒤에는 다른 값이 와도 덮지 않는다 — 정본이 흔들리면 안 된다
+    _log(cur, lid, result_count="9")
+    assert _row(cur, lid)[0] == 6

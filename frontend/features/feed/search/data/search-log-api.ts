@@ -45,6 +45,14 @@ export interface SearchLogInput {
    * 무엇으로 찾았는지 모르면 로그로 원인을 되짚을 수 없다(구현 리뷰 M9).
    */
   queryUsed: string;
+  /**
+   * 이 검색에서 취향 피드를 이어 보여줬는가.
+   *
+   * 검색 **직후에는 모른다** — 0건인지, 매칭을 다 소진했는지는 나중에 정해진다.
+   * 그래서 같은 log_id로 한 번 더 보내 보정한다. 서버는 **참으로만** 덮어쓴다.
+   * 생략 = 아직 모름.
+   */
+  replacementShown?: boolean;
 }
 
 export async function postSearchLog(input: SearchLogInput): Promise<void> {
@@ -58,6 +66,7 @@ export async function postSearchLog(input: SearchLogInput): Promise<void> {
           session_id: input.sessionId,
           query_raw: input.queryRaw.slice(0, RAW_QUERY_LIMIT),
           query_norm: input.queryNorm,
+          replacement_shown: input.replacementShown,
           result_count: input.resultCount,
           occurred_at: input.occurredAt,
           query_used: input.queryUsed,

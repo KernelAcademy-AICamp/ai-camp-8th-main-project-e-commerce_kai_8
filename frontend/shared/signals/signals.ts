@@ -22,6 +22,7 @@ import {
   type SignalEvent,
   type SignalEventType,
   type SourceBucket,
+  type Surface,
 } from "./types";
 
 const SESSION_KEY = "atee-session";
@@ -169,6 +170,8 @@ export interface ImpressionInput {
   screenY?: number;
   slot?: number;
   seed?: number;
+  /** 노출이 일어난 자리. 생략=메인 피드 */
+  surface?: Surface;
 }
 
 /** 카드가 뷰포트에 실제로 보였을 때 1회. 반환값 = 노출 ID (행동 귀속 키) */
@@ -186,6 +189,7 @@ export function logImpression(input: ImpressionInput): string | null {
     screen_y: input.screenY,
     slot: input.slot,
     seed: input.seed,
+    surface: input.surface,
   };
   impressionByGoods.set(input.goodsNo, event.event_id);
   enqueue(event);

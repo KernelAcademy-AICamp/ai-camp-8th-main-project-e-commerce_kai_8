@@ -11,7 +11,10 @@ import {
   fetchSearchPageWithFallback,
   type SearchCursor,
 } from "@/features/feed/search/data/search-api";
-import { logSearch } from "@/features/feed/search/data/search-log-api";
+import {
+  logSearch,
+  type SearchLogInput,
+} from "@/features/feed/search/data/search-log-api";
 import type { SearchSubmission } from "@/features/feed/search/presentation/view-model/use-search-state";
 
 const PAGE_SIZE = 30;
@@ -105,6 +108,11 @@ export function useSearchFeed({ query, submission, paused }: SearchFeedOptions) 
   // 검색어 한 번당 기록 한 번 — 오류 후 retry로 첫 페이지를 다시 불러도
   // 중복 기록하지 않는다 (세대 번호로 판정)
   const loggedGenerationRef = useRef(-1);
+  // 대체 피드 보정용 — 첫 페이지에서 보낸 입력을 그대로 기억했다가 같은 log_id로
+  // 다시 보낸다. 검색 직후에는 "대체를 보여줄지"를 아직 모르기 때문이다.
+  const lastLogInputRef = useRef<SearchLogInput | null>(null);
+  // 검색 한 번당 보정 한 번 — 스크롤 중 여러 번 보내지 않는다
+  const replacementLoggedSeqRef = useRef(-1);
 
   // 검색어 전환 시 표시를 즉시 비운다 (React 권장 렌더 중 리셋) — 같은 검색어를
   // 해제 후 재제출해도 이전 세션의 결과·오류가 잠깐 비치지 않는다
@@ -164,7 +172,7 @@ export function useSearchFeed({ query, submission, paused }: SearchFeedOptions) 
         logId = crypto.randomUUID();
         logIdBySeq.current.set(sub.seq, logId);
       }
-      logSearch({
+      const payload: SearchLogInput = {
         logId,
         queryRaw: sub.queryRaw,
         queryNorm: sub.queryNorm,
@@ -174,7 +182,9 @@ export function useSearchFeed({ query, submission, paused }: SearchFeedOptions) 
         resultCount,
         sessionId: sub.sessionId,
         occurredAt: sub.occurredAt,
-      });
+      };
+      lastLogInputRef.current = payload;
+      logSearch(payload);
     };
     // 이후 페이지는 첫 페이지에서 확정된 질의로 이어간다 — 매 페이지 폴백을
     // 다시 태우면 도중에 다른 질의로 갈아탈 수 있다.
@@ -255,6 +265,21 @@ export function useSearchFeed({ query, submission, paused }: SearchFeedOptions) 
     };
   }, [loadMore, items.length]);
 
+  /**
+   * 취향 피드를 이어 보여줬다고 기록한다 (같은 log_id로 보정).
+   *
+   * **화면이 알려 줘야 한다.** 0건이냐 소진이냐는 여기서 알지만, 실제로 대체를
+   * 띄울지는 화면이 정한다(오류일 때는 안 띄운다). 그 판단을 두 곳에 두면 갈린다.
+   */
+  const markReplacementShown = useCallback(() => {
+    const payload = lastLogInputRef.current;
+    const seq = submissionRef.current?.seq;
+    if (!payload || seq === undefined || replacementLoggedSeqRef.current === seq)
+      return;
+    replacementLoggedSeqRef.current = seq;
+    logSearch({ ...payload, replacementShown: true });
+  }, []);
+
   const retry = useCallback(() => {
     if (progressRef.current.generation === generationRef.current)
       progressRef.current.error = false;
@@ -285,5 +310,7 @@ export function useSearchFeed({ query, submission, paused }: SearchFeedOptions) 
     exhausted: active && result.exhausted && items.length > 0,
     error,
     retry,
+    /** 화면이 취향 피드를 이어 보여줬을 때 부른다 (계측 경계 — 화면 경계와 별개) */
+    markReplacementShown,
   };
 }

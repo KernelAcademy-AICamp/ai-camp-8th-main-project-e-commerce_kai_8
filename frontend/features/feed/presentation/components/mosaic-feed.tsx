@@ -1,5 +1,7 @@
 "use client";
 
+import { useEffect } from "react";
+
 import { ProductDetail } from "@/features/feed/detail/presentation/components/product-detail";
 import { useDetailState } from "@/features/feed/detail/presentation/view-model/use-detail-state";
 import { FeedGrid } from "@/features/feed/presentation/components/feed-grid";
@@ -47,7 +49,21 @@ export function MosaicFeed() {
   // 이어져 대기 시간도 없다.
   const { columns, sentinelRef, onImpress, showSkeleton } = useFeedViewModel({
     paused: detailOpen || (searching && !showReplacement),
+    // 같은 훅이 메인 피드와 대체 피드 양쪽을 맡는다(둘은 동시에 렌더되지 않는다).
+    // 지금 어느 자리인지만 알려 주면 노출 기록이 갈린다 — 훅을 복제하면 두 벌이 갈린다.
+    surface: showReplacement ? "search_replacement" : undefined,
   });
+
+  // 대체 피드를 실제로 띄웠다고 검색 로그에 남긴다.
+  //
+  // **화면이 알려 준다.** 0건이냐 소진이냐는 검색 훅이 알지만, 실제로 대체를 띄울지는
+  // 화면이 정한다(오류일 때는 안 띄운다). 그 판단을 두 곳에 두면 갈린다.
+  //
+  // 다음 조각에서 화면의 경계 문구를 지운다. 그때 계측 경계까지 없으면 나중에
+  // "검색이 답을 준 것인가 피드가 대신한 것인가"를 물을 수 없다.
+  useEffect(() => {
+    if (showReplacement) searchFeed.markReplacementShown();
+  }, [showReplacement, searchFeed]);
   const { saveFeedScroll, suppressUntilRef } = useSearchScroll(search.submittedQuery);
   const { collapsed, expand } = useSearchCollapse(suppressUntilRef);
   const bannerVisible = useConsentNoticeVisible();
