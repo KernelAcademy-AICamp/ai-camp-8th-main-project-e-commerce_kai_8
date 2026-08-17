@@ -24,8 +24,18 @@ language plpgsql immutable parallel safe
 set search_path = pg_catalog, pg_temp
 as $$
 declare
-  -- `이하`류: 상한만. 조사가 붙어도 받는다.
-  k_upper constant text := '^(이하|이내|미만)[가-힣]*$';
+  -- 상한을 뜻하는 말. **포함(`이하`·`이내`)과 미포함(`미만`)을 구분한다** —
+  -- 한 갈래로 묶었더니 `3만원 미만`이 30,000원 상품을 통과시켰다. 기준서 G4는
+  -- 가격 하드 조건을 하나만 어겨도 0이다(교차 리뷰 M1).
+  --
+  -- 조사는 **열거한 것만** 받는다. `[가-힣]*`로 열어 뒀더니 `3만원 미만족`도
+  -- 가격으로 읽었다(교차 리뷰 m1). 모르면 텍스트로 남기는 원칙과 맞지 않는다.
+  k_josa   constant text := '(에|의|로|으로|까지|면|이면)?';
+  k_incl   constant text := '^(이하|이내)' || '(에|의|로|으로|까지|면|이면)?$';
+  k_excl   constant text := '^(미만)' || '(에|의|로|으로|까지|면|이면)?$';
+  -- 숫자는 4자리까지만 받는다(최대 9999만원). 그 위는 int 곱셈이 넘쳐
+  -- **공개 RPC가 5xx로 죽는다** — anon이 `214748만원대 반팔` 하나로 재현했다.
+  k_man    constant text := '^([0-9]{1,4})만원?';
   n int := coalesce(array_length(p_words, 1), 0);
   taken boolean[] := array_fill(false, array[greatest(n, 1)]);
   v_min int; v_max int;
@@ -41,19 +51,21 @@ begin
   for i in 1 .. n loop
     continue when taken[i];
 
-    -- ① `N만원대` — 한 단어로 범위를 말한다
-    if p_words[i] ~ '^[0-9]+만원?대$' then
-      man := (regexp_match(p_words[i], '^([0-9]+)'))[1]::int;
+    -- ① `N만원대` — 한 단어로 **범위**를 말한다. 상한이 아니다.
+    if p_words[i] ~ (k_man || '대' || k_josa || '$') then
+      man := (regexp_match(p_words[i], k_man))[1]::int;
       v_min := man * 10000;
       v_max := (man + 1) * 10000 - 1;
       taken[i] := true;
       exit;
     end if;
 
-    -- ② `N만원` + `이하` — 두 단어로 상한을 말한다
-    if p_words[i] ~ '^[0-9]+만원?$' and i < n and p_words[i + 1] ~ k_upper then
-      man := (regexp_match(p_words[i], '^([0-9]+)'))[1]::int;
-      v_max := man * 10000;
+    -- ② `N만원` + 상한어 — 두 단어로 상한을 말한다
+    if p_words[i] ~ (k_man || '$') and i < n
+       and (p_words[i + 1] ~ k_incl or p_words[i + 1] ~ k_excl) then
+      man := (regexp_match(p_words[i], k_man))[1]::int;
+      -- `미만`은 그 값을 포함하지 않는다
+      v_max := man * 10000 - (case when p_words[i + 1] ~ k_excl then 1 else 0 end);
       taken[i] := true;
       taken[i + 1] := true;
       exit;

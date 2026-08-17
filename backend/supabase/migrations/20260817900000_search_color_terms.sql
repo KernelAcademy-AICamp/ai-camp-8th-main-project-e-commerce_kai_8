@@ -127,10 +127,12 @@ insert into c_search_color_terms_next (term, codes, note) values
   ('아이보리색', array['23'],                              '아이보리'),
   ('베이지색',   array['5'],                               '베이지'),
   ('네이비색',   array['36','81'],                         '네이비'),
-  ('핑크색',     array['10','45','48','73','74'],          '핑크 색군'),
-  ('그레이색',   array['3','13','24','25'],                '그레이 색군'),
-  ('브라운색',   array['4','82','83'],                     '브라운'),
-  ('퍼플색',     array['8','39'],                          '퍼플·라벤더'),
+  -- ⚠️ `-색`은 같은 말의 변형이므로 **정식 명칭과 같은 넓이**로 둔다.
+  -- 색군 전체로 넓혔더니 `핑크`와 `핑크색`의 후보가 달라졌다(교차 리뷰 m4).
+  ('핑크색',     array['10'],                              '핑크 (정식명과 동일)'),
+  ('그레이색',   array['3'],                               '그레이 (정식명과 동일)'),
+  ('브라운색',   array['4'],                               '브라운 (정식명과 동일)'),
+  ('퍼플색',     array['8'],                               '퍼플 (정식명과 동일)'),
   ('코랄',   array['74'],                                 '피치 — 좁은 말이라 좁게')
 on conflict (term) do update set codes = excluded.codes, note = excluded.note;
 
@@ -178,7 +180,7 @@ comment on table c_search_color_terms is
 --    검정 본체까지 통과시킨다 — 색은 본체 색이라는 이 표의 전제를 스스로 어긴다.
 --    역할(본체/로고)을 가릴 수 없으므로 **모르면 손대지 않는다.**
 --
--- ④ **뒤에 역할어가 오면 본체 색이 아니다.** `검정 로고 반팔`은 검정 로고를
+-- ④ **바로 뒤에 역할어가 오면 본체 색이 아니다.** `검정 로고 반팔`은 검정 로고를
 --    찾는 말이지 검정 옷을 찾는 말이 아니다. 그대로 두면 검정 본체만 남겨
 --    질의를 반대로 바꾼다 — 이 표를 만든 계기가 바로 `검정로고`가 붙은 흰
 --    티셔츠였는데, 같은 실수를 반대 방향으로 하는 셈이다(교차 리뷰 M2).
@@ -190,9 +192,17 @@ language plpgsql stable security definer
 set search_path = public, pg_temp
 as $$
 declare
-  -- 색 뒤에 오면 그 색이 **본체가 아니라 무늬·부속의 색**임을 뜻하는 말
-  k_role constant text[] := array[
-    '로고','프린트','레터링','자수','그래픽','패치','나염','포인트','배색','라인','무늬','문구'];
+  -- 색 **바로 뒤에** 오면 그 색이 본체가 아니라 무늬·부속의 색임을 뜻하는 말.
+  -- 조사가 붙어도 받는다(`로고가`·`로고의`) — 처음엔 정확히 같은 토큰만 봐서
+  -- `검정 로고가 있는 반팔`이 본체 색으로 읽혔다(교차 리뷰 M6).
+  --
+  -- **앞쪽은 보지 않는다.** 한국어는 수식어가 앞에 오므로 `검정 로고`가 "검정
+  -- 로고"이지 `로고 검정`이 그런 뜻은 아니다. 앞쪽까지 보게 했더니
+  -- `검정 로고 흰 반팔`에서 본체 색 `흰`까지 놓쳤다 — 리뷰가 든 `로고 검정 반팔`은
+  -- "로고가 있는 검정 반팔"로도 읽히는 애매한 표현이라, 그것을 막으려고 확실한
+  -- 경우를 잃는 것은 손해다.
+  k_role constant text :=
+    '^(로고|프린트|레터링|자수|그래픽|패치|나염|포인트|배색|라인|무늬|문구|글씨|글자)[가-힣]*$';
   n int := coalesce(array_length(p_words, 1), 0);
   protected boolean[] := array_fill(false, array[greatest(n, 1)]);
   taken     boolean[] := array_fill(false, array[greatest(n, 1)]);
@@ -232,7 +242,7 @@ begin
         phrase := lower(array_to_string(p_words[i : i + w - 1], ' '));
         select t.codes into hit from c_search_color_terms t where t.term = phrase;
         -- ④ 바로 뒤가 역할어면 본체 색이 아니다
-        if hit is not null and i + w <= n and p_words[i + w] = any(k_role) then
+        if hit is not null and i + w <= n and p_words[i + w] ~ k_role then
           hit := null;
         end if;
         if hit is not null then

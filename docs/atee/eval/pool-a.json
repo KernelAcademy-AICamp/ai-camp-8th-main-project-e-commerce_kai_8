@@ -9,10 +9,12 @@
       "2026-08-17: 오타 교정을 브랜드 사전 + 자모 거리로 좁힘",
       "2026-08-17: 폴백을 첫 페이지에서만 결정 (이후 페이지는 query_used로 이어간다)",
       "2026-08-17 C-1: 티셔츠 판정을 제목 정규식에서 카테고리 순위로",
-      "2026-08-17 C-2: 색 표현을 텍스트에서 빼내 색 라벨 필터로 (브랜드명 보호 포함)"
+      "2026-08-17 C-2: 색 표현을 텍스트에서 빼내 색 라벨 필터로 (브랜드명 보호 포함)",
+      "2026-08-17 C-3: 가격 표현을 텍스트에서 빼내 가격 범위 필터로",
+      "2026-08-17 C-3 리뷰 반영: `미만` 경계·숫자 상한·5단어 절단 순서·단어 단위 자판 복원·역할어 조사 허용"
     ],
     "topN": 20,
-    "collectedAt": "2026-08-17T09:04:06.287531+00:00",
+    "collectedAt": "2026-08-17T09:36:25.483046+00:00",
     "catalogSnapshot": {
       "c_goods_rows": 226320,
       "c_search_text_rows": 226304,
@@ -65,9 +67,140 @@
       "partition": "holdout",
       "query": "하와이안 셔츠 xl",
       "queryNorm": "하와이안 셔츠 xl",
-      "queryUsed": "하와이안 셔츠 xl",
-      "resultCount": 0,
-      "candidates": []
+      "queryUsed": "하와이안 셔츠 티",
+      "resultCount": 13,
+      "candidates": [
+        {
+          "rank": 0,
+          "goodsNo": 3153089,
+          "title": "비치 하와이안 티셔츠 옐로우",
+          "brandName": "커버낫",
+          "priceFinal": 29400,
+          "gender": "공용",
+          "colorLabel": "라이트 옐로우",
+          "category": "001001"
+        },
+        {
+          "rank": 1,
+          "goodsNo": 3153097,
+          "title": "아치 하와이안 티셔츠 에크루",
+          "brandName": "커버낫",
+          "priceFinal": 34300,
+          "gender": "공용",
+          "colorLabel": "아이보리",
+          "category": "001001"
+        },
+        {
+          "rank": 2,
+          "goodsNo": 4194173,
+          "title": "하와이안 티셔츠 곰돌이 프린트 오버핏 반팔티 화이트",
+          "brandName": "이스케이프프롬",
+          "priceFinal": 20930,
+          "gender": "공용",
+          "colorLabel": "화이트",
+          "category": "001001"
+        },
+        {
+          "rank": 3,
+          "goodsNo": 4210647,
+          "title": "하와이안 화이트 티셔츠",
+          "brandName": "바나나시스터즈",
+          "priceFinal": 39690,
+          "gender": "여성",
+          "colorLabel": "화이트",
+          "category": "001001"
+        },
+        {
+          "rank": 4,
+          "goodsNo": 6241184,
+          "title": "하와이안 파라다이스 반팔티셔츠(블랙)",
+          "brandName": "카멜워크",
+          "priceFinal": 10800,
+          "gender": "남성",
+          "colorLabel": "블랙",
+          "category": "001001"
+        },
+        {
+          "rank": 5,
+          "goodsNo": 6241185,
+          "title": "하와이안 파라다이스 반팔티셔츠(화이트)",
+          "brandName": "카멜워크",
+          "priceFinal": 32000,
+          "gender": "남성",
+          "colorLabel": "화이트",
+          "category": "001001"
+        },
+        {
+          "rank": 6,
+          "goodsNo": 6297939,
+          "title": "키키 하와이안 반팔티셔츠 화이트",
+          "brandName": "와키윌리",
+          "priceFinal": 44100,
+          "gender": "남성",
+          "colorLabel": "화이트",
+          "category": "001001"
+        },
+        {
+          "rank": 7,
+          "goodsNo": 6297941,
+          "title": "키키 하와이안 반팔티셔츠 블루",
+          "brandName": "와키윌리",
+          "priceFinal": 44100,
+          "gender": "남성",
+          "colorLabel": "블루",
+          "category": "001001"
+        },
+        {
+          "rank": 8,
+          "goodsNo": 6297942,
+          "title": "키키 하와이안 반팔티셔츠 블랙",
+          "brandName": "와키윌리",
+          "priceFinal": 44100,
+          "gender": "남성",
+          "colorLabel": "블랙",
+          "category": "001001"
+        },
+        {
+          "rank": 9,
+          "goodsNo": 6299349,
+          "title": "트로피컬 하와이안 티셔츠 (마티니 블루)",
+          "brandName": "빅웨이브 컬렉티브",
+          "priceFinal": 42750,
+          "gender": "여성",
+          "colorLabel": "민트",
+          "category": "001001"
+        },
+        {
+          "rank": 10,
+          "goodsNo": 6876198,
+          "title": "Hawaiian Print T-shirts_Dark Blue(하와이안 프린트 티셔츠_다크블루)",
+          "brandName": "준준스페이스",
+          "priceFinal": 58000,
+          "gender": "여성",
+          "colorLabel": "라이트 그레이",
+          "category": "001001"
+        },
+        {
+          "rank": 11,
+          "goodsNo": 6876275,
+          "title": "Hawaiian Print T-shirts_White(하와이안 프린트 티셔츠_화이트)",
+          "brandName": "준준스페이스",
+          "priceFinal": 58000,
+          "gender": "여성",
+          "colorLabel": "화이트",
+          "category": "001001"
+        },
+        {
+          "rank": 12,
+          "goodsNo": 6876304,
+          "title": "Hawaiian Print T-shirts_Navy(하와이안 프린트 티셔츠_네이비)",
+          "brandName": "준준스페이스",
+          "priceFinal": 58000,
+          "gender": "여성",
+          "colorLabel": "네이비",
+          "category": "001001"
+        }
+      ]
     },
     {
       "id": "s05",

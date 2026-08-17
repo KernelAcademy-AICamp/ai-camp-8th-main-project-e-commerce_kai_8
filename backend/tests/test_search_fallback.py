@@ -416,31 +416,8 @@ def test_single_word_that_is_both_brand_and_color_stays_a_color(cur):
 #
 # `3만원`·`이하`는 제목에 실릴 수 없는 말이라, 텍스트로 두면 하나만 섞여도 0건이
 # 된다. 가격을 말하는 dev 질의 4개가 전부 그랬다.
-@pytest.mark.parametrize(
-    "query,pmin,pmax,rest",
-    [
-        ("블랙 오버핏 반팔티 3만원 이하", None, 30000, ["블랙", "오버핏", "반팔티"]),
-        ("3만원 이하 흰 반팔티", None, 30000, ["흰", "반팔티"]),
-        # `N만원대`는 **범위이지 상한이 아니다**. 상한으로 다루면 1만원대가 딸려 온다.
-        ("2만원대 남성 오버핏 반팔", 20000, 29999, ["남성", "오버핏", "반팔"]),
-        # 조사가 붙어도 받는다 — 개발셋에 실제로 있다
-        ("2만원 이하에 가성비있는 반팔티", None, 20000, ["가성비있는", "반팔티"]),
-        ("3만원 이내 반팔", None, 30000, ["반팔"]),
-        # 표에 없는 표현은 손대지 않는다 — 지금처럼 텍스트로 처리된다
-        ("30000원 이하 반팔", None, None, ["30000원", "이하", "반팔"]),
-        ("반팔티", None, None, ["반팔티"]),
-    ],
-)
-def test_price_is_split_out_of_the_text_query(cur, query, pmin, pmax, rest):
-    cur.execute(
-        "select min_price, max_price, rest from c_search_price_parse(c_search_split(%s))",
-        (query,),
-    )
-    got_min, got_max, got_rest = cur.fetchone()
-    assert (got_min, got_max) == (pmin, pmax)
-    assert got_rest == rest
-
-
+# 순수 파서 케이스(`미만` 경계·조사·큰 수)는 test_search_functions.py로 옮겼다 —
+# 카탈로그가 필요 없어 CI에서 실제로 돈다. 여기서는 **검색 경로 전체**만 본다.
 @pytest.mark.parametrize(
     "query,pmin,pmax,code",
     [
@@ -450,8 +427,13 @@ def test_price_is_split_out_of_the_text_query(cur, query, pmin, pmax, rest):
         ("네이비 라운드넥 반팔 3만원 이하", None, 30000, "36"),
     ],
 )
-def test_hard_conditions_are_never_violated(cur, query, pmin, pmax, code):
-    """기준서 G4는 하드 조건을 하나라도 어기면 0이다. 상위 20개에 위반이 없어야 한다."""
+def test_price_and_color_conditions_are_never_violated(cur, query, pmin, pmax, code):
+    """이 네 질의의 상위 20개에 **가격·색** 위반이 없어야 한다.
+
+    ⚠️ 성별은 세지 않는다. 성별은 이 계획의 범위 밖이고(가입 정보 기반 고정
+    필터로 다룬다) 검색이 구조화 조건으로 보장하지도 않는다. 기준서 G4의
+    하드 조건 전체를 보장한다고 읽히지 않게 이름을 좁혔다.
+    """
     cur.execute(
         "select count(*),"
         " count(*) filter (where %s::int is not null and g.price_final > %s::int),"
@@ -463,3 +445,40 @@ def test_hard_conditions_are_never_violated(cur, query, pmin, pmax, code):
     total, over, under, wrong_color = cur.fetchone()
     assert total > 0, f"{query}: 결과가 있어야 한다 (바꾸기 전에는 0건이었다)"
     assert (over, under, wrong_color) == (0, 0, 0)
+
+
+def test_structured_conditions_survive_the_five_word_cap(cur):
+    """구조화 해석 **전에** 5단어로 자르면 문장 뒤의 가격이 조용히 사라진다.
+
+    `여름에 입을 검정 반팔티 3만원 이하`는 여섯 번째 단어 `이하`가 잘려 나가
+    가격 조건이 없어졌었다(교차 리뷰 M3). 지원한다고 선언한 문법이 문장 뒤에
+    놓이면 지원되지 않는 셈이다.
+    """
+    q = "여름에 입을 검정 반팔티 3만원 이하"
+    cur.execute("select codes, rest from c_search_color_parse(c_search_split(%s))", (q,))
+    codes, rest = cur.fetchone()
+    assert codes == ["2"], "여섯 단어짜리 질의에서도 색을 읽어야 한다"
+    cur.execute("select min_price, max_price from c_search_price_parse(%s)", (rest,))
+    assert cur.fetchone() == (None, 30000), "가격도 읽어야 한다"
+
+
+def test_keyboard_restore_works_when_the_query_also_has_a_price(cur):
+    """자판 복원이 질의 전체를 요구하면 가격이 섞였을 때 통째로 막힌다."""
+    cur.execute("select query_used from c_search_page_v2(%s, null, null, 1)", ("rjawjd qksvkf 3만원 이하",))
+    assert cur.fetchone()[0] == "검정 반팔 3만원 이하"
+
+
+def test_search_docs_price_matches_the_catalog(cur):
+    """가격은 색인에 복사해 두고 거른다 — 카탈로그와 갈리면 **하드 조건이 깨진다.**
+
+    재수집 뒤 파생 테이블을 다시 만들지 않으면 "3만원 이하"로 통과한 상품이
+    응답에서는 3만원을 넘을 수 있다. 자동 동기화가 없으므로 여기서 감시한다.
+    """
+    cur.execute(
+        "select count(*) from c_search_docs s join c_goods g using (goods_no)"
+        " where s.price_final <> g.price_final"
+    )
+    assert cur.fetchone()[0] == 0, (
+        "c_search_docs.price_final이 카탈로그와 다르다 — "
+        "20260817200000을 다시 돌려야 한다(backend/README.md 갱신 계약)"
+    )

@@ -79,7 +79,7 @@ def cur():
             extract(
                 "20260817700000_search_qwerty.sql",
                 "create or replace function c_compose_hangul",
-                "-- 역할을 명시해서 지운다",
+                "revoke all on function c_compose_hangul",
             ),
             extract(
                 "20260817600000_search_typo.sql",
@@ -90,6 +90,13 @@ def cur():
                 "20260817800000_v1_search_fallback.sql",
                 "create or replace function c_like_all_patterns",
                 "revoke all on function c_like_all_patterns",
+            ),
+            # 가격 파서는 카탈로그가 필요 없다 — CI에서 실제로 돌린다.
+            # 실 DB 테스트에만 뒀더니 `미만` 경계·큰 수 오버플로를 CI가 못 잡았다.
+            extract(
+                "20260818000000_search_price_terms.sql",
+                "create or replace function c_search_price_parse",
+                "revoke all on function c_search_price_parse",
             ),
         ]
         for chunk in chunks:
@@ -197,6 +204,43 @@ def test_jamo_distance_separates_typos_from_other_words(cur, a, b, syllable_dist
 )
 def test_chosung(cur, text, chosung):
     assert scalar(cur, "select c_chosung(%s)", text) == chosung
+
+
+# ── 가격 해석 ───────────────────────────────────────────────────────────────
+@pytest.mark.parametrize(
+    "words,pmin,pmax,rest",
+    [
+        # 개발셋에 실제로 나오는 두 형태
+        (["3만원", "이하", "반팔"], None, 30000, ["반팔"]),
+        (["2만원대", "남성", "반팔"], 20000, 29999, ["남성", "반팔"]),
+        # `미만`은 그 값을 **포함하지 않는다**. 한 갈래로 묶었더니 3만원 상품이
+        # 통과해 기준서 G4의 하드 조건을 어겼다.
+        (["3만원", "미만", "반팔"], None, 29999, ["반팔"]),
+        (["3만원", "이내", "반팔"], None, 30000, ["반팔"]),
+        # 조사는 열거한 것만 받는다
+        (["2만원", "이하에", "반팔"], None, 20000, ["반팔"]),
+        (["2만원대에", "반팔"], 20000, 29999, ["반팔"]),
+        (["3만원", "미만족", "반팔"], None, None, ["3만원", "미만족", "반팔"]),
+        # 숫자는 4자리까지. 그 위는 int 곱셈이 넘쳐 공개 RPC가 5xx로 죽었다.
+        (["214748만원대", "반팔"], None, None, ["214748만원대", "반팔"]),
+        (["99999만원", "이하", "반팔"], None, None, ["99999만원", "이하", "반팔"]),
+        # 지원하지 않는 형태는 손대지 않는다
+        (["30000원", "이하", "반팔"], None, None, ["30000원", "이하", "반팔"]),
+        (["반팔티"], None, None, ["반팔티"]),
+        # 빈 입력은 rest도 null — `{}`를 돌려주면 호출자의 "텍스트 조건 없음"이 깨진다
+        ([], None, None, None),
+    ],
+)
+def test_price_parse(cur, words, pmin, pmax, rest):
+    cur.execute("select min_price, max_price, rest from c_search_price_parse(%s)", (words,))
+    assert cur.fetchone() == (pmin, pmax, rest)
+
+
+def test_price_parse_never_overflows(cur):
+    """공개 RPC가 사용자 입력 하나로 죽으면 안 된다."""
+    for n in ["9999", "10000", "99999", "214748", "999999999999"]:
+        cur.execute("select max_price from c_search_price_parse(%s)", ([f"{n}만원", "이하"],))
+        cur.fetchone()  # 예외가 나지 않는 것 자체가 검사다
 
 
 # ── LIKE 이스케이프 (v1 경로) ────────────────────────────────────────────────

@@ -196,7 +196,16 @@ comment on table c_search_docs is
 --   · `&@`는 문자열 전체를 **하나의 키워드**로 본다. 문법 해석이 없어 예약어가
 --     무력화되고, bigram 부분 일치는 그대로라 띄어쓰기 변형도 산다.
 -- 단어 사이 AND는 조건을 이어 붙여 만든다(최대 5단어라 펼쳐 쓴다).
--- 질의를 앞 60자·앞 5단어로 자른다. 정규화 규칙이 한 곳에 있어야 본 검색과
+-- 질의를 앞 60자로 자르고 단어로 나눈다. **여기서는 단어 수를 제한하지 않는다.**
+--
+-- 예전엔 5단어로 먼저 자른 뒤 색·가격을 뽑았다. 그래서 `여름에 입을 검정 반팔티
+-- 3만원 이하`는 여섯 번째 단어 `이하`가 잘려 나가 가격 조건이 조용히 사라지고
+-- 0건이 됐다(교차 리뷰 M3). 지원한다고 선언한 문법이 문장 뒤에 놓이면 지원되지
+-- 않는 셈이다.
+--
+-- 60자 상한이 실제 방어선이다(anon이 직접 부를 수 있다). 그 안에서 단어 수는
+-- 많아야 서른 남짓이라 파싱 비용이 붙지 않는다. **텍스트 매칭에 쓰는 단어만**
+-- 5개로 자른다 — 비용이 드는 곳은 거기다. 정규화 규칙이 한 곳에 있어야 본 검색과
 -- 폴백 후보가 같은 상한을 받는다 — 예전엔 폴백만 상한을 비켜 갔다(리뷰 M2).
 create or replace function c_search_split(p_query text)
 returns text[]
@@ -206,11 +215,25 @@ as $$
   select array_agg(w)
   from (
     select w from regexp_split_to_table(left(coalesce(p_query, ''), 60), '\s+') w
-    where w <> '' limit 5
+    where w <> ''
   ) t;
 $$;
 
 revoke all on function c_search_split(text) from public, anon, authenticated;
+
+-- 텍스트 매칭에 쓸 단어를 앞 5개로 자른다. 구조화 조건(색·가격)을 뽑아낸 **뒤**에
+-- 적용한다 — 비용이 드는 곳은 색인 조회이지 파싱이 아니다.
+create or replace function c_search_cap_words(p_words text[])
+returns text[]
+language sql immutable parallel safe
+set search_path = pg_catalog, pg_temp
+as $$
+  select nullif(array(
+    select w from unnest(p_words) with ordinality as u(w, i) order by i limit 5
+  ), '{}');
+$$;
+
+revoke all on function c_search_cap_words(text[]) from public, anon, authenticated;
 
 -- ⚠️ `create or replace`만으로는 **반환 열이 바뀔 때 실패한다**
 -- (cannot change return type of existing function). query_used 열을 더하면서
@@ -313,6 +336,9 @@ begin
       into v_pmin, v_pmax, v_words
     from c_search_price_parse(coalesce(v_words, '{}'::text[])) pp;
 
+    -- 텍스트로 찾을 단어만 5개로 자른다 (구조화 조건을 뽑은 뒤)
+    v_words := c_search_cap_words(v_words);
+
     -- 초성 판정도 색을 뺀 뒤의 단어로 한다
     v_chosung := v_words is not null
                  and array_to_string(v_words, '') ~ '^[ㄱ-ㅎ]+$'
@@ -322,10 +348,13 @@ begin
   with hit as (
     select
       s.goods_no,
-      -- 반팔 티셔츠가 아니면 **후순위로 밀되 침묵시키지 않는다.**
-      -- 기준서 §3-1 ④는 "최대 1점"이지 "제외"가 아니다. hard filter로 두면
-      -- 노출 자격의 절반을 검색에서 지우는 정책 변경이 된다. 반팔 티셔츠가
-      -- 부족할 때만 아래에 나타난다.
+      -- 반팔 티셔츠를 위로 올린다. **이것은 순위이지 적합성 판정이 아니다** —
+      -- 기준서(v3.1 §3-1④)는 티셔츠 전체(반팔·피케·긴팔·민소매)를 제품 범위로
+      -- 보고 후드·맨투맨만 최대 1로 둔다. 여기서 긴팔을 아래로 미는 것은
+      -- aTee가 반소매 탐색 앱이라는 **제품 결정**이고, 채점에서 긴팔을 깎는다는
+      -- 뜻이 아니다(둘을 혼동해 실제로 5건을 잘못 강등한 적이 있다).
+      -- 침묵시키지는 않는다 — hard filter로 두면 노출 자격의 절반을 검색에서
+      -- 지우는 정책 변경이 된다.
       -- ⚠️ pgroonga_score는 사실상 **매칭 횟수**다. 실측하면 2~3에 몰려 있고
       -- 동점은 goods_no 순으로 깨진다. 그래서 우연 일치가 한 브랜드에 많으면
       -- 상위를 통째로 먹는다 — `포켓 티셔츠` 상위 10개 중 9개가 아워포켓츠였다.
