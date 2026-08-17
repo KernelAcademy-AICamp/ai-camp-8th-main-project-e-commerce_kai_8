@@ -53,12 +53,37 @@ SYSTEMS = {
         # v1도 서버에서 자판 복원·오타 교정을 한다. 지금 다시 만들면
         # dkelektm·아디다드가 0건이 아니게 된다. A단계 개선폭을 말할 때
         # "같은 시스템 비교"가 아님을 기억해야 한다(SYSTEM_CHANGELOG 참고).
-        "sql": "select goods_no, title, brand_name, price_final, gender, query_used from c_search_page(%s, null, %s)",
+        "sql": (
+            "select r.goods_no, r.title, r.brand_name, r.price_final, r.gender, r.query_used,"
+            " (select string_agg(cg.name_ko, '/') from c_color_groups cg"
+            "   where cg.code = any(g.color_codes)) as color_label,"
+            " g.category"
+            " from c_search_page(%s, null, %s) with ordinality as r("
+            "   goods_no, title, brand_name, price_final, thumbnail, gender, gallery,"
+            "   width, height, query_used, ord)"
+            " join c_goods g using (goods_no) order by r.ord"
+        ),
         "args": lambda q, n: (q, n),
     },
     "a": {
         "name": "a-c_search_page_v2-pgroonga-bigram",
-        "sql": "select goods_no, title, brand_name, price_final, gender, query_used from c_search_page_v2(%s, null, null, %s)",
+        "sql": (
+            # 색 라벨·카테고리를 함께 가져온다. 검색이 이 값들로 거르고 순위를
+            # 매기는데 채점자에게 안 보여 주면 **측정 장치가 측정 대상을 못 본다** —
+            # 실제로 색 라벨이 검정인 상품들이 제목에 '검정'이 없다는 이유로
+            # 등급 1을 받아, 색 필터 도입이 개선인지 회귀인지 알 수 없었다.
+            # ⚠️ `with ordinality` + `order by ord`가 **필수**다. 조인은 함수가 낸
+            # 순서를 보존하지 않는다. 처음에 빠뜨렸더니 풀의 순위가 뒤섞여
+            # 순위에 민감한 P@20·nDCG가 조용히 달라졌다(ㅋㅂㄴ 0.95 → 0.80).
+            "select r.goods_no, r.title, r.brand_name, r.price_final, r.gender, r.query_used,"
+            " (select string_agg(cg.name_ko, '/') from c_color_groups cg"
+            "   where cg.code = any(g.color_codes)) as color_label,"
+            " g.category"
+            " from c_search_page_v2(%s, null, null, %s) with ordinality as r("
+            "   goods_no, title, brand_name, price_final, gender, gallery, thumbnail,"
+            "   width, height, score, query_used, ord)"
+            " join c_goods g using (goods_no) order by r.ord"
+        ),
         "args": lambda q, n: (q, n),
     },
 }
@@ -161,6 +186,9 @@ def build(system: str) -> dict:  # noqa: C901
                                 "brandName": r[2],
                                 "priceFinal": r[3],
                                 "gender": r[4],
+                                # 아래 둘은 검색이 실제로 쓰는 값이다
+                                "colorLabel": r[6],
+                                "category": r[7],
                             }
                             for i, r in enumerate(rows)
                         ],

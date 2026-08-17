@@ -245,3 +245,57 @@ def test_pagination_still_continues_where_it_should(cur, query):
     cur.execute("select max(goods_no) from c_search_page(%s, null, 30)", (query,))
     cur.execute("select count(*) from c_search_page(%s, %s, 30)", (query, cur.fetchone()[0]))
     assert cur.fetchone()[0] > 0, f"{query}: v1 2페이지가 이어져야 한다"
+
+
+# ── 색을 텍스트가 아니라 라벨로 찾는가 (C단계 2단계) ────────────────────────
+#
+# 제목의 색 글자는 세 가지 잡음을 끌고 온다: 로고·프린트의 색(`검정로고`가 붙은
+# 흰 티셔츠), 여러 색상안 나열(`화이트 블랙`), 단어 안쪽(`블랙홀스`는 네온라임).
+# `검정 반팔` 상위 20개 중 3개가 그 이유로 검정이 아니었다.
+@pytest.mark.parametrize(
+    "query,codes,rest",
+    [
+        ("검정 반팔", ["2"], ["반팔"]),
+        ("흰 티셔츠", ["1"], ["티셔츠"]),
+        ("와인색 티셔츠", ["49"], ["티셔츠"]),
+        ("검정", ["2"], None),                 # 색만 말한 질의 — 텍스트 조건이 없다
+        ("반팔티", None, ["반팔티"]),           # 색이 없으면 손대지 않는다
+        ("ㅋㅂㄴ", None, ["ㅋㅂㄴ"]),
+    ],
+)
+def test_color_is_split_out_of_the_text_query(cur, query, codes, rest):
+    cur.execute("select c_search_color_codes(c_search_split(%s))", (query,))
+    got = cur.fetchone()[0]
+    assert (sorted(got) if got else None) == (sorted(codes) if codes else None)
+    cur.execute("select c_search_drop_color_words(c_search_split(%s))", (query,))
+    assert cur.fetchone()[0] == rest
+
+
+def test_black_query_returns_only_black_labelled_products(cur):
+    """핵심 기준. 바꾸기 전에는 상위 20개 중 3개가 검정이 아니었다."""
+    cur.execute(
+        "select count(*), count(*) filter (where g.color_codes && array['2'])"
+        " from c_search_page_v2('검정 반팔', null, null, 20) r"
+        " join c_goods g using (goods_no)"
+    )
+    total, black = cur.fetchone()
+    assert total == 20
+    assert black == total, "색 조건이 붙은 질의는 상위 전부가 그 색이어야 한다"
+
+
+def test_color_only_query_works(cur):
+    """`검정`처럼 색만 말하면 텍스트 조건 없이 색으로만 찾는다."""
+    cur.execute("select count(*) from c_search_page_v2('검정', null, null, 20)")
+    assert cur.fetchone()[0] == 20
+
+
+def test_unknown_color_words_change_nothing(cur):
+    """표에 없는 색 표현은 건드리지 않는다 — 지금처럼 텍스트로 처리된다."""
+    cur.execute("select c_search_color_codes(array['형광연두빛'])")
+    assert cur.fetchone()[0] is None
+
+
+def test_query_used_shows_the_color_condition(cur):
+    """로그·평가가 '무엇으로 찾았는지'를 알 수 있어야 한다."""
+    cur.execute("select query_used from c_search_page_v2('검정 반팔', null, null, 1)")
+    assert cur.fetchone()[0] == "반팔 [색:2]"

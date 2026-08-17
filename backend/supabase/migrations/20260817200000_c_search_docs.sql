@@ -23,6 +23,48 @@
 -- 본다고 보장할 수 없다). 재실행하면 그대로 다시 만들어진다.
 
 -- ── 1. 새 테이블을 옆에 만든다 ──────────────────────────────────────────────
+-- ⚠️ **이 함수는 적재문보다 먼저 정의해야 한다.** 아래 INSERT가 이 함수를
+-- 부르는데, 파일 뒤쪽에 두면 적재는 DB에 남아 있던 **옛 정의**를 쓴다. 그러면
+-- 파일을 고쳐도 값이 안 바뀌고, 두 번 돌려야 반영된다. 실제로 그 함정에 빠져
+-- 순위를 두 번 바꿨는데 둘 다 적용되지 않았다(2026-08-17).
+
+-- 반팔 티셔츠에서 얼마나 먼가. 0이 목표 제품군이고 클수록 아래로 간다.
+-- **적재할 때 한 번 계산해 cat_rank에 넣는다** — 질의 시각에 부르면 매칭 전체에서
+-- 카테고리 텍스트를 힙으로 읽어 느려진다(위 열 주석 참고).
+--
+-- 배치의 근거:
+--   0 반팔 티셔츠(001001)
+--   1 피케·카라(001003) — **두 번 옮겼다.** 처음엔 1, 폴로 카라 반팔티가
+--     `검정 반팔`에서 밀리고 채점자가 등급 2를 줘서 0으로 올렸다가, 다시 1로
+--     내렸다. 이 칸이 **반팔만 있는 칸이 아니기 때문이다** — `쿨 케이블 카라
+--     하프 니트`, `피케 웨일 로고 롱슬리브`가 같이 들어 있다. 0으로 올리자
+--     `ㅋㅂㄴ`(커버낫) 상위 20개에서 반팔티 11개가 그것들로 바뀌어 0.95 → 0.80이
+--     됐다. 카테고리 하나로 가를 수 없는 혼합 칸이라 중간에 둔다.
+--   2 긴팔(001010)  — 같은 옷의 소매 차이
+--   3 민소매(001011) — 실루엣이 다름
+--   4 후드·맨투맨(001004) — 다른 옷
+-- 알 수 없는 카테고리는 1로 둔다 — 벌주지도, 반팔티와 동급으로 올리지도 않는다.
+-- (커버리지가 100%라 실제로는 나오지 않는다.)
+--
+-- ⚠️ 이 순위로 고칠 수 **없는** 것: 카탈로그 자체의 오분류. `반팔 바람막이`가
+-- 001001로 들어와 있는 상품이 198개다. 카테고리를 믿는 이상 같이 올라온다.
+create or replace function c_category_rank(p_category text)
+returns int
+language sql immutable parallel safe
+set search_path = pg_catalog, pg_temp
+as $$
+  select case p_category
+    when '001001' then 0   -- 반팔 티셔츠
+    when '001003' then 1   -- 피케·카라 (아래 주석 — 반팔만 있는 칸이 아니다)
+    when '001010' then 2   -- 긴팔
+    when '001011' then 3   -- 민소매
+    when '001004' then 4   -- 후드·맨투맨
+    else 1                 -- 알 수 없음
+  end;
+$$;
+
+revoke all on function c_category_rank(text) from public, anon, authenticated;
+
 drop table if exists c_search_docs_next;
 
 create table c_search_docs_next (
@@ -48,7 +90,12 @@ create table c_search_docs_next (
   -- 읽는다 — 실측 웜 p95가 117ms → 469ms였다. 브랜드 우연 일치 감점을
   -- 되돌린 것과 같은 함정이다. 좁은 정수면 그 비용이 사라진다.
   -- 순위의 뜻은 c_category_rank에 적혀 있다.
-  cat_rank smallint not null default 1
+  cat_rank smallint not null default 1,
+  -- 상품의 색 라벨(무신사 정본). 커버리지 99.7%, 87.9%가 단색.
+  -- 제목의 색 글자 대신 이것으로 거른다 — 이유는 20260817900000 주석 참고.
+  -- 배열이라 GIN 색인을 걸고 `&&`로 거른다. 힙으로 읽지 않으므로 매칭이
+  -- 많아도 비용이 붙지 않는다(cat_rank를 정수로 둔 것과 같은 이유).
+  color_codes text[] not null default '{}'
 );
 
 comment on table c_search_docs_next is
@@ -56,7 +103,8 @@ comment on table c_search_docs_next is
 
 -- 노출 자격은 기존과 동일하다 (c_feed_page·현행 검색과 같은 조건).
 -- 뷰(c_feed_products)에는 card_ok가 없으므로 c_thumb_dims를 직접 조인한다.
-insert into c_search_docs_next (goods_no, brand, title, tags, doc, chosung_words, cat_rank)
+insert into c_search_docs_next
+  (goods_no, brand, title, tags, doc, chosung_words, cat_rank, color_codes)
 select
   g.goods_no,
   coalesce(g.brand_name, ''),
@@ -71,7 +119,8 @@ select
       c_chosung(coalesce(g.brand_name, '') || ' ' || coalesce(g.title, '')), ' ')) w
     where w <> ''
   ), '{}'::text[]),
-  c_category_rank(coalesce(g.category, ''))
+  c_category_rank(coalesce(g.category, '')),
+  coalesce(g.color_codes, '{}'::text[])
 from c_goods g
 join c_thumb_dims d using (goods_no)
 where d.width > 0
@@ -86,6 +135,8 @@ create index c_search_docs_next_doc_idx on c_search_docs_next
   with (tokenizer = 'TokenBigram', normalizer = 'NormalizerAuto');
 
 create index c_search_docs_next_chosung_idx on c_search_docs_next using gin (chosung_words);
+
+create index c_search_docs_next_color_idx on c_search_docs_next using gin (color_codes);
 
 analyze c_search_docs_next;
 
@@ -103,6 +154,7 @@ alter table c_search_docs_next rename to c_search_docs;
 -- 같은 이름이 충돌해 실패한다(실측 — "재실행 가능" 계약이 깨져 있었다).
 alter index c_search_docs_next_doc_idx     rename to c_search_docs_doc_idx;
 alter index c_search_docs_next_chosung_idx rename to c_search_docs_chosung_words_idx;
+alter index c_search_docs_next_color_idx   rename to c_search_docs_color_codes_idx;
 -- 기본키 인덱스의 실제 이름은 생성 시점에 무엇이 점유돼 있었는지에 따라 달라진다
 -- (`_pkey`가 이미 쓰이면 `_pkey1`이 된다). 이름을 찾아서 바꾼다.
 do $rename$
@@ -137,40 +189,6 @@ comment on table c_search_docs is
 --   · `&@`는 문자열 전체를 **하나의 키워드**로 본다. 문법 해석이 없어 예약어가
 --     무력화되고, bigram 부분 일치는 그대로라 띄어쓰기 변형도 산다.
 -- 단어 사이 AND는 조건을 이어 붙여 만든다(최대 5단어라 펼쳐 쓴다).
--- 반팔 티셔츠에서 얼마나 먼가. 0이 목표 제품군이고 클수록 아래로 간다.
--- **적재할 때 한 번 계산해 cat_rank에 넣는다** — 질의 시각에 부르면 매칭 전체에서
--- 카테고리 텍스트를 힙으로 읽어 느려진다(위 열 주석 참고).
---
--- 배치의 근거:
---   0 반팔 티셔츠(001001) · **피케·카라(001003)** — 둘 다 반팔 상의다.
---     피케를 감점했다가 되돌렸다. `검정 반팔` 질의에서 `도미넌트 폴로 카라 반팔
---     티셔츠`가 20위 밖으로 밀렸는데 채점자는 그것을 **등급 2**로 봤다.
---     카라만 다른 반팔 티셔츠라 감점할 이유가 없다(실측 후 정정).
---   1 긴팔(001010)  — 같은 옷의 소매 차이
---   2 민소매(001011) — 실루엣이 다름
---   3 후드·맨투맨(001004) — 다른 옷
--- 알 수 없는 카테고리는 1로 둔다 — 벌주지도, 반팔티와 동급으로 올리지도 않는다.
--- (커버리지가 100%라 실제로는 나오지 않는다.)
---
--- ⚠️ 이 순위로 고칠 수 **없는** 것: 카탈로그 자체의 오분류. `반팔 바람막이`가
--- 001001로 들어와 있는 상품이 198개다. 카테고리를 믿는 이상 같이 올라온다.
-create or replace function c_category_rank(p_category text)
-returns int
-language sql immutable parallel safe
-set search_path = pg_catalog, pg_temp
-as $$
-  select case p_category
-    when '001001' then 0   -- 반팔 티셔츠
-    when '001003' then 0   -- 피케·카라 (반팔 상의 — 동급)
-    when '001010' then 1   -- 긴팔
-    when '001011' then 2   -- 민소매
-    when '001004' then 3   -- 후드·맨투맨
-    else 1                 -- 알 수 없음
-  end;
-$$;
-
-revoke all on function c_category_rank(text) from public, anon, authenticated;
-
 -- 질의를 앞 60자·앞 5단어로 자른다. 정규화 규칙이 한 곳에 있어야 본 검색과
 -- 폴백 후보가 같은 상한을 받는다 — 예전엔 폴백만 상한을 비켜 갔다(리뷰 M2).
 create or replace function c_search_split(p_query text)
@@ -224,6 +242,7 @@ declare
   v_norm  text;
   v_alt   text;
   v_try   int;
+  v_codes text[];   -- 질의가 말한 색. null이면 색 조건 없음
 begin
   -- 커서 쌍 검증 — 한쪽만 온 요청은 받지 않는다
   if (p_after_score is null) <> (p_after is null) then
@@ -236,10 +255,22 @@ begin
   if v_words is null then
     return;  -- 빈 질의: 전체 스캔 금지
   end if;
-  v_norm := array_to_string(v_words, ' ');
+
+  -- 색 표현을 **텍스트에서 빼내** 조건으로 돌린다 (C단계 2단계).
+  -- 남겨두면 제목의 색 글자가 끌고 오는 잡음(로고 색·색상안 나열·단어 안쪽)을
+  -- 그대로 먹는다 — `검정 반팔` 상위 20개 중 3개가 그 때문에 검정이 아니었다.
+  -- 표에 없는 색 표현은 건드리지 않는다. 그때는 지금처럼 텍스트로 처리된다.
+  v_codes := c_search_color_codes(v_words);
+  if v_codes is not null then
+    v_words := c_search_drop_color_words(v_words);
+    -- `검정`처럼 색만 말한 질의는 텍스트 조건이 없다. 색으로만 찾는다.
+  end if;
+
+  v_norm := array_to_string(coalesce(v_words, '{}'::text[]), ' ');
 
   -- 초성만으로 이뤄진 질의(ㄴㅇㅋ)는 본문에 그 형태로 없다. 초성 색인으로 보낸다.
-  v_chosung := array_to_string(v_words, '') ~ '^[ㄱ-ㅎ]+$'
+  v_chosung := v_words is not null
+               and array_to_string(v_words, '') ~ '^[ㄱ-ㅎ]+$'
                and length(array_to_string(v_words, '')) >= 2;
 
   -- 표기 폴백 (A단계 3단계). **원문이 0건일 때만** 다음 후보로 간다 — 결과가
@@ -269,6 +300,7 @@ begin
   -- 오타 교정이 함께 계산된다(배열 원소는 선평가된다 — 리뷰 M3).
   for v_try in 0 .. 2 loop
     if v_try > 0 then
+      continue when v_words is null;   -- 색만 말한 질의는 표기 폴백 대상이 아니다
       v_alt := case v_try
                  when 1 then c_restore_hangul_typing(v_norm)
                  else c_search_correct_query(v_norm)
@@ -297,7 +329,13 @@ begin
         )::real as sc
     from c_search_docs s
     where true
-      and (case when v_chosung
+      -- 색 조건. GIN 색인이라 매칭이 많아도 비용이 붙지 않는다.
+      -- `&&`(겹침)를 쓰므로 **여러 색으로 나오는 상품도 포함**된다 — 검정으로도
+      -- 나오는 티셔츠는 `검정 반팔`의 답이 맞다(전체의 12.1%가 다색).
+      and (v_codes is null or s.color_codes && v_codes)
+      -- 색만 말한 질의(`검정`)는 텍스트 조건이 없다
+      and (v_words is null
+           or case when v_chosung
                 -- 초성은 **모든 단어**를 만족해야 한다. `&&`(겹침)는 OR라서
                 -- 'ㄴㅇㅋ ㅂㅍ'가 두 조건의 AND가 아니게 된다.
                 then s.chosung_words @> v_words
@@ -307,7 +345,7 @@ begin
                      and (v_words[3] is null or s.doc &@ v_words[3])
                      and (v_words[4] is null or s.doc &@ v_words[4])
                      and (v_words[5] is null or s.doc &@ v_words[5])
-                end)
+              end)
       -- ⚠️ 커서 필터는 **정렬식과 같아야 한다.** 예전엔 정렬은 sc(카테고리 감점
       -- 반영)로 하면서 여기서는 원점수와 비교했다. 그 결과 감점받은 행이
       -- 1페이지에 나오면 커서 점수가 -999가 되고, 원점수(2~3)는 그보다 작을 수
@@ -324,7 +362,10 @@ begin
   -- c_feed_products의 width/height는 smallint라 명시 캐스트가 필요하다
   select v.goods_no, v.title, v.brand_name, v.price_final, v.gender,
          v.gallery, v.thumbnail, v.width::int, v.height::int, h.sc,
-         array_to_string(v_words, ' ')
+         -- 실제로 무엇으로 찾았는지 — 색 조건이 붙었으면 함께 보인다
+         btrim(coalesce(array_to_string(v_words, ' '), '') ||
+               case when v_codes is null then ''
+                    else ' [색:' || array_to_string(v_codes, ',') || ']' end)
   from hit h
   join c_feed_products v using (goods_no)
   order by h.sc desc, h.goods_no;

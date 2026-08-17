@@ -37,6 +37,10 @@ GRADED_FILES = (
     "grading-codex-a3.json",
     "grading-codex-typo.json",
     "grading-codex-cat.json",
+    "grading-codex-color.json",
+    # ⚠️ 마지막에 둔다. 같은 itemId가 앞 파일에도 있으면 **이쪽이 이긴다** —
+    # 색 라벨·카테고리를 보여준 뒤 다시 매긴 것이라 기준이 다르다.
+    "grading-codex-color2.json",
 )
 
 # 세지 않는 파일과 그 이유 — 지우지 말고 여기 남긴다
@@ -102,6 +106,12 @@ def build(partitions: set[str], pool_name: str, exclude_graded: bool) -> dict:
                         "brand": cand["brandName"],
                         "price": cand["priceFinal"],
                         "gender": cand["gender"],
+                        # ⚠️ 아래 둘은 **판매자 라벨(정본)**이지 제목에서 읽은 것이
+                        # 아니다. 검색이 이 값으로 거르고 순위를 매기므로 채점자도
+                        # 봐야 한다 — 안 보여 주면 색 라벨이 검정인 상품이 제목에
+                        # '검정'이 없다는 이유로 "확인 불가(1)"가 된다.
+                        "colorLabel": cand.get("colorLabel"),
+                        "category": cand.get("category"),
                     },
                 }
             )
@@ -132,6 +142,14 @@ def build(partitions: set[str], pool_name: str, exclude_graded: bool) -> dict:
                 "0": "무관, 또는 계열 규칙 위반(브랜드 불일치·하드조건 위반·부정조건 위반)",
             },
             "needsImage": "이미지를 봐야 판단되면 true로 표시하고 등급은 1을 준다",
+            "colorLabel": (
+                "판매자가 등록한 색 라벨(정본). 제목에 색이 안 적혀 있어도 이 값이 "
+                "질의의 색과 맞으면 색 조건은 **확인된 것**으로 본다"
+            ),
+            "category": (
+                "무신사 카테고리 정본. 001001 반팔 티셔츠 · 001003 피케·카라 · "
+                "001004 후드·맨투맨 · 001010 긴팔 · 001011 민소매"
+            ),
             "outputFormat": '[{"itemId": "...", "grade": 0|1|2, "needsImage": true|false}]',
         },
         "items": items,

@@ -35,6 +35,14 @@ ALLOWED = {
         "20260817200000_c_search_docs.sql",
         "c_search_correct_query",
     ): "위와 같다 — 질의 시점에만 불린다.",
+    (
+        "20260817200000_c_search_docs.sql",
+        "c_search_color_codes",
+    ): "위와 같다 — c_search_page_v2 본문에서 질의 시점에만 불린다.",
+    (
+        "20260817200000_c_search_docs.sql",
+        "c_search_drop_color_words",
+    ): "위와 같다 — 질의 시점에만 불린다.",
 }
 
 CREATE = re.compile(
