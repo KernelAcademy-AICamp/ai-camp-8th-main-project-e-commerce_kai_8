@@ -44,14 +44,21 @@ export interface SearchPage {
    * 서버가 실제로 검색에 쓴 질의. 자판 복원·오타 교정이 붙으면 원문과 달라진다.
    * 결과가 없으면 원문 그대로다. 화면이 "무엇으로 찾았는지" 알리고, 검색 로그가
    * 무엇이 실행됐는지 남기는 데 쓴다.
+   *
+   * ⚠️ **다음 페이지는 이 값으로 요청해야 한다.** 서버는 폴백을 첫 페이지에서만
+   * 결정하므로, 원문을 그대로 다시 보내면 폴백이 걸렸던 검색은 2페이지가
+   * 0건이 된다(다른 질의 결과가 섞이지는 않는다).
    */
   usedQuery: string;
 }
 
-interface SearchProductDto extends FeedProductDto {
-  score: number;
-  /** 서버가 실제로 검색에 쓴 질의 — 폴백이 서버 안에서 일어나 밖에선 안 보인다 */
+/** 서버가 실제로 검색에 쓴 질의 — 폴백이 서버 안에서 일어나 밖에선 안 보인다 */
+interface WithUsedQuery {
   query_used: string;
+}
+
+interface SearchProductDto extends FeedProductDto, WithUsedQuery {
+  score: number;
 }
 
 /**
@@ -65,7 +72,7 @@ export async function fetchSearchPage(
   size: number,
 ): Promise<SearchPage> {
   if (!isSearchV2Enabled()) {
-    const dtos = await rpcPost<FeedProductDto[]>(
+    const dtos = await rpcPost<(FeedProductDto & WithUsedQuery)[]>(
       "c_search_page",
       { p_query: query, p_after: cursor?.goodsNo ?? null, p_size: size },
       { timeoutMs: SEARCH_TIMEOUT_MS },
@@ -73,15 +80,11 @@ export async function fetchSearchPage(
     const products = dtos.map(mapFeedDto);
     const last = products.at(-1);
     // 구 경로는 점수가 없다 — 자리를 0으로 채워 커서 모양을 통일한다.
-    //
-    // ⚠️ v1도 서버에서 표기 폴백을 타지만(`20260817800000`), 반환형이
-    // `c_feed_products` 고정이라 **무엇으로 찾았는지 알려줄 자리가 없다.**
-    // 그래서 여기 usedQuery는 "서버가 쓴 질의"가 아니라 원문이다. v1 검색
-    // 로그의 queryUsed도 같은 한계를 갖는다 — v2에서만 실제 값이 남는다.
     return {
       products,
       nextCursor: last ? { score: 0, goodsNo: last.goodsNo } : null,
-      usedQuery: query,
+      // 0건이면 행이 없어 서버가 무엇을 시도했는지 알 수 없다 — 원문으로 둔다
+      usedQuery: dtos[0]?.query_used ?? query,
     };
   }
 

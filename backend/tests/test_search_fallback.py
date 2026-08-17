@@ -174,9 +174,14 @@ def test_fallback_does_not_hijack_a_query_that_already_works(cur):
 # 폴백을 "본 검색이 0건이면"으로 판단하던 때, 그 0건이 **질의가 0건**인지
 # **커서 뒤가 없을 뿐**인지 구분하지 않았다. 원문 결과가 한 페이지보다 적으면
 # 2페이지에서 원문이 소진되고 폴백이 걸려 다른 질의 결과가 나왔다 —
-# 실측: `타일러` 1페이지 1건 → 2페이지가 `타일레` 30건. 커서도 다른 질의의
-# 점수 공간에 적용됐다. 교차 리뷰가 Blocker로 잡았다.
-@pytest.mark.parametrize("query", ["타일러", "밀로티", "클로에"])
+# 실측: `타일러` 1페이지 1건 → 2페이지가 `타일레` 30건.
+#
+# 그 뒤 "빈 페이지에서만 존재 확인"으로 고쳤는데, v1의 확인을 PGroonga 색인으로
+# **근사**한 것이 또 갈렸다: `zj`는 LIKE로 1건인데 `&@`로는 0건이라 같은 전환이
+# 재현됐다. 지금은 확인 자체를 없애고 **폴백을 첫 페이지에서만 결정**한다.
+#
+# 아래 영문 표본(zj·tla·ekt)이 그 근사가 깨지는 자리다. 반드시 남긴다.
+@pytest.mark.parametrize("query", ["타일러", "밀로티", "클로에", "zj", "tla", "ekt"])
 def test_short_result_set_does_not_switch_query_on_next_page(cur, query):
     cur.execute(
         "select score, goods_no from c_search_page_v2(%s, null, null, 30)"
@@ -184,29 +189,47 @@ def test_short_result_set_does_not_switch_query_on_next_page(cur, query):
         (query,),
     )
     last = cur.fetchone()
-    assert last is not None, f"{query}: 1페이지에 결과가 있어야 이 검사가 성립한다"
-
-    cur.execute(
-        "select count(*) from c_search_page_v2(%s, %s::real, %s::bigint, 30)",
-        (query, last[0], last[1]),
-    )
-    assert cur.fetchone()[0] == 0, f"{query}: 소진 뒤에는 0건이어야 한다(다른 질의로 갈아타면 안 된다)"
+    if last is not None:
+        cur.execute(
+            "select count(*) from c_search_page_v2(%s, %s::real, %s::bigint, 30)",
+            (query, last[0], last[1]),
+        )
+        assert cur.fetchone()[0] == 0, f"{query}: v2는 소진 뒤 0건이어야 한다"
 
     cur.execute("select max(goods_no) from c_search_page(%s, null, 30)", (query,))
     v1_last = cur.fetchone()[0]
+    assert v1_last is not None, f"{query}: v1 1페이지에 결과가 있어야 이 검사가 성립한다"
     cur.execute("select count(*) from c_search_page(%s, %s, 30)", (query, v1_last))
-    assert cur.fetchone()[0] == 0, f"{query}: v1도 마찬가지다"
+    assert cur.fetchone()[0] == 0, f"{query}: v1도 소진 뒤 0건이어야 한다"
 
 
-@pytest.mark.parametrize(
-    "query,expect_second_page",
-    [
-        ("skdlzl", True),    # 처음부터 폴백 — 2페이지도 이어져야 한다
-        ("반팔", True),       # 결과가 많은 정상 질의
-        ("후드집업", True),   # is_tee 감점으로 점수가 음수인 갈래
-    ],
-)
-def test_pagination_still_continues_where_it_should(cur, query, expect_second_page):
+# 폴백이 걸린 검색의 다음 페이지는 **응답이 준 query_used로** 이어야 한다.
+# 서버는 첫 페이지에서만 폴백을 결정하므로 이것이 호출자의 계약이다.
+@pytest.mark.parametrize("query,resolved", [("skdlzl", "나이키"), ("아디다드", "아디다스")])
+def test_next_page_continues_with_query_used(cur, query, resolved):
+    cur.execute("select distinct query_used from c_search_page(%s, null, 30)", (query,))
+    assert cur.fetchone()[0] == resolved, "v1도 실제로 쓴 질의를 알려줘야 한다"
+
+    cur.execute("select max(goods_no) from c_search_page(%s, null, 30)", (query,))
+    last = cur.fetchone()[0]
+    cur.execute("select count(*) from c_search_page(%s, %s, 30)", (resolved, last))
+    assert cur.fetchone()[0] > 0, "계약대로 이으면 다음 페이지가 나온다"
+
+    cur.execute(
+        "select count(*) from c_search_page(%s, %s, 30) x"
+        " where x.goods_no in (select goods_no from c_search_page(%s, null, 30))",
+        (resolved, last, query),
+    )
+    assert cur.fetchone()[0] == 0, "1페이지와 겹치지 않는다"
+
+    # 계약을 어겨 원문으로 이으면 0건이다 — 다른 질의 결과가 섞이지는 않는다
+    cur.execute("select count(*) from c_search_page(%s, %s, 30)", (query, last))
+    assert cur.fetchone()[0] == 0
+
+
+@pytest.mark.parametrize("query", ["반팔", "후드집업"])
+def test_pagination_still_continues_where_it_should(cur, query):
+    """결과가 많은 질의는 v1·v2 모두 그대로 이어져야 한다."""
     cur.execute(
         "select score, goods_no from c_search_page_v2(%s, null, null, 30)"
         " order by score, goods_no desc limit 1",
@@ -217,4 +240,8 @@ def test_pagination_still_continues_where_it_should(cur, query, expect_second_pa
         "select count(*) from c_search_page_v2(%s, %s::real, %s::bigint, 30)",
         (query, last[0], last[1]),
     )
-    assert (cur.fetchone()[0] > 0) is expect_second_page
+    assert cur.fetchone()[0] > 0, f"{query}: v2 2페이지가 이어져야 한다"
+
+    cur.execute("select max(goods_no) from c_search_page(%s, null, 30)", (query,))
+    cur.execute("select count(*) from c_search_page(%s, %s, 30)", (query, cur.fetchone()[0]))
+    assert cur.fetchone()[0] > 0, f"{query}: v1 2페이지가 이어져야 한다"

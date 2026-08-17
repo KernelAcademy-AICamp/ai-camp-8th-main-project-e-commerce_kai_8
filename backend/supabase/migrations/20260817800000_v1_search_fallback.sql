@@ -1,22 +1,19 @@
--- 구 검색(v1)에도 표기 폴백을 붙인다.
+-- 구 검색(v1)에도 표기 폴백을 붙이고, 실제로 쓴 질의를 함께 돌려준다.
 --
--- **왜**: v2는 `NEXT_PUBLIC_SEARCH_V2=on`일 때만 켜지고 **기본은 v1**이다.
--- 자판 복원을 서버로 옮기면서 프론트 구현을 지웠는데, 서버 폴백은 v2에만
--- 있었다. 그 결과 기본 배포와 v2 롤백 상태에서 예전에 되던 `skdlzl → 나이키`가
--- 다시 0건이 됐다 — 옮기다가 기본 경로를 깨뜨린 것이다(리뷰 M1).
+-- **왜 폴백**: v2는 `NEXT_PUBLIC_SEARCH_V2=on`일 때만 켜지고 **기본은 v1**이다.
+-- 자판 복원을 서버로 옮기면서 프론트 구현을 지웠는데 서버 폴백은 v2에만 있어서,
+-- 기본 배포와 v2 롤백 상태에서 예전에 되던 `skdlzl → 나이키`가 다시 0건이 됐다.
+-- 옮기다가 기본 경로를 깨뜨린 것이다(리뷰 M1). 구현을 복사하지 않고 v2와 같은
+-- 함수를 부른다 — 한 벌만 두는 것이 이 작업의 요지다.
 --
--- v1을 유지하는 동안은 두 경로가 같은 폴백을 써야 롤백이 안전하다. 구현을
--- 복사하지 않고 v2와 같은 함수(c_restore_hangul_typing·c_search_correct_query)를
--- 부른다 — 한 벌만 두는 것이 이 작업의 요지다.
---
--- 폴백은 **모든 페이지에서** 판단한다. v1은 관련도 점수가 없어 응답이 실제로
--- 쓴 질의를 알려줄 자리가 없고(반환형이 c_feed_products 고정), 클라이언트는
--- 2페이지에도 원문을 보낸다. 첫 페이지에서만 판단하면 `skdlzl` 1페이지 30건
--- 뒤 2페이지가 0건이 된다. 해소는 질의 문자열만의 순수 함수라 페이지마다
--- 다시 해도 같은 답이 나온다 — 도중에 갈아타지 않는다.
+-- **왜 반환형을 바꾸나**: 예전 `setof c_feed_products`에는 실제로 쓴 질의를 담을
+-- 자리가 없었다. 그래서 ⓐ 검색 로그의 queryUsed가 v1에서 늘 원문이 되어 조용히
+-- 거짓이었고 ⓑ 다음 페이지를 어떤 질의로 이어야 할지 클라이언트가 알 수 없었다.
+-- `c_search_page`의 소비자는 우리 프론트와 평가 하네스뿐이라 넓혀도 안전하다.
+-- 열 순서·타입은 c_feed_products와 같고 끝에 query_used만 붙는다.
 
 -- LIKE 패턴 만들기를 함수로 뺐다 — 폴백이 후보마다 다시 만들어야 하는데
--- 인라인으로 두면 같은 식이 네 번 나온다. 이스케이프 규칙이 한 곳에 있어야
+-- 인라인으로 두면 같은 식이 여러 번 나온다. 이스케이프 규칙이 한 곳에 있어야
 -- 어긋나지 않는다.
 create or replace function c_like_all_patterns(p_words text[])
 returns text[]
@@ -30,98 +27,88 @@ $$;
 
 revoke all on function c_like_all_patterns(text[]) from public, anon, authenticated;
 
--- 한 벌의 **완성된 LIKE 패턴**으로 실제 검색을 한다. v2의 c_search_rows와
--- 같은 역할이다.
---
--- ⚠️ 패턴을 여기서 만들지 않고 **받는다.** where 절 안에서
--- `c_like_all_patterns(p_words)`를 부르면 상수로 접히지 않고 22.6만 행마다
--- 다시 계산돼 statement timeout까지 갔다(실측). 원래 코드가 패턴을 변수에
--- 미리 담았던 이유가 이것이다.
-create or replace function c_v1_rows(p_patterns text[], p_after bigint, p_size int)
-returns setof c_feed_products
-language sql stable security definer
-set search_path = public, pg_temp
-as $$
-  select v.*
-  from (
-    select s.goods_no
-    from c_search_text s
-    where (p_after is null or s.goods_no > p_after)
-      and s.txt like all (p_patterns)
-    order by s.goods_no
-    limit p_size
-  ) page
-  join c_feed_products v using (goods_no)
-  order by v.goods_no;
-$$;
+-- 반환 열이 바뀌므로 create or replace로는 안 된다
+drop function if exists c_search_page(text, bigint, int);
 
-revoke all on function c_v1_rows(text[], bigint, int) from public, anon, authenticated;
-
-create or replace function c_search_page(p_query text, p_after bigint default null, p_size int default 30)
-returns setof c_feed_products
+create or replace function c_search_page(
+  p_query text,
+  p_after bigint default null,
+  p_size  int default 30
+)
+returns table (
+  goods_no    bigint,
+  title       text,
+  brand_name  text,
+  price_final int,
+  thumbnail   text,
+  gender      text,
+  gallery     text[],
+  width       smallint,
+  height      smallint,
+  -- 실제로 검색에 쓰인 질의. v2의 같은 이름 열과 뜻이 같다.
+  query_used  text
+)
 language plpgsql stable security definer
 set search_path = public, extensions, pg_temp
 as $$
 declare
-  v_size int := least(greatest(coalesce(p_size, 30), 1), 60);
-  v_raw  text[];
-  v_norm text;
-  v_alt  text;
-  v_cand text[];
+  v_size     int := least(greatest(coalesce(p_size, 30), 1), 60);
+  v_words    text[];
+  v_norm     text;
+  v_alt      text;
+  v_try      int;
 begin
   -- 정규화(60자·5단어)를 먼저 하고 **그 결과로** 폴백을 판단한다. 원문을 넘기면
   -- 상한이 이 경로만 비켜 간다(v2와 같은 이유 — 리뷰 M2).
-  v_raw := c_search_split(p_query);
-  if v_raw is null then
+  v_words := c_search_split(p_query);
+  if v_words is null then
     return;  -- 빈 검색어: 전체 카탈로그 스캔 금지
   end if;
-  v_norm := array_to_string(v_raw, ' ');
+  v_norm := array_to_string(v_words, ' ');
 
-  -- ⚠️ **탐침을 따로 돌리지 않는다.** 처음엔 "걸리는 게 있나"를 exists로 먼저
-  -- 확인했는데, c_search_text는 색인이 없는 full scan 테이블이라 결과가 있는
-  -- 보통 질의도 두 번 읽게 됐다 — 정상 질의 p95가 385ms → 892ms, 폴백 질의는
-  -- 3.4초였다(리뷰 M1). 본 검색을 먼저 하고 **0건일 때만** 다음 후보로 간다.
-  -- RETURN QUERY는 FOUND를 세팅하므로 추가 조회 없이 알 수 있다.
-  return query select * from c_v1_rows(c_like_all_patterns(v_raw), p_after, v_size);
-  if found then
-    return;
-  end if;
+  -- **폴백은 첫 페이지에서만 결정한다** (p_after is null). 이후 페이지는 응답의
+  -- `query_used`를 그대로 다시 보내는 것이 호출자의 계약이다. 근거는
+  -- 20260817200000의 같은 주석에 적어 두었다 — 요약하면, 매 페이지 판단하려면
+  -- 커서를 무시한 존재 확인이 필요한데 그것이 느리거나(색인 없는 LIKE 3.3초)
+  -- 부정확했다(PGroonga 근사: `zj`가 LIKE 1건인데 `&@` 0건이라 2페이지가
+  -- `커` 결과로 바뀌었다).
+  --
+  -- 후보 순서: ① 원문 ② 한영 자판 복원 ③ 브랜드 사전 오타 교정.
+  -- 자판을 먼저 두는 이유: 영문 나열은 브랜드 사전에 없어 교정이 헛돈다.
+  -- 후보는 CASE로 만든다 — 배열에 담아 순회하면 자판 복원이 성공해도 오타
+  -- 교정이 함께 계산된다(배열 원소는 선평가된다).
+  for v_try in 0 .. 2 loop
+    if v_try > 0 then
+      v_alt := case v_try
+                 when 1 then c_restore_hangul_typing(v_norm)
+                 else c_search_correct_query(v_norm)
+               end;
+      continue when v_alt is null or v_alt = v_norm;
+      v_words := c_search_split(v_alt);
+      continue when v_words is null;
+    end if;
 
-    -- ⚠️ `FOUND`가 말하는 것은 "이 **페이지**가 0건"이지 "이 **질의**가 0건"이
-    -- 아니다. 원문 결과가 한 페이지보다 적으면 다음 페이지에서 원문이 소진되고,
-    -- 그때 폴백이 걸려 **스크롤 도중 검색어가 바뀐다** — 실측: `타일러` 1페이지
-    -- 1건 → 2페이지가 `타일레` 30건. 커서도 다른 질의의 공간에 적용된다.
-    -- 그래서 페이지가 비었을 때만 "커서를 무시하고 걸리는 게 있는가"를 묻는다.
-    -- 있으면 소진된 것이므로 폴백하지 않는다. 이 확인은 **빈 페이지에서만**
-    -- 일어나므로 보통 질의의 비용은 그대로다.
-  -- 확인은 **c_search_docs의 PGroonga 색인**으로 한다. c_search_text에 같은
-  -- 질문을 하면 색인이 없어 3.3초가 걸렸다(실측, 희귀어일수록 나쁘다).
-  -- 두 테이블은 같은 카탈로그·같은 노출 자격이고 여기서 묻는 것은 "이 질의에
-  -- 걸리는 상품이 존재하는가"뿐이라 근사로 충분하다. bigram과 LIKE가 갈리는
-  -- 드문 경우에 폴백이 한 번 더 걸릴 수 있을 뿐, 반환 결과가 틀리지는 않는다.
-  if p_after is not null and c_search_has_hit(v_raw) then
-    return;
-  end if;
+    -- ⚠️ 패턴은 **미리 만들어** 넘긴다. where 절 안에서 c_like_all_patterns를
+    -- 부르면 상수로 접히지 않고 22.6만 행마다 다시 계산돼 timeout까지 갔다.
+    return query
+    select v.goods_no, v.title, v.brand_name, v.price_final, v.thumbnail,
+           v.gender, v.gallery, v.width, v.height,
+           array_to_string(v_words, ' ')
+    from (
+      select s.goods_no
+      from c_search_text s
+      where (p_after is null or s.goods_no > p_after)
+        and s.txt like all (c_like_all_patterns(v_words))
+      order by s.goods_no
+      limit v_size
+    ) page
+    join c_feed_products v using (goods_no)
+    order by v.goods_no;
 
-  -- 후보는 순서대로 하나씩 만든다 — 배열에 담아 순회하면 자판 복원이
-  -- 성공해도 오타 교정이 함께 계산된다(배열 원소는 선평가된다).
-  v_alt := c_restore_hangul_typing(v_norm);
-  if v_alt is not null and v_alt <> v_norm then
-    v_cand := c_search_split(v_alt);
-    return query select * from c_v1_rows(c_like_all_patterns(v_cand), p_after, v_size);
-    if found then
+    if found or p_after is not null then
       return;
     end if;
-    -- 대안도 소진된 것일 수 있다 — 같은 이유로 확인한다
-    if p_after is not null and c_search_has_hit(v_cand) then
-      return;
-    end if;
-  end if;
-
-  v_alt := c_search_correct_query(v_norm);
-  if v_alt is not null and v_alt <> v_norm then
-    return query select * from c_v1_rows(c_like_all_patterns(c_search_split(v_alt)), p_after, v_size);
-  end if;
+  end loop;
 end
 $$;
 

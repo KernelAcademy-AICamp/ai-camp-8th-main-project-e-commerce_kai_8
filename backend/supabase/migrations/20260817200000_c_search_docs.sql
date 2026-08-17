@@ -128,28 +128,6 @@ comment on table c_search_docs is
 --   · `&@`는 문자열 전체를 **하나의 키워드**로 본다. 문법 해석이 없어 예약어가
 --     무력화되고, bigram 부분 일치는 그대로라 띄어쓰기 변형도 산다.
 -- 단어 사이 AND는 조건을 이어 붙여 만든다(최대 5단어라 펼쳐 쓴다).
--- 이 단어들로 걸리는 문서가 하나라도 있는가 — **커서를 보지 않는다.**
--- 페이지가 비었을 때 "질의가 0건인가, 커서 뒤가 없을 뿐인가"를 가르는 데만 쓴다.
--- `&@`(단일 키워드)를 쓰는 이유는 본 검색과 같다 — `&@~`는 질의 구문을 파싱해
--- 사용자 입력이 연산자로 해석된다.
-create or replace function c_search_has_hit(p_words text[])
-returns boolean
-language sql stable security definer
-set search_path = public, extensions, pg_temp
-as $$
-  select exists (
-    select 1 from c_search_docs s
-    where s.doc &@ p_words[1]
-      and (p_words[2] is null or s.doc &@ p_words[2])
-      and (p_words[3] is null or s.doc &@ p_words[3])
-      and (p_words[4] is null or s.doc &@ p_words[4])
-      and (p_words[5] is null or s.doc &@ p_words[5])
-    limit 1
-  );
-$$;
-
-revoke all on function c_search_has_hit(text[]) from public, anon, authenticated;
-
 -- 질의를 앞 60자·앞 5단어로 자른다. 정규화 규칙이 한 곳에 있어야 본 검색과
 -- 폴백 후보가 같은 상한을 받는다 — 예전엔 폴백만 상한을 비켜 갔다(리뷰 M2).
 create or replace function c_search_split(p_query text)
@@ -226,9 +204,19 @@ begin
   --   0회차 = 원문 · 1회차 = 한영 자판 복원 · 2회차 = 브랜드 사전 오타 교정
   -- 자판을 먼저 두는 이유: 영문 나열은 브랜드 사전에 없어 교정이 헛돈다.
   --
-  -- ⚠️ **탐침을 따로 돌리지 않는다.** "걸리는 게 있나"를 미리 확인하면 결과가
-  -- 있는 보통 질의도 색인을 두 번 읽는다. RETURN QUERY가 FOUND를 세팅하므로
-  -- 추가 조회 없이 알 수 있다(리뷰 M1).
+  -- **폴백은 첫 페이지에서만 결정한다** (p_after is null). 이후 페이지는 응답의
+  -- `query_used`를 그대로 다시 보내는 것이 호출자의 계약이다.
+  --
+  -- 왜 이렇게 하나. 폴백을 매 페이지 판단하려면 "이 페이지가 빈 것이 질의가
+  -- 0건이어서인가, 커서 뒤가 없어서인가"를 알아야 하고, 그러려면 커서를 무시한
+  -- 존재 확인이 필요하다. 두 번 시도했고 둘 다 실패했다:
+  --   ① 매 페이지 탐침 → 결과가 있는 보통 질의도 두 번 읽어 v1 정상 p95가
+  --      385ms → 892ms가 됐다.
+  --   ② 빈 페이지에서만 탐침하되 v1은 PGroonga 색인으로 근사 → LIKE와 갈렸다.
+  --      `zj`는 LIKE로 1건인데 `&@`로는 0건이라, 원문을 소진한 2페이지가
+  --      `커` 결과 60건으로 바뀌었다(교차 리뷰 실측).
+  -- 첫 페이지에서만 결정하면 확인 자체가 필요 없다. 호출자가 계약을 어기면
+  -- 폴백 질의의 2페이지가 0건이 될 뿐, **다른 질의 결과가 섞이지는 않는다.**
   --
   -- ⚠️ 질의를 별도 함수로 빼지 않는다. `set search_path`가 붙은 SQL 함수는
   -- 인라인되지 않아 플래너가 top-N 최적화를 못 한다 — 실측 웜 p50이
@@ -298,18 +286,9 @@ begin
   from hit h
   join c_feed_products v using (goods_no)
   order by h.sc desc, h.goods_no;
-    if found or v_chosung then
-      return;   -- 초성 갈래는 표기 폴백을 타지 않는다
-    end if;
-
-    -- ⚠️ `FOUND`가 말하는 것은 "이 **페이지**가 0건"이지 "이 **질의**가 0건"이
-    -- 아니다. 원문 결과가 한 페이지보다 적으면 다음 페이지에서 원문이 소진되고,
-    -- 그때 폴백이 걸려 **스크롤 도중 검색어가 바뀐다** — 실측: `타일러` 1페이지
-    -- 1건 → 2페이지가 `타일레` 30건. 커서도 다른 질의의 공간에 적용된다.
-    -- 그래서 페이지가 비었을 때만 "커서를 무시하고 걸리는 게 있는가"를 묻는다.
-    -- 있으면 소진된 것이므로 폴백하지 않는다. 이 확인은 **빈 페이지에서만**
-    -- 일어나므로 보통 질의의 비용은 그대로다.
-    if p_after is not null and c_search_has_hit(v_words) then
+    -- 결과가 있으면 끝. 초성 갈래는 표기 폴백을 타지 않는다.
+    -- 첫 페이지가 아니면 폴백하지 않는다(위 계약) — 빈 것은 소진이다.
+    if found or v_chosung or p_after is not null then
       return;
     end if;
   end loop;

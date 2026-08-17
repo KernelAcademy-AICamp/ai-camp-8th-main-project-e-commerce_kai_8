@@ -33,12 +33,14 @@ OUT_PATH = EVAL_DIR / "pool-baseline.json"
 SYSTEM_CHANGELOG = {
     "baseline": [
         "2026-08-17: 서버 표기 폴백(자판 복원·오타 교정) 추가 — 커밋된 "
-        "pool-baseline.json은 이 변경 **이전** 측정이라 재현되지 않는다"
+        "pool-baseline.json은 이 변경 이전 측정이라 재현되지 않는다",
+        "2026-08-17: 반환에 query_used 추가, 폴백은 첫 페이지에서만 결정",
     ],
     "a": [
         "2026-08-17: is_tee를 hard filter에서 순위 감점으로",
         "2026-08-17: 서버 표기 폴백 추가, query_used 반환",
         "2026-08-17: 오타 교정을 브랜드 사전 + 자모 거리로 좁힘",
+        "2026-08-17: 폴백을 첫 페이지에서만 결정 (이후 페이지는 query_used로 이어간다)",
     ],
 }
 
@@ -46,16 +48,13 @@ TOP_N = 20  # 판정 대상 상위 개수 — P@20·nDCG@20의 K와 같게 맞�
 SYSTEMS = {
     "baseline": {
         "name": "baseline-c_search_page",
-        # ⚠️ v1도 2026-08-17부터 서버에서 표기 폴백을 탄다. 다만 반환형이
-        # c_feed_products 고정이라 **무엇으로 찾았는지 알려줄 자리가 없다** —
-        # 그래서 여기 queryUsed는 원문이고, v1에 한해 실제와 다를 수 있다.
-        #
-        # 그 결과 **커밋된 pool-baseline.json은 이제 이 스크립트로 재현되지
-        # 않는다.** 기준선(27.8%)은 v1에 폴백이 없던 시점의 측정이고, 지금
-        # 다시 만들면 dkelektm·아디다드가 0건이 아니게 된다. A단계 개선폭을
-        # 말할 때 "같은 시스템 비교"가 아님을 기억해야 한다.
-        "sql": "select goods_no, title, brand_name, price_final, gender, %s::text from c_search_page(%s, null, %s)",
-        "args": lambda q, n: (q, q, n),
+        # ⚠️ **커밋된 pool-baseline.json은 이제 이 스크립트로 재현되지 않는다.**
+        # 기준선(27.8%)은 v1에 표기 폴백이 없던 시점의 측정이고, 2026-08-17부터
+        # v1도 서버에서 자판 복원·오타 교정을 한다. 지금 다시 만들면
+        # dkelektm·아디다드가 0건이 아니게 된다. A단계 개선폭을 말할 때
+        # "같은 시스템 비교"가 아님을 기억해야 한다(SYSTEM_CHANGELOG 참고).
+        "sql": "select goods_no, title, brand_name, price_final, gender, query_used from c_search_page(%s, null, %s)",
+        "args": lambda q, n: (q, n),
     },
     "a": {
         "name": "a-c_search_page_v2-pgroonga-bigram",
@@ -141,9 +140,9 @@ def build(system: str) -> dict:  # noqa: C901
                 norm = normalize_query(e["query"])
                 cur.execute(spec["sql"], spec["args"](norm, TOP_N))
                 rows = cur.fetchall()
-                # 폴백(자판·오타)은 서버 안에서 일어난다. v2는 query_used로
-                # 알려주므로 그대로 받는다 — 여기서 다시 계산하면 평가와
-                # 서버가 갈린다. v1은 알려줄 자리가 없어 원문이 그대로 온다.
+                # 폴백(자판·오타)은 서버 안에서 일어난다. v1·v2 모두 query_used로
+                # 알려주므로 그대로 받는다 — 여기서 다시 계산하면 평가와 서버가
+                # 갈린다(예전에 파이썬 사본을 두었다가 실제로 갈렸다).
                 used = rows[0][5] if rows else norm
                 results.append(
                     {
