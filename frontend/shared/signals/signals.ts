@@ -10,6 +10,7 @@ import {
   recordProfileAction,
   recordProfileImpression,
 } from "@/shared/profile/profile-store";
+import { rememberPendingForget } from "@/shared/signals/pending-forget";
 import { rpcPost } from "@/shared/supabase-rpc";
 
 import { getDeviceId } from "./device-id";
@@ -227,8 +228,11 @@ export function getFeedProfileSummary(): ProfileSummary | null {
 
 /**
  * 개인화 데이터 초기화(설정) — 기기 ID·세션·미전송 큐를 지우고
- * 서버에 이 기기의 이벤트 삭제를 요청한다(설계 §4 프라이버시).
- * 반환값 = 서버에서 지운 이벤트 수 (요청 실패 시 null).
+ * 서버에 이 기기의 기록 삭제를 요청한다(설계 §4 프라이버시, 방침 O-32).
+ * 반환값 = 서버에서 지운 행 수 (요청 실패 시 null).
+ *
+ * 서버 요청이 실패하면 그 기기 ID를 미완료 큐에 적어 둔다 — 로컬 ID를 지운 뒤에도
+ * 다음 접속에 재시도할 수 있어야 삭제 약속이 지켜진다.
  */
 export async function clearSignals(): Promise<number | null> {
   if (!isBrowser()) return null;
@@ -237,7 +241,11 @@ export async function clearSignals(): Promise<number | null> {
   try {
     deleted = await rpcPost<number>("c_forget_device", { p_device: deviceId });
   } catch {
-    deleted = null; // 서버 삭제 실패해도 로컬은 지운다
+    deleted = null;
+    // 로컬은 지우되, 이 기기 ID를 적어 둔다. 여기서 안 적으면 곧 ID를 지워
+    // 버리므로 서버에 남은 기록(행동 신호·검색어 원문)을 **영원히 지울 수 없다** —
+    // 설정 화면이 약속한 "다음 접속에서 재시도"가 거짓이 된다 (방침 O-32).
+    rememberPendingForget(deviceId);
   }
   try {
     localStorage.removeItem("atee-device-id");

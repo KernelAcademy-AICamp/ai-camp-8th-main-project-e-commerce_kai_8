@@ -1,0 +1,1269 @@
+{
+  "meta": {
+    "purpose": "is_tee 필터·입력방어 교정 후 신규 후보",
+    "rubric": "rubric.md v2",
+    "count": 95,
+    "outputFormat": "[{\"itemId\":\"...\",\"grade\":0|1|2,\"needsImage\":true|false}]"
+  },
+  "items": [
+    {
+      "itemId": "b01-322292",
+      "queryId": "b01",
+      "bucket": "G1",
+      "rule": "브랜드 질의. 그 브랜드가 아니면 무조건 0.",
+      "query": "돌돌",
+      "product": {
+        "title": "Bike Rabbit_T-shirts_S01-3",
+        "brand": "돌돌",
+        "price": 36000,
+        "gender": "남성"
+      }
+    },
+    {
+      "itemId": "b11-4924182",
+      "queryId": "b11",
+      "bucket": "G1",
+      "rule": "브랜드 질의. 그 브랜드가 아니면 무조건 0.",
+      "query": "티글레이크",
+      "product": {
+        "title": "캄니스스튜디오 반팔 티셔츠_6color",
+        "brand": "티글레이크",
+        "price": 18900,
+        "gender": "공용"
+      }
+    },
+    {
+      "itemId": "b13-5049547",
+      "queryId": "b13",
+      "bucket": "G1",
+      "rule": "브랜드 질의. 그 브랜드가 아니면 무조건 0.",
+      "query": "크림소다랩",
+      "product": {
+        "title": "크림소다랩 파쿠 서클 로고 포켓 반팔티",
+        "brand": "크림소다랩",
+        "price": 27600,
+        "gender": "공용"
+      }
+    },
+    {
+      "itemId": "b11-4924648",
+      "queryId": "b11",
+      "bucket": "G1",
+      "rule": "브랜드 질의. 그 브랜드가 아니면 무조건 0.",
+      "query": "티글레이크",
+      "product": {
+        "title": "커넥트 반팔 티셔츠_6color",
+        "brand": "티글레이크",
+        "price": 18900,
+        "gender": "공용"
+      }
+    },
+    {
+      "itemId": "a-g2-11-1822346",
+      "queryId": "a-g2-11",
+      "bucket": "G2",
+      "rule": "짧은 키워드·속성. 속성이 모두 확인되면 2, 일부만 맞으면 1.",
+      "query": "그래픽 티",
+      "product": {
+        "title": "Lily-tshirts-31 러블리 릴리 여자 북극곰 스노우보드 선수 익스트림 캐릭터 그래픽 디자인 그래피티 디자이너 티셔츠 티",
+        "brand": "돌돌",
+        "price": 38000,
+        "gender": "남성"
+      }
+    },
+    {
+      "itemId": "v10-4121038",
+      "queryId": "v10",
+      "bucket": "G3",
+      "rule": "표기 변형. 원본 기준으로 판정.",
+      "query": "ㅁㅈㅌ",
+      "product": {
+        "title": "하트 비트 티셔츠 마젠타",
+        "brand": "미스터차일드",
+        "price": 44100,
+        "gender": "남성"
+      },
+      "origin": "무지티"
+    },
+    {
+      "itemId": "b11-4924235",
+      "queryId": "b11",
+      "bucket": "G1",
+      "rule": "브랜드 질의. 그 브랜드가 아니면 무조건 0.",
+      "query": "티글레이크",
+      "product": {
+        "title": "쇼핑베어 반팔 티셔츠_6color",
+        "brand": "티글레이크",
+        "price": 18900,
+        "gender": "공용"
+      }
+    },
+    {
+      "itemId": "a-g2-11-1822347",
+      "queryId": "a-g2-11",
+      "bucket": "G2",
+      "rule": "짧은 키워드·속성. 속성이 모두 확인되면 2, 일부만 맞으면 1.",
+      "query": "그래픽 티",
+      "product": {
+        "title": "Lily-tshirts-32 러블리 릴리 여자 북극곰 스노우보드 선수 익스트림 캐릭터 그래픽 디자인 그래피티 디자이너 티셔츠 티",
+        "brand": "돌돌",
+        "price": 38000,
+        "gender": "남성"
+      }
+    },
+    {
+      "itemId": "a-g2-08-5401799",
+      "queryId": "a-g2-08",
+      "bucket": "G2",
+      "rule": "짧은 키워드·속성. 속성이 모두 확인되면 2, 일부만 맞으면 1.",
+      "query": "레터링 티",
+      "product": {
+        "title": "레터링 플레이 소매 시보리 긴팔티 [화이트]",
+        "brand": "비마이티",
+        "price": 33600,
+        "gender": "남성"
+      }
+    },
+    {
+      "itemId": "b11-4924574",
+      "queryId": "b11",
+      "bucket": "G1",
+      "rule": "브랜드 질의. 그 브랜드가 아니면 무조건 0.",
+      "query": "티글레이크",
+      "product": {
+        "title": "투톤TGLK로고 반팔 티셔츠_6color",
+        "brand": "티글레이크",
+        "price": 18900,
+        "gender": "공용"
+      }
+    },
+    {
+      "itemId": "a-g2-07-3417135",
+      "queryId": "a-g2-07",
+      "bucket": "G2",
+      "rule": "짧은 키워드·속성. 속성이 모두 확인되면 2, 일부만 맞으면 1.",
+      "query": "라운드넥 반팔",
+      "product": {
+        "title": "M 모노그램 자카드 투톤 라운드넥 반팔 티셔츠 (Navy)",
+        "brand": "세르지오 타키니",
+        "price": 41700,
+        "gender": "남성"
+      }
+    },
+    {
+      "itemId": "b08-3919679",
+      "queryId": "b08",
+      "bucket": "G1",
+      "rule": "브랜드 질의. 그 브랜드가 아니면 무조건 0.",
+      "query": "이스케이프프롬",
+      "product": {
+        "title": "낭만 프린트 롱슬리브 화이트",
+        "brand": "이스케이프프롬",
+        "price": 25900,
+        "gender": "공용"
+      }
+    },
+    {
+      "itemId": "b11-4924940",
+      "queryId": "b11",
+      "bucket": "G1",
+      "rule": "브랜드 질의. 그 브랜드가 아니면 무조건 0.",
+      "query": "티글레이크",
+      "product": {
+        "title": "홀드베어 반팔 티셔츠_6color",
+        "brand": "티글레이크",
+        "price": 18900,
+        "gender": "공용"
+      }
+    },
+    {
+      "itemId": "b10-2009919",
+      "queryId": "b10",
+      "bucket": "G1",
+      "rule": "브랜드 질의. 그 브랜드가 아니면 무조건 0.",
+      "query": "라디네오",
+      "product": {
+        "title": "디노 화이트 반팔 티셔츠",
+        "brand": "라디네오",
+        "price": 48000,
+        "gender": "남성"
+      }
+    },
+    {
+      "itemId": "b11-4924299",
+      "queryId": "b11",
+      "bucket": "G1",
+      "rule": "브랜드 질의. 그 브랜드가 아니면 무조건 0.",
+      "query": "티글레이크",
+      "product": {
+        "title": "TGLK90스토리 반팔 티셔츠_6color",
+        "brand": "티글레이크",
+        "price": 18900,
+        "gender": "공용"
+      }
+    },
+    {
+      "itemId": "b11-4924324",
+      "queryId": "b11",
+      "bucket": "G1",
+      "rule": "브랜드 질의. 그 브랜드가 아니면 무조건 0.",
+      "query": "티글레이크",
+      "product": {
+        "title": "TGK로고 반팔 티셔츠_6color",
+        "brand": "티글레이크",
+        "price": 18900,
+        "gender": "공용"
+      }
+    },
+    {
+      "itemId": "a-g2-11-1628499",
+      "queryId": "a-g2-11",
+      "bucket": "G2",
+      "rule": "짧은 키워드·속성. 속성이 모두 확인되면 2, 일부만 맞으면 1.",
+      "query": "그래픽 티",
+      "product": {
+        "title": "Lily-tshirts-18 러블리 릴리 여자 북극곰 스노우보드 선수 익스트림 캐릭터 그래픽 그래피티 디자인 티셔츠 티",
+        "brand": "돌돌",
+        "price": 38000,
+        "gender": "남성"
+      }
+    },
+    {
+      "itemId": "a-g2-08-5806104",
+      "queryId": "a-g2-08",
+      "bucket": "G2",
+      "rule": "짧은 키워드·속성. 속성이 모두 확인되면 2, 일부만 맞으면 1.",
+      "query": "레터링 티",
+      "product": {
+        "title": "크로우 그래피티 레터링 롱 슬리브 티",
+        "brand": "캣세이브더월드",
+        "price": 35900,
+        "gender": "여성"
+      }
+    },
+    {
+      "itemId": "b01-322293",
+      "queryId": "b01",
+      "bucket": "G1",
+      "rule": "브랜드 질의. 그 브랜드가 아니면 무조건 0.",
+      "query": "돌돌",
+      "product": {
+        "title": "Bike Rabbit_T-shirts_S01-4",
+        "brand": "돌돌",
+        "price": 36000,
+        "gender": "남성"
+      }
+    },
+    {
+      "itemId": "b11-4924526",
+      "queryId": "b11",
+      "bucket": "G1",
+      "rule": "브랜드 질의. 그 브랜드가 아니면 무조건 0.",
+      "query": "티글레이크",
+      "product": {
+        "title": "패치로고 반팔 티셔츠_6color",
+        "brand": "티글레이크",
+        "price": 18900,
+        "gender": "공용"
+      }
+    },
+    {
+      "itemId": "b08-3919680",
+      "queryId": "b08",
+      "bucket": "G1",
+      "rule": "브랜드 질의. 그 브랜드가 아니면 무조건 0.",
+      "query": "이스케이프프롬",
+      "product": {
+        "title": "힙 캣 스케이트보드 프린트 롱슬리브 화이트",
+        "brand": "이스케이프프롬",
+        "price": 25900,
+        "gender": "공용"
+      }
+    },
+    {
+      "itemId": "v11-577957",
+      "queryId": "v11",
+      "bucket": "G3",
+      "rule": "표기 변형. 원본 기준으로 판정.",
+      "query": "ㅇㅂㅍ",
+      "product": {
+        "title": "[레이쿠] reiku overfit tshirt gw 배색 오버핏 무지 반팔티",
+        "brand": "레이쿠",
+        "price": 37000,
+        "gender": "남성"
+      },
+      "origin": "오버핏"
+    },
+    {
+      "itemId": "b10-2017690",
+      "queryId": "b10",
+      "bucket": "G1",
+      "rule": "브랜드 질의. 그 브랜드가 아니면 무조건 0.",
+      "query": "라디네오",
+      "product": {
+        "title": "피타 네이비 반팔 티셔츠",
+        "brand": "라디네오",
+        "price": 38400,
+        "gender": "남성"
+      }
+    },
+    {
+      "itemId": "a-g2-11-3144973",
+      "queryId": "a-g2-11",
+      "bucket": "G2",
+      "rule": "짧은 키워드·속성. 속성이 모두 확인되면 2, 일부만 맞으면 1.",
+      "query": "그래픽 티",
+      "product": {
+        "title": "DMK_T-shirts_60 그래피티 아티스트 데빌몽키 dmk 캐릭터 그래픽 티셔츠 반팔티",
+        "brand": "돌돌",
+        "price": 43000,
+        "gender": "남성"
+      }
+    },
+    {
+      "itemId": "a-g2-11-1817553",
+      "queryId": "a-g2-11",
+      "bucket": "G2",
+      "rule": "짧은 키워드·속성. 속성이 모두 확인되면 2, 일부만 맞으면 1.",
+      "query": "그래픽 티",
+      "product": {
+        "title": "Lily-tshirts-25 러블리 릴리 여자 북극곰 스노우보드 선수 익스트림 캐릭터 그래픽 디자인 그래피티 디자이너 티셔츠 티",
+        "brand": "돌돌",
+        "price": 38000,
+        "gender": "남성"
+      }
+    },
+    {
+      "itemId": "a-g2-11-1820564",
+      "queryId": "a-g2-11",
+      "bucket": "G2",
+      "rule": "짧은 키워드·속성. 속성이 모두 확인되면 2, 일부만 맞으면 1.",
+      "query": "그래픽 티",
+      "product": {
+        "title": "Lily-tshirts-29 러블리 릴리 여자 북극곰 스노우보드 선수 익스트림 캐릭터 그래픽 디자인 그래피티 디자이너 티셔츠 티",
+        "brand": "돌돌",
+        "price": 38000,
+        "gender": "남성"
+      }
+    },
+    {
+      "itemId": "b11-4924942",
+      "queryId": "b11",
+      "bucket": "G1",
+      "rule": "브랜드 질의. 그 브랜드가 아니면 무조건 0.",
+      "query": "티글레이크",
+      "product": {
+        "title": "리본베어 반팔 티셔츠_6color",
+        "brand": "티글레이크",
+        "price": 18900,
+        "gender": "공용"
+      }
+    },
+    {
+      "itemId": "b08-3919682",
+      "queryId": "b08",
+      "bucket": "G1",
+      "rule": "브랜드 질의. 그 브랜드가 아니면 무조건 0.",
+      "query": "이스케이프프롬",
+      "product": {
+        "title": "메탈 팀 넘버 06 프린트 롱슬리브 화이트",
+        "brand": "이스케이프프롬",
+        "price": 25900,
+        "gender": "공용"
+      }
+    },
+    {
+      "itemId": "b11-4924398",
+      "queryId": "b11",
+      "bucket": "G1",
+      "rule": "브랜드 질의. 그 브랜드가 아니면 무조건 0.",
+      "query": "티글레이크",
+      "product": {
+        "title": "네버겟  반팔 티셔츠_6color",
+        "brand": "티글레이크",
+        "price": 18900,
+        "gender": "공용"
+      }
+    },
+    {
+      "itemId": "b10-2009912",
+      "queryId": "b10",
+      "bucket": "G1",
+      "rule": "브랜드 질의. 그 브랜드가 아니면 무조건 0.",
+      "query": "라디네오",
+      "product": {
+        "title": "디노 그레이 반팔 티셔츠",
+        "brand": "라디네오",
+        "price": 38400,
+        "gender": "남성"
+      }
+    },
+    {
+      "itemId": "v11-581439",
+      "queryId": "v11",
+      "bucket": "G3",
+      "rule": "표기 변형. 원본 기준으로 판정.",
+      "query": "ㅇㅂㅍ",
+      "product": {
+        "title": "[레이쿠] reiku poket overfit cream 포켓 오버핏 무지 반팔티",
+        "brand": "레이쿠",
+        "price": 37000,
+        "gender": "남성"
+      },
+      "origin": "오버핏"
+    },
+    {
+      "itemId": "a-g2-11-1494631",
+      "queryId": "a-g2-11",
+      "bucket": "G2",
+      "rule": "짧은 키워드·속성. 속성이 모두 확인되면 2, 일부만 맞으면 1.",
+      "query": "그래픽 티",
+      "product": {
+        "title": "[그래픽스 X 모노하 Gold Label] 이 또한 지나가리라 Premium 반팔 티셔츠",
+        "brand": "그래픽스",
+        "price": 27840,
+        "gender": "남성"
+      }
+    },
+    {
+      "itemId": "b09-996500",
+      "queryId": "b09",
+      "bucket": "G1",
+      "rule": "브랜드 질의. 그 브랜드가 아니면 무조건 0.",
+      "query": "무신사 스탠다드",
+      "product": {
+        "title": "베이식 크루 넥 티셔츠 [멜란지 그레이]",
+        "brand": "무신사 스탠다드",
+        "price": 11590,
+        "gender": "남성"
+      }
+    },
+    {
+      "itemId": "v10-4120932",
+      "queryId": "v10",
+      "bucket": "G3",
+      "rule": "표기 변형. 원본 기준으로 판정.",
+      "query": "ㅁㅈㅌ",
+      "product": {
+        "title": "그래피티 엠씨  티셔츠 마젠타",
+        "brand": "미스터차일드",
+        "price": 44100,
+        "gender": "남성"
+      },
+      "origin": "무지티"
+    },
+    {
+      "itemId": "v11-559954",
+      "queryId": "v11",
+      "bucket": "G3",
+      "rule": "표기 변형. 원본 기준으로 판정.",
+      "query": "ㅇㅂㅍ",
+      "product": {
+        "title": "헤비 오버핏 무지 반팔티 화이트",
+        "brand": "꼼파뇨",
+        "price": 23000,
+        "gender": "공용"
+      },
+      "origin": "오버핏"
+    },
+    {
+      "itemId": "v03-996501",
+      "queryId": "v03",
+      "bucket": "G3",
+      "rule": "표기 변형. 원본 기준으로 판정.",
+      "query": "antlstk tmxosekem",
+      "product": {
+        "title": "베이식 크루 넥 티셔츠 [네이비]",
+        "brand": "무신사 스탠다드",
+        "price": 11090,
+        "gender": "남성"
+      },
+      "origin": "무신사 스탠다드"
+    },
+    {
+      "itemId": "v09-1487498",
+      "queryId": "v09",
+      "bucket": "G3",
+      "rule": "표기 변형. 원본 기준으로 판정.",
+      "query": "ㄱㄹㅇㅂ",
+      "product": {
+        "title": "[UNISEX]드로잉 플라워 로고 반팔티_2color",
+        "brand": "그레이버",
+        "price": 21000,
+        "gender": "남성"
+      },
+      "origin": "그레이버"
+    },
+    {
+      "itemId": "a-g2-03-5154839",
+      "queryId": "a-g2-03",
+      "bucket": "G2",
+      "rule": "짧은 키워드·속성. 속성이 모두 확인되면 2, 일부만 맞으면 1.",
+      "query": "검정 반팔",
+      "product": {
+        "title": "반팔티셔츠 BOTK-6514 (검정)",
+        "brand": "제트",
+        "price": 31500,
+        "gender": "남성"
+      }
+    },
+    {
+      "itemId": "b11-4924782",
+      "queryId": "b11",
+      "bucket": "G1",
+      "rule": "브랜드 질의. 그 브랜드가 아니면 무조건 0.",
+      "query": "티글레이크",
+      "product": {
+        "title": "쉐도우로고 반팔 티셔츠_6color",
+        "brand": "티글레이크",
+        "price": 18900,
+        "gender": "공용"
+      }
+    },
+    {
+      "itemId": "b08-3919675",
+      "queryId": "b08",
+      "bucket": "G1",
+      "rule": "브랜드 질의. 그 브랜드가 아니면 무조건 0.",
+      "query": "이스케이프프롬",
+      "product": {
+        "title": "어바웃 어스 프린트 롱슬리브 화이트",
+        "brand": "이스케이프프롬",
+        "price": 38900,
+        "gender": "공용"
+      }
+    },
+    {
+      "itemId": "b10-2009916",
+      "queryId": "b10",
+      "bucket": "G1",
+      "rule": "브랜드 질의. 그 브랜드가 아니면 무조건 0.",
+      "query": "라디네오",
+      "product": {
+        "title": "디노 블랙 반팔 티셔츠",
+        "brand": "라디네오",
+        "price": 38400,
+        "gender": "남성"
+      }
+    },
+    {
+      "itemId": "b11-4924173",
+      "queryId": "b11",
+      "bucket": "G1",
+      "rule": "브랜드 질의. 그 브랜드가 아니면 무조건 0.",
+      "query": "티글레이크",
+      "product": {
+        "title": "페이크러브 반팔 티셔츠_6color",
+        "brand": "티글레이크",
+        "price": 18900,
+        "gender": "공용"
+      }
+    },
+    {
+      "itemId": "a-g2-11-1628497",
+      "queryId": "a-g2-11",
+      "bucket": "G2",
+      "rule": "짧은 키워드·속성. 속성이 모두 확인되면 2, 일부만 맞으면 1.",
+      "query": "그래픽 티",
+      "product": {
+        "title": "Lily-tshirts-17 러블리 릴리 여자 북극곰 스노우보드 선수 익스트림 캐릭터 그래픽 그래피티 디자인 티셔츠 티",
+        "brand": "돌돌",
+        "price": 38000,
+        "gender": "남성"
+      }
+    },
+    {
+      "itemId": "b11-4924266",
+      "queryId": "b11",
+      "bucket": "G1",
+      "rule": "브랜드 질의. 그 브랜드가 아니면 무조건 0.",
+      "query": "티글레이크",
+      "product": {
+        "title": "캠핑베어 반팔 티셔츠_6color",
+        "brand": "티글레이크",
+        "price": 18900,
+        "gender": "공용"
+      }
+    },
+    {
+      "itemId": "a-g2-11-3144975",
+      "queryId": "a-g2-11",
+      "bucket": "G2",
+      "rule": "짧은 키워드·속성. 속성이 모두 확인되면 2, 일부만 맞으면 1.",
+      "query": "그래픽 티",
+      "product": {
+        "title": "DMK_T-shirts_61 그래피티 아티스트 데빌몽키 dmk 캐릭터 그래픽 티셔츠 반팔티",
+        "brand": "돌돌",
+        "price": 43000,
+        "gender": "남성"
+      }
+    },
+    {
+      "itemId": "v09-1481354",
+      "queryId": "v09",
+      "bucket": "G3",
+      "rule": "표기 변형. 원본 기준으로 판정.",
+      "query": "ㄱㄹㅇㅂ",
+      "product": {
+        "title": "[UNISEX]드로잉도트 백로고 반팔티_블랙",
+        "brand": "그레이버",
+        "price": 23000,
+        "gender": "공용"
+      },
+      "origin": "그레이버"
+    },
+    {
+      "itemId": "b11-4924252",
+      "queryId": "b11",
+      "bucket": "G1",
+      "rule": "브랜드 질의. 그 브랜드가 아니면 무조건 0.",
+      "query": "티글레이크",
+      "product": {
+        "title": "1990캄니스 반팔 티셔츠_6color",
+        "brand": "티글레이크",
+        "price": 18900,
+        "gender": "공용"
+      }
+    },
+    {
+      "itemId": "v11-576454",
+      "queryId": "v11",
+      "bucket": "G3",
+      "rule": "표기 변형. 원본 기준으로 판정.",
+      "query": "ㅇㅂㅍ",
+      "product": {
+        "title": "유니버시티 오버핏 반팔 티셔츠 올그린 남녀공용",
+        "brand": "아타르",
+        "price": 31980,
+        "gender": "남성"
+      },
+      "origin": "오버핏"
+    },
+    {
+      "itemId": "a-g2-11-1820563",
+      "queryId": "a-g2-11",
+      "bucket": "G2",
+      "rule": "짧은 키워드·속성. 속성이 모두 확인되면 2, 일부만 맞으면 1.",
+      "query": "그래픽 티",
+      "product": {
+        "title": "Lily-tshirts-28 러블리 릴리 여자 북극곰 스노우보드 선수 익스트림 캐릭터 그래픽 디자인 그래피티 디자이너 티셔츠 티",
+        "brand": "돌돌",
+        "price": 38000,
+        "gender": "남성"
+      }
+    },
+    {
+      "itemId": "v03-996500",
+      "queryId": "v03",
+      "bucket": "G3",
+      "rule": "표기 변형. 원본 기준으로 판정.",
+      "query": "antlstk tmxosekem",
+      "product": {
+        "title": "베이식 크루 넥 티셔츠 [멜란지 그레이]",
+        "brand": "무신사 스탠다드",
+        "price": 11590,
+        "gender": "남성"
+      },
+      "origin": "무신사 스탠다드"
+    },
+    {
+      "itemId": "b08-3919676",
+      "queryId": "b08",
+      "bucket": "G1",
+      "rule": "브랜드 질의. 그 브랜드가 아니면 무조건 0.",
+      "query": "이스케이프프롬",
+      "product": {
+        "title": "어바웃 어스 프린트 롱슬리브 블랙",
+        "brand": "이스케이프프롬",
+        "price": 38900,
+        "gender": "공용"
+      }
+    },
+    {
+      "itemId": "a-g2-08-5401779",
+      "queryId": "a-g2-08",
+      "bucket": "G2",
+      "rule": "짧은 키워드·속성. 속성이 모두 확인되면 2, 일부만 맞으면 1.",
+      "query": "레터링 티",
+      "product": {
+        "title": "핸드레터링 소매 시보리 긴팔티 [화이트]",
+        "brand": "비마이티",
+        "price": 39200,
+        "gender": "남성"
+      }
+    },
+    {
+      "itemId": "v03-996503",
+      "queryId": "v03",
+      "bucket": "G3",
+      "rule": "표기 변형. 원본 기준으로 판정.",
+      "query": "antlstk tmxosekem",
+      "product": {
+        "title": "베이식 크루 넥 티셔츠 [딥 그린]",
+        "brand": "무신사 스탠다드",
+        "price": 10290,
+        "gender": "남성"
+      },
+      "origin": "무신사 스탠다드"
+    },
+    {
+      "itemId": "a-g2-11-2038812",
+      "queryId": "a-g2-11",
+      "bucket": "G2",
+      "rule": "짧은 키워드·속성. 속성이 모두 확인되면 2, 일부만 맞으면 1.",
+      "query": "그래픽 티",
+      "product": {
+        "title": "[UNISEX]빅 라이프로고 멀티 그래픽 반팔티_블랙",
+        "brand": "그레이버",
+        "price": 22500,
+        "gender": "남성"
+      }
+    },
+    {
+      "itemId": "a-g2-03-5154833",
+      "queryId": "a-g2-03",
+      "bucket": "G2",
+      "rule": "짧은 키워드·속성. 속성이 모두 확인되면 2, 일부만 맞으면 1.",
+      "query": "검정 반팔",
+      "product": {
+        "title": "반팔티셔츠 BOTK-382 (검정)",
+        "brand": "제트",
+        "price": 28800,
+        "gender": "남성"
+      }
+    },
+    {
+      "itemId": "a-g2-11-1494689",
+      "queryId": "a-g2-11",
+      "bucket": "G2",
+      "rule": "짧은 키워드·속성. 속성이 모두 확인되면 2, 일부만 맞으면 1.",
+      "query": "그래픽 티",
+      "product": {
+        "title": "[그래픽스 X 모노하 Gold Label] 스케이트 보드 Premium 반팔 티셔츠",
+        "brand": "그래픽스",
+        "price": 27840,
+        "gender": "남성"
+      }
+    },
+    {
+      "itemId": "b10-2009905",
+      "queryId": "b10",
+      "bucket": "G1",
+      "rule": "브랜드 질의. 그 브랜드가 아니면 무조건 0.",
+      "query": "라디네오",
+      "product": {
+        "title": "디노 네이비 반팔 티셔츠",
+        "brand": "라디네오",
+        "price": 38400,
+        "gender": "남성"
+      }
+    },
+    {
+      "itemId": "v08-3153114",
+      "queryId": "v08",
+      "bucket": "G3",
+      "rule": "표기 변형. 원본 기준으로 판정.",
+      "query": "ㅋㅂㄴ",
+      "product": {
+        "title": "웨일 로고 슬럽 티셔츠 에크루",
+        "brand": "커버낫",
+        "price": 35400,
+        "gender": "공용"
+      },
+      "origin": "커버낫"
+    },
+    {
+      "itemId": "b08-3919681",
+      "queryId": "b08",
+      "bucket": "G1",
+      "rule": "브랜드 질의. 그 브랜드가 아니면 무조건 0.",
+      "query": "이스케이프프롬",
+      "product": {
+        "title": "힙 캣 스케이트보드 프린트 롱슬리브 블랙",
+        "brand": "이스케이프프롬",
+        "price": 25900,
+        "gender": "공용"
+      }
+    },
+    {
+      "itemId": "v07-3879815",
+      "queryId": "v07",
+      "bucket": "G3",
+      "rule": "표기 변형. 원본 기준으로 판정.",
+      "query": "ㅇㄷㄷㅅ",
+      "product": {
+        "title": "그래픽 티 - 화이트 / JF2858",
+        "brand": "아디다스",
+        "price": 23990,
+        "gender": "남성"
+      },
+      "origin": "아디다스"
+    },
+    {
+      "itemId": "v08-3153110",
+      "queryId": "v08",
+      "bucket": "G3",
+      "rule": "표기 변형. 원본 기준으로 판정.",
+      "query": "ㅋㅂㄴ",
+      "product": {
+        "title": "웨일 로고 슬럽 티셔츠 스카이 블루",
+        "brand": "커버낫",
+        "price": 35400,
+        "gender": "공용"
+      },
+      "origin": "커버낫"
+    },
+    {
+      "itemId": "v11-577958",
+      "queryId": "v11",
+      "bucket": "G3",
+      "rule": "표기 변형. 원본 기준으로 판정.",
+      "query": "ㅇㅂㅍ",
+      "product": {
+        "title": "[레이쿠] reiku overfit tshirt bc 배색 오버핏 무지 반팔티",
+        "brand": "레이쿠",
+        "price": 37000,
+        "gender": "남성"
+      },
+      "origin": "오버핏"
+    },
+    {
+      "itemId": "a-g2-11-1494737",
+      "queryId": "a-g2-11",
+      "bucket": "G2",
+      "rule": "짧은 키워드·속성. 속성이 모두 확인되면 2, 일부만 맞으면 1.",
+      "query": "그래픽 티",
+      "product": {
+        "title": "[그래픽스 X 미스터 머스타드 스튜디오 Gold Label] Love Together Premium 반팔 티셔츠",
+        "brand": "그래픽스",
+        "price": 27840,
+        "gender": "남성"
+      }
+    },
+    {
+      "itemId": "v08-3153097",
+      "queryId": "v08",
+      "bucket": "G3",
+      "rule": "표기 변형. 원본 기준으로 판정.",
+      "query": "ㅋㅂㄴ",
+      "product": {
+        "title": "아치 하와이안 티셔츠 에크루",
+        "brand": "커버낫",
+        "price": 34300,
+        "gender": "공용"
+      },
+      "origin": "커버낫"
+    },
+    {
+      "itemId": "b08-3919678",
+      "queryId": "b08",
+      "bucket": "G1",
+      "rule": "브랜드 질의. 그 브랜드가 아니면 무조건 0.",
+      "query": "이스케이프프롬",
+      "product": {
+        "title": "더 퍼펙트 이스케이프 클럽 프린트 롱슬리브 화이트",
+        "brand": "이스케이프프롬",
+        "price": 25900,
+        "gender": "공용"
+      }
+    },
+    {
+      "itemId": "b08-3919670",
+      "queryId": "b08",
+      "bucket": "G1",
+      "rule": "브랜드 질의. 그 브랜드가 아니면 무조건 0.",
+      "query": "이스케이프프롬",
+      "product": {
+        "title": "ESCF 스포츠 프린트 롱슬리브 화이트",
+        "brand": "이스케이프프롬",
+        "price": 35900,
+        "gender": "공용"
+      }
+    },
+    {
+      "itemId": "v08-3153111",
+      "queryId": "v08",
+      "bucket": "G3",
+      "rule": "표기 변형. 원본 기준으로 판정.",
+      "query": "ㅋㅂㄴ",
+      "product": {
+        "title": "웨일 로고 슬럽 티셔츠 차콜",
+        "brand": "커버낫",
+        "price": 35400,
+        "gender": "공용"
+      },
+      "origin": "커버낫"
+    },
+    {
+      "itemId": "b08-3919673",
+      "queryId": "b08",
+      "bucket": "G1",
+      "rule": "브랜드 질의. 그 브랜드가 아니면 무조건 0.",
+      "query": "이스케이프프롬",
+      "product": {
+        "title": "블랙 키티 캣츠 프린트 롱슬리브 블랙",
+        "brand": "이스케이프프롬",
+        "price": 38900,
+        "gender": "공용"
+      }
+    },
+    {
+      "itemId": "v08-3195215",
+      "queryId": "v08",
+      "bucket": "G3",
+      "rule": "표기 변형. 원본 기준으로 판정.",
+      "query": "ㅋㅂㄴ",
+      "product": {
+        "title": "테리 카라 티셔츠 에크루",
+        "brand": "커버낫",
+        "price": 34500,
+        "gender": "공용"
+      },
+      "origin": "커버낫"
+    },
+    {
+      "itemId": "a-g2-08-5418134",
+      "queryId": "a-g2-08",
+      "bucket": "G2",
+      "rule": "짧은 키워드·속성. 속성이 모두 확인되면 2, 일부만 맞으면 1.",
+      "query": "레터링 티",
+      "product": {
+        "title": "밀로티 하트 레터링 로고 카모 반팔 티 남녀공용",
+        "brand": "무센트",
+        "price": 35710,
+        "gender": "공용"
+      }
+    },
+    {
+      "itemId": "v08-3195217",
+      "queryId": "v08",
+      "bucket": "G3",
+      "rule": "표기 변형. 원본 기준으로 판정.",
+      "query": "ㅋㅂㄴ",
+      "product": {
+        "title": "테리 카라 티셔츠 블랙",
+        "brand": "커버낫",
+        "price": 34500,
+        "gender": "공용"
+      },
+      "origin": "커버낫"
+    },
+    {
+      "itemId": "b11-4924520",
+      "queryId": "b11",
+      "bucket": "G1",
+      "rule": "브랜드 질의. 그 브랜드가 아니면 무조건 0.",
+      "query": "티글레이크",
+      "product": {
+        "title": "1978오리지널 반팔 티셔츠_6color",
+        "brand": "티글레이크",
+        "price": 18900,
+        "gender": "공용"
+      }
+    },
+    {
+      "itemId": "v11-579500",
+      "queryId": "v11",
+      "bucket": "G3",
+      "rule": "표기 변형. 원본 기준으로 판정.",
+      "query": "ㅇㅂㅍ",
+      "product": {
+        "title": "[레이쿠] reiku imagination overfit tshirt gw 배색 오버핏 반팔티",
+        "brand": "레이쿠",
+        "price": 39000,
+        "gender": "남성"
+      },
+      "origin": "오버핏"
+    },
+    {
+      "itemId": "v10-4066557",
+      "queryId": "v10",
+      "bucket": "G3",
+      "rule": "표기 변형. 원본 기준으로 판정.",
+      "query": "ㅁㅈㅌ",
+      "product": {
+        "title": "트레블링 피그먼트 반팔티 마젠타",
+        "brand": "써치410",
+        "price": 34300,
+        "gender": "남성"
+      },
+      "origin": "무지티"
+    },
+    {
+      "itemId": "a-g2-08-5401843",
+      "queryId": "a-g2-08",
+      "bucket": "G2",
+      "rule": "짧은 키워드·속성. 속성이 모두 확인되면 2, 일부만 맞으면 1.",
+      "query": "레터링 티",
+      "product": {
+        "title": "레터링 플레이 소매 시보리 긴팔티 [블랙]",
+        "brand": "비마이티",
+        "price": 33600,
+        "gender": "남성"
+      }
+    },
+    {
+      "itemId": "b11-4924530",
+      "queryId": "b11",
+      "bucket": "G1",
+      "rule": "브랜드 질의. 그 브랜드가 아니면 무조건 0.",
+      "query": "티글레이크",
+      "product": {
+        "title": "유고앙 반팔 티셔츠_6color",
+        "brand": "티글레이크",
+        "price": 18900,
+        "gender": "공용"
+      }
+    },
+    {
+      "itemId": "b11-4924276",
+      "queryId": "b11",
+      "bucket": "G1",
+      "rule": "브랜드 질의. 그 브랜드가 아니면 무조건 0.",
+      "query": "티글레이크",
+      "product": {
+        "title": "위니드아치로고 반팔 티셔츠_6color",
+        "brand": "티글레이크",
+        "price": 18900,
+        "gender": "공용"
+      }
+    },
+    {
+      "itemId": "a-g2-11-2038810",
+      "queryId": "a-g2-11",
+      "bucket": "G2",
+      "rule": "짧은 키워드·속성. 속성이 모두 확인되면 2, 일부만 맞으면 1.",
+      "query": "그래픽 티",
+      "product": {
+        "title": "[UNISEX]빅 라이프로고 멀티 그래픽 반팔티_화이트",
+        "brand": "그레이버",
+        "price": 22500,
+        "gender": "남성"
+      }
+    },
+    {
+      "itemId": "v11-579501",
+      "queryId": "v11",
+      "bucket": "G3",
+      "rule": "표기 변형. 원본 기준으로 판정.",
+      "query": "ㅇㅂㅍ",
+      "product": {
+        "title": "[레이쿠] reiku imagination overfit tshirt r-bc 배색 오버핏 반팔티",
+        "brand": "레이쿠",
+        "price": 39000,
+        "gender": "남성"
+      },
+      "origin": "오버핏"
+    },
+    {
+      "itemId": "a-g2-11-1494722",
+      "queryId": "a-g2-11",
+      "bucket": "G2",
+      "rule": "짧은 키워드·속성. 속성이 모두 확인되면 2, 일부만 맞으면 1.",
+      "query": "그래픽 티",
+      "product": {
+        "title": "[그래픽스 X 미스터 머스타드 스튜디오 Gold Label] 2 in 1 Premium 반팔 티셔츠",
+        "brand": "그래픽스",
+        "price": 27840,
+        "gender": "남성"
+      }
+    },
+    {
+      "itemId": "a-g2-11-1820565",
+      "queryId": "a-g2-11",
+      "bucket": "G2",
+      "rule": "짧은 키워드·속성. 속성이 모두 확인되면 2, 일부만 맞으면 1.",
+      "query": "그래픽 티",
+      "product": {
+        "title": "Lily-tshirts-30 러블리 릴리 여자 북극곰 스노우보드 선수 익스트림 캐릭터 그래픽 디자인 그래피티 디자이너 티셔츠 티",
+        "brand": "돌돌",
+        "price": 38000,
+        "gender": "남성"
+      }
+    },
+    {
+      "itemId": "b11-4924956",
+      "queryId": "b11",
+      "bucket": "G1",
+      "rule": "브랜드 질의. 그 브랜드가 아니면 무조건 0.",
+      "query": "티글레이크",
+      "product": {
+        "title": "유니버시티로고 반팔 티셔츠_6color",
+        "brand": "티글레이크",
+        "price": 18900,
+        "gender": "공용"
+      }
+    },
+    {
+      "itemId": "a-g2-12-3100375",
+      "queryId": "a-g2-12",
+      "bucket": "G2",
+      "rule": "짧은 키워드·속성. 속성이 모두 확인되면 2, 일부만 맞으면 1.",
+      "query": "브이넥 티셔츠",
+      "product": {
+        "title": "여성) 골지 브이넥 티셔츠_AN2WTS356-BK",
+        "brand": "잠뱅이",
+        "price": 22000,
+        "gender": "여성"
+      }
+    },
+    {
+      "itemId": "v11-566650",
+      "queryId": "v11",
+      "bucket": "G3",
+      "rule": "표기 변형. 원본 기준으로 판정.",
+      "query": "ㅇㅂㅍ",
+      "product": {
+        "title": "사하라 오버핏 반팔티셔츠 (블랙)",
+        "brand": "어텐션로우",
+        "price": 37000,
+        "gender": "남성"
+      },
+      "origin": "오버핏"
+    },
+    {
+      "itemId": "b09-996501",
+      "queryId": "b09",
+      "bucket": "G1",
+      "rule": "브랜드 질의. 그 브랜드가 아니면 무조건 0.",
+      "query": "무신사 스탠다드",
+      "product": {
+        "title": "베이식 크루 넥 티셔츠 [네이비]",
+        "brand": "무신사 스탠다드",
+        "price": 11090,
+        "gender": "남성"
+      }
+    },
+    {
+      "itemId": "v03-996504",
+      "queryId": "v03",
+      "bucket": "G3",
+      "rule": "표기 변형. 원본 기준으로 판정.",
+      "query": "antlstk tmxosekem",
+      "product": {
+        "title": "베이식 크루 넥 티셔츠 [잉크 블루]",
+        "brand": "무신사 스탠다드",
+        "price": 10290,
+        "gender": "남성"
+      },
+      "origin": "무신사 스탠다드"
+    },
+    {
+      "itemId": "b11-4924591",
+      "queryId": "b11",
+      "bucket": "G1",
+      "rule": "브랜드 질의. 그 브랜드가 아니면 무조건 0.",
+      "query": "티글레이크",
+      "product": {
+        "title": "콘넥트 반팔 티셔츠_6color",
+        "brand": "티글레이크",
+        "price": 18900,
+        "gender": "공용"
+      }
+    },
+    {
+      "itemId": "a-g2-11-1628496",
+      "queryId": "a-g2-11",
+      "bucket": "G2",
+      "rule": "짧은 키워드·속성. 속성이 모두 확인되면 2, 일부만 맞으면 1.",
+      "query": "그래픽 티",
+      "product": {
+        "title": "Lily-tshirts-16 러블리 릴리 여자 북극곰 스노우보드 선수 익스트림 캐릭터 그래픽 그래피티 디자인 티셔츠 티",
+        "brand": "돌돌",
+        "price": 38000,
+        "gender": "남성"
+      }
+    },
+    {
+      "itemId": "a-g2-11-5087224",
+      "queryId": "a-g2-11",
+      "bucket": "G2",
+      "rule": "짧은 키워드·속성. 속성이 모두 확인되면 2, 일부만 맞으면 1.",
+      "query": "그래픽 티",
+      "product": {
+        "title": "[2PACK] OG 에센셜 그래피티 그래픽 반팔티",
+        "brand": "요세미티",
+        "price": 36500,
+        "gender": "공용"
+      }
+    },
+    {
+      "itemId": "b07-2804052",
+      "queryId": "b07",
+      "bucket": "G1",
+      "rule": "브랜드 질의. 그 브랜드가 아니면 무조건 0.",
+      "query": "아스트랄 프로젝션",
+      "product": {
+        "title": "아스트랄 디자인 스튜디오  라운드 넥 13수 면 롱 슬리브 티셔츠_블랙",
+        "brand": "아스트랄 프로젝션",
+        "price": 19900,
+        "gender": "남성"
+      }
+    },
+    {
+      "itemId": "b08-3919677",
+      "queryId": "b08",
+      "bucket": "G1",
+      "rule": "브랜드 질의. 그 브랜드가 아니면 무조건 0.",
+      "query": "이스케이프프롬",
+      "product": {
+        "title": "더 퍼펙트 이스케이프 클럽 프린트 롱슬리브 블랙",
+        "brand": "이스케이프프롬",
+        "price": 25900,
+        "gender": "공용"
+      }
+    },
+    {
+      "itemId": "a-g2-11-1817554",
+      "queryId": "a-g2-11",
+      "bucket": "G2",
+      "rule": "짧은 키워드·속성. 속성이 모두 확인되면 2, 일부만 맞으면 1.",
+      "query": "그래픽 티",
+      "product": {
+        "title": "Lily-tshirts-26 러블리 릴리 여자 북극곰 스노우보드 선수 익스트림 캐릭터 그래픽 디자인 그래피티 디자이너 티셔츠 티",
+        "brand": "돌돌",
+        "price": 38000,
+        "gender": "남성"
+      }
+    },
+    {
+      "itemId": "a-g2-11-1817555",
+      "queryId": "a-g2-11",
+      "bucket": "G2",
+      "rule": "짧은 키워드·속성. 속성이 모두 확인되면 2, 일부만 맞으면 1.",
+      "query": "그래픽 티",
+      "product": {
+        "title": "Lily-tshirts-27 러블리 릴리 여자 북극곰 스노우보드 선수 익스트림 캐릭터 그래픽 디자인 그래피티 디자이너 티셔츠 티",
+        "brand": "돌돌",
+        "price": 38000,
+        "gender": "남성"
+      }
+    },
+    {
+      "itemId": "b09-996504",
+      "queryId": "b09",
+      "bucket": "G1",
+      "rule": "브랜드 질의. 그 브랜드가 아니면 무조건 0.",
+      "query": "무신사 스탠다드",
+      "product": {
+        "title": "베이식 크루 넥 티셔츠 [잉크 블루]",
+        "brand": "무신사 스탠다드",
+        "price": 10290,
+        "gender": "남성"
+      }
+    },
+    {
+      "itemId": "b09-996503",
+      "queryId": "b09",
+      "bucket": "G1",
+      "rule": "브랜드 질의. 그 브랜드가 아니면 무조건 0.",
+      "query": "무신사 스탠다드",
+      "product": {
+        "title": "베이식 크루 넥 티셔츠 [딥 그린]",
+        "brand": "무신사 스탠다드",
+        "price": 10290,
+        "gender": "남성"
+      }
+    }
+  ]
+}

@@ -4,7 +4,10 @@
 
 import { useSyncExternalStore } from "react";
 
-const STORAGE_KEY = "atee-consent-notice-seen";
+// 키에 버전을 붙인다 — 수집 범위가 늘면 키를 올려 이미 확인한 사용자에게도
+// 배너를 한 번 다시 보여준다 (결정 O-32: 검색어 수집 추가로 v1 → v2).
+// 이전 키(atee-consent-notice-seen)는 그대로 두고 새 키로 판정한다.
+const STORAGE_KEY = "atee-consent-notice-seen-v2";
 
 const listeners = new Set<() => void>();
 

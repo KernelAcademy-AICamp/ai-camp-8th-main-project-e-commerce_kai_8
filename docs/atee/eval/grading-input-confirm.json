@@ -1,0 +1,1007 @@
+{
+  "meta": {
+    "purpose": "확인 표본 — 기준서 v2 재측정용. 1차 일치도 표본과 질의가 겹치지 않는다.",
+    "rubric": "docs/atee/eval/rubric.md — 이 문서를 읽고 채점한다",
+    "partitions": [
+      "dev"
+    ],
+    "count": 76,
+    "gradeScale": {
+      "2": "질의가 명시한 조건을 전부 만족",
+      "1": "일부만 만족하거나 근접, 또는 텍스트로 확인 불가",
+      "0": "무관, 또는 계열 규칙 위반(브랜드 불일치·하드조건 위반·부정조건 위반)"
+    },
+    "needsImage": "이미지를 봐야 판단되면 true로 표시하고 등급은 1을 준다",
+    "outputFormat": "[{\"itemId\": \"...\", \"grade\": 0|1|2, \"needsImage\": true|false}]"
+  },
+  "items": [
+    {
+      "itemId": "g02-1421810",
+      "queryId": "g02",
+      "bucket": "G2",
+      "rule": "짧은 키워드·속성. 속성이 모두 확인되면 2, 일부만 맞으면 1.",
+      "query": "크롭티",
+      "product": {
+        "title": "크롭티 - 버건디",
+        "brand": "디컬트",
+        "price": 19000,
+        "gender": "여성"
+      }
+    },
+    {
+      "itemId": "s18-6088161",
+      "queryId": "s18",
+      "bucket": "G2",
+      "rule": "짧은 키워드·속성. 속성이 모두 확인되면 2, 일부만 맞으면 1.",
+      "query": "브이넥 오버핏 티셔츠",
+      "product": {
+        "title": "Supima 코튼 브이넥 반팔 티셔츠_블랙 (세미오버핏)_STSWB82NSB",
+        "brand": "에스티코",
+        "price": 19990,
+        "gender": "남성"
+      }
+    },
+    {
+      "itemId": "b18-2411509",
+      "queryId": "b18",
+      "bucket": "G1",
+      "rule": "브랜드 질의. 그 브랜드가 아니면 무조건 0.",
+      "query": "커버낫",
+      "product": {
+        "title": "쿨 케이블 카라 하프 니트 블랙",
+        "brand": "커버낫",
+        "price": 59400,
+        "gender": "공용"
+      }
+    },
+    {
+      "itemId": "b18-3057791",
+      "queryId": "b18",
+      "bucket": "G1",
+      "rule": "브랜드 질의. 그 브랜드가 아니면 무조건 0.",
+      "query": "커버낫",
+      "product": {
+        "title": "엠블럼 아치 로고 후디 옐로우",
+        "brand": "커버낫",
+        "price": 51000,
+        "gender": "공용"
+      }
+    },
+    {
+      "itemId": "g02-1128255",
+      "queryId": "g02",
+      "bucket": "G2",
+      "rule": "짧은 키워드·속성. 속성이 모두 확인되면 2, 일부만 맞으면 1.",
+      "query": "크롭티",
+      "product": {
+        "title": "아임 프리티어 퍼프 크롭티 블랙",
+        "brand": "홀리세턴즈",
+        "price": 68000,
+        "gender": "여성"
+      }
+    },
+    {
+      "itemId": "s18-5801958",
+      "queryId": "s18",
+      "bucket": "G2",
+      "rule": "짧은 키워드·속성. 속성이 모두 확인되면 2, 일부만 맞으면 1.",
+      "query": "브이넥 오버핏 티셔츠",
+      "product": {
+        "title": "여성 레이온 찰랑 스판 오버핏 브이넥 무지 반팔티셔츠 카키",
+        "brand": "베이직하우스",
+        "price": 10900,
+        "gender": "여성"
+      }
+    },
+    {
+      "itemId": "s18-3989537",
+      "queryId": "s18",
+      "bucket": "G2",
+      "rule": "짧은 키워드·속성. 속성이 모두 확인되면 2, 일부만 맞으면 1.",
+      "query": "브이넥 오버핏 티셔츠",
+      "product": {
+        "title": "UNISEX 넘버 프린트 브이넥 오버핏 티셔츠 브라운",
+        "brand": "하이투",
+        "price": 23700,
+        "gender": "남성"
+      }
+    },
+    {
+      "itemId": "s18-5111975",
+      "queryId": "s18",
+      "bucket": "G2",
+      "rule": "짧은 키워드·속성. 속성이 모두 확인되면 2, 일부만 맞으면 1.",
+      "query": "브이넥 오버핏 티셔츠",
+      "product": {
+        "title": "크레이프 브이넥 오버핏 반팔 티셔츠",
+        "brand": "라이프워크",
+        "price": 48360,
+        "gender": "남성"
+      }
+    },
+    {
+      "itemId": "a-g2-04-579501",
+      "queryId": "a-g2-04",
+      "bucket": "G2",
+      "rule": "짧은 키워드·속성. 속성이 모두 확인되면 2, 일부만 맞으면 1.",
+      "query": "오버핏 반팔",
+      "product": {
+        "title": "[레이쿠] reiku imagination overfit tshirt r-bc 배색 오버핏 반팔티",
+        "brand": "레이쿠",
+        "price": 39000,
+        "gender": "남성"
+      }
+    },
+    {
+      "itemId": "s18-5801946",
+      "queryId": "s18",
+      "bucket": "G2",
+      "rule": "짧은 키워드·속성. 속성이 모두 확인되면 2, 일부만 맞으면 1.",
+      "query": "브이넥 오버핏 티셔츠",
+      "product": {
+        "title": "여성 레이온 찰랑 스판 오버핏 브이넥 무지 반팔티셔츠 다크베이지",
+        "brand": "베이직하우스",
+        "price": 10900,
+        "gender": "여성"
+      }
+    },
+    {
+      "itemId": "s18-6088166",
+      "queryId": "s18",
+      "bucket": "G2",
+      "rule": "짧은 키워드·속성. 속성이 모두 확인되면 2, 일부만 맞으면 1.",
+      "query": "브이넥 오버핏 티셔츠",
+      "product": {
+        "title": "Supima 코튼 브이넥 반팔 티셔츠_화이트 (세미오버핏)_STSWB81NSW",
+        "brand": "에스티코",
+        "price": 19990,
+        "gender": "남성"
+      }
+    },
+    {
+      "itemId": "s18-3989535",
+      "queryId": "s18",
+      "bucket": "G2",
+      "rule": "짧은 키워드·속성. 속성이 모두 확인되면 2, 일부만 맞으면 1.",
+      "query": "브이넥 오버핏 티셔츠",
+      "product": {
+        "title": "UNISEX 넘버 프린트 브이넥 오버핏 티셔츠 블랙",
+        "brand": "하이투",
+        "price": 23700,
+        "gender": "남성"
+      }
+    },
+    {
+      "itemId": "a-g2-04-581439",
+      "queryId": "a-g2-04",
+      "bucket": "G2",
+      "rule": "짧은 키워드·속성. 속성이 모두 확인되면 2, 일부만 맞으면 1.",
+      "query": "오버핏 반팔",
+      "product": {
+        "title": "[레이쿠] reiku poket overfit cream 포켓 오버핏 무지 반팔티",
+        "brand": "레이쿠",
+        "price": 37000,
+        "gender": "남성"
+      }
+    },
+    {
+      "itemId": "a-g2-04-538836",
+      "queryId": "a-g2-04",
+      "bucket": "G2",
+      "rule": "짧은 키워드·속성. 속성이 모두 확인되면 2, 일부만 맞으면 1.",
+      "query": "오버핏 반팔",
+      "product": {
+        "title": "헤비 오버핏 무지 반팔티 블랙",
+        "brand": "꼼파뇨",
+        "price": 26880,
+        "gender": "공용"
+      }
+    },
+    {
+      "itemId": "s18-6088154",
+      "queryId": "s18",
+      "bucket": "G2",
+      "rule": "짧은 키워드·속성. 속성이 모두 확인되면 2, 일부만 맞으면 1.",
+      "query": "브이넥 오버핏 티셔츠",
+      "product": {
+        "title": "Supima 코튼 브이넥 반팔 티셔츠 차콜 그레이 (세미오버핏)_STSWB83NSC",
+        "brand": "에스티코",
+        "price": 19990,
+        "gender": "남성"
+      }
+    },
+    {
+      "itemId": "a-g2-04-577958",
+      "queryId": "a-g2-04",
+      "bucket": "G2",
+      "rule": "짧은 키워드·속성. 속성이 모두 확인되면 2, 일부만 맞으면 1.",
+      "query": "오버핏 반팔",
+      "product": {
+        "title": "[레이쿠] reiku overfit tshirt bc 배색 오버핏 무지 반팔티",
+        "brand": "레이쿠",
+        "price": 37000,
+        "gender": "남성"
+      }
+    },
+    {
+      "itemId": "g02-1431169",
+      "queryId": "g02",
+      "bucket": "G2",
+      "rule": "짧은 키워드·속성. 속성이 모두 확인되면 2, 일부만 맞으면 1.",
+      "query": "크롭티",
+      "product": {
+        "title": "레터링 스퀘어넥 반팔 크롭티 버건디",
+        "brand": "제너두웍스",
+        "price": 29000,
+        "gender": "여성"
+      }
+    },
+    {
+      "itemId": "s18-5801951",
+      "queryId": "s18",
+      "bucket": "G2",
+      "rule": "짧은 키워드·속성. 속성이 모두 확인되면 2, 일부만 맞으면 1.",
+      "query": "브이넥 오버핏 티셔츠",
+      "product": {
+        "title": "여성 레이온 찰랑 스판 오버핏 브이넥 무지 반팔티셔츠 크림",
+        "brand": "베이직하우스",
+        "price": 10900,
+        "gender": "여성"
+      }
+    },
+    {
+      "itemId": "a-g2-04-540420",
+      "queryId": "a-g2-04",
+      "bucket": "G2",
+      "rule": "짧은 키워드·속성. 속성이 모두 확인되면 2, 일부만 맞으면 1.",
+      "query": "오버핏 반팔",
+      "product": {
+        "title": "오리지널 로고 오버핏 반팔티 (RL001 OG LOGO TEE) - BLACK",
+        "brand": "로얄라이프",
+        "price": 25600,
+        "gender": "공용"
+      }
+    },
+    {
+      "itemId": "s18-6207849",
+      "queryId": "s18",
+      "bucket": "G2",
+      "rule": "짧은 키워드·속성. 속성이 모두 확인되면 2, 일부만 맞으면 1.",
+      "query": "브이넥 오버핏 티셔츠",
+      "product": {
+        "title": "[BLACK LABEL] 수피마 브이넥 반팔 티셔츠_블랙 (세미오버핏)_STSXB82NSB",
+        "brand": "에스티코",
+        "price": 39900,
+        "gender": "남성"
+      }
+    },
+    {
+      "itemId": "s18-5754097",
+      "queryId": "s18",
+      "bucket": "G2",
+      "rule": "짧은 키워드·속성. 속성이 모두 확인되면 2, 일부만 맞으면 1.",
+      "query": "브이넥 오버핏 티셔츠",
+      "product": {
+        "title": "여성 레이온 찰랑 스판 오버핏 브이넥 무지 반팔티셔츠 화이트",
+        "brand": "베이직하우스",
+        "price": 10900,
+        "gender": "여성"
+      }
+    },
+    {
+      "itemId": "a-g2-04-546361",
+      "queryId": "a-g2-04",
+      "bucket": "G2",
+      "rule": "짧은 키워드·속성. 속성이 모두 확인되면 2, 일부만 맞으면 1.",
+      "query": "오버핏 반팔",
+      "product": {
+        "title": "[오버핏] 넘버플랜트 로고 반팔 블랙 no.2",
+        "brand": "넘버플랜트",
+        "price": 19800,
+        "gender": "남성"
+      }
+    },
+    {
+      "itemId": "g02-1466450",
+      "queryId": "g02",
+      "bucket": "G2",
+      "rule": "짧은 키워드·속성. 속성이 모두 확인되면 2, 일부만 맞으면 1.",
+      "query": "크롭티",
+      "product": {
+        "title": "커브 랩 크롭티 DEVI-T0041-에쉬네이비",
+        "brand": "데비웨어",
+        "price": 20190,
+        "gender": "여성"
+      }
+    },
+    {
+      "itemId": "g02-1667575",
+      "queryId": "g02",
+      "bucket": "G2",
+      "rule": "짧은 키워드·속성. 속성이 모두 확인되면 2, 일부만 맞으면 1.",
+      "query": "크롭티",
+      "product": {
+        "title": "크라잉 크롭티",
+        "brand": "더블유아이엠",
+        "price": 30100,
+        "gender": "여성"
+      }
+    },
+    {
+      "itemId": "b18-1848166",
+      "queryId": "b18",
+      "bucket": "G1",
+      "rule": "브랜드 질의. 그 브랜드가 아니면 무조건 0.",
+      "query": "커버낫",
+      "product": {
+        "title": "[2PACK] 쿨 코튼 티셔츠 Black+White",
+        "brand": "커버낫",
+        "price": 29400,
+        "gender": "공용"
+      }
+    },
+    {
+      "itemId": "b18-3153097",
+      "queryId": "b18",
+      "bucket": "G1",
+      "rule": "브랜드 질의. 그 브랜드가 아니면 무조건 0.",
+      "query": "커버낫",
+      "product": {
+        "title": "아치 하와이안 티셔츠 에크루",
+        "brand": "커버낫",
+        "price": 34300,
+        "gender": "공용"
+      }
+    },
+    {
+      "itemId": "b18-3132094",
+      "queryId": "b18",
+      "bucket": "G1",
+      "rule": "브랜드 질의. 그 브랜드가 아니면 무조건 0.",
+      "query": "커버낫",
+      "product": {
+        "title": "C 로고 캡 카라 티셔츠 화이트",
+        "brand": "커버낫",
+        "price": 39500,
+        "gender": "공용"
+      }
+    },
+    {
+      "itemId": "b18-2411508",
+      "queryId": "b18",
+      "bucket": "G1",
+      "rule": "브랜드 질의. 그 브랜드가 아니면 무조건 0.",
+      "query": "커버낫",
+      "product": {
+        "title": "쿨 케이블 카라 하프 니트 네이비",
+        "brand": "커버낫",
+        "price": 49500,
+        "gender": "공용"
+      }
+    },
+    {
+      "itemId": "g02-1128252",
+      "queryId": "g02",
+      "bucket": "G2",
+      "rule": "짧은 키워드·속성. 속성이 모두 확인되면 2, 일부만 맞으면 1.",
+      "query": "크롭티",
+      "product": {
+        "title": "아임 프리티어 퍼프 크롭티 화이트",
+        "brand": "홀리세턴즈",
+        "price": 68000,
+        "gender": "여성"
+      }
+    },
+    {
+      "itemId": "a-g2-04-540421",
+      "queryId": "a-g2-04",
+      "bucket": "G2",
+      "rule": "짧은 키워드·속성. 속성이 모두 확인되면 2, 일부만 맞으면 1.",
+      "query": "오버핏 반팔",
+      "product": {
+        "title": "오리지널 로고 오버핏 반팔티 (RL001 OG LOGO TEE) - WHITE",
+        "brand": "로얄라이프",
+        "price": 25600,
+        "gender": "공용"
+      }
+    },
+    {
+      "itemId": "b18-3132095",
+      "queryId": "b18",
+      "bucket": "G1",
+      "rule": "브랜드 질의. 그 브랜드가 아니면 무조건 0.",
+      "query": "커버낫",
+      "product": {
+        "title": "아치 C 로고 레이어 티셔츠 블루",
+        "brand": "커버낫",
+        "price": 25000,
+        "gender": "공용"
+      }
+    },
+    {
+      "itemId": "b18-2411507",
+      "queryId": "b18",
+      "bucket": "G1",
+      "rule": "브랜드 질의. 그 브랜드가 아니면 무조건 0.",
+      "query": "커버낫",
+      "product": {
+        "title": "쿨 케이블 카라 하프 니트 그린",
+        "brand": "커버낫",
+        "price": 59400,
+        "gender": "공용"
+      }
+    },
+    {
+      "itemId": "s18-6207854",
+      "queryId": "s18",
+      "bucket": "G2",
+      "rule": "짧은 키워드·속성. 속성이 모두 확인되면 2, 일부만 맞으면 1.",
+      "query": "브이넥 오버핏 티셔츠",
+      "product": {
+        "title": "[BLACK LABEL] 수피마 브이넥 반팔 티셔츠_화이트 (세미오버핏)_STSXB81NSW",
+        "brand": "에스티코",
+        "price": 39900,
+        "gender": "남성"
+      }
+    },
+    {
+      "itemId": "g02-1861101",
+      "queryId": "g02",
+      "bucket": "G2",
+      "rule": "짧은 키워드·속성. 속성이 모두 확인되면 2, 일부만 맞으면 1.",
+      "query": "크롭티",
+      "product": {
+        "title": "클로에 하이숏 크롭티 DEVI-T0055-그레이",
+        "brand": "데비웨어",
+        "price": 21850,
+        "gender": "여성"
+      }
+    },
+    {
+      "itemId": "a-g2-04-730771",
+      "queryId": "a-g2-04",
+      "bucket": "G2",
+      "rule": "짧은 키워드·속성. 속성이 모두 확인되면 2, 일부만 맞으면 1.",
+      "query": "오버핏 반팔",
+      "product": {
+        "title": "18 SS 08 사운드 스트라이프 오버핏 반팔 (black)",
+        "brand": "우조",
+        "price": 88000,
+        "gender": "여성"
+      }
+    },
+    {
+      "itemId": "g02-1861130",
+      "queryId": "g02",
+      "bucket": "G2",
+      "rule": "짧은 키워드·속성. 속성이 모두 확인되면 2, 일부만 맞으면 1.",
+      "query": "크롭티",
+      "product": {
+        "title": "클로에 하이숏 크롭티 DEVI-T0055-블랙",
+        "brand": "데비웨어",
+        "price": 21850,
+        "gender": "여성"
+      }
+    },
+    {
+      "itemId": "b18-3038965",
+      "queryId": "b18",
+      "bucket": "G1",
+      "rule": "브랜드 질의. 그 브랜드가 아니면 무조건 0.",
+      "query": "커버낫",
+      "product": {
+        "title": "어센틱 로고 후디 라벤더",
+        "brand": "커버낫",
+        "price": 47400,
+        "gender": "공용"
+      }
+    },
+    {
+      "itemId": "b18-3132089",
+      "queryId": "b18",
+      "bucket": "G1",
+      "rule": "브랜드 질의. 그 브랜드가 아니면 무조건 0.",
+      "query": "커버낫",
+      "product": {
+        "title": "우븐 믹스 티셔츠 블랙",
+        "brand": "커버낫",
+        "price": 45500,
+        "gender": "공용"
+      }
+    },
+    {
+      "itemId": "g02-1443394",
+      "queryId": "g02",
+      "bucket": "G2",
+      "rule": "짧은 키워드·속성. 속성이 모두 확인되면 2, 일부만 맞으면 1.",
+      "query": "크롭티",
+      "product": {
+        "title": "[2PACK] 쿨링 기능성  세미 무지 크롭티 반팔 (블랙/화이트)",
+        "brand": "콜릿",
+        "price": 36600,
+        "gender": "공용"
+      }
+    },
+    {
+      "itemId": "b18-3132078",
+      "queryId": "b18",
+      "bucket": "G1",
+      "rule": "브랜드 질의. 그 브랜드가 아니면 무조건 0.",
+      "query": "커버낫",
+      "product": {
+        "title": "다잉 피케 티셔츠 차콜",
+        "brand": "커버낫",
+        "price": 34500,
+        "gender": "공용"
+      }
+    },
+    {
+      "itemId": "g02-1432964",
+      "queryId": "g02",
+      "bucket": "G2",
+      "rule": "짧은 키워드·속성. 속성이 모두 확인되면 2, 일부만 맞으면 1.",
+      "query": "크롭티",
+      "product": {
+        "title": "[ 여름 ver. ] 쿨링 기능성 세미 무지 크롭티 반팔 (블랙)",
+        "brand": "콜릿",
+        "price": 22300,
+        "gender": "여성"
+      }
+    },
+    {
+      "itemId": "b18-3097386",
+      "queryId": "b18",
+      "bucket": "G1",
+      "rule": "브랜드 질의. 그 브랜드가 아니면 무조건 0.",
+      "query": "커버낫",
+      "product": {
+        "title": "C 로고 카라 티셔츠 블루",
+        "brand": "커버낫",
+        "price": 35400,
+        "gender": "공용"
+      }
+    },
+    {
+      "itemId": "s18-6434754",
+      "queryId": "s18",
+      "bucket": "G2",
+      "rule": "짧은 키워드·속성. 속성이 모두 확인되면 2, 일부만 맞으면 1.",
+      "query": "브이넥 오버핏 티셔츠",
+      "product": {
+        "title": "카모 메쉬 파이핑 오버핏 브이넥 반팔 티셔츠 차콜",
+        "brand": "크림소다랩",
+        "price": 26910,
+        "gender": "남성"
+      }
+    },
+    {
+      "itemId": "a-g2-04-555040",
+      "queryId": "a-g2-04",
+      "bucket": "G2",
+      "rule": "짧은 키워드·속성. 속성이 모두 확인되면 2, 일부만 맞으면 1.",
+      "query": "오버핏 반팔",
+      "product": {
+        "title": "psln 런던 오버핏 반팔티셔츠 네이비 남녀공용",
+        "brand": "아타르",
+        "price": 31980,
+        "gender": "여성"
+      }
+    },
+    {
+      "itemId": "a-g2-04-559954",
+      "queryId": "a-g2-04",
+      "bucket": "G2",
+      "rule": "짧은 키워드·속성. 속성이 모두 확인되면 2, 일부만 맞으면 1.",
+      "query": "오버핏 반팔",
+      "product": {
+        "title": "헤비 오버핏 무지 반팔티 화이트",
+        "brand": "꼼파뇨",
+        "price": 23000,
+        "gender": "공용"
+      }
+    },
+    {
+      "itemId": "b18-3060056",
+      "queryId": "b18",
+      "bucket": "G1",
+      "rule": "브랜드 질의. 그 브랜드가 아니면 무조건 0.",
+      "query": "커버낫",
+      "product": {
+        "title": "피케 웨일 로고 롱슬리브 화이트",
+        "brand": "커버낫",
+        "price": 49770,
+        "gender": "공용"
+      }
+    },
+    {
+      "itemId": "b18-3132081",
+      "queryId": "b18",
+      "bucket": "G1",
+      "rule": "브랜드 질의. 그 브랜드가 아니면 무조건 0.",
+      "query": "커버낫",
+      "product": {
+        "title": "다잉 피케 티셔츠 에크루",
+        "brand": "커버낫",
+        "price": 34500,
+        "gender": "공용"
+      }
+    },
+    {
+      "itemId": "a-g2-04-736052",
+      "queryId": "a-g2-04",
+      "bucket": "G2",
+      "rule": "짧은 키워드·속성. 속성이 모두 확인되면 2, 일부만 맞으면 1.",
+      "query": "오버핏 반팔",
+      "product": {
+        "title": "오버핏 라운드 반팔 티셔츠 TA-108_WH",
+        "brand": "하프크라이즈 레이아웃",
+        "price": 26000,
+        "gender": "남성"
+      }
+    },
+    {
+      "itemId": "g02-1466457",
+      "queryId": "g02",
+      "bucket": "G2",
+      "rule": "짧은 키워드·속성. 속성이 모두 확인되면 2, 일부만 맞으면 1.",
+      "query": "크롭티",
+      "product": {
+        "title": "커브 랩 크롭티 DEVI-T0041-블랙",
+        "brand": "데비웨어",
+        "price": 20190,
+        "gender": "여성"
+      }
+    },
+    {
+      "itemId": "a-g2-04-550020",
+      "queryId": "a-g2-04",
+      "bucket": "G2",
+      "rule": "짧은 키워드·속성. 속성이 모두 확인되면 2, 일부만 맞으면 1.",
+      "query": "오버핏 반팔",
+      "product": {
+        "title": "[20수] 헤비 오버핏 보더 반팔티 레드",
+        "brand": "꼼파뇨",
+        "price": 26000,
+        "gender": "공용"
+      }
+    },
+    {
+      "itemId": "a-g2-04-532246",
+      "queryId": "a-g2-04",
+      "bucket": "G2",
+      "rule": "짧은 키워드·속성. 속성이 모두 확인되면 2, 일부만 맞으면 1.",
+      "query": "오버핏 반팔",
+      "product": {
+        "title": "[UNISEX] 45수 특양면 옆트임 오버핏 반팔티 (블랙)",
+        "brand": "티아즈",
+        "price": 16800,
+        "gender": "남성"
+      }
+    },
+    {
+      "itemId": "g02-1421812",
+      "queryId": "g02",
+      "bucket": "G2",
+      "rule": "짧은 키워드·속성. 속성이 모두 확인되면 2, 일부만 맞으면 1.",
+      "query": "크롭티",
+      "product": {
+        "title": "크롭티 - 화이트",
+        "brand": "디컬트",
+        "price": 19000,
+        "gender": "여성"
+      }
+    },
+    {
+      "itemId": "b18-2411538",
+      "queryId": "b18",
+      "bucket": "G1",
+      "rule": "브랜드 질의. 그 브랜드가 아니면 무조건 0.",
+      "query": "커버낫",
+      "product": {
+        "title": "테리 폴로티 그레이",
+        "brand": "커버낫",
+        "price": 29500,
+        "gender": "공용"
+      }
+    },
+    {
+      "itemId": "s18-6434792",
+      "queryId": "s18",
+      "bucket": "G2",
+      "rule": "짧은 키워드·속성. 속성이 모두 확인되면 2, 일부만 맞으면 1.",
+      "query": "브이넥 오버핏 티셔츠",
+      "product": {
+        "title": "카모 메쉬 파이핑 오버핏 브이넥 반팔 티셔츠 카키",
+        "brand": "크림소다랩",
+        "price": 43290,
+        "gender": "남성"
+      }
+    },
+    {
+      "itemId": "a-g2-04-566650",
+      "queryId": "a-g2-04",
+      "bucket": "G2",
+      "rule": "짧은 키워드·속성. 속성이 모두 확인되면 2, 일부만 맞으면 1.",
+      "query": "오버핏 반팔",
+      "product": {
+        "title": "사하라 오버핏 반팔티셔츠 (블랙)",
+        "brand": "어텐션로우",
+        "price": 37000,
+        "gender": "남성"
+      }
+    },
+    {
+      "itemId": "b18-3132092",
+      "queryId": "b18",
+      "bucket": "G1",
+      "rule": "브랜드 질의. 그 브랜드가 아니면 무조건 0.",
+      "query": "커버낫",
+      "product": {
+        "title": "C 로고 캡 카라 티셔츠 네이비",
+        "brand": "커버낫",
+        "price": 39500,
+        "gender": "공용"
+      }
+    },
+    {
+      "itemId": "s18-5993964",
+      "queryId": "s18",
+      "bucket": "G2",
+      "rule": "짧은 키워드·속성. 속성이 모두 확인되면 2, 일부만 맞으면 1.",
+      "query": "브이넥 오버핏 티셔츠",
+      "product": {
+        "title": "셋업 브이넥 오버핏 더블 레이어드 레이스 긴팔티셔츠 [2colors] 622",
+        "brand": "콜릿",
+        "price": 32250,
+        "gender": "여성"
+      }
+    },
+    {
+      "itemId": "b18-3153089",
+      "queryId": "b18",
+      "bucket": "G1",
+      "rule": "브랜드 질의. 그 브랜드가 아니면 무조건 0.",
+      "query": "커버낫",
+      "product": {
+        "title": "비치 하와이안 티셔츠 옐로우",
+        "brand": "커버낫",
+        "price": 29400,
+        "gender": "공용"
+      }
+    },
+    {
+      "itemId": "a-g2-04-730825",
+      "queryId": "a-g2-04",
+      "bucket": "G2",
+      "rule": "짧은 키워드·속성. 속성이 모두 확인되면 2, 일부만 맞으면 1.",
+      "query": "오버핏 반팔",
+      "product": {
+        "title": "18 SS 12 웨이브 그래픽 오버핏 반팔 (white)",
+        "brand": "우조",
+        "price": 88000,
+        "gender": "남성"
+      }
+    },
+    {
+      "itemId": "g02-1861135",
+      "queryId": "g02",
+      "bucket": "G2",
+      "rule": "짧은 키워드·속성. 속성이 모두 확인되면 2, 일부만 맞으면 1.",
+      "query": "크롭티",
+      "product": {
+        "title": "클로에 하이숏 크롭티 DEVI-T0055-스카이",
+        "brand": "데비웨어",
+        "price": 21850,
+        "gender": "여성"
+      }
+    },
+    {
+      "itemId": "g02-1941364",
+      "queryId": "g02",
+      "bucket": "G2",
+      "rule": "짧은 키워드·속성. 속성이 모두 확인되면 2, 일부만 맞으면 1.",
+      "query": "크롭티",
+      "product": {
+        "title": "비대칭 프린트 후드 크롭티",
+        "brand": "곽현주컬렉션",
+        "price": 598000,
+        "gender": "여성"
+      }
+    },
+    {
+      "itemId": "g02-1466460",
+      "queryId": "g02",
+      "bucket": "G2",
+      "rule": "짧은 키워드·속성. 속성이 모두 확인되면 2, 일부만 맞으면 1.",
+      "query": "크롭티",
+      "product": {
+        "title": "커브 랩 크롭티 DEVI-T0041-오트밀",
+        "brand": "데비웨어",
+        "price": 20190,
+        "gender": "여성"
+      }
+    },
+    {
+      "itemId": "a-g2-04-579500",
+      "queryId": "a-g2-04",
+      "bucket": "G2",
+      "rule": "짧은 키워드·속성. 속성이 모두 확인되면 2, 일부만 맞으면 1.",
+      "query": "오버핏 반팔",
+      "product": {
+        "title": "[레이쿠] reiku imagination overfit tshirt gw 배색 오버핏 반팔티",
+        "brand": "레이쿠",
+        "price": 39000,
+        "gender": "남성"
+      }
+    },
+    {
+      "itemId": "a-g2-04-735992",
+      "queryId": "a-g2-04",
+      "bucket": "G2",
+      "rule": "짧은 키워드·속성. 속성이 모두 확인되면 2, 일부만 맞으면 1.",
+      "query": "오버핏 반팔",
+      "product": {
+        "title": "오버핏 라운드 반팔 티셔츠 TA-108_BK",
+        "brand": "하프크라이즈 레이아웃",
+        "price": 26000,
+        "gender": "남성"
+      }
+    },
+    {
+      "itemId": "b18-3097388",
+      "queryId": "b18",
+      "bucket": "G1",
+      "rule": "브랜드 질의. 그 브랜드가 아니면 무조건 0.",
+      "query": "커버낫",
+      "product": {
+        "title": "C 로고 카라 티셔츠 브라운",
+        "brand": "커버낫",
+        "price": 35400,
+        "gender": "공용"
+      }
+    },
+    {
+      "itemId": "g02-1529866",
+      "queryId": "g02",
+      "bucket": "G2",
+      "rule": "짧은 키워드·속성. 속성이 모두 확인되면 2, 일부만 맞으면 1.",
+      "query": "크롭티",
+      "product": {
+        "title": "NO PLAN 오발 로고 스트라이프 크롭티_블루/오렌지",
+        "brand": "돈애스크마이플랜",
+        "price": 14000,
+        "gender": "여성"
+      }
+    },
+    {
+      "itemId": "s18-3989536",
+      "queryId": "s18",
+      "bucket": "G2",
+      "rule": "짧은 키워드·속성. 속성이 모두 확인되면 2, 일부만 맞으면 1.",
+      "query": "브이넥 오버핏 티셔츠",
+      "product": {
+        "title": "UNISEX 넘버 프린트 브이넥 오버핏 티셔츠 네이비",
+        "brand": "하이투",
+        "price": 23700,
+        "gender": "남성"
+      }
+    },
+    {
+      "itemId": "a-g2-04-581440",
+      "queryId": "a-g2-04",
+      "bucket": "G2",
+      "rule": "짧은 키워드·속성. 속성이 모두 확인되면 2, 일부만 맞으면 1.",
+      "query": "오버핏 반팔",
+      "product": {
+        "title": "[레이쿠] reiku poket overfit black 포켓 오버핏 무지 반팔티",
+        "brand": "레이쿠",
+        "price": 37000,
+        "gender": "남성"
+      }
+    },
+    {
+      "itemId": "g02-1466462",
+      "queryId": "g02",
+      "bucket": "G2",
+      "rule": "짧은 키워드·속성. 속성이 모두 확인되면 2, 일부만 맞으면 1.",
+      "query": "크롭티",
+      "product": {
+        "title": "커브 랩 크롭티 DEVI-T0041-스카이",
+        "brand": "데비웨어",
+        "price": 20190,
+        "gender": "여성"
+      }
+    },
+    {
+      "itemId": "a-g2-04-576454",
+      "queryId": "a-g2-04",
+      "bucket": "G2",
+      "rule": "짧은 키워드·속성. 속성이 모두 확인되면 2, 일부만 맞으면 1.",
+      "query": "오버핏 반팔",
+      "product": {
+        "title": "유니버시티 오버핏 반팔 티셔츠 올그린 남녀공용",
+        "brand": "아타르",
+        "price": 31980,
+        "gender": "남성"
+      }
+    },
+    {
+      "itemId": "g02-1432965",
+      "queryId": "g02",
+      "bucket": "G2",
+      "rule": "짧은 키워드·속성. 속성이 모두 확인되면 2, 일부만 맞으면 1.",
+      "query": "크롭티",
+      "product": {
+        "title": "[ 여름 ver.] 쿨링 기능성 세미 무지 크롭티 반팔 (화이트)",
+        "brand": "콜릿",
+        "price": 20730,
+        "gender": "여성"
+      }
+    },
+    {
+      "itemId": "b18-2783058",
+      "queryId": "b18",
+      "bucket": "G1",
+      "rule": "브랜드 질의. 그 브랜드가 아니면 무조건 0.",
+      "query": "커버낫",
+      "product": {
+        "title": "스포츠클럽 컬러 블록 후디 그린",
+        "brand": "커버낫",
+        "price": 49500,
+        "gender": "공용"
+      }
+    },
+    {
+      "itemId": "g02-1431170",
+      "queryId": "g02",
+      "bucket": "G2",
+      "rule": "짧은 키워드·속성. 속성이 모두 확인되면 2, 일부만 맞으면 1.",
+      "query": "크롭티",
+      "product": {
+        "title": "레터링 스퀘어넥 반팔 크롭티 그레이",
+        "brand": "제너두웍스",
+        "price": 29000,
+        "gender": "여성"
+      }
+    },
+    {
+      "itemId": "g02-1466472",
+      "queryId": "g02",
+      "bucket": "G2",
+      "rule": "짧은 키워드·속성. 속성이 모두 확인되면 2, 일부만 맞으면 1.",
+      "query": "크롭티",
+      "product": {
+        "title": "커브 랩 크롭티 DEVI-T0041-화이트",
+        "brand": "데비웨어",
+        "price": 20190,
+        "gender": "여성"
+      }
+    },
+    {
+      "itemId": "b18-3132090",
+      "queryId": "b18",
+      "bucket": "G1",
+      "rule": "브랜드 질의. 그 브랜드가 아니면 무조건 0.",
+      "query": "커버낫",
+      "product": {
+        "title": "우븐 믹스 티셔츠 화이트",
+        "brand": "커버낫",
+        "price": 45500,
+        "gender": "공용"
+      }
+    },
+    {
+      "itemId": "a-g2-04-577957",
+      "queryId": "a-g2-04",
+      "bucket": "G2",
+      "rule": "짧은 키워드·속성. 속성이 모두 확인되면 2, 일부만 맞으면 1.",
+      "query": "오버핏 반팔",
+      "product": {
+        "title": "[레이쿠] reiku overfit tshirt gw 배색 오버핏 무지 반팔티",
+        "brand": "레이쿠",
+        "price": 37000,
+        "gender": "남성"
+      }
+    }
+  ]
+}
