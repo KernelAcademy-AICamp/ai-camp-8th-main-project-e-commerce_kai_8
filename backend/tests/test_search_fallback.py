@@ -709,3 +709,63 @@ def test_brand_plus_attribute_no_longer_returns_zero(cur, query, brand):
     total, same = cur.fetchone()
     assert total == 20, "하드 조건만으로도 후보 자격이 된다"
     assert same == total, "브랜드는 하드 조건이라 상위가 전부 그 브랜드여야 한다"
+
+
+# ── 카테고리 말을 하드 조건으로 (소프트 텍스트 4단계) ──────────────────────
+#
+# `반팔`·`민소매`는 제목 단어가 아니라 카탈로그의 정본 값이다. 제목만 보면
+# 민소매는 실제의 2.9%만 찾는다.
+
+
+@pytest.mark.parametrize(
+    "query,category",
+    [("민소매", "001011"), ("반팔", "001001"), ("긴팔", "001010"),
+     ("피케", "001003"), ("후드", "001004"),
+     ("데상트 민소매", "001011"), ("검정 민소매", "001011"), ("커버낫 후드", "001004")],
+)
+def test_category_word_becomes_a_hard_condition(cur, query, category):
+    cur.execute(
+        "select count(*), count(*) filter (where g.category = %s)"
+        " from c_search_page_v2(%s, null, null, 20) r join c_goods g using (goods_no)",
+        (category, query),
+    )
+    total, same = cur.fetchone()
+    assert total == 20
+    assert same == total, f"{query}: 상위 20이 전부 {category}여야 한다"
+
+
+def test_title_word_that_contradicts_the_category_does_not_surface(cur):
+    """제목에 `반팔`이 있지만 반팔 티셔츠가 아닌 상품이 3,216개 있다.
+
+    카테고리를 정본으로 쓰면 이것들이 `반팔` 상위에 오지 않는다.
+    """
+    cur.execute(
+        "select count(*) from c_search_page_v2('반팔', null, null, 20) r"
+        " join c_goods g using (goods_no) where g.category <> '001001'"
+    )
+    assert cur.fetchone()[0] == 0
+
+
+@pytest.mark.parametrize("query", ["피케 반팔", "후드 민소매"])
+def test_two_different_categories_are_left_alone(cur, query):
+    """하드 조건은 AND라서 둘을 걸면 공집합이 된다. 색·브랜드와 같은 규칙 —
+    합집합으로 묶으면 사용자가 말한 것과 달라지므로 **모르면 손대지 않는다.**
+    """
+    cur.execute("select ranks from c_search_category_parse(c_search_split(%s))", (query,))
+    assert cur.fetchone()[0] is None
+    cur.execute("select count(*) from c_search_page_v2(%s, null, null, 20)", (query,))
+    assert cur.fetchone()[0] > 0, "카테고리를 포기해도 텍스트로 답이 나와야 한다"
+
+
+def test_category_rank_mapping_is_one_to_one(cur):
+    """검색은 `codes`가 아니라 `ranks`(cat_rank)로 건다 — c_search_docs에 category
+    열이 없기 때문이다. 대응이 1:1이 아니게 되면 `피케` 질의가 모르는 카테고리까지
+    끌어온다(c_category_rank가 미지의 값을 1로 떨어뜨린다).
+    """
+    cur.execute(
+        "select count(*) from ("
+        "  select c_category_rank(category) r from"
+        "    (select distinct category from c_goods where category is not null) g"
+        "  group by 1 having count(*) > 1) x"
+    )
+    assert cur.fetchone()[0] == 0, "카테고리↔cat_rank 대응이 깨졌다"

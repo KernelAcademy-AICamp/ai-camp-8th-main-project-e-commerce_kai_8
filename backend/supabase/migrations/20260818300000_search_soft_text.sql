@@ -25,6 +25,9 @@
 -- 재적재에서 조용히 사라진다.
 create index if not exists c_search_docs_brand_idx on c_search_docs (brand);
 
+-- 나머지 갈래는 `cat_rank, goods_no` 순으로 훑는다. 색인이 없으면 12만 행을 정렬한다.
+create index if not exists c_search_docs_cat_goods_idx on c_search_docs (cat_rank, goods_no);
+
 create or replace function c_search_page_v2(
   p_query   text,
   p_after_score real   default null,
@@ -68,6 +71,8 @@ declare
   v_more  int;      -- 갈래 ②가 준 행 수
   v_ok    boolean := false;  -- 이 후보가 질의에 답했나
   v_and   boolean;  -- 모든 단어 AND만으로 이 페이지가 채워지나
+  v_cats  int[];    -- 이번 후보가 말한 카테고리(cat_rank). null이면 조건 없음
+  v0_cats int[];
   -- 원문(try 0)의 문맥. 어떤 후보도 못 맞췄을 때 갈래 ②가 이것을 쓴다 —
   -- 그때 변수에는 마지막 후보(오타 교정)의 값이 남아 있기 때문이다.
   v0_brand text; v0_codes text[]; v0_pmin int; v0_pmax int;
@@ -124,6 +129,8 @@ begin
         -- 가격·색을 먼저 빼는 이유는 `rjawjd qksvkf 3만원 이하`처럼 구조화
         -- 조건에만 한글이 있는 경우를 살리기 위해서다(교차 리뷰 M4).
         select bp.rest into v_text from c_search_brand_parse(v_words) bp;
+        select gp.rest into v_text
+        from c_search_category_parse(coalesce(v_text, '{}'::text[])) gp;
         select cp.rest into v_text
         from c_search_color_parse(coalesce(v_text, '{}'::text[])) cp;
         select pp.rest into v_text
@@ -147,6 +154,11 @@ begin
     -- 브랜드가 색을 가로채므로 그때 순서를 다시 정한다.
     select bp.brand, bp.rest into v_brand, v_words from c_search_brand_parse(v_cand) bp;
 
+    -- 카테고리도 하드 조건이다. `민소매`는 제목 커버리지가 2.9%뿐이라 텍스트로
+    -- 두면 실제의 97%가 안 보인다. 색·브랜드 사전과 겹치는 말이 없음을 확인했다.
+    select gp.ranks, gp.rest into v_cats, v_words
+    from c_search_category_parse(coalesce(v_words, '{}'::text[])) gp;
+
     select cp.codes, cp.rest into v_codes, v_words
     from c_search_color_parse(coalesce(v_words, '{}'::text[])) cp;
 
@@ -166,7 +178,7 @@ begin
     -- 질의는 그 말이 여전히 필수**가 되어 AND 그대로다 — `데상트 민소매`가 그 예다.
     -- 데상트에 민소매 상품이 74개 있는데 제목에 `민소매`가 든 것은 0개라 0건이었다
     -- (교차 리뷰 2차 ②가 짚었고, 실제로 그 함정에 빠져 있었다).
-    v_hard := v_brand is not null or v_codes is not null
+    v_hard := v_brand is not null or v_codes is not null or v_cats is not null
               or v_pmin is not null or v_pmax is not null;
     if v_try = 0 then
       v0_words := v_words; v0_cand := v_cand;
@@ -175,7 +187,7 @@ begin
 
     -- 원문 문맥을 붙잡아 둔다 (아래 갈래 ②가 쓴다)
     if v_try = 0 then
-      v0_brand := v_brand; v0_codes := v_codes;
+      v0_brand := v_brand; v0_codes := v_codes; v0_cats := v_cats;
       v0_pmin := v_pmin; v0_pmax := v_pmax;
     end if;
 
@@ -208,7 +220,9 @@ begin
       select count(*) >= v_size into v_and from (
         select 1 from c_search_docs s
         where (v_brand is null or s.brand = v_brand)
-          and (v_codes is null or s.color_codes && v_codes)
+          and (v_cats is null or s.cat_rank = any(v_cats))
+          and (v_cats is null or s.cat_rank = any(v_cats))
+      and (v_codes is null or s.color_codes && v_codes)
           and (v_pmin is null or s.price_final >= v_pmin)
           and (v_pmax is null or s.price_final <= v_pmax)
           and s.doc &@ v_words[1]
@@ -229,6 +243,7 @@ begin
     from c_search_docs s
     where true
       and (v_brand is null or s.brand = v_brand)
+      and (v_cats is null or s.cat_rank = any(v_cats))
       and (v_codes is null or s.color_codes && v_codes)
       and (v_pmin is null or s.price_final >= v_pmin)
       and (v_pmax is null or s.price_final <= v_pmax)
@@ -296,7 +311,7 @@ begin
   -- 어떤 후보도 사용자가 친 말을 못 맞췄다. 그러면 **원문의 하드 조건**으로 잇는다 —
   -- 이때 변수에는 마지막 후보(오타 교정)의 값이 남아 있으므로 되돌린다.
   if not v_ok then
-    v_brand := v0_brand; v_codes := v0_codes;
+    v_brand := v0_brand; v_codes := v0_codes; v_cats := v0_cats;
     v_pmin := v0_pmin; v_pmax := v0_pmax;
     v_words := v0_words; v_cand := v0_cand;
     v_chosung := v0_chosung; v_hard := v0_hard;
@@ -321,6 +336,7 @@ begin
       from c_search_docs s
       where true
       and (v_brand is null or s.brand = v_brand)
+      and (v_cats is null or s.cat_rank = any(v_cats))
       and (v_codes is null or s.color_codes && v_codes)
       and (v_pmin is null or s.price_final >= v_pmin)
       and (v_pmax is null or s.price_final <= v_pmax)
@@ -331,7 +347,11 @@ begin
         and (p_after_score is null
              or (0 - s.cat_rank)::real < p_after_score
              or ((0 - s.cat_rank)::real = p_after_score and s.goods_no > p_after))
-      order by 2 desc, 1
+      -- ⚠️ **표현식이 아니라 열로 정렬한다.** `(0 - cat_rank) desc`와 `cat_rank asc`는
+      -- 같은 순서인데, 표현식으로 쓰면 색인을 못 써서 12만 행을 통째로 정렬한다 —
+      -- `여름에 입을 시원한 반팔`이 **1.27초**였다(실측). 열로 쓰면 (cat_rank, goods_no)
+      -- 색인을 타고 조건을 만족하는 행을 찾는 즉시 멈춘다.
+      order by s.cat_rank, s.goods_no
       limit v_size - v_n
     )
   -- c_feed_products의 width/height는 smallint라 명시 캐스트가 필요하다
