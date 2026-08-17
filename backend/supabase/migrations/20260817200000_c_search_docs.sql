@@ -35,6 +35,13 @@ create table c_search_docs_next (
   -- 초성 검색용 단어 배열. RPC가 참조하므로 **여기서** 만든다 — 뒤 마이그레이션에
   -- 미루면 그 사이 구간이나 실패 시 새 RPC가 깨진 상태로 노출된다.
   chosung_words text[] not null default '{}',
+  -- 브랜드명을 지운 제목. **브랜드 우연 일치**를 가려낼 재료다 —
+  -- `포켓 티셔츠`가 브랜드 `아워포켓츠`에 걸려 상위를 통째로 먹는 문제.
+  -- bigram은 단어 안쪽도 맞히므로 아워포켓츠 안의 '포켓'이 진짜 포켓 상품
+  -- 1,768개를 밀어낸다. 질의어가 여기에도 있으면 진짜 속성이고, 브랜드에만
+  -- 있으면 우연이다. 질의 시각에 계산하면 매칭 10만 건에 문자열 연산이
+  -- 붙으므로 적재할 때 만들어 둔다.
+  title_wo_brand text not null default '',
   -- 반소매 티셔츠 제품군인가. 기준서 §3-1 ④(티셔츠가 아니면 최대 1)를 검색에서
   -- 미리 반영한다. 제목 키워드 기준이라 위양성이 있다(§ 한계).
   is_tee   boolean not null default true
@@ -45,7 +52,8 @@ comment on table c_search_docs_next is
 
 -- 노출 자격은 기존과 동일하다 (c_feed_page·현행 검색과 같은 조건).
 -- 뷰(c_feed_products)에는 card_ok가 없으므로 c_thumb_dims를 직접 조인한다.
-insert into c_search_docs_next (goods_no, brand, title, tags, doc, chosung_words, is_tee)
+insert into c_search_docs_next
+  (goods_no, brand, title, tags, doc, title_wo_brand, chosung_words, is_tee)
 select
   g.goods_no,
   coalesce(g.brand_name, ''),
@@ -54,6 +62,13 @@ select
   -- ⚠️ 태그는 **문서에 넣지 않는다**. 상품과 느슨하게 붙어 있어 정밀도를 깎았다
   -- (실측: G2 P@20 58.2% → 48.9% 회귀). tags 컬럼은 C단계 필터 재료로 남긴다.
   lower(coalesce(g.brand_name, '') || ' ' || coalesce(g.title, '')),
+  -- 제목에 브랜드가 그대로 박힌 상품은 1.2%뿐이지만, 하필 그것들이 문제를
+  -- 만든다(아워포켓츠는 제목이 브랜드로 시작한다). 지워야 '포켓'이 브랜드
+  -- 때문에만 맞았다는 사실이 드러난다.
+  lower(case
+    when coalesce(g.brand_name, '') = '' then coalesce(g.title, '')
+    else replace(coalesce(g.title, ''), g.brand_name, ' ')
+  end),
   coalesce((
     select array_agg(w)
     from unnest(string_to_array(
@@ -246,8 +261,22 @@ begin
       -- 노출 자격 22.6만 중 2.8만을 제목 정규식으로 검색에서 지우는
       -- 정책 변경이 되고, 위양성('후드집업 저지 반팔')까지 함께 사라진다
       -- (구현 리뷰 M11). 티셔츠가 부족할 때만 아래에 나타난다.
+      -- ⚠️ pgroonga_score는 사실상 **매칭 횟수**다. 실측하면 2~3에 몰려 있고
+      -- 동점은 goods_no 순으로 깨진다. 그래서 우연 일치가 한 브랜드에 많으면
+      -- 상위를 통째로 먹는다 — `포켓 티셔츠` 상위 10개 중 9개가 아워포켓츠였다.
+      -- 즉 지금 실질적인 순위 신호는 is_tee 하나뿐이다. 브랜드 우연 일치
+      -- 감점(c_brand_only_hits)을 여기 넣어 봤지만 **성능 상한을 넘어 뺐다** —
+      -- 아래 「브랜드 우연 일치」 주석과 계획 실행 기록 참고.
       (pgroonga_score(s.tableoid, s.ctid)
-        - case when s.is_tee then 0 else 1000 end)::real as sc
+        - case when s.is_tee then 0 else 1000 end
+        -- 브랜드 우연 일치 감점: 질의어가 브랜드명 **안쪽에만** 있고 제목엔
+        -- 없으면, 이 상품이 걸린 이유는 브랜드 이름뿐이다.
+        --   포켓 티셔츠 → 아워포켓츠 : '포켓'이 브랜드 안쪽, 제목엔 없음 → 감점
+        --   나이키       → 나이키     : 질의어 = 브랜드 전체            → 감점 없음
+        --   아워포켓     → 아워포켓츠 : 브랜드의 앞부분(브랜드를 찾는 중) → 감점 없음
+        --   그래픽       → 그래픽스    : 앞부분이라 감점 없음 / 내셔널지오그래픽은 감점
+        -- 감점 폭은 원점수(2~3)보다 커야 뒤집힌다.
+        )::real as sc
     from c_search_docs s
     where true
       and (case when v_chosung
@@ -261,9 +290,15 @@ begin
                      and (v_words[4] is null or s.doc &@ v_words[4])
                      and (v_words[5] is null or s.doc &@ v_words[5])
                 end)
+      -- ⚠️ 커서 필터는 **정렬식과 같아야 한다.** 예전엔 정렬은 sc(is_tee 감점
+      -- 반영)로 하면서 여기서는 원점수와 비교했다. 그 결과 감점받은 행이
+      -- 1페이지에 나오면 커서 점수가 -999가 되고, 원점수(2~3)는 그보다 작을 수
+      -- 없어 **2페이지가 통째로 0건**이 됐다(실측: `후드집업` 30건 → 0건).
       and (p_after_score is null
-           or pgroonga_score(s.tableoid, s.ctid)::real < p_after_score
-           or (pgroonga_score(s.tableoid, s.ctid)::real = p_after_score
+           or (pgroonga_score(s.tableoid, s.ctid)
+               - case when s.is_tee then 0 else 1000 end)::real < p_after_score
+           or ((pgroonga_score(s.tableoid, s.ctid)
+                - case when s.is_tee then 0 else 1000 end)::real = p_after_score
                and s.goods_no > p_after))
     order by 2 desc, 1
     limit v_size
