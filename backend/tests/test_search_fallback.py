@@ -607,3 +607,90 @@ def test_search_docs_price_matches_the_catalog(cur):
         "c_search_docs.price_final이 카탈로그와 다르다 — "
         "20260817200000을 다시 돌려야 한다(backend/README.md 갱신 계약)"
     )
+
+
+# ── 브랜드 사전 (소프트 텍스트 조각 1단계) ─────────────────────────────────
+#
+# 다음 단계에서 제목 단어를 하드 AND에서 점수로 내린다. 브랜드를 먼저 빼내지 않으면
+# `커버낫 반팔`이 `반팔`만 맞은 5만 건과 섞인다.
+
+
+def test_brand_dictionary_is_built_from_the_catalog_not_the_typo_vocab(cur):
+    """정본은 `c_search_docs.brand`다. `c_search_vocab`은 오타 교정용이라 정본이 아니다.
+
+    vocab에는 브랜드가 아닌 항목이 241개 섞여 있고 실제 브랜드 4,347개 중 3,989개만
+    담는다. 하드 필터의 근거로 쓰면 안 된다(교차 리뷰 2차 ②).
+    """
+    cur.execute(
+        "select count(*) from c_search_brand_terms t"
+        " where not exists (select 1 from c_search_docs d where d.brand = t.brand)"
+    )
+    assert cur.fetchone()[0] == 0, "사전의 brand는 모두 실제 카탈로그 브랜드여야 한다"
+
+
+@pytest.mark.parametrize(
+    "word,reason",
+    [
+        # 그 브랜드 상품은 9개인데 그 말이 든 문서가 7,305개다. 색으로 남겨야 한다
+        ("네이비", "색이지 브랜드가 아니다"),
+        # 티셔츠를 말할 때 쓰는 일상어이자 우연히 브랜드명이기도 한 말들
+        ("무지", "무지 티셔츠의 무지다"),
+        ("레이스", "소재·디테일을 말하는 말이다"),
+        ("시그니처", "상품명에 흔히 붙는 말이다"),
+        ("오리지널", "상품명에 흔히 붙는 말이다"),
+    ],
+)
+def test_words_that_are_also_everyday_words_are_not_brands(cur, word, reason):
+    cur.execute("select count(*) from c_search_brand_terms where term = %s", (word,))
+    assert cur.fetchone()[0] == 0, reason
+
+
+@pytest.mark.parametrize(
+    "word",
+    # 비율 임계값(0.5)을 썼다면 카고브로스·컬럼비아·반스가, 0.7이면 무신사 스탠다드가
+    # 탈락했다. 절대 기준으로 바꾼 뒤 전부 살아남는지 고정한다.
+    ["커버낫", "데상트", "컬럼비아", "반스", "카고브로스", "무신사 스탠다드", "나이키", "트립션"],
+)
+def test_real_brands_survive(cur, word):
+    cur.execute("select brand from c_search_brand_terms where term = lower(%s)", (word,))
+    row = cur.fetchone()
+    assert row is not None and row[0] == word
+
+
+@pytest.mark.parametrize(
+    "query,brand,rest",
+    [
+        # 긴 구문을 먼저 본다 — 단어별로 보면 `무신사`가 먼저 걸려 `스탠다드`가 남는다
+        ("무신사 스탠다드 반팔", "무신사 스탠다드", ["반팔"]),
+        # 공백을 뗀 형태도 받는다
+        ("무신사스탠다드 반팔", "무신사 스탠다드", ["반팔"]),
+        ("커버낫 반팔", "커버낫", ["반팔"]),
+        ("데상트 민소매", "데상트", ["민소매"]),
+        # 브랜드만 말한 질의는 나머지가 없다
+        ("트립션", "트립션", None),
+        # 색으로 남겨야 하는 말은 브랜드로 걸리지 않는다
+        ("네이비 반팔", None, ["네이비", "반팔"]),
+        # 서로 다른 브랜드가 둘이면 손대지 않는다 — 합집합은 사용자가 말한 것이 아니다
+        ("커버낫 나이키 반팔", None, ["커버낫", "나이키", "반팔"]),
+        # 사전에 없는 말은 아무것도 하지 않는다
+        ("여름 반팔티", None, ["여름", "반팔티"]),
+    ],
+)
+def test_brand_is_split_out_of_the_text_query(cur, query, brand, rest):
+    cur.execute("select brand, rest from c_search_brand_parse(c_search_split(%s))", (query,))
+    got_brand, got_rest = cur.fetchone()
+    assert got_brand == brand
+    assert got_rest == rest
+
+
+def test_brand_extraction_would_fix_brand_plus_attribute_zero_results(cur):
+    """이 조각의 이유. 지금은 `데상트 민소매`가 0건인데 데상트에 민소매가 74개 있다.
+
+    ⚠️ 여기서는 **파서가 재료를 만드는지**만 본다. 실제로 0건이 아니게 되는 것은
+    2단계(후보 자격)와 4단계(카테고리)가 붙어야 한다 — 이 테스트를 "고쳐졌다"로
+    읽지 않도록 적어 둔다.
+    """
+    cur.execute("select brand from c_search_brand_parse(c_search_split('데상트 민소매'))")
+    assert cur.fetchone()[0] == "데상트"
+    cur.execute("select count(*) from c_search_page_v2('데상트 민소매', null, null, 20)")
+    assert cur.fetchone()[0] == 0, "아직 검색 경로에 붙이지 않았다 — 2단계에서 붙인다"
