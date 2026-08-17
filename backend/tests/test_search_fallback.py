@@ -769,3 +769,85 @@ def test_category_rank_mapping_is_one_to_one(cur):
         "  group by 1 having count(*) > 1) x"
     )
     assert cur.fetchone()[0] == 0, "카테고리↔cat_rank 대응이 깨졌다"
+
+
+# ── 부정 조건 — 아는 위반만 제외한다 (부정 조각 1단계) ──────────────────────
+#
+# 소프트 텍스트 전환으로 G5의 0건율은 100% → 0%가 됐는데 P@20은 10.6%였다.
+# `로고 없는 무지 반팔티`를 검색하면 상위 20개가 **전부 로고 상품**이었다.
+
+
+@pytest.mark.parametrize(
+    "query,exclude,violates",
+    [
+        ("로고 없는 무지 반팔티", ["로고"], "d.doc &@ '로고'"),
+        ("프린트 없는 검정 반팔", ["프린트", "프린팅"], "d.doc &@ '프린트' or d.doc &@ '프린팅'"),
+        ("브이넥 말고 라운드넥 반팔", ["브이넥"], "d.doc &@ '브이넥'"),
+        ("비침 없는 흰 반팔티", ["비침"], "g.sheer ~ '있음|보통'"),
+        ("너무 붙지 않는 여성 반팔티", ["슬림핏"], "g.fit ~ '슬림|스키니|타이트'"),
+    ],
+)
+def test_known_violations_are_excluded(cur, query, exclude, violates):
+    cur.execute(
+        f"select count(*), count(*) filter (where {violates})"
+        " from c_search_page_v2(%s, null, null, 20, %s::text[]) r"
+        " join c_search_docs d using (goods_no) join c_goods g using (goods_no)",
+        (query, exclude),
+    )
+    total, bad = cur.fetchone()
+    assert total == 20, "제외해도 페이지는 채워져야 한다"
+    assert bad == 0, f"{query}: 아는 위반이 상위 20에 남으면 안 된다"
+
+
+def test_unknown_values_are_kept(cur):
+    """**아는 위반만** 제외한다. 값이 없는 상품은 남긴다.
+
+    원단 속성 커버리지는 28%다. 양성 필터(`sheer in ('없음')`)로 걸면 값이 없는
+    72%가 통째로 사라진다 — C단계가 "필터로 쓰지 않는다"고 정한 이유다.
+    부정은 방향이 반대라 그 문제가 없고, 그 사실을 여기서 고정한다.
+    """
+    cur.execute(
+        "select count(*), count(*) filter (where g.sheer is null or g.sheer = '')"
+        " from c_search_page_v2('비침 없는 흰 반팔티', null, null, 20, array['비침']) r"
+        " join c_goods g using (goods_no)"
+    )
+    total, unknown = cur.fetchone()
+    assert total == 20
+    assert unknown > 0, "값이 없는 상품이 남아 있어야 한다 (아는 위반만 뺀다)"
+
+
+def test_excluding_nothing_changes_nothing(cur):
+    """부정을 주지 않으면 지금과 결과가 같아야 한다."""
+    for q in ("검정 반팔", "커버낫 후드", "주황색이 들어간 티"):
+        cur.execute("select array_agg(goods_no order by goods_no) from c_search_page_v2(%s,null,null,20)", (q,))
+        a = cur.fetchone()[0]
+        cur.execute(
+            "select array_agg(goods_no order by goods_no) from c_search_page_v2(%s,null,null,20,null::text[])",
+            (q,),
+        )
+        assert cur.fetchone()[0] == a, f"{q}: 부정 없이 부르면 결과가 같아야 한다"
+
+
+def test_negation_terms_are_a_closed_set(cur):
+    """LLM은 이 표의 term만 고를 수 있다. 종류(하드/소프트)는 표가 정한다(설계 130행).
+
+    표에 없는 값을 넘기면 아무것도 제외하지 않는다 — 조용히 무시하는 것이 맞다.
+    새 축을 만들려면 표를 먼저 고쳐야 한다.
+    """
+    cur.execute("select count(*) from c_search_page_v2('반팔', null, null, 20)")
+    base = cur.fetchone()[0]
+    cur.execute(
+        "select count(*) from c_search_page_v2('반팔', null, null, 20, array['지어낸축'])"
+    )
+    assert cur.fetchone()[0] == base
+
+
+def test_negation_flags_cover_only_known_violators(cur):
+    """플래그 표에는 **위반하는 상품만** 있다. 나머지는 행이 없다."""
+    cur.execute("select count(*) from c_search_negation_flags")
+    flagged = cur.fetchone()[0]
+    cur.execute("select count(*) from c_search_docs")
+    total = cur.fetchone()[0]
+    assert 0 < flagged < total, "전부이거나 비어 있으면 계산이 틀린 것이다"
+    cur.execute("select count(*) from c_search_negation_flags where flags = '{}'")
+    assert cur.fetchone()[0] == 0, "빈 플래그 행은 있으면 안 된다"
