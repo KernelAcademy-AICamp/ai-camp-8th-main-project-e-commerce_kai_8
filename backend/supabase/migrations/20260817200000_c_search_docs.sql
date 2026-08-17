@@ -119,10 +119,15 @@ comment on table c_search_docs is
 -- 한쪽만 주면 첫 페이지를 다시 주거나(점수만 null) 동점 행이 통째로 누락된다
 -- (goods_no만 null → `goods_no > NULL`이 항상 false). 검증해서 거른다.
 --
--- 입력 방어: **질의 문법을 쓰지 못하게 각 단어를 큰따옴표로 감싼다.**
--- pgroonga_query_escape만으로는 부족하다 — `OR`·`AND`는 특수문자가 아니라
--- escape를 통과하고 그대로 연산자로 해석된다(실측: escape('OR') = 'OR').
--- 큰따옴표 안은 리터럴 구문이라 예약어가 무력화된다.
+-- 입력 방어: **질의 문법을 해석하지 않는 연산자(`&@`)를 쓴다.**
+--   · `&@~`는 질의 문법을 해석해 `OR`·`AND` 같은 예약어가 연산자가 된다
+--     (`pgroonga_query_escape`는 특수문자만 다뤄 예약어를 못 막는다).
+--   · 큰따옴표로 감싸는 방법은 **구(phrase) 검색이 되어** `무지티셔츠`로
+--     `무지 티셔츠`를 못 찾게 만든다 — A단계 목표인 띄어쓰기 변형이 깨진다
+--     (실측: 30건 → 1건).
+--   · `&@`는 문자열 전체를 **하나의 키워드**로 본다. 문법 해석이 없어 예약어가
+--     무력화되고, bigram 부분 일치는 그대로라 띄어쓰기 변형도 산다.
+-- 단어 사이 AND는 조건을 이어 붙여 만든다(최대 5단어라 펼쳐 쓴다).
 create or replace function c_search_page_v2(
   p_query   text,
   p_after_score real   default null,
@@ -147,8 +152,6 @@ as $$
 declare
   v_size  int := least(greatest(coalesce(p_size, 30), 1), 60);
   v_words text[];
-  v_terms text[];
-  v_q     text;
   v_chosung boolean;
 begin
   -- 커서 쌍 검증 — 한쪽만 온 요청은 받지 않는다
@@ -172,10 +175,6 @@ begin
   v_chosung := array_to_string(v_words, '') ~ '^[ㄱ-ㅎ]+$'
                and length(array_to_string(v_words, '')) >= 2;
 
-  -- 큰따옴표로 감싸 리터럴로 만든다 (예약어 무력화). 내부 따옴표는 escape.
-  select array_agg('"' || replace(pgroonga_query_escape(w), '"', '\"') || '"')
-  into v_terms from unnest(v_words) w;
-  v_q := array_to_string(v_terms, ' ');
 
   return query
   -- ⚠️ 후보를 **조인 전에** 자른다. 처음엔 매칭 전체(예: '반팔' 103,221건)를
@@ -191,7 +190,13 @@ begin
                 -- 초성은 **모든 단어**를 만족해야 한다. `&&`(겹침)는 OR라서
                 -- 'ㄴㅇㅋ ㅂㅍ'가 두 조건의 AND가 아니게 된다.
                 then s.chosung_words @> v_words
-                else s.doc &@~ v_q end)
+                -- 각 단어를 `&@`(단일 키워드, 문법 해석 없음)로 AND
+                else s.doc &@ v_words[1]
+                     and (v_words[2] is null or s.doc &@ v_words[2])
+                     and (v_words[3] is null or s.doc &@ v_words[3])
+                     and (v_words[4] is null or s.doc &@ v_words[4])
+                     and (v_words[5] is null or s.doc &@ v_words[5])
+                end)
       and (p_after_score is null
            or pgroonga_score(s.tableoid, s.ctid)::real < p_after_score
            or (pgroonga_score(s.tableoid, s.ctid)::real = p_after_score

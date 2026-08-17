@@ -9,6 +9,7 @@ import type { FeedCardViewData } from "@/features/feed/presentation/view-model/c
 import {
   fetchSearchPage,
   fetchSearchPageWithFallback,
+  type SearchCursor,
 } from "@/features/feed/search/data/search-api";
 import { logSearch } from "@/features/feed/search/data/search-log-api";
 import type { SearchSubmission } from "@/features/feed/search/presentation/view-model/use-search-state";
@@ -42,7 +43,8 @@ interface ResultState {
 /** 진행 상태 — 자신이 속한 세대를 기억한다 (커서·오류·로딩) */
 interface Progress {
   generation: number;
-  after: number | null;
+  /** 관련도 정렬이라 (점수, 번호) 쌍이다. null이면 첫 페이지 */
+  cursor: SearchCursor | null;
   exhausted: boolean;
   loading: boolean;
   error: boolean;
@@ -69,7 +71,7 @@ export function useSearchFeed({ query, submission, paused }: SearchFeedOptions) 
   const generationRef = useRef(0);
   const progressRef = useRef<Progress>({
     generation: 0,
-    after: null,
+    cursor: null,
     exhausted: false,
     loading: false,
     error: false,
@@ -115,7 +117,7 @@ export function useSearchFeed({ query, submission, paused }: SearchFeedOptions) 
       usedQueryRef.current = null;
       progressRef.current = {
         generation,
-        after: null,
+        cursor: null,
         exhausted: false,
         loading: false,
         error: false,
@@ -126,7 +128,7 @@ export function useSearchFeed({ query, submission, paused }: SearchFeedOptions) 
     if (pausedRef.current || progress.loading || progress.exhausted || progress.error)
       return;
     progress.loading = true;
-    const isFirstPage = progress.after === null;
+    const isFirstPage = progress.cursor === null;
     // 검색어 기록 (방침 O-32). 첫 페이지가 결론난 시점에 한 번 — 결과 수를
     // 함께 남기려면 응답을 기다려야 하기 때문이다. 실패는 결과 수 없이 남긴다.
     const logOnce = (resultCount: number | null) => {
@@ -154,20 +156,17 @@ export function useSearchFeed({ query, submission, paused }: SearchFeedOptions) 
     };
     // 첫 페이지만 자판 폴백을 태운다. 이후 페이지는 확정된 질의로 이어간다.
     const request = isFirstPage
-      ? fetchSearchPageWithFallback(query, null, PAGE_SIZE)
-      : fetchSearchPage(usedQueryRef.current ?? query, progress.after, PAGE_SIZE).then(
-          (products) => ({
-            products,
-            usedQuery: usedQueryRef.current ?? query,
-          }),
+      ? fetchSearchPageWithFallback(query, PAGE_SIZE)
+      : fetchSearchPage(usedQueryRef.current ?? query, progress.cursor, PAGE_SIZE).then(
+          (page) => ({ ...page, usedQuery: usedQueryRef.current ?? query }),
         );
     request
-      .then(({ products, usedQuery }) => {
+      .then(({ products, nextCursor, usedQuery }) => {
         if (generation !== generationRef.current) return; // 늦은 응답 폐기
         if (isFirstPage) usedQueryRef.current = usedQuery;
         logOnce(products.length);
         if (products.length === 0) progress.exhausted = true;
-        else progress.after = products[products.length - 1].goodsNo;
+        else progress.cursor = nextCursor;
         setResult((prev) => {
           // 새 세대의 첫 페이지는 빈 목록에서 시작 — 이전 세션 결과에 잇지 않는다
           const base = !isFirstPage && prev.query === query ? prev.items : [];

@@ -4,7 +4,10 @@ import { createElement } from "react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import type { Product } from "@/features/feed/domain/product";
-import { fetchSearchPage } from "@/features/feed/search/data/search-api";
+import {
+  fetchSearchPage,
+  type SearchPage,
+} from "@/features/feed/search/data/search-api";
 import {
   type SearchFeedOptions,
   useSearchFeed,
@@ -16,16 +19,26 @@ vi.mock("@/features/feed/search/data/search-api", () => {
   const fetchSearchPage = vi.fn();
   return {
     fetchSearchPage,
-    fetchSearchPageWithFallback: vi.fn(
-      async (query: string, after: number | null, size: number) => ({
-        products: (await fetchSearchPage(query, after, size)) as Product[],
-        usedQuery: query,
+    fetchSearchPageWithFallback: vi.fn(async (query: string, size: number) => ({
+      ...((await fetchSearchPage(query, null, size)) as {
+        products: Product[];
+        nextCursor: unknown;
       }),
-    ),
+      usedQuery: query,
+    })),
   };
 });
 
 const fetchSearchPageMock = vi.mocked(fetchSearchPage);
+
+/** 상품 배열을 새 페이지 계약(SearchPage)으로 감싼다 — 커서는 마지막 행에서 만든다 */
+const page = (products: Product[]) => {
+  const last = products.at(-1);
+  return {
+    products,
+    nextCursor: last ? { score: 0, goodsNo: last.goodsNo } : null,
+  };
+};
 
 const product = (goodsNo: number): Product => ({
   goodsNo,
@@ -94,8 +107,8 @@ function goodsNos(result: { current: ReturnType<typeof useSearchFeed> }) {
 describe("useSearchFeed", () => {
   it("제출된 검색어로 첫 페이지를 요청해 컬럼으로 만든다", async () => {
     fetchSearchPageMock
-      .mockResolvedValueOnce([product(1), product(2)])
-      .mockResolvedValue([]);
+      .mockResolvedValueOnce(page([product(1), product(2)]))
+      .mockResolvedValue(page([]));
     const { result } = renderSearchFeed({ query: "나이키" });
     await waitFor(() => {
       expect(fetchSearchPageMock).toHaveBeenCalledWith("나이키", null, 30);
@@ -109,7 +122,9 @@ describe("useSearchFeed", () => {
   });
 
   it("paused면 요청하지 않고, 풀리면 이어서 요청한다", async () => {
-    fetchSearchPageMock.mockResolvedValueOnce([product(1)]).mockResolvedValue([]);
+    fetchSearchPageMock
+      .mockResolvedValueOnce(page([product(1)]))
+      .mockResolvedValue(page([]));
     const { result, setOptions } = renderSearchFeed({ query: "나이키", paused: true });
     expect(fetchSearchPageMock).not.toHaveBeenCalled();
     setOptions({ query: "나이키", paused: false });
@@ -118,23 +133,33 @@ describe("useSearchFeed", () => {
     });
   });
 
-  it("다음 페이지는 마지막 goods_no 커서로 이어 요청한다", async () => {
+  it("다음 페이지는 응답이 준 (점수, 번호) 커서로 이어 요청한다", async () => {
+    // 관련도 정렬이라 커서가 숫자 하나가 아니다. 서버가 준 커서를 그대로 되돌려준다.
     fetchSearchPageMock
-      .mockResolvedValueOnce([product(1), product(2)])
-      .mockResolvedValueOnce([product(3)])
-      .mockResolvedValue([]);
+      .mockResolvedValueOnce({
+        products: [product(1), product(2)],
+        nextCursor: { score: 4.5, goodsNo: 2 },
+      })
+      .mockResolvedValueOnce(page([product(3)]))
+      .mockResolvedValue(page([]));
     const { result } = renderSearchFeed({ query: "나이키" });
     await waitFor(() => {
-      expect(fetchSearchPageMock).toHaveBeenCalledWith("나이키", 2, 30);
+      expect(fetchSearchPageMock).toHaveBeenCalledWith(
+        "나이키",
+        { score: 4.5, goodsNo: 2 },
+        30,
+      );
       expect(goodsNos(result)).toEqual([1, 2, 3]);
     });
   });
 
   it("A 제출 뒤 B를 제출하면 늦게 도착한 A 응답은 버린다", async () => {
-    let resolveA: (products: Product[]) => void = () => undefined;
-    const pendingA = new Promise<Product[]>((resolve) => (resolveA = resolve));
+    let resolveA: (page: SearchPage) => void = () => undefined;
+    const pendingA = new Promise<SearchPage>((resolve) => (resolveA = resolve));
     fetchSearchPageMock.mockImplementationOnce(() => pendingA);
-    fetchSearchPageMock.mockResolvedValueOnce([product(20)]).mockResolvedValue([]);
+    fetchSearchPageMock
+      .mockResolvedValueOnce(page([product(20)]))
+      .mockResolvedValue(page([]));
 
     const { result, setOptions } = renderSearchFeed({ query: "A" });
     await waitFor(() => {
@@ -144,7 +169,7 @@ describe("useSearchFeed", () => {
     await waitFor(() => {
       expect(goodsNos(result)).toEqual([20]);
     });
-    resolveA([product(10)]);
+    resolveA(page([product(10)]));
     // A 응답이 B 결과에 섞이면 안 된다
     await waitFor(() => {
       expect(goodsNos(result)).toEqual([20]);
@@ -152,8 +177,8 @@ describe("useSearchFeed", () => {
   });
 
   it("요청 중 검색을 해제하면(query null) 응답을 버린다", async () => {
-    let resolveA: (products: Product[]) => void = () => undefined;
-    const pendingA = new Promise<Product[]>((resolve) => (resolveA = resolve));
+    let resolveA: (page: SearchPage) => void = () => undefined;
+    const pendingA = new Promise<SearchPage>((resolve) => (resolveA = resolve));
     fetchSearchPageMock.mockImplementationOnce(() => pendingA);
 
     const { result, setOptions } = renderSearchFeed({ query: "A" });
@@ -161,7 +186,7 @@ describe("useSearchFeed", () => {
       expect(fetchSearchPageMock).toHaveBeenCalled();
     });
     setOptions({ query: null });
-    resolveA([product(10)]);
+    resolveA(page([product(10)]));
     await waitFor(() => {
       expect(goodsNos(result)).toEqual([]);
     });
@@ -170,8 +195,8 @@ describe("useSearchFeed", () => {
   it("해제 후 같은 검색어를 재제출하면 이전 오류 상태가 되살아나지 않는다", async () => {
     fetchSearchPageMock
       .mockRejectedValueOnce(new Error("RPC 오류"))
-      .mockResolvedValueOnce([product(1)])
-      .mockResolvedValue([]);
+      .mockResolvedValueOnce(page([product(1)]))
+      .mockResolvedValue(page([]));
     const { result, setOptions } = renderSearchFeed({ query: "A" });
     await waitFor(() => {
       expect(result.current.error).toBe(true);
@@ -186,10 +211,12 @@ describe("useSearchFeed", () => {
   });
 
   it("해제 후 같은 검색어를 재제출하면 이전 진행 중 응답을 버리고 새로 요청한다", async () => {
-    let resolveOld: (products: Product[]) => void = () => undefined;
-    const pendingOld = new Promise<Product[]>((resolve) => (resolveOld = resolve));
+    let resolveOld: (page: SearchPage) => void = () => undefined;
+    const pendingOld = new Promise<SearchPage>((resolve) => (resolveOld = resolve));
     fetchSearchPageMock.mockImplementationOnce(() => pendingOld);
-    fetchSearchPageMock.mockResolvedValueOnce([product(1)]).mockResolvedValue([]);
+    fetchSearchPageMock
+      .mockResolvedValueOnce(page([product(1)]))
+      .mockResolvedValue(page([]));
 
     const { result, setOptions } = renderSearchFeed({ query: "A" });
     await waitFor(() => {
@@ -202,7 +229,7 @@ describe("useSearchFeed", () => {
       expect(fetchSearchPageMock).toHaveBeenNthCalledWith(2, "A", null, 30);
       expect(goodsNos(result)).toEqual([1]);
     });
-    resolveOld([product(99)]);
+    resolveOld(page([product(99)]));
     await waitFor(() => {
       expect(goodsNos(result)).toEqual([1]);
     });
@@ -211,8 +238,8 @@ describe("useSearchFeed", () => {
   it("실패하면 자동 재시도 없이 오류 상태가 되고, retry로만 다시 요청한다", async () => {
     fetchSearchPageMock
       .mockRejectedValueOnce(new Error("RPC 오류"))
-      .mockResolvedValueOnce([product(1)])
-      .mockResolvedValue([]);
+      .mockResolvedValueOnce(page([product(1)]))
+      .mockResolvedValue(page([]));
     const { result } = renderSearchFeed({ query: "나이키" });
     await waitFor(() => {
       expect(result.current.error).toBe(true);
@@ -226,7 +253,7 @@ describe("useSearchFeed", () => {
   });
 
   it("결과가 비면 isEmpty가 된다", async () => {
-    fetchSearchPageMock.mockResolvedValue([]);
+    fetchSearchPageMock.mockResolvedValue(page([]));
     const { result } = renderSearchFeed({ query: "쟈갸모" });
     await waitFor(() => {
       expect(result.current.isEmpty).toBe(true);
