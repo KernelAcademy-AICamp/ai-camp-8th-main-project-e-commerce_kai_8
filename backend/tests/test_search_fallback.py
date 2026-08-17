@@ -251,7 +251,6 @@ def test_pagination_still_continues_where_it_should(cur, query):
 #
 # 제목의 색 글자는 세 가지 잡음을 끌고 온다: 로고·프린트의 색(`검정로고`가 붙은
 # 흰 티셔츠), 여러 색상안 나열(`화이트 블랙`), 단어 안쪽(`블랙홀스`는 네온라임).
-# `검정 반팔` 상위 20개 중 3개가 그 이유로 검정이 아니었다.
 @pytest.mark.parametrize(
     "query,codes,rest",
     [
@@ -261,14 +260,21 @@ def test_pagination_still_continues_where_it_should(cur, query):
         ("검정", ["2"], None),                 # 색만 말한 질의 — 텍스트 조건이 없다
         ("반팔티", None, ["반팔티"]),           # 색이 없으면 손대지 않는다
         ("ㅋㅂㄴ", None, ["ㅋㅂㄴ"]),
+        # 두 단어짜리 정식 색 이름. 단어별로 보면 `그레이`(3)가 되어 24를 놓친다.
+        ("라이트 그레이 반팔", ["24"], ["반팔"]),
+        ("다크 블루 티", ["80"], ["티"]),
+        ("카키 베이지", ["28"], None),
+        # 색 표현이 둘 이상이면 손대지 않는다 — 합집합으로 묶으면
+        # `검정 로고 흰 반팔`이 검정 본체까지 통과시킨다
+        ("검정 흰 반팔", None, ["검정", "흰", "반팔"]),
+        ("검정 로고 흰 반팔", None, ["검정", "로고", "흰", "반팔"]),
     ],
 )
 def test_color_is_split_out_of_the_text_query(cur, query, codes, rest):
-    cur.execute("select c_search_color_codes(c_search_split(%s))", (query,))
-    got = cur.fetchone()[0]
-    assert (sorted(got) if got else None) == (sorted(codes) if codes else None)
-    cur.execute("select c_search_drop_color_words(c_search_split(%s))", (query,))
-    assert cur.fetchone()[0] == rest
+    cur.execute("select codes, rest from c_search_color_parse(c_search_split(%s))", (query,))
+    got_codes, got_rest = cur.fetchone()
+    assert (sorted(got_codes) if got_codes else None) == (sorted(codes) if codes else None)
+    assert got_rest == rest
 
 
 def test_black_query_returns_only_black_labelled_products(cur):
@@ -291,27 +297,70 @@ def test_color_only_query_works(cur):
 
 def test_unknown_color_words_change_nothing(cur):
     """표에 없는 색 표현은 건드리지 않는다 — 지금처럼 텍스트로 처리된다."""
-    cur.execute("select c_search_color_codes(array['형광연두빛'])")
+    cur.execute("select codes from c_search_color_parse(array['형광연두빛'])")
     assert cur.fetchone()[0] is None
 
 
-def test_query_used_shows_the_color_condition(cur):
-    """로그·평가가 '무엇으로 찾았는지'를 알 수 있어야 한다."""
-    cur.execute("select query_used from c_search_page_v2('검정 반팔', null, null, 1)")
-    assert cur.fetchone()[0] == "반팔 [색:2]"
+def test_query_used_is_re_inputtable(cur):
+    """query_used는 **그대로 다시 넣을 수 있는 질의**여야 한다.
+
+    한때 `반팔 [색:2]`처럼 표시용 문자열을 돌려줬는데, RPC가 해석하는 문법이
+    아니라 색 질의의 2페이지가 전부 0건이 됐다. 무한 스크롤 제품에서 치명적이다.
+    """
+    cur.execute(
+        "select score, goods_no, query_used from c_search_page_v2('검정 반팔', null, null, 5)"
+        " order by score, goods_no desc limit 1"
+    )
+    score, goods_no, used = cur.fetchone()
+    assert used == "검정 반팔"
+    cur.execute(
+        "select count(*) from c_search_page_v2(%s, %s::real, %s::bigint, 5)",
+        (used, score, goods_no),
+    )
+    assert cur.fetchone()[0] == 5, "돌려준 질의로 다음 페이지가 이어져야 한다"
+
+
+@pytest.mark.parametrize("typed,restored", [("rjawjd qksvkf", "검정 반팔")])
+def test_color_is_parsed_after_keyboard_restore(cur, typed, restored):
+    """색 해석을 후보마다 하지 않으면, 자판으로 친 같은 말이 색 조건을 못 탄다."""
+    cur.execute("select query_used from c_search_page_v2(%s, null, null, 1)", (typed,))
+    assert cur.fetchone()[0] == restored
+    cur.execute(
+        "select count(*), count(*) filter (where g.color_codes && array['2'])"
+        " from c_search_page_v2(%s, null, null, 20) r join c_goods g using (goods_no)",
+        (typed,),
+    )
+    total, black = cur.fetchone()
+    assert black == total, "자판 입력도 정상 입력과 같은 색 조건을 타야 한다"
 
 
 # 색 표현이 **브랜드명의 일부**인 경우가 있다. 색으로 빼내면 브랜드를 못 찾는다 —
 # `하이퍼 데님`은 실제로 0건이 됐다. 여러 단어짜리 브랜드는 색 추출을 건너뛴다.
 @pytest.mark.parametrize(
-    "query", ["톰 브라운", "브라운 스튜디오", "하이퍼 데님", "올리브 데 올리브", "블랙 퍼플"]
+    "query",
+    [
+        "톰 브라운", "브라운 스튜디오", "하이퍼 데님", "올리브 데 올리브", "블랙 퍼플",
+        # 브랜드에 조건어를 붙이는 정상 사용 — 질의 전체가 브랜드일 때만 막으면 깨진다
+        "톰 브라운 반팔", "하이퍼 데님 반팔", "샌드 사운드 반팔",
+    ],
 )
 def test_multiword_brand_names_are_not_split_by_color(cur, query):
-    assert scalar(cur, "select c_search_color_codes(c_search_split(%s))", query) is None
+    cur.execute("select codes from c_search_color_parse(c_search_split(%s))", (query,))
+    assert cur.fetchone()[0] is None, f"{query}: 브랜드명 안의 색은 색이 아니다"
+
+
+@pytest.mark.parametrize("query", ["톰 브라운", "브라운 스튜디오", "하이퍼 데님", "블랙 퍼플"])
+def test_brand_queries_still_return_products(cur, query):
+    """색 추출로 브랜드가 사라지지 않는지. `하이퍼 데님`은 실제로 0건이 됐었다.
+
+    조건어를 붙인 형태(`하이퍼 데님 반팔`)는 여기서 세지 않는다 — 그 브랜드
+    상품 3개의 제목에 `반팔`이 없어서 0건인 것이 정상이고, 색과 무관하다.
+    """
     cur.execute("select count(*) from c_search_page_v2(%s, null, null, 20)", (query,))
-    assert cur.fetchone()[0] > 0, f"{query}: 브랜드 질의가 결과를 내야 한다"
+    assert cur.fetchone()[0] > 0
 
 
 def test_single_word_that_is_both_brand_and_color_stays_a_color(cur):
     """`네이비`는 브랜드(상품 9개)이자 색(20,873개)이다. 색으로 둔다 — 대가를 알고 고른다."""
-    assert scalar(cur, "select c_search_color_codes(c_search_split('네이비'))") == ["36"]
+    cur.execute("select codes from c_search_color_parse(c_search_split('네이비'))")
+    assert cur.fetchone()[0] == ["36"]

@@ -38,9 +38,10 @@ GRADED_FILES = (
     "grading-codex-typo.json",
     "grading-codex-cat.json",
     "grading-codex-color.json",
-    # ⚠️ 마지막에 둔다. 같은 itemId가 앞 파일에도 있으면 **이쪽이 이긴다** —
-    # 색 라벨·카테고리를 보여준 뒤 다시 매긴 것이라 기준이 다르다.
+    # ⚠️ 아래 둘은 기준서 v3(색 라벨·카테고리를 보여준다)으로 매긴 것이다.
+    # 마지막에 두어 같은 itemId가 앞 파일에도 있으면 **이쪽이 이기게** 한다.
     "grading-codex-color2.json",
+    "grading-codex-color3.json",
 )
 
 # 세지 않는 파일과 그 이유 — 지우지 말고 여기 남긴다

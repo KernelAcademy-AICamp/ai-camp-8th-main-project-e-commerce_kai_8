@@ -14,32 +14,34 @@
 -- 표에 없는 색 표현은 **아무것도 하지 않는다.** 지금처럼 텍스트로 처리한다.
 -- 못 알아본 것을 억지로 맞히지 않는다.
 
-create table if not exists c_search_color_terms (
+-- ⚠️ shadow 교체다. `truncate` 후 다시 채우면 그 사이(또는 실패 시) 살아 있는
+-- 검색이 **빈 표**를 읽어 색 조건이 조용히 사라진다. 공유 DB에 수동으로 적용하는
+-- repo라 자동 커밋 구간이 실재한다. c_search_docs·c_search_vocab과 같은 방식이다.
+drop table if exists c_search_color_terms_next;
+
+create table c_search_color_terms_next (
   term  text primary key,
   codes text[] not null,
   note  text
 );
 
-alter table c_search_color_terms enable row level security;
-revoke all on c_search_color_terms from public, anon, authenticated;
-
-comment on table c_search_color_terms is
-  '질의의 색 표현 → c_color_groups.code 목록. 좁은 표현은 좁게, 넓은 표현은 색군 전체로.';
-
-truncate c_search_color_terms;
-
 -- ── 1. 정식 명칭은 자동으로 넣는다 (c_color_groups가 정본) ──────────────────
 -- 공백이 있는 이름(`라이트 그레이`)은 질의가 공백으로 쪼개지므로 그대로는 안
 -- 걸린다. 공백을 뗀 형태도 함께 넣는다.
-insert into c_search_color_terms (term, codes, note)
+-- ⚠️ 전부 넣지는 않는다. 티셔츠 본체 색으로 해석하면 안 되는 이름이 있다:
+--   데님·연청·중청·진청·흑청 — `데님 티셔츠`의 데님은 **소재**일 가능성이 높다
+--   기타색상·클리어·로즈골드 — 사용자가 색으로 치는 말이 아니다
+insert into c_search_color_terms_next (term, codes, note)
 select lower(name_ko), array[code], '정식 명칭'
 from c_color_groups
+where name_ko not in ('데님','연청','중청','진청','흑청','기타색상','클리어','로즈골드')
 on conflict (term) do nothing;
 
-insert into c_search_color_terms (term, codes, note)
+insert into c_search_color_terms_next (term, codes, note)
 select replace(lower(name_ko), ' ', ''), array[code], '정식 명칭(공백 뗌)'
 from c_color_groups
 where name_ko like '% %'
+  and name_ko not in ('기타색상')
 on conflict (term) do nothing;
 
 -- ── 2. 일상 표현 ────────────────────────────────────────────────────────────
@@ -47,7 +49,7 @@ on conflict (term) do nothing;
 -- 파랗다고 보는 쪽이 사용자 기대에 가깝고, `네이비`는 하늘색을 뜻하지 않는다.
 -- 개발셋 질의에 실제로 나온 표현(검정·흰·노란·노란색·파란색·블랙·네이비·
 -- 아이보리)을 먼저 덮고, 같은 계열의 흔한 말을 함께 넣었다.
-insert into c_search_color_terms (term, codes, note) values
+insert into c_search_color_terms_next (term, codes, note) values
   -- 무채
   ('검정',   array['2'],                                  '블랙'),
   ('검정색', array['2'],                                  '블랙'),
@@ -81,10 +83,13 @@ insert into c_search_color_terms (term, codes, note) values
   ('연두',   array['31','79'],                            '라이트 그린·라임'),
   ('올리브', array['34'],                                 '올리브 그린'),
   -- 빨강·분홍
+  -- `빨강`류와 `붉은`을 같은 범위로 맞춘다. 예전엔 `붉은`만 버건디·브릭을
+  -- 포함해 일관성이 없었다.
   ('빨강',   array['11','51'],                            '레드·딥레드'),
-  ('빨간',   array['11','51'],                            '레드'),
-  ('빨간색', array['11','51'],                            '레드'),
-  ('붉은',   array['11','51','49','72'],                  '붉은 계열 전체'),
+  ('빨간',   array['11','51'],                            '레드·딥레드'),
+  ('빨간색', array['11','51'],                            '레드·딥레드'),
+  ('빨강색', array['11','51'],                            '레드·딥레드'),
+  ('붉은',   array['11','51'],                            '레드·딥레드'),
   ('와인',   array['49'],                                 '버건디'),
   ('와인색', array['49'],                                 '버건디'),
   ('벽돌색', array['72'],                                 '브릭'),
@@ -103,63 +108,134 @@ insert into c_search_color_terms (term, codes, note) values
   ('갈색',   array['4','82','83'],                        '브라운'),
   ('밤색',   array['4','83'],                             '브라운'),
   ('금색',   array['14'],                                 '골드'),
-  -- 카키는 한국어에서 보통 초록빛 국방색을 뜻한다
-  ('카키색', array['30','28'],                            '카키·카키 베이지')
+  -- `카키`(정식 명칭, 코드 30)와 범위를 맞춘다. 예전엔 `카키색`만 28을 더 받았다.
+  ('카키색', array['30'],                                 '카키'),
+  -- 개발셋 표현과 흔한 변형 보강
+  ('하얀색', array['1'],                                  '화이트'),
+  ('까만색', array['2'],                                  '블랙'),
+  ('블랙색', array['2'],                                  '블랙'),
+  ('차콜',   array['25'],                                 '다크 그레이'),
+  ('먹색',   array['25'],                                 '다크 그레이'),
+  ('크림',   array['23','77'],                            '아이보리·오트밀'),
+  ('크림색', array['23','77'],                            '아이보리·오트밀'),
+  ('파랑색', array['7','36','37','80','81'],              '블루 색군'),
+  ('노랑색', array['9','44'],                             '옐로우'),
+  ('연두색', array['31','79'],                            '라이트 그린·라임'),
+  ('청록',   array['32','6'],                             '민트·그린'),
+  ('연보라', array['39'],                                 '라벤더'),
+  ('코랄',   array['74','12'],                            '피치·오렌지')
 on conflict (term) do update set codes = excluded.codes, note = excluded.note;
 
-analyze c_search_color_terms;
+alter table c_search_color_terms_next enable row level security;
+revoke all on c_search_color_terms_next from public, anon, authenticated;
+analyze c_search_color_terms_next;
 
--- 이 질의가 **브랜드 이름 그 자체**인가. 색 표현이 브랜드명의 일부인 경우가 있다:
---   톰 브라운 · 브라운 스튜디오 · 올리브 데 올리브 · 블랙 퍼플 · 하이퍼 데님 ·
---   블루 제이너 클럽 · 블루디 블루 · 샌드 사운드 · 카키 스튜디오 · 브라운 아이드 소울
--- 이때 색을 빼내면 브랜드를 찾을 수 없다 — `하이퍼 데님`은 실제로 0건이 됐다.
+do $swap$
+declare v_idx text;
+begin
+  drop table if exists c_search_color_terms;
+  alter table c_search_color_terms_next rename to c_search_color_terms;
+  select i.relname into v_idx from pg_index x
+  join pg_class i on i.oid = x.indexrelid
+  join pg_class t on t.oid = x.indrelid
+  where t.relname = 'c_search_color_terms' and x.indisprimary;
+  if v_idx is not null and v_idx <> 'c_search_color_terms_pkey' then
+    execute format('alter index %I rename to c_search_color_terms_pkey', v_idx);
+  end if;
+end $swap$;
+
+comment on table c_search_color_terms is
+  '질의의 색 표현 → c_color_groups.code 목록. 좁은 표현은 좁게, 넓은 표현은 색군 전체로.';
+
+-- 질의를 색 조건과 나머지 텍스트로 가른다. **한 함수에서 한다** — 코드 뽑기와
+-- 단어 빼기를 따로 두면 둘이 어긋난다.
 --
--- **여러 단어짜리 브랜드에만 적용한다.** `네이비`는 브랜드이기도 하지만(상품 9개)
--- 색으로 쓰는 쪽이 압도적이라(네이비 색 상품 20,873개) 색으로 둔다. 그 브랜드는
--- 이름으로 찾을 수 없게 되며, 그 대가를 알고 선택한다.
-create or replace function c_search_is_brand_name(p_words text[])
-returns boolean
-language sql stable security definer
+-- 규칙 네 가지, 전부 실측으로 필요해진 것이다:
+--
+-- ① **브랜드 이름 안의 색은 색이 아니다.** `톰 브라운`·`하이퍼 데님`·`올리브 데
+--    올리브`처럼 색 표현이 브랜드명의 일부인 브랜드가 11개 있다. 색으로 빼내면
+--    브랜드를 못 찾는다 — `하이퍼 데님`은 0건이 됐다. 질의 **어디에 있든**
+--    보호한다(`톰 브라운 반팔`도 마찬가지다).
+--    단어 하나짜리 충돌(`네이비`)은 보호하지 않는다 — 브랜드 상품 9개 대 색
+--    상품 20,873개라 색으로 쓰는 쪽이 압도적이다. 그 브랜드는 이름으로 찾을 수
+--    없게 되며, 대가를 알고 고른다.
+--
+-- ② **두 단어짜리 색 이름을 먼저 본다.** `라이트 그레이`를 단어별로 보면
+--    `그레이`(코드 3) + 텍스트 `라이트`가 되어 정식 코드 24를 놓친다.
+--    `다크 블루`·`카키 베이지`도 같다.
+--
+-- ③ **색 표현이 둘 이상이면 색 조건을 걸지 않는다.** 합집합으로 묶으면
+--    `검정 흰 반팔`이 "검정 또는 흰색"이 되고, 더 나쁘게는 `검정 로고 흰 반팔`이
+--    검정 본체까지 통과시킨다 — 색은 본체 색이라는 이 표의 전제를 스스로 어긴다.
+--    역할(본체/로고)을 가릴 수 없으므로 **모르면 손대지 않는다.**
+--
+-- ④ 표에 없는 색 표현은 아무것도 하지 않는다. 지금처럼 텍스트로 처리된다.
+create or replace function c_search_color_parse(p_words text[])
+returns table (codes text[], rest text[])
+language plpgsql stable security definer
 set search_path = public, pg_temp
 as $$
-  select coalesce(array_length(p_words, 1), 0) > 1
-     and exists (
-       select 1 from c_search_vocab v where v.term = lower(array_to_string(p_words, ' '))
-     );
+declare
+  n int := coalesce(array_length(p_words, 1), 0);
+  protected boolean[] := array_fill(false, array[greatest(n, 1)]);
+  taken     boolean[] := array_fill(false, array[greatest(n, 1)]);
+  v_terms text[] := '{}';
+  v_codes text[] := '{}';
+  i int; w int; j int;
+  phrase text; hit text[];
+begin
+  if n = 0 then
+    return query select null::text[], p_words;
+    return;
+  end if;
+
+  -- ① 브랜드 이름(두 단어 이상)에 걸린 자리를 보호한다
+  for w in reverse least(n, 5) .. 2 loop
+    for i in 1 .. n - w + 1 loop
+      phrase := lower(array_to_string(p_words[i : i + w - 1], ' '));
+      if exists (select 1 from c_search_vocab v where v.term = phrase) then
+        for j in i .. i + w - 1 loop
+          protected[j] := true;
+        end loop;
+      end if;
+    end loop;
+  end loop;
+
+  -- ② 두 단어짜리 색 이름을 먼저, 그다음 한 단어
+  for w in reverse 2 .. 1 loop
+    i := 1;
+    while i <= n - w + 1 loop
+      if not protected[i] and not taken[i]
+         and (w = 1 or (not protected[i + 1] and not taken[i + 1])) then
+        phrase := lower(array_to_string(p_words[i : i + w - 1], ' '));
+        select t.codes into hit from c_search_color_terms t where t.term = phrase;
+        if hit is not null then
+          v_terms := v_terms || phrase;
+          v_codes := v_codes || hit;
+          for j in i .. i + w - 1 loop
+            taken[j] := true;
+          end loop;
+        end if;
+      end if;
+      i := i + 1;
+    end loop;
+  end loop;
+
+  -- ③ 색 표현이 정확히 하나일 때만 조건을 건다
+  if (select count(distinct t) from unnest(v_terms) t) <> 1 then
+    return query select null::text[], p_words;
+    return;
+  end if;
+
+  return query
+  select
+    (select array_agg(distinct c) from unnest(v_codes) c),
+    -- 별칭을 붙인다 — 그냥 `i`로 두면 plpgsql 변수 i와 충돌한다
+    nullif(array(
+      select p_words[g.pos] from generate_series(1, n) as g(pos) where not taken[g.pos]
+    ), '{}');
+end
 $$;
 
-revoke all on function c_search_is_brand_name(text[]) from public, anon, authenticated;
+revoke all on function c_search_color_parse(text[]) from public, anon, authenticated;
 
--- 질의 단어들에서 색 코드를 뽑는다. 표에 있는 단어가 없으면 null.
--- 여러 색을 말하면 **합집합**이다 — `검정 흰`은 둘 중 하나를 뜻하는 쪽이 자연스럽다.
-create or replace function c_search_color_codes(p_words text[])
-returns text[]
-language sql stable security definer
-set search_path = public, pg_temp
-as $$
-  select case when c_search_is_brand_name(p_words) then null else nullif(array(
-    select distinct c
-    from unnest(p_words) w
-    join c_search_color_terms t on t.term = w
-    cross join unnest(t.codes) c
-  ), '{}') end;
-$$;
-
-revoke all on function c_search_color_codes(text[]) from public, anon, authenticated;
-
--- 색 표현을 뺀 나머지 단어. 텍스트 검색은 이것으로 한다.
-create or replace function c_search_drop_color_words(p_words text[])
-returns text[]
-language sql stable security definer
-set search_path = public, pg_temp
-as $$
-  -- 순서를 지킨다 — 이 값이 query_used로 사용자·로그에 그대로 나간다.
-  -- 브랜드 이름이면 한 단어도 빼지 않는다(위 c_search_is_brand_name).
-  select case when c_search_is_brand_name(p_words) then p_words else nullif(array(
-    select w from unnest(p_words) with ordinality as u(w, i)
-    where not exists (select 1 from c_search_color_terms t where t.term = w)
-    order by i
-  ), '{}') end;
-$$;
-
-revoke all on function c_search_drop_color_words(text[]) from public, anon, authenticated;

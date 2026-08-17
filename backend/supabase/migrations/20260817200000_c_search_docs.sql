@@ -242,7 +242,8 @@ declare
   v_norm  text;
   v_alt   text;
   v_try   int;
-  v_codes text[];   -- 질의가 말한 색. null이면 색 조건 없음
+  v_cand  text[];   -- 이번 후보의 단어 전체 (색 포함) — query_used가 된다
+  v_codes text[];   -- 이번 후보가 말한 색. null이면 색 조건 없음
 begin
   -- 커서 쌍 검증 — 한쪽만 온 요청은 받지 않는다
   if (p_after_score is null) <> (p_after is null) then
@@ -255,29 +256,9 @@ begin
   if v_words is null then
     return;  -- 빈 질의: 전체 스캔 금지
   end if;
+  v_norm := array_to_string(v_words, ' ');
 
-  -- 색 표현을 **텍스트에서 빼내** 조건으로 돌린다 (C단계 2단계).
-  -- 남겨두면 제목의 색 글자가 끌고 오는 잡음(로고 색·색상안 나열·단어 안쪽)을
-  -- 그대로 먹는다 — `검정 반팔` 상위 20개 중 3개가 그 때문에 검정이 아니었다.
-  -- 표에 없는 색 표현은 건드리지 않는다. 그때는 지금처럼 텍스트로 처리된다.
-  v_codes := c_search_color_codes(v_words);
-  if v_codes is not null then
-    v_words := c_search_drop_color_words(v_words);
-    -- `검정`처럼 색만 말한 질의는 텍스트 조건이 없다. 색으로만 찾는다.
-  end if;
 
-  v_norm := array_to_string(coalesce(v_words, '{}'::text[]), ' ');
-
-  -- 초성만으로 이뤄진 질의(ㄴㅇㅋ)는 본문에 그 형태로 없다. 초성 색인으로 보낸다.
-  v_chosung := v_words is not null
-               and array_to_string(v_words, '') ~ '^[ㄱ-ㅎ]+$'
-               and length(array_to_string(v_words, '')) >= 2;
-
-  -- 표기 폴백 (A단계 3단계). **원문이 0건일 때만** 다음 후보로 간다 — 결과가
-  -- 있으면 그게 사용자 의도이고, 멀쩡한 질의를 고치면 의도를 덮어쓴다.
-  --   0회차 = 원문 · 1회차 = 한영 자판 복원 · 2회차 = 브랜드 사전 오타 교정
-  -- 자판을 먼저 두는 이유: 영문 나열은 브랜드 사전에 없어 교정이 헛돈다.
-  --
   -- **폴백은 첫 페이지에서만 결정한다** (p_after is null). 이후 페이지는 응답의
   -- `query_used`를 그대로 다시 보내는 것이 호출자의 계약이다.
   --
@@ -299,16 +280,27 @@ begin
   -- ⚠️ 후보는 CASE로 만든다. 배열에 담아 순회하면 자판 복원이 성공해도
   -- 오타 교정이 함께 계산된다(배열 원소는 선평가된다 — 리뷰 M3).
   for v_try in 0 .. 2 loop
-    if v_try > 0 then
-      continue when v_words is null;   -- 색만 말한 질의는 표기 폴백 대상이 아니다
+    if v_try = 0 then
+      v_cand := v_words;
+    else
       v_alt := case v_try
                  when 1 then c_restore_hangul_typing(v_norm)
                  else c_search_correct_query(v_norm)
                end;
       continue when v_alt is null or v_alt = v_norm;
-      v_words := c_search_split(v_alt);
-      continue when v_words is null;
+      v_cand := c_search_split(v_alt);
+      continue when v_cand is null;
     end if;
+
+    -- ⚠️ 색 해석은 **후보마다** 한다. 한 번만 하면 자판으로 친 `rjawjd qksvkf`가
+    -- `검정 반팔`로 복원된 뒤에도 색 조건을 못 탄다 — 실측으로 정상 입력은
+    -- 20/20이 검정인데 자판 입력은 17/20이었다(교차 리뷰 M1).
+    select cp.codes, cp.rest into v_codes, v_words from c_search_color_parse(v_cand) cp;
+
+    -- 초성 판정도 색을 뺀 뒤의 단어로 한다
+    v_chosung := v_words is not null
+                 and array_to_string(v_words, '') ~ '^[ㄱ-ㅎ]+$'
+                 and length(array_to_string(v_words, '')) >= 2;
 
     return query
   with hit as (
@@ -362,10 +354,12 @@ begin
   -- c_feed_products의 width/height는 smallint라 명시 캐스트가 필요하다
   select v.goods_no, v.title, v.brand_name, v.price_final, v.gender,
          v.gallery, v.thumbnail, v.width::int, v.height::int, h.sc,
-         -- 실제로 무엇으로 찾았는지 — 색 조건이 붙었으면 함께 보인다
-         btrim(coalesce(array_to_string(v_words, ' '), '') ||
-               case when v_codes is null then ''
-                    else ' [색:' || array_to_string(v_codes, ',') || ']' end)
+         -- ⚠️ **다시 넣을 수 있는 질의**여야 한다. 호출자는 이 값을 그대로 보내
+         -- 다음 페이지를 잇는다. 한때 `반팔 [색:2]`처럼 표시용 문자열을 돌려줬는데,
+         -- 그건 RPC가 해석하는 문법이 아니라 **색 질의의 2페이지가 전부 0건**이
+         -- 됐다(교차 리뷰 B1). 색 해석은 결정론적이라 후보 질의를 그대로 돌려주면
+         -- 다음 요청에서 같은 색·텍스트로 갈라진다.
+         array_to_string(v_cand, ' ')
   from hit h
   join c_feed_products v using (goods_no)
   order by h.sc desc, h.goods_no;

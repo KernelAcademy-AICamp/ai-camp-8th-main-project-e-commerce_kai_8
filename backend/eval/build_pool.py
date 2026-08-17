@@ -41,6 +41,8 @@ SYSTEM_CHANGELOG = {
         "2026-08-17: 서버 표기 폴백 추가, query_used 반환",
         "2026-08-17: 오타 교정을 브랜드 사전 + 자모 거리로 좁힘",
         "2026-08-17: 폴백을 첫 페이지에서만 결정 (이후 페이지는 query_used로 이어간다)",
+        "2026-08-17 C-1: 티셔츠 판정을 제목 정규식에서 카테고리 순위로",
+        "2026-08-17 C-2: 색 표현을 텍스트에서 빼내 색 라벨 필터로 (브랜드명 보호 포함)",
     ],
 }
 
@@ -55,7 +57,7 @@ SYSTEMS = {
         # "같은 시스템 비교"가 아님을 기억해야 한다(SYSTEM_CHANGELOG 참고).
         "sql": (
             "select r.goods_no, r.title, r.brand_name, r.price_final, r.gender, r.query_used,"
-            " (select string_agg(cg.name_ko, '/') from c_color_groups cg"
+            " (select string_agg(cg.name_ko, '/' order by cg.code) from c_color_groups cg"
             "   where cg.code = any(g.color_codes)) as color_label,"
             " g.category"
             " from c_search_page(%s, null, %s) with ordinality as r("
@@ -76,7 +78,7 @@ SYSTEMS = {
             # 순서를 보존하지 않는다. 처음에 빠뜨렸더니 풀의 순위가 뒤섞여
             # 순위에 민감한 P@20·nDCG가 조용히 달라졌다(ㅋㅂㄴ 0.95 → 0.80).
             "select r.goods_no, r.title, r.brand_name, r.price_final, r.gender, r.query_used,"
-            " (select string_agg(cg.name_ko, '/') from c_color_groups cg"
+            " (select string_agg(cg.name_ko, '/' order by cg.code) from c_color_groups cg"
             "   where cg.code = any(g.color_codes)) as color_label,"
             " g.category"
             " from c_search_page_v2(%s, null, null, %s) with ordinality as r("

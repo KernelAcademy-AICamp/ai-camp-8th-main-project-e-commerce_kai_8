@@ -7,10 +7,12 @@
       "2026-08-17: is_tee를 hard filter에서 순위 감점으로",
       "2026-08-17: 서버 표기 폴백 추가, query_used 반환",
       "2026-08-17: 오타 교정을 브랜드 사전 + 자모 거리로 좁힘",
-      "2026-08-17: 폴백을 첫 페이지에서만 결정 (이후 페이지는 query_used로 이어간다)"
+      "2026-08-17: 폴백을 첫 페이지에서만 결정 (이후 페이지는 query_used로 이어간다)",
+      "2026-08-17 C-1: 티셔츠 판정을 제목 정규식에서 카테고리 순위로",
+      "2026-08-17 C-2: 색 표현을 텍스트에서 빼내 색 라벨 필터로 (브랜드명 보호 포함)"
     ],
     "topN": 20,
-    "collectedAt": "2026-08-17T08:05:57.344761+00:00",
+    "collectedAt": "2026-08-17T08:26:40.420722+00:00",
     "catalogSnapshot": {
       "c_goods_rows": 226320,
       "c_search_text_rows": 226304,
@@ -163,7 +165,7 @@
           "brandName": "음",
           "priceFinal": 16800,
           "gender": "남성",
-          "colorLabel": "화이트/블랙/다크 그레이/오트밀/네이비/스카이 블루",
+          "colorLabel": "화이트/블랙/다크 그레이/네이비/스카이 블루/오트밀",
           "category": "001001"
         },
         {
@@ -936,7 +938,7 @@
           "brandName": "엘라모",
           "priceFinal": 17910,
           "gender": "공용",
-          "colorLabel": "화이트/베이지/네이비/스카이 블루/레드",
+          "colorLabel": "화이트/레드/네이비/스카이 블루/베이지",
           "category": "001001"
         },
         {
@@ -1046,7 +1048,7 @@
           "brandName": "돌돌",
           "priceFinal": 59000,
           "gender": "남성",
-          "colorLabel": "화이트/블랙/핑크",
+          "colorLabel": "화이트/핑크/블랙",
           "category": "001001"
         },
         {
@@ -1056,7 +1058,7 @@
           "brandName": "돌돌",
           "priceFinal": 59000,
           "gender": "남성",
-          "colorLabel": "화이트/블랙/핑크",
+          "colorLabel": "화이트/핑크/블랙",
           "category": "001001"
         },
         {
@@ -1066,7 +1068,7 @@
           "brandName": "돌돌",
           "priceFinal": 59000,
           "gender": "남성",
-          "colorLabel": "화이트/블랙/핑크",
+          "colorLabel": "화이트/핑크/블랙",
           "category": "001001"
         },
         {
@@ -1076,7 +1078,7 @@
           "brandName": "돌돌",
           "priceFinal": 59000,
           "gender": "남성",
-          "colorLabel": "화이트/블랙/핑크",
+          "colorLabel": "화이트/핑크/블랙",
           "category": "001001"
         },
         {
@@ -1086,7 +1088,7 @@
           "brandName": "돌돌",
           "priceFinal": 59000,
           "gender": "남성",
-          "colorLabel": "화이트/블랙/핑크",
+          "colorLabel": "화이트/핑크/블랙",
           "category": "001001"
         }
       ]
@@ -1177,7 +1179,7 @@
           "brandName": "베이직하우스",
           "priceFinal": 16900,
           "gender": "여성",
-          "colorLabel": "화이트/블랙/네이비/블루/라벤더/옐로우",
+          "colorLabel": "화이트/블랙/네이비/라벤더/블루/옐로우",
           "category": "001001"
         },
         {
@@ -1277,7 +1279,7 @@
           "brandName": "프라임에이트",
           "priceFinal": 22800,
           "gender": "여성",
-          "colorLabel": "화이트/블랙/다크 그레이/아이보리/스카이 블루/카키/라벤더",
+          "colorLabel": "화이트/블랙/아이보리/다크 그레이/카키/스카이 블루/라벤더",
           "category": "001001"
         },
         {
@@ -1287,7 +1289,7 @@
           "brandName": "프라임에이트",
           "priceFinal": 22800,
           "gender": "여성",
-          "colorLabel": "화이트/블랙/다크 그레이/아이보리/카키",
+          "colorLabel": "화이트/블랙/아이보리/다크 그레이/카키",
           "category": "001001"
         },
         {
@@ -1297,7 +1299,7 @@
           "brandName": "프라임에이트",
           "priceFinal": 22800,
           "gender": "여성",
-          "colorLabel": "화이트/블랙/다크 그레이/아이보리/스카이 블루/카키/라벤더",
+          "colorLabel": "화이트/블랙/아이보리/다크 그레이/카키/스카이 블루/라벤더",
           "category": "001001"
         },
         {
@@ -1307,7 +1309,7 @@
           "brandName": "프라임에이트",
           "priceFinal": 22800,
           "gender": "여성",
-          "colorLabel": "화이트/블랙/다크 그레이/아이보리/카키",
+          "colorLabel": "화이트/블랙/아이보리/다크 그레이/카키",
           "category": "001001"
         },
         {
@@ -2423,7 +2425,7 @@
           "brandName": "원헌드레드퍼센트",
           "priceFinal": 49000,
           "gender": "남성",
-          "colorLabel": "화이트/블랙/그레이/베이지/블루/그린/핑크/옐로우",
+          "colorLabel": "화이트/핑크/블랙/그레이/베이지/그린/블루/옐로우",
           "category": "001001"
         },
         {
@@ -2433,7 +2435,7 @@
           "brandName": "원헌드레드퍼센트",
           "priceFinal": 31800,
           "gender": "남성",
-          "colorLabel": "화이트/블랙/그레이/베이지/블루/그린/핑크/옐로우",
+          "colorLabel": "화이트/핑크/블랙/그레이/베이지/그린/블루/옐로우",
           "category": "001001"
         },
         {
@@ -2443,7 +2445,7 @@
           "brandName": "원헌드레드퍼센트",
           "priceFinal": 34450,
           "gender": "남성",
-          "colorLabel": "화이트/블랙/그레이/베이지/블루/그린/핑크/옐로우",
+          "colorLabel": "화이트/핑크/블랙/그레이/베이지/그린/블루/옐로우",
           "category": "001001"
         },
         {
@@ -2453,7 +2455,7 @@
           "brandName": "원헌드레드퍼센트",
           "priceFinal": 34450,
           "gender": "남성",
-          "colorLabel": "화이트/블랙/그레이/베이지/블루/그린/핑크/옐로우",
+          "colorLabel": "화이트/핑크/블랙/그레이/베이지/그린/블루/옐로우",
           "category": "001001"
         },
         {
@@ -2463,7 +2465,7 @@
           "brandName": "원헌드레드퍼센트",
           "priceFinal": 31800,
           "gender": "남성",
-          "colorLabel": "화이트/블랙/그레이/베이지/블루/그린/핑크/옐로우",
+          "colorLabel": "화이트/핑크/블랙/그레이/베이지/그린/블루/옐로우",
           "category": "001001"
         },
         {
@@ -2473,7 +2475,7 @@
           "brandName": "원헌드레드퍼센트",
           "priceFinal": 34450,
           "gender": "남성",
-          "colorLabel": "화이트/블랙/그레이/베이지/블루/그린/핑크/옐로우",
+          "colorLabel": "화이트/핑크/블랙/그레이/베이지/그린/블루/옐로우",
           "category": "001001"
         },
         {
@@ -2483,7 +2485,7 @@
           "brandName": "원헌드레드퍼센트",
           "priceFinal": 34450,
           "gender": "남성",
-          "colorLabel": "화이트/블랙/그레이/베이지/블루/그린/핑크/옐로우",
+          "colorLabel": "화이트/핑크/블랙/그레이/베이지/그린/블루/옐로우",
           "category": "001001"
         },
         {
@@ -2493,7 +2495,7 @@
           "brandName": "원헌드레드퍼센트",
           "priceFinal": 31800,
           "gender": "남성",
-          "colorLabel": "화이트/블랙/그레이/베이지/블루/그린/핑크/옐로우",
+          "colorLabel": "화이트/핑크/블랙/그레이/베이지/그린/블루/옐로우",
           "category": "001001"
         },
         {
@@ -2503,7 +2505,7 @@
           "brandName": "원헌드레드퍼센트",
           "priceFinal": 34450,
           "gender": "남성",
-          "colorLabel": "화이트/블랙/그레이/베이지/블루/그린/핑크/옐로우",
+          "colorLabel": "화이트/핑크/블랙/그레이/베이지/그린/블루/옐로우",
           "category": "001001"
         },
         {
@@ -2513,7 +2515,7 @@
           "brandName": "원헌드레드퍼센트",
           "priceFinal": 34450,
           "gender": "남성",
-          "colorLabel": "화이트/블랙/그레이/베이지/블루/그린/핑크/옐로우",
+          "colorLabel": "화이트/핑크/블랙/그레이/베이지/그린/블루/옐로우",
           "category": "001001"
         },
         {
@@ -2523,7 +2525,7 @@
           "brandName": "원헌드레드퍼센트",
           "priceFinal": 34450,
           "gender": "남성",
-          "colorLabel": "화이트/블랙/그레이/베이지/블루/그린/핑크/옐로우",
+          "colorLabel": "화이트/핑크/블랙/그레이/베이지/그린/블루/옐로우",
           "category": "001001"
         },
         {
@@ -2533,7 +2535,7 @@
           "brandName": "원헌드레드퍼센트",
           "priceFinal": 34450,
           "gender": "남성",
-          "colorLabel": "화이트/블랙/그레이/베이지/블루/그린/핑크/옐로우",
+          "colorLabel": "화이트/핑크/블랙/그레이/베이지/그린/블루/옐로우",
           "category": "001001"
         },
         {
@@ -2543,7 +2545,7 @@
           "brandName": "원헌드레드퍼센트",
           "priceFinal": 31800,
           "gender": "남성",
-          "colorLabel": "화이트/블랙/그레이/베이지/블루/그린/핑크/옐로우",
+          "colorLabel": "화이트/핑크/블랙/그레이/베이지/그린/블루/옐로우",
           "category": "001001"
         },
         {
@@ -2553,7 +2555,7 @@
           "brandName": "원헌드레드퍼센트",
           "priceFinal": 34300,
           "gender": "남성",
-          "colorLabel": "화이트/블랙/그레이/베이지/블루/그린/핑크/옐로우",
+          "colorLabel": "화이트/핑크/블랙/그레이/베이지/그린/블루/옐로우",
           "category": "001001"
         },
         {
@@ -2563,7 +2565,7 @@
           "brandName": "원헌드레드퍼센트",
           "priceFinal": 34450,
           "gender": "남성",
-          "colorLabel": "화이트/블랙/그레이/베이지/블루/그린/핑크/옐로우",
+          "colorLabel": "화이트/핑크/블랙/그레이/베이지/그린/블루/옐로우",
           "category": "001001"
         },
         {
@@ -2573,7 +2575,7 @@
           "brandName": "원헌드레드퍼센트",
           "priceFinal": 34450,
           "gender": "남성",
-          "colorLabel": "화이트/블랙/그레이/베이지/블루/그린/핑크/옐로우",
+          "colorLabel": "화이트/핑크/블랙/그레이/베이지/그린/블루/옐로우",
           "category": "001001"
         },
         {
@@ -2583,7 +2585,7 @@
           "brandName": "원헌드레드퍼센트",
           "priceFinal": 31800,
           "gender": "남성",
-          "colorLabel": "화이트/블랙/그레이/오트밀/베이지/블루/그린/핑크/옐로우",
+          "colorLabel": "화이트/핑크/블랙/그레이/베이지/그린/블루/오트밀/옐로우",
           "category": "001001"
         }
       ]
@@ -3448,7 +3450,7 @@
           "brandName": "티글레이크",
           "priceFinal": 18900,
           "gender": "공용",
-          "colorLabel": "화이트/블랙/라이트 그레이/다크 그레이/오트밀/네이비",
+          "colorLabel": "화이트/블랙/라이트 그레이/다크 그레이/네이비/오트밀",
           "category": "001001"
         },
         {
@@ -3458,7 +3460,7 @@
           "brandName": "티글레이크",
           "priceFinal": 18900,
           "gender": "공용",
-          "colorLabel": "화이트/블랙/라이트 그레이/다크 그레이/오트밀/네이비",
+          "colorLabel": "화이트/블랙/라이트 그레이/다크 그레이/네이비/오트밀",
           "category": "001001"
         },
         {
@@ -3468,7 +3470,7 @@
           "brandName": "티글레이크",
           "priceFinal": 18900,
           "gender": "공용",
-          "colorLabel": "화이트/블랙/라이트 그레이/다크 그레이/오트밀/네이비",
+          "colorLabel": "화이트/블랙/라이트 그레이/다크 그레이/네이비/오트밀",
           "category": "001001"
         },
         {
@@ -3478,7 +3480,7 @@
           "brandName": "티글레이크",
           "priceFinal": 18900,
           "gender": "공용",
-          "colorLabel": "화이트/블랙/라이트 그레이/다크 그레이/오트밀/네이비",
+          "colorLabel": "화이트/블랙/라이트 그레이/다크 그레이/네이비/오트밀",
           "category": "001001"
         },
         {
@@ -3488,7 +3490,7 @@
           "brandName": "티글레이크",
           "priceFinal": 18900,
           "gender": "공용",
-          "colorLabel": "화이트/블랙/라이트 그레이/다크 그레이/오트밀/네이비",
+          "colorLabel": "화이트/블랙/라이트 그레이/다크 그레이/네이비/오트밀",
           "category": "001001"
         },
         {
@@ -3498,7 +3500,7 @@
           "brandName": "티글레이크",
           "priceFinal": 18900,
           "gender": "공용",
-          "colorLabel": "화이트/블랙/라이트 그레이/다크 그레이/오트밀/네이비",
+          "colorLabel": "화이트/블랙/라이트 그레이/다크 그레이/네이비/오트밀",
           "category": "001001"
         },
         {
@@ -3508,7 +3510,7 @@
           "brandName": "티글레이크",
           "priceFinal": 18900,
           "gender": "공용",
-          "colorLabel": "화이트/블랙/라이트 그레이/다크 그레이/오트밀/네이비",
+          "colorLabel": "화이트/블랙/라이트 그레이/다크 그레이/네이비/오트밀",
           "category": "001001"
         },
         {
@@ -3518,7 +3520,7 @@
           "brandName": "티글레이크",
           "priceFinal": 18900,
           "gender": "공용",
-          "colorLabel": "화이트/블랙/라이트 그레이/다크 그레이/오트밀/네이비",
+          "colorLabel": "화이트/블랙/라이트 그레이/다크 그레이/네이비/오트밀",
           "category": "001001"
         },
         {
@@ -3528,7 +3530,7 @@
           "brandName": "티글레이크",
           "priceFinal": 18900,
           "gender": "공용",
-          "colorLabel": "화이트/블랙/라이트 그레이/다크 그레이/오트밀/네이비",
+          "colorLabel": "화이트/블랙/라이트 그레이/다크 그레이/네이비/오트밀",
           "category": "001001"
         },
         {
@@ -3538,7 +3540,7 @@
           "brandName": "티글레이크",
           "priceFinal": 18900,
           "gender": "공용",
-          "colorLabel": "화이트/블랙/라이트 그레이/다크 그레이/오트밀/네이비",
+          "colorLabel": "화이트/블랙/라이트 그레이/다크 그레이/네이비/오트밀",
           "category": "001001"
         },
         {
@@ -3548,7 +3550,7 @@
           "brandName": "티글레이크",
           "priceFinal": 18900,
           "gender": "공용",
-          "colorLabel": "화이트/블랙/라이트 그레이/다크 그레이/오트밀/네이비",
+          "colorLabel": "화이트/블랙/라이트 그레이/다크 그레이/네이비/오트밀",
           "category": "001001"
         },
         {
@@ -3558,7 +3560,7 @@
           "brandName": "티글레이크",
           "priceFinal": 18900,
           "gender": "공용",
-          "colorLabel": "화이트/블랙/라이트 그레이/다크 그레이/오트밀/네이비",
+          "colorLabel": "화이트/블랙/라이트 그레이/다크 그레이/네이비/오트밀",
           "category": "001001"
         },
         {
@@ -3568,7 +3570,7 @@
           "brandName": "티글레이크",
           "priceFinal": 18900,
           "gender": "공용",
-          "colorLabel": "화이트/블랙/라이트 그레이/다크 그레이/오트밀/네이비",
+          "colorLabel": "화이트/블랙/라이트 그레이/다크 그레이/네이비/오트밀",
           "category": "001001"
         },
         {
@@ -3578,7 +3580,7 @@
           "brandName": "티글레이크",
           "priceFinal": 18900,
           "gender": "공용",
-          "colorLabel": "화이트/블랙/라이트 그레이/다크 그레이/오트밀/네이비",
+          "colorLabel": "화이트/블랙/라이트 그레이/다크 그레이/네이비/오트밀",
           "category": "001001"
         },
         {
@@ -3588,7 +3590,7 @@
           "brandName": "티글레이크",
           "priceFinal": 18900,
           "gender": "공용",
-          "colorLabel": "화이트/블랙/라이트 그레이/다크 그레이/오트밀/네이비",
+          "colorLabel": "화이트/블랙/라이트 그레이/다크 그레이/네이비/오트밀",
           "category": "001001"
         },
         {
@@ -3598,7 +3600,7 @@
           "brandName": "티글레이크",
           "priceFinal": 18900,
           "gender": "공용",
-          "colorLabel": "화이트/블랙/라이트 그레이/다크 그레이/오트밀/네이비",
+          "colorLabel": "화이트/블랙/라이트 그레이/다크 그레이/네이비/오트밀",
           "category": "001001"
         },
         {
@@ -3608,7 +3610,7 @@
           "brandName": "티글레이크",
           "priceFinal": 18900,
           "gender": "공용",
-          "colorLabel": "화이트/블랙/라이트 그레이/다크 그레이/오트밀/네이비",
+          "colorLabel": "화이트/블랙/라이트 그레이/다크 그레이/네이비/오트밀",
           "category": "001001"
         },
         {
@@ -3618,7 +3620,7 @@
           "brandName": "티글레이크",
           "priceFinal": 18900,
           "gender": "공용",
-          "colorLabel": "화이트/블랙/라이트 그레이/다크 그레이/오트밀/네이비",
+          "colorLabel": "화이트/블랙/라이트 그레이/다크 그레이/네이비/오트밀",
           "category": "001001"
         },
         {
@@ -3628,7 +3630,7 @@
           "brandName": "티글레이크",
           "priceFinal": 18900,
           "gender": "공용",
-          "colorLabel": "화이트/블랙/라이트 그레이/다크 그레이/오트밀/네이비",
+          "colorLabel": "화이트/블랙/라이트 그레이/다크 그레이/네이비/오트밀",
           "category": "001001"
         },
         {
@@ -3638,7 +3640,7 @@
           "brandName": "티글레이크",
           "priceFinal": 18900,
           "gender": "공용",
-          "colorLabel": "화이트/블랙/라이트 그레이/다크 그레이/오트밀/네이비",
+          "colorLabel": "화이트/블랙/라이트 그레이/다크 그레이/네이비/오트밀",
           "category": "001001"
         }
       ]
@@ -3659,7 +3661,7 @@
           "brandName": "엘라모",
           "priceFinal": 17910,
           "gender": "공용",
-          "colorLabel": "화이트/블랙/그레이/레드",
+          "colorLabel": "화이트/레드/블랙/그레이",
           "category": "001001"
         },
         {
@@ -3679,7 +3681,7 @@
           "brandName": "엘라모",
           "priceFinal": 17910,
           "gender": "공용",
-          "colorLabel": "화이트/그레이/베이지/카키",
+          "colorLabel": "화이트/그레이/카키/베이지",
           "category": "001001"
         },
         {
@@ -3699,7 +3701,7 @@
           "brandName": "엘라모",
           "priceFinal": 18810,
           "gender": "공용",
-          "colorLabel": "화이트/블랙/베이지/스카이 블루",
+          "colorLabel": "화이트/블랙/스카이 블루/베이지",
           "category": "001001"
         },
         {
@@ -3709,7 +3711,7 @@
           "brandName": "엘라모",
           "priceFinal": 17910,
           "gender": "공용",
-          "colorLabel": "화이트/베이지/네이비",
+          "colorLabel": "화이트/네이비/베이지",
           "category": "001001"
         },
         {
@@ -3729,7 +3731,7 @@
           "brandName": "엘라모",
           "priceFinal": 20800,
           "gender": "공용",
-          "colorLabel": "블랙/다크 그레이/네이비/핑크",
+          "colorLabel": "핑크/블랙/다크 그레이/네이비",
           "category": "001001"
         },
         {
@@ -3759,7 +3761,7 @@
           "brandName": "엘라모",
           "priceFinal": 21900,
           "gender": "남성",
-          "colorLabel": "화이트/블랙/그레이/다크 그레이/다크 브라운/네이비/스카이 블루/카키/레드",
+          "colorLabel": "화이트/레드/블랙/다크 그레이/그레이/카키/네이비/스카이 블루/다크 브라운",
           "category": "001001"
         },
         {
@@ -3769,7 +3771,7 @@
           "brandName": "엘라모",
           "priceFinal": 23900,
           "gender": "남성",
-          "colorLabel": "화이트/블랙/그레이/다크 그레이/다크 브라운/네이비/스카이 블루/카키/레드",
+          "colorLabel": "화이트/레드/블랙/다크 그레이/그레이/카키/네이비/스카이 블루/다크 브라운",
           "category": "001001"
         },
         {
@@ -3779,7 +3781,7 @@
           "brandName": "엘라모",
           "priceFinal": 21900,
           "gender": "여성",
-          "colorLabel": "화이트/블랙/그레이/다크 그레이/다크 브라운/네이비/스카이 블루/카키/레드",
+          "colorLabel": "화이트/레드/블랙/다크 그레이/그레이/카키/네이비/스카이 블루/다크 브라운",
           "category": "001001"
         },
         {
@@ -3789,7 +3791,7 @@
           "brandName": "엘라모",
           "priceFinal": 21900,
           "gender": "여성",
-          "colorLabel": "화이트/블랙/그레이/다크 그레이/다크 브라운/네이비/스카이 블루/카키/레드",
+          "colorLabel": "화이트/레드/블랙/다크 그레이/그레이/카키/네이비/스카이 블루/다크 브라운",
           "category": "001001"
         },
         {
@@ -3799,7 +3801,7 @@
           "brandName": "엘라모",
           "priceFinal": 25900,
           "gender": "공용",
-          "colorLabel": "화이트/블랙/베이지/라이트 그린",
+          "colorLabel": "화이트/블랙/라이트 그린/베이지",
           "category": "001001"
         },
         {
@@ -3809,7 +3811,7 @@
           "brandName": "엘라모",
           "priceFinal": 14310,
           "gender": "공용",
-          "colorLabel": "화이트/블랙/베이지/카키",
+          "colorLabel": "화이트/블랙/카키/베이지",
           "category": "001001"
         },
         {
@@ -3829,7 +3831,7 @@
           "brandName": "엘라모",
           "priceFinal": 15210,
           "gender": "공용",
-          "colorLabel": "화이트/블랙/네이비/스카이 블루/핑크",
+          "colorLabel": "화이트/핑크/블랙/네이비/스카이 블루",
           "category": "001001"
         },
         {
@@ -3839,7 +3841,7 @@
           "brandName": "엘라모",
           "priceFinal": 14310,
           "gender": "공용",
-          "colorLabel": "화이트/블랙/그레이/네이비/레드",
+          "colorLabel": "화이트/레드/블랙/그레이/네이비",
           "category": "001001"
         },
         {
@@ -3849,7 +3851,7 @@
           "brandName": "엘라모",
           "priceFinal": 15210,
           "gender": "공용",
-          "colorLabel": "화이트/블랙/베이지/카키",
+          "colorLabel": "화이트/블랙/카키/베이지",
           "category": "001001"
         }
       ]
@@ -7497,7 +7499,7 @@
           "brandName": "플루크",
           "priceFinal": 38800,
           "gender": "남성",
-          "colorLabel": "화이트/그레이/다크 그레이/오트밀/네이비/블루/스카이 블루/카키/민트/라이트 핑크/라이트 옐로우/오렌지",
+          "colorLabel": "화이트/오렌지/다크 그레이/그레이/카키/민트/네이비/스카이 블루/라이트 옐로우/라이트 핑크/블루/오트밀",
           "category": "001001"
         },
         {
@@ -7507,7 +7509,7 @@
           "brandName": "플루크",
           "priceFinal": 30800,
           "gender": "남성",
-          "colorLabel": "화이트/블랙/브라운/네이비",
+          "colorLabel": "화이트/블랙/네이비/브라운",
           "category": "001001"
         },
         {
@@ -7719,7 +7721,7 @@
           "brandName": "페르메논",
           "priceFinal": 41930,
           "gender": "남성",
-          "colorLabel": "화이트/블랙/그레이/다크 그레이",
+          "colorLabel": "화이트/블랙/다크 그레이/그레이",
           "category": "001001"
         },
         {
@@ -7729,7 +7731,7 @@
           "brandName": "페르메논",
           "priceFinal": 40600,
           "gender": "남성",
-          "colorLabel": "화이트/블랙/그레이/다크 그레이",
+          "colorLabel": "화이트/블랙/다크 그레이/그레이",
           "category": "001001"
         },
         {
@@ -8131,7 +8133,7 @@
           "brandName": "음",
           "priceFinal": 14800,
           "gender": "여성",
-          "colorLabel": "블랙/라이트 그레이/아이보리",
+          "colorLabel": "블랙/아이보리/라이트 그레이",
           "category": "001001"
         }
       ]
@@ -8886,7 +8888,7 @@
       "partition": "dev",
       "query": "검정 반팔",
       "queryNorm": "검정 반팔",
-      "queryUsed": "반팔 [색:2]",
+      "queryUsed": "검정 반팔",
       "resultCount": 20,
       "candidates": [
         {
@@ -8996,7 +8998,7 @@
           "brandName": "플루크",
           "priceFinal": 30800,
           "gender": "남성",
-          "colorLabel": "화이트/블랙/브라운/네이비",
+          "colorLabel": "화이트/블랙/네이비/브라운",
           "category": "001001"
         },
         {
@@ -9056,7 +9058,7 @@
           "brandName": "바이젝",
           "priceFinal": 68400,
           "gender": "남성",
-          "colorLabel": "화이트/블랙/다크 그레이/오트밀/다크 네이비/다크 그린/카키",
+          "colorLabel": "화이트/블랙/다크 그레이/카키/다크 그린/오트밀/다크 네이비",
           "category": "001001"
         },
         {
@@ -9167,7 +9169,7 @@
           "brandName": "플루크",
           "priceFinal": 38800,
           "gender": "남성",
-          "colorLabel": "화이트/그레이/다크 그레이/오트밀/네이비/블루/스카이 블루/카키/민트/라이트 핑크/라이트 옐로우/오렌지",
+          "colorLabel": "화이트/오렌지/다크 그레이/그레이/카키/민트/네이비/스카이 블루/라이트 옐로우/라이트 핑크/블루/오트밀",
           "category": "001001"
         },
         {
@@ -9187,7 +9189,7 @@
           "brandName": "바이젝",
           "priceFinal": 68400,
           "gender": "남성",
-          "colorLabel": "화이트/블랙/다크 그레이/오트밀/다크 네이비/다크 그린/카키",
+          "colorLabel": "화이트/블랙/다크 그레이/카키/다크 그린/오트밀/다크 네이비",
           "category": "001001"
         },
         {
@@ -9197,7 +9199,7 @@
           "brandName": "페르메논",
           "priceFinal": 41930,
           "gender": "남성",
-          "colorLabel": "화이트/블랙/그레이/다크 그레이",
+          "colorLabel": "화이트/블랙/다크 그레이/그레이",
           "category": "001001"
         },
         {
@@ -9207,7 +9209,7 @@
           "brandName": "페르메논",
           "priceFinal": 40600,
           "gender": "남성",
-          "colorLabel": "화이트/블랙/그레이/다크 그레이",
+          "colorLabel": "화이트/블랙/다크 그레이/그레이",
           "category": "001001"
         },
         {
@@ -9519,7 +9521,7 @@
           "brandName": "컨셉츄얼",
           "priceFinal": 9900,
           "gender": "남성",
-          "colorLabel": "그레이/핑크/옐로우",
+          "colorLabel": "핑크/그레이/옐로우",
           "category": "001001"
         },
         {
@@ -9620,7 +9622,7 @@
           "brandName": "빠니깔레",
           "priceFinal": 49000,
           "gender": "남성",
-          "colorLabel": "블랙/다크 그레이/베이지/카키",
+          "colorLabel": "블랙/다크 그레이/카키/베이지",
           "category": "001001"
         },
         {
@@ -10012,7 +10014,7 @@
           "brandName": "플루크",
           "priceFinal": 30800,
           "gender": "남성",
-          "colorLabel": "화이트/블랙/브라운/네이비",
+          "colorLabel": "화이트/블랙/네이비/브라운",
           "category": "001001"
         },
         {
@@ -10876,7 +10878,7 @@
           "brandName": "제이엘브",
           "priceFinal": 44200,
           "gender": "여성",
-          "colorLabel": "그레이/아이보리/네이비",
+          "colorLabel": "아이보리/그레이/네이비",
           "category": "001001"
         },
         {
@@ -11208,7 +11210,7 @@
       "partition": "progress",
       "query": "여성 브이넥 반팔 흰색",
       "queryNorm": "여성 브이넥 반팔 흰색",
-      "queryUsed": "여성 브이넥 반팔 [색:1]",
+      "queryUsed": "여성 브이넥 반팔 흰색",
       "resultCount": 13,
       "candidates": [
         {
@@ -11218,7 +11220,7 @@
           "brandName": "베이직하우스",
           "priceFinal": 16900,
           "gender": "여성",
-          "colorLabel": "화이트/블랙/네이비/블루/라벤더/옐로우",
+          "colorLabel": "화이트/블랙/네이비/라벤더/블루/옐로우",
           "category": "001001"
         },
         {
@@ -11288,7 +11290,7 @@
           "brandName": "프라임에이트",
           "priceFinal": 29900,
           "gender": "여성",
-          "colorLabel": "화이트/블랙/네이비/카키/레드/옐로우",
+          "colorLabel": "화이트/레드/블랙/카키/네이비/옐로우",
           "category": "001001"
         },
         {
@@ -11298,7 +11300,7 @@
           "brandName": "김영주 골프",
           "priceFinal": 51000,
           "gender": "여성",
-          "colorLabel": "화이트/네이비/스카이 블루/핑크",
+          "colorLabel": "화이트/핑크/네이비/스카이 블루",
           "category": "001001"
         },
         {
@@ -11308,7 +11310,7 @@
           "brandName": "프라임에이트",
           "priceFinal": 19900,
           "gender": "여성",
-          "colorLabel": "화이트/블랙/네이비/카키/레드/옐로우",
+          "colorLabel": "화이트/레드/블랙/카키/네이비/옐로우",
           "category": "001001"
         },
         {
@@ -11318,7 +11320,7 @@
           "brandName": "프라임에이트",
           "priceFinal": 19900,
           "gender": "여성",
-          "colorLabel": "화이트/블랙/네이비/카키/레드/옐로우",
+          "colorLabel": "화이트/레드/블랙/카키/네이비/옐로우",
           "category": "001001"
         },
         {
@@ -11328,7 +11330,7 @@
           "brandName": "프라임에이트",
           "priceFinal": 19900,
           "gender": "여성",
-          "colorLabel": "화이트/블랙/네이비/카키/레드/옐로우",
+          "colorLabel": "화이트/레드/블랙/카키/네이비/옐로우",
           "category": "001001"
         },
         {
