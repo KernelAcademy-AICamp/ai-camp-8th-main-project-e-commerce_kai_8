@@ -29,8 +29,24 @@ ROOT = Path(__file__).resolve().parents[2]
 EVAL_DIR = ROOT / "docs" / "atee" / "eval"
 DEFAULT_POOL = "pool-baseline.json"
 
-# 이미 채점된 등급이 실린 파일들 — --exclude-graded가 여기서 읽는다
-GRADED_GLOBS = ("grading-codex-*.json", "grading-claude-*.json")
+# --exclude-graded가 "이미 판정됨"으로 칠 파일 **목록**. glob로 싹 긁으면
+# 폐기본과 부분 라벨까지 완료로 세어 새 입력에서 항목이 조용히 빠진다.
+# 기준서 버전이 다른 채점본을 섞는 것과 같은 실수라 명시 목록으로 둔다.
+GRADED_FILES = (
+    "grading-codex-all.json",
+    "grading-codex-a-new.json",
+    "grading-codex-a2.json",
+    "grading-codex-a3.json",
+    "grading-codex-typo.json",
+)
+
+# 세지 않는 파일과 그 이유 — 지우지 말고 여기 남긴다
+NOT_GRADED = {
+    "grading-codex-dev.json": "기준서 v1로 매긴 폐기본 (compute_baseline.py 주석 참고)",
+    "grading-codex-confirm.json": "채점자 일치도 확인용 부분 라벨",
+    "grading-claude-confirm.json": "채점자 일치도 확인용 부분 라벨",
+    "grading-claude-anchor.json": "기준점 확인용 부분 라벨",
+}
 
 # 계열별 규칙 요약 — 채점자가 기준서를 못 읽는 경우에도 최소 규칙은 입력에 실린다
 BUCKET_RULE = {
@@ -47,13 +63,15 @@ BUCKET_RULE = {
 def already_graded() -> set[str]:
     """등급이 매겨진 itemId 집합. 형식이 다른 파일이 섞여 있어 방어적으로 읽는다."""
     done: set[str] = set()
-    for pattern in GRADED_GLOBS:
-        for path in sorted(EVAL_DIR.glob(pattern)):
-            doc = json.loads(path.read_text(encoding="utf-8"))
-            rows = doc if isinstance(doc, list) else doc.get("items", [])
-            for row in rows:
-                if isinstance(row, dict) and row.get("grade") is not None:
-                    done.add(row["itemId"])
+    for name in GRADED_FILES:
+        path = EVAL_DIR / name
+        if not path.exists():
+            raise SystemExit(f"채점본이 없습니다: {name} (GRADED_FILES를 갱신하세요)")
+        doc = json.loads(path.read_text(encoding="utf-8"))
+        rows = doc if isinstance(doc, list) else doc.get("items", [])
+        for row in rows:
+            if isinstance(row, dict) and row.get("grade") is not None:
+                done.add(row["itemId"])
     return done
 
 
@@ -107,6 +125,7 @@ def build(partitions: set[str], pool_name: str, exclude_graded: bool) -> dict:
             "partitions": sorted(partitions),
             "pool": pool_name,
             "excludeGraded": exclude_graded,
+            "gradedFiles": list(GRADED_FILES) if exclude_graded else [],
             "count": len(items),
             "gradeScale": {
                 "2": "질의가 명시한 조건을 전부 만족",
@@ -134,7 +153,10 @@ def main() -> int:
 
     partitions = {p.strip() for p in args.partition.split(",")}
     doc = build(partitions, args.pool, args.exclude_graded)
-    name = args.out or f"grading-input-{'-'.join(sorted(partitions))}.json"
+    # 기본 출력명에 풀 이름을 넣는다 — 안 넣으면 baseline 입력과 A 입력이
+    # 같은 파일명을 두고 서로 덮어쓴다
+    pool_tag = args.pool.removeprefix("pool-").removesuffix(".json")
+    name = args.out or f"grading-input-{pool_tag}-{'-'.join(sorted(partitions))}.json"
     out = EVAL_DIR / name
     out.write_text(json.dumps(doc, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     print(f"생성: {out.relative_to(ROOT)} — {doc['meta']['count']}개 항목")

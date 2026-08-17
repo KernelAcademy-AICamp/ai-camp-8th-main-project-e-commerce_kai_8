@@ -3,10 +3,14 @@
 이 케이스들은 원래 프론트엔드 vitest(`hangul-keyboard.test.ts`)에 있었다. 로직을
 서버로 옮기면서 함께 옮겼다 — 구현이 한 벌이면 테스트도 한 벌이어야 한다.
 
-⚠️ **이 파일은 CI에서 돌지 않는다.** CI에 DB가 없어 `SEARCH_TEST_DSN`이 비고
-통째로 건너뛴다. 자판·오타 규칙을 고칠 때는 손으로 돌려야 한다:
+이 파일은 **카탈로그가 실린 실 DB**를 상대로 검색 경로 전체를 확인한다. CI에는
+그런 DB가 없어 통째로 건너뛴다. 자판·오타 규칙을 고칠 때는 손으로 돌린다:
 
   SEARCH_TEST_DSN="$SUPABASE_DB_URL" venv/bin/python -m pytest tests/test_search_fallback.py -v
+
+CI가 검증하는 몫은 `test_search_functions.py`가 맡는다 — 카탈로그가 필요 없는
+순수 함수(자판 상태기계·자모 분해·LIKE 이스케이프)를 빈 Postgres에 올려 돌린다.
+자판 상태기계 회귀는 거기서 잡힌다.
 """
 import os
 
@@ -82,6 +86,44 @@ def test_typo_correction(cur, query, expected):
 def test_typo_correction_leaves_known_and_unfixable_alone(cur, query):
     """사전에 있는 말과 고칠 수 없는 말은 모두 null — 호출자가 폴백을 건너뛴다."""
     assert scalar(cur, "select c_search_correct_query(%s)", query) is None
+
+
+# ⚠️ 이 묶음은 실제로 깨졌던 게이트를 막는다.
+#
+# 처음엔 교정 사전에 제목 빈출어까지 넣었다. 그 결과 `샌들 슬리퍼`가
+# `샌드 슬리브`로 바뀌어 무관한 티셔츠 20건을 반환했고, 기준서의 G6(0건이
+# 정답)이 100% → 93.3%로 떨어졌다 — 명시된 출시 게이트 실패였다.
+#
+# 지금은 ⓐ 사전을 브랜드명으로 좁히고 ⓑ 자모 단위 거리로 재고 ⓒ 2음절은
+# 고치지 않는다. 이 세 가지가 각각 아래 어느 줄을 막는지 주석에 적어 둔다.
+@pytest.mark.parametrize(
+    "query,blocked_by",
+    [
+        ("샌들 슬리퍼", "브랜드 사전 — 속성어를 안 고친다"),
+        ("슬리퍼", "브랜드 사전"),
+        ("운동화", "브랜드 사전"),
+        ("백팩", "브랜드 사전"),
+        ("청바지", "브랜드 사전"),
+        ("원피스", "브랜드 사전"),
+        ("모자", "2음절 하한 — 브랜드 '모아'와 자모 거리 1이다"),
+        ("바지", "2음절 하한"),
+        ("가방", "2음절 하한"),
+        ("신발", "2음절 하한"),
+    ],
+)
+def test_other_categories_are_never_corrected_into_tshirts(cur, query, blocked_by):
+    assert scalar(cur, "select c_search_correct_query(%s)", query) is None, blocked_by
+
+
+def test_g6_query_that_broke_stays_at_zero(cur):
+    """평가 세트의 실제 G6 질의(a-g6-08). 교정이 뚫으면 여기서 잡힌다.
+
+    다른 품목 이름이 0건이라고 단정하지는 않는다 — `백팩 프린트 티셔츠`처럼
+    제목에 그 말이 실제로 든 티셔츠가 있고, 그건 옳은 결과다. 교정이 만들어낸
+    결과와 원문이 직접 맞은 결과는 다르다.
+    """
+    cur.execute("select count(*) from c_search_page_v2(%s, null, null, 20)", ("샌들 슬리퍼",))
+    assert cur.fetchone()[0] == 0, "샌들 슬리퍼: 0건이 정답이다 (기준서 G6)"
 
 
 # 검색 경로 전체. 폴백은 **원문이 0건일 때만** 걸린다.

@@ -1,14 +1,16 @@
 {
   "meta": {
-    "purpose": "기준선 후보 풀 — 현재 검색(c_search_page)의 상위 결과. 판정 대상이다.",
+    "purpose": "후보 풀 — 시스템 'a-c_search_page_v2-pgroonga-bigram'의 상위 20건. 판정 대상이다.",
     "generatedBy": "backend/eval/build_pool.py",
     "system": "a-c_search_page_v2-pgroonga-bigram",
     "topN": 20,
-    "collectedAt": "2026-08-17T03:44:00.630500+00:00",
+    "collectedAt": "2026-08-17T04:09:51.171978+00:00",
     "catalogSnapshot": {
       "c_goods_rows": 226320,
       "c_search_text_rows": 226304,
-      "note": "카탈로그가 바뀌면 판정이 낡는다 — 재측정 시 이 수치와 비교한다"
+      "c_search_docs_rows": 226304,
+      "c_search_vocab_rows": 4347,
+      "note": "카탈로그·사전이 바뀌면 판정이 낡는다 — 재측정 시 이 수치와 비교한다. c_search_vocab은 오타 교정 사전이라 여기 결과에 직접 영향을 준다"
     },
     "unjudgedPolicy": {
       "onMissingJudgment": "exclude",
@@ -7276,170 +7278,9 @@
       "partition": "dev",
       "query": "흰티",
       "queryNorm": "흰티",
-      "queryUsed": "흰색",
-      "resultCount": 20,
-      "candidates": [
-        {
-          "rank": 0,
-          "goodsNo": 1468432,
-          "title": "퍼그 알티 라운드(흰색)",
-          "brandName": "퍼니피그메이드",
-          "priceFinal": 23400,
-          "gender": "남성"
-        },
-        {
-          "rank": 1,
-          "goodsNo": 1468438,
-          "title": "퍼그 테잎 라운드(흰색)",
-          "brandName": "퍼니피그메이드",
-          "priceFinal": 21600,
-          "gender": "남성"
-        },
-        {
-          "rank": 2,
-          "goodsNo": 1468441,
-          "title": "퍼그 조선 티(흰색)",
-          "brandName": "퍼니피그메이드",
-          "priceFinal": 25200,
-          "gender": "남성"
-        },
-        {
-          "rank": 3,
-          "goodsNo": 1468443,
-          "title": "퍼그 라인 티(흰색)",
-          "brandName": "퍼니피그메이드",
-          "priceFinal": 25200,
-          "gender": "남성"
-        },
-        {
-          "rank": 4,
-          "goodsNo": 1468446,
-          "title": "퍼그 라이프 티(흰색)",
-          "brandName": "퍼니피그메이드",
-          "priceFinal": 23400,
-          "gender": "남성"
-        },
-        {
-          "rank": 5,
-          "goodsNo": 1519150,
-          "title": "퍼그 스태프 티(흰색)",
-          "brandName": "퍼니피그메이드",
-          "priceFinal": 23400,
-          "gender": "남성"
-        },
-        {
-          "rank": 6,
-          "goodsNo": 1519302,
-          "title": "퍼그 메이드 티(흰색)",
-          "brandName": "퍼니피그메이드",
-          "priceFinal": 25200,
-          "gender": "남성"
-        },
-        {
-          "rank": 7,
-          "goodsNo": 2085626,
-          "title": "센트릭 레이어드 긴팔 티셔츠 흰색 SMLT4446",
-          "brandName": "퍼스텝",
-          "priceFinal": 21800,
-          "gender": "남성"
-        },
-        {
-          "rank": 8,
-          "goodsNo": 2995276,
-          "title": "와플 롱 슬리브 티셔츠 ( 흰색 )",
-          "brandName": "하이하이킹",
-          "priceFinal": 48000,
-          "gender": "남성"
-        },
-        {
-          "rank": 9,
-          "goodsNo": 3164442,
-          "title": "HH 포켓 롱 슬리브 티셔츠 (남색/흰색)",
-          "brandName": "하이하이킹",
-          "priceFinal": 58000,
-          "gender": "남성"
-        },
-        {
-          "rank": 10,
-          "goodsNo": 4032736,
-          "title": "월계수 디자인 나염 오버사이즈 반팔티 (흰색)",
-          "brandName": "플랑프레레",
-          "priceFinal": 63200,
-          "gender": "남성"
-        },
-        {
-          "rank": 11,
-          "goodsNo": 4085610,
-          "title": "티셔츠 - Careless (흰색)",
-          "brandName": "피오큐",
-          "priceFinal": 29000,
-          "gender": "공용"
-        },
-        {
-          "rank": 12,
-          "goodsNo": 4085640,
-          "title": "티셔츠 - Incomplete (흰색)",
-          "brandName": "피오큐",
-          "priceFinal": 29000,
-          "gender": "공용"
-        },
-        {
-          "rank": 13,
-          "goodsNo": 4276776,
-          "title": "RK 01 short tshirt white 페이스 흰색 반팔티",
-          "brandName": "레이쿠",
-          "priceFinal": 31680,
-          "gender": "남성"
-        },
-        {
-          "rank": 14,
-          "goodsNo": 4276790,
-          "title": "RK 05 short tshirt white 스마일 보이 흰색 반팔티",
-          "brandName": "레이쿠",
-          "priceFinal": 31680,
-          "gender": "남성"
-        },
-        {
-          "rank": 15,
-          "goodsNo": 4279796,
-          "title": "RK 09 short tshirt white 생각 흰색 반팔티",
-          "brandName": "레이쿠",
-          "priceFinal": 31680,
-          "gender": "남성"
-        },
-        {
-          "rank": 16,
-          "goodsNo": 4279801,
-          "title": "RK 11 short tshirt white 스페이스맨 흰색 반팔티",
-          "brandName": "레이쿠",
-          "priceFinal": 31680,
-          "gender": "남성"
-        },
-        {
-          "rank": 17,
-          "goodsNo": 4458413,
-          "title": "에클라 디뱅 흰색 티셔츠 (긴팔) logotype",
-          "brandName": "에클라 디뱅",
-          "priceFinal": 29000,
-          "gender": "여성"
-        },
-        {
-          "rank": 18,
-          "goodsNo": 4663623,
-          "title": "KOREA ARMY List 육군 오버핏 긴팔티 흰색",
-          "brandName": "밀리브로",
-          "priceFinal": 35000,
-          "gender": "남성"
-        },
-        {
-          "rank": 19,
-          "goodsNo": 4972035,
-          "title": "반팔 티셔츠 BOTK-644 (흰색)",
-          "brandName": "제트",
-          "priceFinal": 26100,
-          "gender": "남성"
-        }
-      ]
+      "queryUsed": "흰티",
+      "resultCount": 0,
+      "candidates": []
     },
     {
       "id": "a-g2-03",
@@ -9539,170 +9380,9 @@
       "partition": "progress",
       "query": "샌들 슬리퍼",
       "queryNorm": "샌들 슬리퍼",
-      "queryUsed": "샌드 슬리브",
-      "resultCount": 20,
-      "candidates": [
-        {
-          "rank": 0,
-          "goodsNo": 1151728,
-          "title": "퍼니셔 롱슬리브티 샌드",
-          "brandName": "필드매뉴얼",
-          "priceFinal": 24500,
-          "gender": "남성"
-        },
-        {
-          "rank": 1,
-          "goodsNo": 1269181,
-          "title": "베이직 프레쉬 숏 슬리브 샌드화이트",
-          "brandName": "레이나모라",
-          "priceFinal": 16500,
-          "gender": "여성"
-        },
-        {
-          "rank": 2,
-          "goodsNo": 2244804,
-          "title": "파르팔라 롱슬리브 DEVI-T0069-샌드",
-          "brandName": "데비웨어",
-          "priceFinal": 25000,
-          "gender": "여성"
-        },
-        {
-          "rank": 3,
-          "goodsNo": 2479823,
-          "title": "오버핏 레이어드 슬리브 티셔츠 (샌드그레이)",
-          "brandName": "쿠어",
-          "priceFinal": 54000,
-          "gender": "공용"
-        },
-        {
-          "rank": 4,
-          "goodsNo": 3167617,
-          "title": "HH 포켓 롱 슬리브 티셔츠 (갈색/샌드베이지색)",
-          "brandName": "하이하이킹",
-          "priceFinal": 58000,
-          "gender": "남성"
-        },
-        {
-          "rank": 5,
-          "goodsNo": 3167619,
-          "title": "HH RIDGE 포켓 롱 슬리브 티셔츠 (갈색/샌드베이지색)",
-          "brandName": "하이하이킹",
-          "priceFinal": 58000,
-          "gender": "남성"
-        },
-        {
-          "rank": 6,
-          "goodsNo": 3467975,
-          "title": "짐 로고 슬리브리스 [샌드 베이지]",
-          "brandName": "포더",
-          "priceFinal": 42000,
-          "gender": "남성"
-        },
-        {
-          "rank": 7,
-          "goodsNo": 3579568,
-          "title": "[CP] 슬림 골지 피케 카라티 롱슬리브 [샌드]",
-          "brandName": "시티팝즈",
-          "priceFinal": 28000,
-          "gender": "여성"
-        },
-        {
-          "rank": 8,
-          "goodsNo": 3584334,
-          "title": "로고 밴딩 크롭 롱슬리브 어텀샌드",
-          "brandName": "젝시믹스",
-          "priceFinal": 24080,
-          "gender": "여성"
-        },
-        {
-          "rank": 9,
-          "goodsNo": 3788274,
-          "title": "[SWT24020-03] 레터링 크롭 숏 슬리브 샌드베이지",
-          "brandName": "스컬피그",
-          "priceFinal": 12900,
-          "gender": "여성"
-        },
-        {
-          "rank": 10,
-          "goodsNo": 3998978,
-          "title": "프라나 슬리브니스 탑-샌드",
-          "brandName": "프라나 물라",
-          "priceFinal": 45600,
-          "gender": "여성"
-        },
-        {
-          "rank": 11,
-          "goodsNo": 4052776,
-          "title": "가먼트 캥거루포켓 숏 슬리브 [샌드베이지]",
-          "brandName": "후브스",
-          "priceFinal": 25500,
-          "gender": "남성"
-        },
-        {
-          "rank": 12,
-          "goodsNo": 4053060,
-          "title": "가먼트 다잉 숏 슬리브 [샌드베이지]",
-          "brandName": "후브스",
-          "priceFinal": 19800,
-          "gender": "남성"
-        },
-        {
-          "rank": 13,
-          "goodsNo": 4113907,
-          "title": "라운딩 홀터 슬리브리스 DEVI-TS0047-샌드베이지",
-          "brandName": "데비웨어",
-          "priceFinal": 33500,
-          "gender": "여성"
-        },
-        {
-          "rank": 14,
-          "goodsNo": 4129033,
-          "title": "데미지드 와플 롱 슬리브 티셔츠 (워시드샌드베이지)",
-          "brandName": "쿠어",
-          "priceFinal": 99000,
-          "gender": "공용"
-        },
-        {
-          "rank": 15,
-          "goodsNo": 4147770,
-          "title": "오픈백 스트랩 숏슬리브 DEVI-T0107-샌드베이지",
-          "brandName": "데비웨어",
-          "priceFinal": 23090,
-          "gender": "여성"
-        },
-        {
-          "rank": 16,
-          "goodsNo": 4370628,
-          "title": "마운틴 캐빈 롱 슬리브 화이트 샌드",
-          "brandName": "바스락",
-          "priceFinal": 19200,
-          "gender": "남성"
-        },
-        {
-          "rank": 17,
-          "goodsNo": 4570727,
-          "title": "피그먼트 워시드 오버핏 롱슬리브 [샌드베이지]",
-          "brandName": "람블라",
-          "priceFinal": 22900,
-          "gender": "공용"
-        },
-        {
-          "rank": 18,
-          "goodsNo": 4628546,
-          "title": "워머 롱슬리브 티셔츠 샌드 베이지",
-          "brandName": "슬로우선데이",
-          "priceFinal": 55000,
-          "gender": "공용"
-        },
-        {
-          "rank": 19,
-          "goodsNo": 4705641,
-          "title": "피티드 카라 롱 슬리브 [샌드]",
-          "brandName": "헬레네파리스",
-          "priceFinal": 21800,
-          "gender": "여성"
-        }
-      ]
+      "queryUsed": "샌들 슬리퍼",
+      "resultCount": 0,
+      "candidates": []
     },
     {
       "id": "a-g6-09",

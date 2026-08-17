@@ -72,7 +72,12 @@ export async function fetchSearchPage(
     );
     const products = dtos.map(mapFeedDto);
     const last = products.at(-1);
-    // 구 경로는 점수도 폴백도 없다 — 자리를 채워 커서·질의 모양을 통일한다
+    // 구 경로는 점수가 없다 — 자리를 0으로 채워 커서 모양을 통일한다.
+    //
+    // ⚠️ v1도 서버에서 표기 폴백을 타지만(`20260817800000`), 반환형이
+    // `c_feed_products` 고정이라 **무엇으로 찾았는지 알려줄 자리가 없다.**
+    // 그래서 여기 usedQuery는 "서버가 쓴 질의"가 아니라 원문이다. v1 검색
+    // 로그의 queryUsed도 같은 한계를 갖는다 — v2에서만 실제 값이 남는다.
     return {
       products,
       nextCursor: last ? { score: 0, goodsNo: last.goodsNo } : null,

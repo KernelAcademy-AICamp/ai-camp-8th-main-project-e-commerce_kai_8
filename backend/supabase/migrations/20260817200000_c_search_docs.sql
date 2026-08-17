@@ -165,6 +165,11 @@ $$;
 -- 역할 명시 필수 — 열어 두면 anon이 임의 단어의 존재 여부를 무제한 물을 수 있다.
 revoke all on function c_search_has_hit(text[]) from public, anon, authenticated;
 
+-- ⚠️ `create or replace`만으로는 **반환 열이 바뀔 때 실패한다**
+-- (cannot change return type of existing function). query_used 열을 더하면서
+-- 실제로 그랬다. 이 파일은 재실행이 배포 경로이므로 먼저 지운다.
+drop function if exists c_search_page_v2(text, real, bigint, int);
+
 create or replace function c_search_page_v2(
   p_query   text,
   p_after_score real   default null,
@@ -194,6 +199,7 @@ declare
   v_size  int := least(greatest(coalesce(p_size, 30), 1), 60);
   v_words text[];
   v_chosung boolean;
+  v_norm text;
   v_alt text;
   v_alt_words text[];
 begin
@@ -219,34 +225,32 @@ begin
                and length(array_to_string(v_words, '')) >= 2;
 
 
-  -- 표기 폴백 (A단계 3단계). **원문이 0건일 때만** 순서대로 시도한다 —
-  -- 결과가 있으면 그게 사용자 의도이고, 멀쩡한 질의를 고치면 의도를 덮어쓴다.
-  --   1) 한영 자판 복원 (zjqjskt → 커버낫) — 자판 배열이 정해져 있어 결정론적
-  --   2) 어휘 사전 편집거리 오타 교정 (커버났 → 커버낫) — 사전에 있으면 손대지 않는다
-  -- 자판을 먼저 두는 이유: 영문 나열은 사전에 없어 오타 교정이 엉뚱한 답을 낸다.
+  -- 표기 폴백 (A단계 3단계). **원문이 0건일 때만** 시도한다 — 결과가 있으면
+  -- 그게 사용자 의도이고, 멀쩡한 질의를 고치면 의도를 덮어쓴다.
+  --
+  -- 후보 순서: ① 한영 자판 복원 ② 브랜드 사전 오타 교정.
+  -- 자판을 먼저 두는 이유: 영문 나열은 브랜드 사전에 없어 교정이 헛돈다.
+  --
+  -- ⚠️ **정규화된 질의(v_norm)를 넘긴다.** 예전엔 원본 p_query를 그대로
+  -- 넘겨서, 60자·5단어 상한이 이 경로만 비켜 갔다. c_search_page_v2는 anon이
+  -- 직접 부를 수 있으므로 임의 길이 입력이 문자 단위 루프로 들어갔다(리뷰 M2).
+  --
+  -- 각 후보는 **한 번씩만** 만들고 한 번씩만 확인한다. 예전엔 자판 복원이
+  -- null일 때 같은 교정 함수와 같은 hit 확인을 두 번 돌았다(리뷰 M3).
   if not v_chosung and not c_search_has_hit(v_words) then
-    v_alt := c_restore_hangul_typing(p_query);
-    if v_alt is null then
-      v_alt := c_search_correct_query(p_query);
-    end if;
-    if v_alt is not null then
+    v_norm := array_to_string(v_words, ' ');
+    foreach v_alt in array array[
+      c_restore_hangul_typing(v_norm),
+      c_search_correct_query(v_norm)
+    ] loop
+      continue when v_alt is null or v_alt = v_norm;
       select array_agg(w) into v_alt_words
       from (select w from regexp_split_to_table(v_alt, '\s+') w where w <> '' limit 5) t;
-      -- 자판 복원 결과도 0건일 수 있다(예: 진짜 영어 브랜드). 그때는 원문을 지킨다.
       if v_alt_words is not null and c_search_has_hit(v_alt_words) then
         v_words := v_alt_words;
-      elsif v_alt_words is not null then
-        -- 자판이 헛돌면 오타 교정을 한 번 더 본다
-        v_alt := c_search_correct_query(p_query);
-        if v_alt is not null then
-          select array_agg(w) into v_alt_words
-          from (select w from regexp_split_to_table(v_alt, '\s+') w where w <> '' limit 5) t;
-          if v_alt_words is not null and c_search_has_hit(v_alt_words) then
-            v_words := v_alt_words;
-          end if;
-        end if;
+        exit;                       -- 걸리는 후보를 찾았다
       end if;
-    end if;
+    end loop;
   end if;
 
   return query

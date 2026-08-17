@@ -103,6 +103,19 @@ def build(system: str) -> dict:
             searchable = cur.fetchone()[0]
             cur.execute("select count(*) from c_goods")
             goods = cur.fetchone()[0]
+            # 시스템이 실제로 의존하는 객체를 함께 남긴다. c_search_text 행 수만
+            # 적어 두면 A 시스템 결과는 재현할 수 없다 — 오타 교정 결과가
+            # c_search_vocab 내용에 따라 달라지기 때문이다.
+            cur.execute("select to_regclass('c_search_docs')")
+            docs_rows = None
+            if cur.fetchone()[0] is not None:
+                cur.execute("select count(*) from c_search_docs")
+                docs_rows = cur.fetchone()[0]
+            cur.execute("select to_regclass('c_search_vocab')")
+            vocab_rows = None
+            if cur.fetchone()[0] is not None:
+                cur.execute("select count(*) from c_search_vocab")
+                vocab_rows = cur.fetchone()[0]
 
             for e in entries:
                 norm = normalize_query(e["query"])
@@ -137,7 +150,7 @@ def build(system: str) -> dict:
 
     return {
         "meta": {
-            "purpose": "기준선 후보 풀 — 현재 검색(c_search_page)의 상위 결과. 판정 대상이다.",
+            "purpose": f"후보 풀 — 시스템 '{spec['name']}'의 상위 {TOP_N}건. 판정 대상이다.",
             "generatedBy": "backend/eval/build_pool.py",
             "system": spec["name"],
             "topN": TOP_N,
@@ -145,7 +158,12 @@ def build(system: str) -> dict:
             "catalogSnapshot": {
                 "c_goods_rows": goods,
                 "c_search_text_rows": searchable,
-                "note": "카탈로그가 바뀌면 판정이 낡는다 — 재측정 시 이 수치와 비교한다",
+                "c_search_docs_rows": docs_rows,
+                "c_search_vocab_rows": vocab_rows,
+                "note": (
+                    "카탈로그·사전이 바뀌면 판정이 낡는다 — 재측정 시 이 수치와 비교한다. "
+                    "c_search_vocab은 오타 교정 사전이라 여기 결과에 직접 영향을 준다"
+                ),
             },
             "unjudgedPolicy": UNJUDGED_POLICY,
             "normalization": f"앞 {MAX_QUERY_CHARS}자 → 공백 분리 → 앞 {MAX_QUERY_WORDS}단어 (프론트와 동일)",

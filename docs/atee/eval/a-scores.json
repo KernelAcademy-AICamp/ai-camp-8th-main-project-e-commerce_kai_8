@@ -11,10 +11,10 @@
     "G2": {
       "metric": "p_at_20",
       "queries": 22,
-      "score": 0.5886363636363636,
-      "ndcg": 0.7093565393098488,
+      "score": 0.5477272727272727,
+      "ndcg": 0.6691669331015988,
       "unjudgedRate": 0.0,
-      "zeroResultRate": 0.18181818181818182
+      "zeroResultRate": 0.22727272727272727
     },
     "G3": {
       "metric": "p_at_20",
@@ -43,7 +43,7 @@
     "G6": {
       "metric": "zero_result_accuracy",
       "queries": 15,
-      "score": 0.9333333333333333
+      "score": 1.0
     },
     "R1": {
       "metric": "p_at_20",
@@ -58,14 +58,14 @@
     "dev": {
       "perBucket": {
         "G1": 0.9222222222222223,
-        "G2": 0.5545454545454546,
+        "G2": 0.4727272727272727,
         "G3": 0.7136363636363636,
         "G4": 0.04090909090909091,
         "G5": 0.0,
         "G6": 1.0,
         "R1": 0.0
       },
-      "gate": 0.4462626262626263
+      "gate": 0.4298989898989899
     },
     "holdout": {
       "perBucket": {
@@ -86,7 +86,7 @@
         "G3": 1.0,
         "G4": 0.0,
         "G5": 0.0,
-        "G6": 0.75,
+        "G6": 1.0,
         "R1": 0.0
       },
       "gate": 0.504
@@ -99,7 +99,7 @@
     ],
     "verdict": "재풀링 필요"
   },
-  "overallGate": 0.439040404040404,
+  "overallGate": 0.43085858585858583,
   "gateBuckets": [
     "G1",
     "G2",
@@ -926,10 +926,10 @@
       "bucket": "G2",
       "partition": "dev",
       "kind": "ranked",
-      "p_at_k": 0.9,
-      "ndcg": 0.8841713365814996,
+      "p_at_k": 0.0,
+      "ndcg": 0.0,
       "unjudgedRate": 0.0,
-      "zero": false
+      "zero": true
     },
     {
       "id": "a-g2-03",
@@ -1315,7 +1315,7 @@
       "bucket": "G6",
       "partition": "progress",
       "kind": "zero_result",
-      "correct": false
+      "correct": true
     },
     {
       "id": "a-g6-09",
