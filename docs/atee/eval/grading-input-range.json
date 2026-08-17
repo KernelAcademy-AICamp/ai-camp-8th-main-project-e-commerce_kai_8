@@ -1,0 +1,684 @@
+{
+  "meta": {
+    "purpose": "기준서 v3.1(제품 범위 명시) 적용 재채점",
+    "rule": "제품 범위는 티셔츠 전체(001001 반팔·001003 피케카라·001010 긴팔·001011 민소매). 후드·맨투맨(001004)만 최대 1. **소매 길이로 감점하지 않는다** — 질의가 소매를 명시하지 않았으면 긴팔도 2가 될 수 있다.",
+    "count": 45
+  },
+  "items": [
+    {
+      "itemId": "a-g2-01-4984076",
+      "queryId": "a-g2-01",
+      "bucket": "G2",
+      "query": "무지티",
+      "previousGrade": 1,
+      "product": {
+        "title": "베이직 롱슬리브 티셔츠_화이트",
+        "brandName": "유나이티드 애슬",
+        "priceFinal": 18500,
+        "gender": "남성",
+        "colorLabel": "화이트",
+        "category": "001010"
+      }
+    },
+    {
+      "itemId": "a-g2-01-4984175",
+      "queryId": "a-g2-01",
+      "bucket": "G2",
+      "query": "무지티",
+      "previousGrade": 1,
+      "product": {
+        "title": "베이직 롱슬리브 티셔츠_블랙",
+        "brandName": "유나이티드 애슬",
+        "priceFinal": 18500,
+        "gender": "남성",
+        "colorLabel": "블랙",
+        "category": "001010"
+      }
+    },
+    {
+      "itemId": "a-g2-01-4984302",
+      "queryId": "a-g2-01",
+      "bucket": "G2",
+      "query": "무지티",
+      "previousGrade": 1,
+      "product": {
+        "title": "베이직 롱슬리브 티셔츠_네이비",
+        "brandName": "유나이티드 애슬",
+        "priceFinal": 18500,
+        "gender": "남성",
+        "colorLabel": "네이비",
+        "category": "001010"
+      }
+    },
+    {
+      "itemId": "a-g2-01-4984311",
+      "queryId": "a-g2-01",
+      "bucket": "G2",
+      "query": "무지티",
+      "previousGrade": 1,
+      "product": {
+        "title": "베이직 롱슬리브 티셔츠_애쉬",
+        "brandName": "유나이티드 애슬",
+        "priceFinal": 18500,
+        "gender": "남성",
+        "colorLabel": "라이트 그레이",
+        "category": "001010"
+      }
+    },
+    {
+      "itemId": "a-g2-01-4984358",
+      "queryId": "a-g2-01",
+      "bucket": "G2",
+      "query": "무지티",
+      "previousGrade": 1,
+      "product": {
+        "title": "[2PACK] 베이직 롱슬리브 티셔츠",
+        "brandName": "유나이티드 애슬",
+        "priceFinal": 39000,
+        "gender": "남성",
+        "colorLabel": "블랙",
+        "category": "001010"
+      }
+    },
+    {
+      "itemId": "a-g2-01-4984387",
+      "queryId": "a-g2-01",
+      "bucket": "G2",
+      "query": "무지티",
+      "previousGrade": 1,
+      "product": {
+        "title": "[3PACK] 베이직 롱슬리브 티셔츠",
+        "brandName": "유나이티드 애슬",
+        "priceFinal": 53500,
+        "gender": "남성",
+        "colorLabel": "블랙",
+        "category": "001010"
+      }
+    },
+    {
+      "itemId": "a-g2-02-2085626",
+      "queryId": "a-g2-02",
+      "bucket": "G2",
+      "query": "흰티",
+      "previousGrade": 1,
+      "product": {
+        "title": "센트릭 레이어드 긴팔 티셔츠 흰색 SMLT4446",
+        "brandName": "퍼스텝",
+        "priceFinal": 21800,
+        "gender": "남성",
+        "colorLabel": "화이트",
+        "category": "001010"
+      }
+    },
+    {
+      "itemId": "a-g2-02-2995276",
+      "queryId": "a-g2-02",
+      "bucket": "G2",
+      "query": "흰티",
+      "previousGrade": 1,
+      "product": {
+        "title": "와플 롱 슬리브 티셔츠 ( 흰색 )",
+        "brandName": "하이하이킹",
+        "priceFinal": 48000,
+        "gender": "남성",
+        "colorLabel": "화이트",
+        "category": "001010"
+      }
+    },
+    {
+      "itemId": "a-g2-02-3164442",
+      "queryId": "a-g2-02",
+      "bucket": "G2",
+      "query": "흰티",
+      "previousGrade": 1,
+      "product": {
+        "title": "HH 포켓 롱 슬리브 티셔츠 (남색/흰색)",
+        "brandName": "하이하이킹",
+        "priceFinal": 58000,
+        "gender": "남성",
+        "colorLabel": "화이트",
+        "category": "001010"
+      }
+    },
+    {
+      "itemId": "a-g2-02-4458413",
+      "queryId": "a-g2-02",
+      "bucket": "G2",
+      "query": "흰티",
+      "previousGrade": 1,
+      "product": {
+        "title": "에클라 디뱅 흰색 티셔츠 (긴팔) logotype",
+        "brandName": "에클라 디뱅",
+        "priceFinal": 29000,
+        "gender": "여성",
+        "colorLabel": "화이트",
+        "category": "001010"
+      }
+    },
+    {
+      "itemId": "a-g2-02-4663623",
+      "queryId": "a-g2-02",
+      "bucket": "G2",
+      "query": "흰티",
+      "previousGrade": 1,
+      "product": {
+        "title": "KOREA ARMY List 육군 오버핏 긴팔티 흰색",
+        "brandName": "밀리브로",
+        "priceFinal": 35000,
+        "gender": "남성",
+        "colorLabel": "화이트",
+        "category": "001010"
+      }
+    },
+    {
+      "itemId": "a-g2-11-4054398",
+      "queryId": "a-g2-11",
+      "bucket": "G2",
+      "query": "그래픽 티",
+      "previousGrade": 1,
+      "product": {
+        "title": "남성 순면 그래픽  민소매 티셔츠. Segment",
+        "brandName": "슈가포인트",
+        "priceFinal": 15500,
+        "gender": "남성",
+        "colorLabel": "핑크",
+        "category": "001011"
+      }
+    },
+    {
+      "itemId": "a-g2-11-4054616",
+      "queryId": "a-g2-11",
+      "bucket": "G2",
+      "query": "그래픽 티",
+      "previousGrade": 1,
+      "product": {
+        "title": "남성 순면 그래픽  민소매 티셔츠. Tery",
+        "brandName": "슈가포인트",
+        "priceFinal": 19200,
+        "gender": "남성",
+        "colorLabel": "라벤더",
+        "category": "001011"
+      }
+    },
+    {
+      "itemId": "a-g2-11-4055255",
+      "queryId": "a-g2-11",
+      "bucket": "G2",
+      "query": "그래픽 티",
+      "previousGrade": 1,
+      "product": {
+        "title": "남성/여성 순면 그래픽  민소매 티셔츠. Graph",
+        "brandName": "슈가포인트",
+        "priceFinal": 15500,
+        "gender": "남성",
+        "colorLabel": "화이트/스카이 블루",
+        "category": "001011"
+      }
+    },
+    {
+      "itemId": "a-g2-11-4107183",
+      "queryId": "a-g2-11",
+      "bucket": "G2",
+      "query": "그래픽 티",
+      "previousGrade": 1,
+      "product": {
+        "title": "남성  물나염 그래픽 민소매 나시 티셔츠. Alltags",
+        "brandName": "세컨드 코너",
+        "priceFinal": 24000,
+        "gender": "남성",
+        "colorLabel": "오렌지/민트",
+        "category": "001011"
+      }
+    },
+    {
+      "itemId": "a-g2-11-4122366",
+      "queryId": "a-g2-11",
+      "bucket": "G2",
+      "query": "그래픽 티",
+      "previousGrade": 1,
+      "product": {
+        "title": "남성  순면 그래픽 민소매 나시 티셔츠. Kellogg",
+        "brandName": "세컨드 코너",
+        "priceFinal": 21600,
+        "gender": "남성",
+        "colorLabel": "오렌지/네이비",
+        "category": "001011"
+      }
+    },
+    {
+      "itemId": "b09-1452270",
+      "queryId": "b09",
+      "bucket": "G1",
+      "query": "무신사 스탠다드",
+      "previousGrade": 1,
+      "product": {
+        "title": "우먼즈 베이식 슬리브리스 탑 [화이트]",
+        "brandName": "무신사 스탠다드 우먼",
+        "priceFinal": 12720,
+        "gender": "여성",
+        "colorLabel": "화이트",
+        "category": "001011"
+      }
+    },
+    {
+      "itemId": "b09-1452272",
+      "queryId": "b09",
+      "bucket": "G1",
+      "query": "무신사 스탠다드",
+      "previousGrade": 1,
+      "product": {
+        "title": "우먼즈 베이식 슬리브리스 탑 [블랙]",
+        "brandName": "무신사 스탠다드 우먼",
+        "priceFinal": 14310,
+        "gender": "여성",
+        "colorLabel": "블랙",
+        "category": "001011"
+      }
+    },
+    {
+      "itemId": "b13-3348674",
+      "queryId": "b13",
+      "bucket": "G1",
+      "query": "크림소다랩",
+      "previousGrade": 1,
+      "product": {
+        "title": "FC 크림소다랩 오버핏 슬리브리스 블랙",
+        "brandName": "크림소다랩",
+        "priceFinal": 20670,
+        "gender": "공용",
+        "colorLabel": "블랙",
+        "category": "001011"
+      }
+    },
+    {
+      "itemId": "b13-3348691",
+      "queryId": "b13",
+      "bucket": "G1",
+      "query": "크림소다랩",
+      "previousGrade": 1,
+      "product": {
+        "title": "FC 크림소다랩 오버핏 슬리브리스 화이트",
+        "brandName": "크림소다랩",
+        "priceFinal": 22620,
+        "gender": "공용",
+        "colorLabel": "화이트",
+        "category": "001011"
+      }
+    },
+    {
+      "itemId": "b13-3382117",
+      "queryId": "b13",
+      "bucket": "G1",
+      "query": "크림소다랩",
+      "previousGrade": 1,
+      "product": {
+        "title": "FC 크림소다랩 오버핏 슬리브리스 라이트 그레이",
+        "brandName": "크림소다랩",
+        "priceFinal": 22620,
+        "gender": "공용",
+        "colorLabel": "라이트 그레이",
+        "category": "001011"
+      }
+    },
+    {
+      "itemId": "b16-3449511",
+      "queryId": "b16",
+      "bucket": "G1",
+      "query": "젝시믹스",
+      "previousGrade": 1,
+      "product": {
+        "title": "블랙라벨 시그니처 380N 서포트탑 팬시퍼플",
+        "brandName": "젝시믹스",
+        "priceFinal": 31200,
+        "gender": "여성",
+        "colorLabel": "퍼플",
+        "category": "001011"
+      }
+    },
+    {
+      "itemId": "b16-4094144",
+      "queryId": "b16",
+      "bucket": "G1",
+      "query": "젝시믹스",
+      "previousGrade": 1,
+      "product": {
+        "title": "언밸런스 스트랩 크롭탑 백아이보리",
+        "brandName": "젝시믹스",
+        "priceFinal": 35400,
+        "gender": "여성",
+        "colorLabel": "아이보리",
+        "category": "001011"
+      }
+    },
+    {
+      "itemId": "b16-4094145",
+      "queryId": "b16",
+      "bucket": "G1",
+      "query": "젝시믹스",
+      "previousGrade": 1,
+      "product": {
+        "title": "언밸런스 스트랩 크롭탑 블랙",
+        "brandName": "젝시믹스",
+        "priceFinal": 35400,
+        "gender": "여성",
+        "colorLabel": "블랙",
+        "category": "001011"
+      }
+    },
+    {
+      "itemId": "b16-4094146",
+      "queryId": "b16",
+      "bucket": "G1",
+      "query": "젝시믹스",
+      "previousGrade": 1,
+      "product": {
+        "title": "언밸런스 스트랩 크롭탑 세이지그린",
+        "brandName": "젝시믹스",
+        "priceFinal": 35400,
+        "gender": "여성",
+        "colorLabel": "올리브 그린",
+        "category": "001011"
+      }
+    },
+    {
+      "itemId": "b16-4094148",
+      "queryId": "b16",
+      "bucket": "G1",
+      "query": "젝시믹스",
+      "previousGrade": 1,
+      "product": {
+        "title": "언밸런스 스트랩 크롭탑 코랄로즈",
+        "brandName": "젝시믹스",
+        "priceFinal": 35400,
+        "gender": "여성",
+        "colorLabel": "오렌지",
+        "category": "001011"
+      }
+    },
+    {
+      "itemId": "b16-4094149",
+      "queryId": "b16",
+      "bucket": "G1",
+      "query": "젝시믹스",
+      "previousGrade": 1,
+      "product": {
+        "title": "언밸런스 스트랩 크롭탑 파스텔라일락",
+        "brandName": "젝시믹스",
+        "priceFinal": 35400,
+        "gender": "여성",
+        "colorLabel": "라벤더",
+        "category": "001011"
+      }
+    },
+    {
+      "itemId": "b18-2411507",
+      "queryId": "b18",
+      "bucket": "G1",
+      "query": "커버낫",
+      "previousGrade": 1,
+      "product": {
+        "title": "쿨 케이블 카라 하프 니트 그린",
+        "brandName": "커버낫",
+        "priceFinal": 59400,
+        "gender": "공용",
+        "colorLabel": "그린",
+        "category": "001003"
+      }
+    },
+    {
+      "itemId": "b18-2411508",
+      "queryId": "b18",
+      "bucket": "G1",
+      "query": "커버낫",
+      "previousGrade": 1,
+      "product": {
+        "title": "쿨 케이블 카라 하프 니트 네이비",
+        "brandName": "커버낫",
+        "priceFinal": 49500,
+        "gender": "공용",
+        "colorLabel": "다크 네이비",
+        "category": "001003"
+      }
+    },
+    {
+      "itemId": "b18-2411509",
+      "queryId": "b18",
+      "bucket": "G1",
+      "query": "커버낫",
+      "previousGrade": 1,
+      "product": {
+        "title": "쿨 케이블 카라 하프 니트 블랙",
+        "brandName": "커버낫",
+        "priceFinal": 59400,
+        "gender": "공용",
+        "colorLabel": "블랙",
+        "category": "001003"
+      }
+    },
+    {
+      "itemId": "g02-1941364",
+      "queryId": "g02",
+      "bucket": "G2",
+      "query": "크롭티",
+      "previousGrade": 2,
+      "product": {
+        "title": "비대칭 프린트 후드 크롭티",
+        "brandName": "곽현주컬렉션",
+        "priceFinal": 598000,
+        "gender": "여성",
+        "colorLabel": "그레이",
+        "category": "001004"
+      }
+    },
+    {
+      "itemId": "v03-1452270",
+      "queryId": "v03",
+      "bucket": "G3",
+      "query": "antlstk tmxosekem",
+      "previousGrade": 1,
+      "product": {
+        "title": "우먼즈 베이식 슬리브리스 탑 [화이트]",
+        "brandName": "무신사 스탠다드 우먼",
+        "priceFinal": 12720,
+        "gender": "여성",
+        "colorLabel": "화이트",
+        "category": "001011"
+      }
+    },
+    {
+      "itemId": "v03-1452272",
+      "queryId": "v03",
+      "bucket": "G3",
+      "query": "antlstk tmxosekem",
+      "previousGrade": 1,
+      "product": {
+        "title": "우먼즈 베이식 슬리브리스 탑 [블랙]",
+        "brandName": "무신사 스탠다드 우먼",
+        "priceFinal": 14310,
+        "gender": "여성",
+        "colorLabel": "블랙",
+        "category": "001011"
+      }
+    },
+    {
+      "itemId": "v04-3449511",
+      "queryId": "v04",
+      "bucket": "G3",
+      "query": "wprtlalrtm",
+      "previousGrade": 1,
+      "product": {
+        "title": "블랙라벨 시그니처 380N 서포트탑 팬시퍼플",
+        "brandName": "젝시믹스",
+        "priceFinal": 31200,
+        "gender": "여성",
+        "colorLabel": "퍼플",
+        "category": "001011"
+      }
+    },
+    {
+      "itemId": "v04-3449890",
+      "queryId": "v04",
+      "bucket": "G3",
+      "query": "wprtlalrtm",
+      "previousGrade": 1,
+      "product": {
+        "title": "올데이페더 크롭탑 라임에이드",
+        "brandName": "젝시믹스",
+        "priceFinal": 17400,
+        "gender": "여성",
+        "colorLabel": "라임",
+        "category": "001010"
+      }
+    },
+    {
+      "itemId": "v08-2411507",
+      "queryId": "v08",
+      "bucket": "G3",
+      "query": "ㅋㅂㄴ",
+      "previousGrade": 1,
+      "product": {
+        "title": "쿨 케이블 카라 하프 니트 그린",
+        "brandName": "커버낫",
+        "priceFinal": 59400,
+        "gender": "공용",
+        "colorLabel": "그린",
+        "category": "001003"
+      }
+    },
+    {
+      "itemId": "v08-2411508",
+      "queryId": "v08",
+      "bucket": "G3",
+      "query": "ㅋㅂㄴ",
+      "previousGrade": 1,
+      "product": {
+        "title": "쿨 케이블 카라 하프 니트 네이비",
+        "brandName": "커버낫",
+        "priceFinal": 49500,
+        "gender": "공용",
+        "colorLabel": "다크 네이비",
+        "category": "001003"
+      }
+    },
+    {
+      "itemId": "v08-2411509",
+      "queryId": "v08",
+      "bucket": "G3",
+      "query": "ㅋㅂㄴ",
+      "previousGrade": 1,
+      "product": {
+        "title": "쿨 케이블 카라 하프 니트 블랙",
+        "brandName": "커버낫",
+        "priceFinal": 59400,
+        "gender": "공용",
+        "colorLabel": "블랙",
+        "category": "001003"
+      }
+    },
+    {
+      "itemId": "v10-1696699",
+      "queryId": "v10",
+      "bucket": "G3",
+      "query": "ㅁㅈㅌ",
+      "previousGrade": 1,
+      "product": {
+        "title": "솔라 롱 슬리브 [마젠타]",
+        "brandName": "바이닉",
+        "priceFinal": 22050,
+        "gender": "남성",
+        "colorLabel": "라벤더",
+        "category": "001010"
+      }
+    },
+    {
+      "itemId": "v10-3399784",
+      "queryId": "v10",
+      "bucket": "G3",
+      "query": "ㅁㅈㅌ",
+      "previousGrade": 1,
+      "product": {
+        "title": "리즌 트레일 피그먼트 롱 슬리브 마젠타",
+        "brandName": "트래블",
+        "priceFinal": 23520,
+        "gender": "공용",
+        "colorLabel": "다크핑크",
+        "category": "001010"
+      }
+    },
+    {
+      "itemId": "v11-4878150",
+      "queryId": "v11",
+      "bucket": "G3",
+      "query": "ㅇㅂㅍ",
+      "previousGrade": 1,
+      "product": {
+        "title": "[SET] 에센셜 오버핏 롱 슬리브  + 에센셜 오버핏 버뮤다 쇼츠",
+        "brandName": "페르메논",
+        "priceFinal": 47920,
+        "gender": "남성",
+        "colorLabel": "화이트/블랙/다크 그레이",
+        "category": "001010"
+      }
+    },
+    {
+      "itemId": "v13-1100110",
+      "queryId": "v13",
+      "bucket": "G3",
+      "query": "무지티셔츠",
+      "previousGrade": 1,
+      "product": {
+        "title": "피그먼트 워시드 오버핏 롱 슬리브 티셔츠 MLT105 [WHITE]",
+        "brandName": "미니멀프로젝트",
+        "priceFinal": 29800,
+        "gender": "공용",
+        "colorLabel": "화이트",
+        "category": "001010"
+      }
+    },
+    {
+      "itemId": "v13-1100115",
+      "queryId": "v13",
+      "bucket": "G3",
+      "query": "무지티셔츠",
+      "previousGrade": 1,
+      "product": {
+        "title": "피그먼트 워시드 오버핏 롱 슬리브 티셔츠 MLT105 / 6COLOR",
+        "brandName": "미니멀프로젝트",
+        "priceFinal": 29800,
+        "gender": "공용",
+        "colorLabel": "화이트/다크 그레이/그레이/카키/네이비/베이지",
+        "category": "001010"
+      }
+    },
+    {
+      "itemId": "v13-891375",
+      "queryId": "v13",
+      "bucket": "G3",
+      "query": "무지티셔츠",
+      "previousGrade": 1,
+      "product": {
+        "title": "롱 슬리브 긴팔소매 트임티셔츠 맨투맨 블루",
+        "brandName": "트리핀셀",
+        "priceFinal": 29400,
+        "gender": "남성",
+        "colorLabel": "블루",
+        "category": "001010"
+      }
+    },
+    {
+      "itemId": "v14-4878150",
+      "queryId": "v14",
+      "bucket": "G3",
+      "query": "오버핏",
+      "previousGrade": 1,
+      "product": {
+        "title": "[SET] 에센셜 오버핏 롱 슬리브  + 에센셜 오버핏 버뮤다 쇼츠",
+        "brandName": "페르메논",
+        "priceFinal": 47920,
+        "gender": "남성",
+        "colorLabel": "화이트/블랙/다크 그레이",
+        "category": "001010"
+      }
+    }
+  ]
+}

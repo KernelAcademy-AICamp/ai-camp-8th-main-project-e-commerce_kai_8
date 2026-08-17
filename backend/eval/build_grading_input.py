@@ -46,6 +46,7 @@ GRADED_FILES = (
     # 여기서 v3 파일을 넣는 이유는 그 항목들을 "이미 판정됨"으로 세기 위해서다.
     "grading-codex-color2.json",
     "grading-codex-color3.json",
+    "grading-codex-range.json",   # 기준서 v3.1 (제품 범위 명시)
 )
 
 # 세지 않는 파일과 그 이유 — 지우지 말고 여기 남긴다

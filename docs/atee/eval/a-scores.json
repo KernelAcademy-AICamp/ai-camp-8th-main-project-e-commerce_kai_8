@@ -1350,7 +1350,8 @@
       "docs/atee/eval/grading-codex-cat.json",
       "docs/atee/eval/grading-codex-color.json",
       "docs/atee/eval/grading-codex-color2.json",
-      "docs/atee/eval/grading-codex-color3.json"
+      "docs/atee/eval/grading-codex-color3.json",
+      "docs/atee/eval/grading-codex-range.json"
     ],
     "judgedItems": 2009,
     "k": 20,
