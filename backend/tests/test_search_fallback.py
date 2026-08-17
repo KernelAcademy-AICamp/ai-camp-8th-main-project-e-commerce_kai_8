@@ -264,10 +264,21 @@ def test_pagination_still_continues_where_it_should(cur, query):
         ("라이트 그레이 반팔", ["24"], ["반팔"]),
         ("다크 블루 티", ["80"], ["티"]),
         ("카키 베이지", ["28"], None),
-        # 색 표현이 둘 이상이면 손대지 않는다 — 합집합으로 묶으면
+        # 서로 **다른 색**이 둘 이상이면 손대지 않는다 — 합집합으로 묶으면
         # `검정 로고 흰 반팔`이 검정 본체까지 통과시킨다
         ("검정 흰 반팔", None, ["검정", "흰", "반팔"]),
-        ("검정 로고 흰 반팔", None, ["검정", "로고", "흰", "반팔"]),
+        # 역할어 규칙이 붙으면서 이 질의는 **포기가 아니라 정확히** 풀린다.
+        # `검정`은 로고 색이라 빠지고, 본체 색은 `흰`이다.
+        ("검정 로고 흰 반팔", ["1"], ["검정", "로고", "반팔"]),
+        # 같은 색을 동의어로 두 번 말한 것은 포기하지 않는다
+        ("검정 블랙 반팔", ["2"], ["반팔"]),
+        # 뒤에 역할어가 오면 본체 색이 아니다 — `검정 로고 반팔`은 검정 로고를
+        # 찾는 말이지 검정 옷을 찾는 말이 아니다
+        ("검정 로고 반팔", None, ["검정", "로고", "반팔"]),
+        ("흰 프린트 티셔츠", None, ["흰", "프린트", "티셔츠"]),
+        # 브랜드는 띄어쓰기가 달라도 보호한다 (저장 표기는 `블랙야크`)
+        ("블랙 야크 반팔", None, ["블랙", "야크", "반팔"]),
+        ("브라운 브레스", None, ["브라운", "브레스"]),
     ],
 )
 def test_color_is_split_out_of_the_text_query(cur, query, codes, rest):
@@ -318,6 +329,41 @@ def test_query_used_is_re_inputtable(cur):
         (used, score, goods_no),
     )
     assert cur.fetchone()[0] == 5, "돌려준 질의로 다음 페이지가 이어져야 한다"
+
+
+# B1(재입력 불가한 query_used)이 무한 스크롤 출시 차단급이었으므로, 단순한 한 경우가
+# 아니라 실제로 갈리는 갈래를 모두 고정한다.
+@pytest.mark.parametrize(
+    "query,size",
+    [
+        ("검정 반팔", 5),          # 색 + 텍스트
+        ("검정", 5),               # 색만 — 텍스트 조건이 없다
+        ("rjawjd qksvkf", 5),      # 색 + 자판 폴백
+        ("검정 아디다드", 5),        # 색 + 오타 폴백
+        ("ㅋㅂㄴ", 5),              # 초성 갈래
+        ("검정 반팔", 60),          # 크기 상한
+    ],
+)
+def test_query_used_carries_every_branch_to_the_next_page(cur, query, size):
+    cur.execute(
+        "select score, goods_no, query_used from c_search_page_v2(%s, null, null, %s)"
+        " order by score, goods_no desc limit 1",
+        (query, size),
+    )
+    row = cur.fetchone()
+    assert row is not None, f"{query}: 1페이지에 결과가 있어야 한다"
+    score, goods_no, used = row
+    cur.execute(
+        "select count(*) from c_search_page_v2(%s, %s::real, %s::bigint, %s)",
+        (used, score, goods_no, size),
+    )
+    assert cur.fetchone()[0] > 0, f"{query}: 돌려준 질의로 다음 페이지가 이어져야 한다"
+    cur.execute(
+        "select count(*) from c_search_page_v2(%s, %s::real, %s::bigint, %s) p2"
+        " where p2.goods_no in (select goods_no from c_search_page_v2(%s, null, null, %s))",
+        (used, score, goods_no, size, query, size),
+    )
+    assert cur.fetchone()[0] == 0, f"{query}: 1페이지와 겹치면 안 된다"
 
 
 @pytest.mark.parametrize("typed,restored", [("rjawjd qksvkf", "검정 반팔")])

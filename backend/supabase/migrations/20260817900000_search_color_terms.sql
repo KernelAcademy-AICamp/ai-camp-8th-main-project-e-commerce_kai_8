@@ -121,9 +121,17 @@ insert into c_search_color_terms_next (term, codes, note) values
   ('파랑색', array['7','36','37','80','81'],              '블루 색군'),
   ('노랑색', array['9','44'],                             '옐로우'),
   ('연두색', array['31','79'],                            '라이트 그린·라임'),
-  ('청록',   array['32','6'],                             '민트·그린'),
+  ('청록',   array['32'],                                 '민트 — 좁은 말이라 좁게'),
   ('연보라', array['39'],                                 '라벤더'),
-  ('코랄',   array['74','12'],                            '피치·오렌지')
+  -- `-색`을 붙이는 흔한 변형. 정식 명칭에 붙는 형태를 함께 넣는다.
+  ('아이보리색', array['23'],                              '아이보리'),
+  ('베이지색',   array['5'],                               '베이지'),
+  ('네이비색',   array['36','81'],                         '네이비'),
+  ('핑크색',     array['10','45','48','73','74'],          '핑크 색군'),
+  ('그레이색',   array['3','13','24','25'],                '그레이 색군'),
+  ('브라운색',   array['4','82','83'],                     '브라운'),
+  ('퍼플색',     array['8','39'],                          '퍼플·라벤더'),
+  ('코랄',   array['74'],                                 '피치 — 좁은 말이라 좁게')
 on conflict (term) do update set codes = excluded.codes, note = excluded.note;
 
 alter table c_search_color_terms_next enable row level security;
@@ -156,6 +164,7 @@ comment on table c_search_color_terms is
 --    올리브`처럼 색 표현이 브랜드명의 일부인 브랜드가 11개 있다. 색으로 빼내면
 --    브랜드를 못 찾는다 — `하이퍼 데님`은 0건이 됐다. 질의 **어디에 있든**
 --    보호한다(`톰 브라운 반팔`도 마찬가지다).
+--    저장 표기와 띄어쓰기가 달라도 보호한다(`블랙야크` ↔ `블랙 야크`).
 --    단어 하나짜리 충돌(`네이비`)은 보호하지 않는다 — 브랜드 상품 9개 대 색
 --    상품 20,873개라 색으로 쓰는 쪽이 압도적이다. 그 브랜드는 이름으로 찾을 수
 --    없게 되며, 대가를 알고 고른다.
@@ -169,17 +178,25 @@ comment on table c_search_color_terms is
 --    검정 본체까지 통과시킨다 — 색은 본체 색이라는 이 표의 전제를 스스로 어긴다.
 --    역할(본체/로고)을 가릴 수 없으므로 **모르면 손대지 않는다.**
 --
--- ④ 표에 없는 색 표현은 아무것도 하지 않는다. 지금처럼 텍스트로 처리된다.
+-- ④ **뒤에 역할어가 오면 본체 색이 아니다.** `검정 로고 반팔`은 검정 로고를
+--    찾는 말이지 검정 옷을 찾는 말이 아니다. 그대로 두면 검정 본체만 남겨
+--    질의를 반대로 바꾼다 — 이 표를 만든 계기가 바로 `검정로고`가 붙은 흰
+--    티셔츠였는데, 같은 실수를 반대 방향으로 하는 셈이다(교차 리뷰 M2).
+--
+-- ⑤ 표에 없는 색 표현은 아무것도 하지 않는다. 지금처럼 텍스트로 처리된다.
 create or replace function c_search_color_parse(p_words text[])
 returns table (codes text[], rest text[])
 language plpgsql stable security definer
 set search_path = public, pg_temp
 as $$
 declare
+  -- 색 뒤에 오면 그 색이 **본체가 아니라 무늬·부속의 색**임을 뜻하는 말
+  k_role constant text[] := array[
+    '로고','프린트','레터링','자수','그래픽','패치','나염','포인트','배색','라인','무늬','문구'];
   n int := coalesce(array_length(p_words, 1), 0);
   protected boolean[] := array_fill(false, array[greatest(n, 1)]);
   taken     boolean[] := array_fill(false, array[greatest(n, 1)]);
-  v_terms text[] := '{}';
+  v_terms text[] := '{}';   -- 걸린 색 표현들 (코드 집합으로 셀 때 쓴다)
   v_codes text[] := '{}';
   i int; w int; j int;
   phrase text; hit text[];
@@ -193,7 +210,12 @@ begin
   for w in reverse least(n, 5) .. 2 loop
     for i in 1 .. n - w + 1 loop
       phrase := lower(array_to_string(p_words[i : i + w - 1], ' '));
-      if exists (select 1 from c_search_vocab v where v.term = phrase) then
+      if exists (
+        select 1 from c_search_vocab v
+        -- 공백 뗀 형태도 본다. 저장된 브랜드가 `블랙야크`인데 사용자가
+        -- `블랙 야크 반팔`로 띄어 쓰면 `블랙`이 색으로 빠져나갔다(교차 리뷰 M1).
+        where v.term = phrase or v.term = replace(phrase, ' ', '')
+      ) then
         for j in i .. i + w - 1 loop
           protected[j] := true;
         end loop;
@@ -209,6 +231,10 @@ begin
          and (w = 1 or (not protected[i + 1] and not taken[i + 1])) then
         phrase := lower(array_to_string(p_words[i : i + w - 1], ' '));
         select t.codes into hit from c_search_color_terms t where t.term = phrase;
+        -- ④ 바로 뒤가 역할어면 본체 색이 아니다
+        if hit is not null and i + w <= n and p_words[i + w] = any(k_role) then
+          hit := null;
+        end if;
         if hit is not null then
           v_terms := v_terms || phrase;
           v_codes := v_codes || hit;
@@ -221,8 +247,12 @@ begin
     end loop;
   end loop;
 
-  -- ③ 색 표현이 정확히 하나일 때만 조건을 건다
-  if (select count(distinct t) from unnest(v_terms) t) <> 1 then
+  -- ③ 서로 **다른 색**을 말했을 때만 포기한다. `검정 블랙 반팔`처럼 같은 색을
+  -- 동의어로 두 번 말한 것까지 포기하면 정상 질의를 놓친다(교차 리뷰 m3).
+  -- 표현이 아니라 **코드 집합**이 같은지로 센다.
+  if (select count(distinct c) from (
+        select (select array_agg(x order by x) from unnest(t2.codes) x) c
+        from c_search_color_terms t2 where t2.term = any(v_terms)) u) <> 1 then
     return query select null::text[], p_words;
     return;
   end if;

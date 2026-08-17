@@ -38,8 +38,12 @@ GRADED_FILES = (
     "grading-codex-typo.json",
     "grading-codex-cat.json",
     "grading-codex-color.json",
-    # ⚠️ 아래 둘은 기준서 v3(색 라벨·카테고리를 보여준다)으로 매긴 것이다.
-    # 마지막에 두어 같은 itemId가 앞 파일에도 있으면 **이쪽이 이기게** 한다.
+    # 아래 둘은 기준서 v3(색 라벨·카테고리를 보여준다)으로 매긴 것이다.
+    #
+    # ⚠️ **이 함수에서는 순서가 의미 없다.** already_graded()는 itemId를 집합에
+    # 넣을 뿐 등급을 읽지 않는다. "마지막 파일이 이긴다"가 성립하는 곳은
+    # compute_baseline.py의 점수 계산(딕셔너리를 덮어쓴다)뿐이다.
+    # 여기서 v3 파일을 넣는 이유는 그 항목들을 "이미 판정됨"으로 세기 위해서다.
     "grading-codex-color2.json",
     "grading-codex-color3.json",
 )
