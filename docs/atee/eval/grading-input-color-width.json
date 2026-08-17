@@ -1,0 +1,55 @@
+{
+  "meta": {
+    "purpose": "블라인드 채점 입력. 시스템·순위 정보를 담지 않고 순서를 섞었다.",
+    "rubric": "docs/atee/eval/rubric.md — 이 문서를 읽고 채점한다",
+    "partitions": [
+      "dev"
+    ],
+    "pool": "pool-a.json",
+    "excludeGraded": true,
+    "gradedFiles": [
+      "grading-codex-all.json",
+      "grading-codex-a-new.json",
+      "grading-codex-a2.json",
+      "grading-codex-a3.json",
+      "grading-codex-typo.json",
+      "grading-codex-cat.json",
+      "grading-codex-color.json",
+      "grading-codex-color2.json",
+      "grading-codex-color3.json",
+      "grading-codex-range.json",
+      "grading-codex-price.json"
+    ],
+    "count": 1,
+    "gradeScale": {
+      "2": "질의가 명시한 조건을 전부 만족",
+      "1": "일부만 만족하거나 근접, 또는 텍스트로 확인 불가",
+      "0": "무관, 또는 계열 규칙 위반(브랜드 불일치·하드조건 위반·부정조건 위반)"
+    },
+    "needsImage": "이미지를 봐야 판단되면 true로 표시하고 등급은 1을 준다",
+    "colorLabel": "판매자가 등록한 색 라벨(정본). 제목에 색이 안 적혀 있어도 이 값이 질의의 색과 맞으면 색 조건은 **확인된 것**으로 본다",
+    "category": "무신사 카테고리 정본. 001001 반팔 티셔츠 · 001003 피케·카라 · 001004 후드·맨투맨 · 001010 긴팔 · 001011 민소매",
+    "outputFormat": "[{\"itemId\": \"...\", \"grade\": 0|1|2, \"needsImage\": true|false}]",
+    "poolNote": "생성 당시 이름은 pool-a-color.json이었고, 그대로 pool-a.json으로 승격했다. 내용은 같다 — 색 넓이 정렬·-색 자동 생성·영문 30개·조사 처리가 적용된 뒤의 풀이다.",
+    "systemChangedAt": [
+      "2026-08-17 색: -색 자동 생성 · 외래어 정식명 넓이 정렬 10쌍 · 영문 색 이름 30개 · 색 표현 뒤 조사 허용 · 회색/그레이에서 실버 제외"
+    ]
+  },
+  "items": [
+    {
+      "itemId": "a-g4-06-4887176",
+      "queryId": "a-g4-06",
+      "bucket": "G4",
+      "rule": "문장·복합. 하드 조건(가격·성별·명시된 색)을 하나라도 어기면 0.",
+      "query": "네이비 라운드넥 반팔 3만원 이하",
+      "product": {
+        "title": "면 라운드넥 모던 반팔 티셔츠 블루 FJBMTT79A",
+        "brand": "닥터퍼니스트",
+        "price": 20900,
+        "gender": "남성",
+        "colorLabel": "다크 네이비",
+        "category": "001001"
+      }
+    }
+  ]
+}

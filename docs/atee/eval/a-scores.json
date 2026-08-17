@@ -1343,19 +1343,20 @@
   "meta": {
     "system": "a-c_search_page_v2-pgroonga-bigram",
     "gradeFiles": [
-      "docs/atee/eval/grading-codex-all.json",
-      "docs/atee/eval/grading-codex-a-new.json",
-      "docs/atee/eval/grading-codex-a2.json",
-      "docs/atee/eval/grading-codex-a3.json",
-      "docs/atee/eval/grading-codex-typo.json",
-      "docs/atee/eval/grading-codex-cat.json",
-      "docs/atee/eval/grading-codex-color.json",
-      "docs/atee/eval/grading-codex-color2.json",
-      "docs/atee/eval/grading-codex-color3.json",
-      "docs/atee/eval/grading-codex-range.json",
-      "docs/atee/eval/grading-codex-price.json"
+      "../docs/atee/eval/grading-claude-color-width.json",
+      "../docs/atee/eval/grading-codex-a-new.json",
+      "../docs/atee/eval/grading-codex-a2.json",
+      "../docs/atee/eval/grading-codex-a3.json",
+      "../docs/atee/eval/grading-codex-all.json",
+      "../docs/atee/eval/grading-codex-cat.json",
+      "../docs/atee/eval/grading-codex-color.json",
+      "../docs/atee/eval/grading-codex-color2.json",
+      "../docs/atee/eval/grading-codex-color3.json",
+      "../docs/atee/eval/grading-codex-price.json",
+      "../docs/atee/eval/grading-codex-range.json",
+      "../docs/atee/eval/grading-codex-typo.json"
     ],
-    "judgedItems": 2079,
+    "judgedItems": 2080,
     "k": 20,
     "note": "등급 1은 P@20에서 적합이 아니다(기준서 §1). G6은 질의 단위 zero-result 정확도. nDCG의 ideal은 질의별 판정 풀 전체 상위 K다 — 현재 시스템 반환분으로 만들면 등급 1만 반환한 질의가 nDCG 1.0이 된다(구현 리뷰 M8 정정)."
   }
