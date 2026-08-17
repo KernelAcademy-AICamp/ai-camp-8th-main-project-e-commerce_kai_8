@@ -272,7 +272,8 @@ declare
   v_norm  text;
   v_alt   text;
   v_try   int;
-  v_cand  text[];   -- 이번 후보의 단어 전체 (색 포함) — query_used가 된다
+  v_cand  text[];   -- 이번 후보의 단어 전체 (색·가격 포함) — query_used가 된다
+  v_text  text[];   -- 구조화 조건을 뺀 나머지 (자판 복원 대상 판정에 쓴다)
   v_codes text[];   -- 이번 후보가 말한 색. null이면 색 조건 없음
   v_pmin  int;      -- 이번 후보가 말한 가격 하한·상한. null이면 조건 없음
   v_pmax  int;
@@ -315,10 +316,26 @@ begin
     if v_try = 0 then
       v_cand := v_words;
     else
-      v_alt := case v_try
-                 when 1 then c_restore_hangul_typing(v_norm)
-                 else c_search_correct_query(v_norm)
-               end;
+      if v_try = 1 then
+        -- ⚠️ 자판 복원은 **구조화 조건을 뺀 나머지에 한글이 없을 때만** 시도한다.
+        --
+        -- 단어 단위로만 판단했더니 `xl`·`fit`·`xxl` 같은 멀쩡한 영문이 한글로
+        -- 바뀌었다 — `하와이안 셔츠 xl`이 `하와이안 셔츠 티`가 되어 0건이어야 할
+        -- 질의가 13건을 냈다(교차 리뷰 M2). `xl`은 두벌식으로 `티`가 맞지만,
+        -- **나머지가 한글이면 그 사람은 한글로 치고 있는 것**이므로 `xl`은
+        -- 사이즈다. 반대로 나머지가 전부 영문이면 자판을 안 바꾼 것이다.
+        --
+        -- 가격·색을 먼저 빼는 이유는 `rjawjd qksvkf 3만원 이하`처럼 구조화
+        -- 조건에만 한글이 있는 경우를 살리기 위해서다(교차 리뷰 M4).
+        select cp.rest into v_text from c_search_color_parse(v_words) cp;
+        select pp.rest into v_text
+        from c_search_price_parse(coalesce(v_text, '{}'::text[])) pp;
+        continue when v_text is null
+                   or array_to_string(v_text, ' ') ~ '[가-힣ㄱ-ㅎㅏ-ㅣ]';
+        v_alt := c_restore_hangul_typing(v_norm);
+      else
+        v_alt := c_search_correct_query(v_norm);
+      end if;
       continue when v_alt is null or v_alt = v_norm;
       v_cand := c_search_split(v_alt);
       continue when v_cand is null;

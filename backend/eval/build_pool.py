@@ -108,13 +108,17 @@ UNJUDGED_POLICY = {
 }
 
 MAX_QUERY_CHARS = 60
-MAX_QUERY_WORDS = 5
 
 
 def normalize_query(raw: str) -> str:
-    """프론트·서버 공통 정규화와 같은 규칙 (use-search-state.ts normalizeQuery)."""
+    """프론트·서버 공통 정규화와 같은 규칙 (use-search-state.ts normalizeQuery).
+
+    ⚠️ **단어 수는 자르지 않는다.** 예전엔 앞 5단어만 넘겼는데, 그러면 서버가
+    문장 뒤의 가격·색 조건을 볼 기회 자체가 없어져 **평가가 그 실패를 숨긴다.**
+    서버는 조건을 뽑은 뒤에 텍스트 단어만 5개로 자른다(교차 리뷰 M1).
+    """
     words = [w for w in re.split(r"\s+", raw[:MAX_QUERY_CHARS]) if w]
-    return " ".join(words[:MAX_QUERY_WORDS])
+    return " ".join(words)
 
 
 # 한영 자판 복원·오타 교정은 **서버(c_search_page_v2)에 있다.** 예전엔 여기에
@@ -221,7 +225,10 @@ def build(system: str) -> dict:  # noqa: C901
                 ),
             },
             "unjudgedPolicy": UNJUDGED_POLICY,
-            "normalization": f"앞 {MAX_QUERY_CHARS}자 → 공백 분리 → 앞 {MAX_QUERY_WORDS}단어 (프론트와 동일)",
+            "normalization": (
+                f"앞 {MAX_QUERY_CHARS}자 → 공백 분리 (프론트와 동일). "
+                "단어 수 제한은 서버가 구조화 조건을 뽑은 뒤 텍스트에만 적용한다"
+            ),
         },
         "queries": results,
     }

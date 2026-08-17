@@ -14,7 +14,7 @@
       "2026-08-17 C-3 리뷰 반영: `미만` 경계·숫자 상한·5단어 절단 순서·단어 단위 자판 복원·역할어 조사 허용"
     ],
     "topN": 20,
-    "collectedAt": "2026-08-17T09:36:25.483046+00:00",
+    "collectedAt": "2026-08-17T10:11:49.434141+00:00",
     "catalogSnapshot": {
       "c_goods_rows": 226320,
       "c_search_text_rows": 226304,
@@ -28,7 +28,7 @@
       "repoolThreshold": 0.3,
       "repoolRule": "어떤 시스템의 상위 20개 중 미판정이 30%를 넘으면 그 시스템의 결과로 풀을 확장하고새로 들어온 상품만 블라인드로 추가 채점한다. 기존 판정은 재사용한다."
     },
-    "normalization": "앞 60자 → 공백 분리 → 앞 5단어 (프론트와 동일)"
+    "normalization": "앞 60자 → 공백 분리 (프론트와 동일). 단어 수 제한은 서버가 구조화 조건을 뽑은 뒤 텍스트에만 적용한다"
   },
   "queries": [
     {
@@ -36,8 +36,8 @@
       "bucket": "G5",
       "partition": "holdout",
       "query": "등에 프린트가 없는 와인색 여자 티셔츠",
-      "queryNorm": "등에 프린트가 없는 와인색 여자",
-      "queryUsed": "등에 프린트가 없는 와인색 여자",
+      "queryNorm": "등에 프린트가 없는 와인색 여자 티셔츠",
+      "queryUsed": "등에 프린트가 없는 와인색 여자 티셔츠",
       "resultCount": 0,
       "candidates": []
     },
@@ -67,140 +67,9 @@
       "partition": "holdout",
       "query": "하와이안 셔츠 xl",
       "queryNorm": "하와이안 셔츠 xl",
-      "queryUsed": "하와이안 셔츠 티",
-      "resultCount": 13,
-      "candidates": [
-        {
-          "rank": 0,
-          "goodsNo": 3153089,
-          "title": "비치 하와이안 티셔츠 옐로우",
-          "brandName": "커버낫",
-          "priceFinal": 29400,
-          "gender": "공용",
-          "colorLabel": "라이트 옐로우",
-          "category": "001001"
-        },
-        {
-          "rank": 1,
-          "goodsNo": 3153097,
-          "title": "아치 하와이안 티셔츠 에크루",
-          "brandName": "커버낫",
-          "priceFinal": 34300,
-          "gender": "공용",
-          "colorLabel": "아이보리",
-          "category": "001001"
-        },
-        {
-          "rank": 2,
-          "goodsNo": 4194173,
-          "title": "하와이안 티셔츠 곰돌이 프린트 오버핏 반팔티 화이트",
-          "brandName": "이스케이프프롬",
-          "priceFinal": 20930,
-          "gender": "공용",
-          "colorLabel": "화이트",
-          "category": "001001"
-        },
-        {
-          "rank": 3,
-          "goodsNo": 4210647,
-          "title": "하와이안 화이트 티셔츠",
-          "brandName": "바나나시스터즈",
-          "priceFinal": 39690,
-          "gender": "여성",
-          "colorLabel": "화이트",
-          "category": "001001"
-        },
-        {
-          "rank": 4,
-          "goodsNo": 6241184,
-          "title": "하와이안 파라다이스 반팔티셔츠(블랙)",
-          "brandName": "카멜워크",
-          "priceFinal": 10800,
-          "gender": "남성",
-          "colorLabel": "블랙",
-          "category": "001001"
-        },
-        {
-          "rank": 5,
-          "goodsNo": 6241185,
-          "title": "하와이안 파라다이스 반팔티셔츠(화이트)",
-          "brandName": "카멜워크",
-          "priceFinal": 32000,
-          "gender": "남성",
-          "colorLabel": "화이트",
-          "category": "001001"
-        },
-        {
-          "rank": 6,
-          "goodsNo": 6297939,
-          "title": "키키 하와이안 반팔티셔츠 화이트",
-          "brandName": "와키윌리",
-          "priceFinal": 44100,
-          "gender": "남성",
-          "colorLabel": "화이트",
-          "category": "001001"
-        },
-        {
-          "rank": 7,
-          "goodsNo": 6297941,
-          "title": "키키 하와이안 반팔티셔츠 블루",
-          "brandName": "와키윌리",
-          "priceFinal": 44100,
-          "gender": "남성",
-          "colorLabel": "블루",
-          "category": "001001"
-        },
-        {
-          "rank": 8,
-          "goodsNo": 6297942,
-          "title": "키키 하와이안 반팔티셔츠 블랙",
-          "brandName": "와키윌리",
-          "priceFinal": 44100,
-          "gender": "남성",
-          "colorLabel": "블랙",
-          "category": "001001"
-        },
-        {
-          "rank": 9,
-          "goodsNo": 6299349,
-          "title": "트로피컬 하와이안 티셔츠 (마티니 블루)",
-          "brandName": "빅웨이브 컬렉티브",
-          "priceFinal": 42750,
-          "gender": "여성",
-          "colorLabel": "민트",
-          "category": "001001"
-        },
-        {
-          "rank": 10,
-          "goodsNo": 6876198,
-          "title": "Hawaiian Print T-shirts_Dark Blue(하와이안 프린트 티셔츠_다크블루)",
-          "brandName": "준준스페이스",
-          "priceFinal": 58000,
-          "gender": "여성",
-          "colorLabel": "라이트 그레이",
-          "category": "001001"
-        },
-        {
-          "rank": 11,
-          "goodsNo": 6876275,
-          "title": "Hawaiian Print T-shirts_White(하와이안 프린트 티셔츠_화이트)",
-          "brandName": "준준스페이스",
-          "priceFinal": 58000,
-          "gender": "여성",
-          "colorLabel": "화이트",
-          "category": "001001"
-        },
-        {
-          "rank": 12,
-          "goodsNo": 6876304,
-          "title": "Hawaiian Print T-shirts_Navy(하와이안 프린트 티셔츠_네이비)",
-          "brandName": "준준스페이스",
-          "priceFinal": 58000,
-          "gender": "여성",
-          "colorLabel": "네이비",
-          "category": "001001"
-        }
-      ]
+      "queryUsed": "하와이안 셔츠 xl",
+      "resultCount": 0,
+      "candidates": []
     },
     {
       "id": "s05",
@@ -338,8 +207,8 @@
       "bucket": "R1",
       "partition": "dev",
       "query": "클럽에 갈때 입을옷 추천해줘 - 여자야",
-      "queryNorm": "클럽에 갈때 입을옷 추천해줘 -",
-      "queryUsed": "클럽에 갈때 입을옷 추천해줘 -",
+      "queryNorm": "클럽에 갈때 입을옷 추천해줘 - 여자야",
+      "queryUsed": "클럽에 갈때 입을옷 추천해줘 - 여자야",
       "resultCount": 0,
       "candidates": []
     },
@@ -348,8 +217,8 @@
       "bucket": "R1",
       "partition": "dev",
       "query": "바다에서 비키니 위에 입을 얇은 티셔츠",
-      "queryNorm": "바다에서 비키니 위에 입을 얇은",
-      "queryUsed": "바다에서 비키니 위에 입을 얇은",
+      "queryNorm": "바다에서 비키니 위에 입을 얇은 티셔츠",
+      "queryUsed": "바다에서 비키니 위에 입을 얇은 티셔츠",
       "resultCount": 0,
       "candidates": []
     },
@@ -408,8 +277,8 @@
       "bucket": "R1",
       "partition": "progress",
       "query": "흰 롱치마랑 입으면 잘어울리는 여자 티셔츠. 무늬가 있었으면 좋겠어",
-      "queryNorm": "흰 롱치마랑 입으면 잘어울리는 여자",
-      "queryUsed": "흰 롱치마랑 입으면 잘어울리는 여자",
+      "queryNorm": "흰 롱치마랑 입으면 잘어울리는 여자 티셔츠. 무늬가 있었으면 좋겠어",
+      "queryUsed": "흰 롱치마랑 입으면 잘어울리는 여자 티셔츠. 무늬가 있었으면 좋겠어",
       "resultCount": 0,
       "candidates": []
     },
@@ -639,8 +508,8 @@
       "bucket": "R1",
       "partition": "holdout",
       "query": "커플티로 입을수 있게 사이즈 여자꺼랑 남자꺼 사이즈 있는걸로 추천해줘",
-      "queryNorm": "커플티로 입을수 있게 사이즈 여자꺼랑",
-      "queryUsed": "커플티로 입을수 있게 사이즈 여자꺼랑",
+      "queryNorm": "커플티로 입을수 있게 사이즈 여자꺼랑 남자꺼 사이즈 있는걸로 추천해줘",
+      "queryUsed": "커플티로 입을수 있게 사이즈 여자꺼랑 남자꺼 사이즈 있는걸로 추천해줘",
       "resultCount": 0,
       "candidates": []
     },
@@ -649,8 +518,8 @@
       "bucket": "R1",
       "partition": "holdout",
       "query": "골프칠때 입을건데 이쁘면서 시원한 운동복으로 보여줘",
-      "queryNorm": "골프칠때 입을건데 이쁘면서 시원한 운동복으로",
-      "queryUsed": "골프칠때 입을건데 이쁘면서 시원한 운동복으로",
+      "queryNorm": "골프칠때 입을건데 이쁘면서 시원한 운동복으로 보여줘",
+      "queryUsed": "골프칠때 입을건데 이쁘면서 시원한 운동복으로 보여줘",
       "resultCount": 0,
       "candidates": []
     },
@@ -659,8 +528,8 @@
       "bucket": "G5",
       "partition": "dev",
       "query": "디즈니 캐릭터인데 그림이 너무 크진않았으면 좋겠어",
-      "queryNorm": "디즈니 캐릭터인데 그림이 너무 크진않았으면",
-      "queryUsed": "디즈니 캐릭터인데 그림이 너무 크진않았으면",
+      "queryNorm": "디즈니 캐릭터인데 그림이 너무 크진않았으면 좋겠어",
+      "queryUsed": "디즈니 캐릭터인데 그림이 너무 크진않았으면 좋겠어",
       "resultCount": 0,
       "candidates": []
     },
@@ -669,8 +538,8 @@
       "bucket": "R1",
       "partition": "holdout",
       "query": "친구들4명과 우정티셔츠로 맞출건데 비슷한데 다른 그림이 있는걸로 추천해줘",
-      "queryNorm": "친구들4명과 우정티셔츠로 맞출건데 비슷한데 다른",
-      "queryUsed": "친구들4명과 우정티셔츠로 맞출건데 비슷한데 다른",
+      "queryNorm": "친구들4명과 우정티셔츠로 맞출건데 비슷한데 다른 그림이 있는걸로 추천해줘",
+      "queryUsed": "친구들4명과 우정티셔츠로 맞출건데 비슷한데 다른 그림이 있는걸로 추천해줘",
       "resultCount": 0,
       "candidates": []
     },
@@ -679,8 +548,8 @@
       "bucket": "G5",
       "partition": "dev",
       "query": "너무 스포츠스러운거 말고 여성스러운 핏이 있는 티셔츠를 보여줘",
-      "queryNorm": "너무 스포츠스러운거 말고 여성스러운 핏이",
-      "queryUsed": "너무 스포츠스러운거 말고 여성스러운 핏이",
+      "queryNorm": "너무 스포츠스러운거 말고 여성스러운 핏이 있는 티셔츠를 보여줘",
+      "queryUsed": "너무 스포츠스러운거 말고 여성스러운 핏이 있는 티셔츠를 보여줘",
       "resultCount": 0,
       "candidates": []
     },
@@ -689,8 +558,8 @@
       "bucket": "R1",
       "partition": "progress",
       "query": "요가할때 입을 티셔츠인데 하늘하늘한 땀흡수 잘되는소재를 찾고있어",
-      "queryNorm": "요가할때 입을 티셔츠인데 하늘하늘한 땀흡수",
-      "queryUsed": "요가할때 입을 티셔츠인데 하늘하늘한 땀흡수",
+      "queryNorm": "요가할때 입을 티셔츠인데 하늘하늘한 땀흡수 잘되는소재를 찾고있어",
+      "queryUsed": "요가할때 입을 티셔츠인데 하늘하늘한 땀흡수 잘되는소재를 찾고있어",
       "resultCount": 0,
       "candidates": []
     },
@@ -699,8 +568,8 @@
       "bucket": "G5",
       "partition": "dev",
       "query": "젖꼭지가 튀어나와보이지않게 두꺼운 남자 여름 티셔츠",
-      "queryNorm": "젖꼭지가 튀어나와보이지않게 두꺼운 남자 여름",
-      "queryUsed": "젖꼭지가 튀어나와보이지않게 두꺼운 남자 여름",
+      "queryNorm": "젖꼭지가 튀어나와보이지않게 두꺼운 남자 여름 티셔츠",
+      "queryUsed": "젖꼭지가 튀어나와보이지않게 두꺼운 남자 여름 티셔츠",
       "resultCount": 0,
       "candidates": []
     },
@@ -719,8 +588,8 @@
       "bucket": "R1",
       "partition": "dev",
       "query": "내가 105 입는데 노란색 신발에 어울리는 티셔츠 추천해줘",
-      "queryNorm": "내가 105 입는데 노란색 신발에",
-      "queryUsed": "내가 105 입는데 노란색 신발에",
+      "queryNorm": "내가 105 입는데 노란색 신발에 어울리는 티셔츠 추천해줘",
+      "queryUsed": "내가 105 입는데 노란색 신발에 어울리는 티셔츠 추천해줘",
       "resultCount": 0,
       "candidates": []
     },
@@ -950,8 +819,8 @@
       "bucket": "G5",
       "partition": "holdout",
       "query": "간지나는티 제일 인기있고 소매에 프린팅이 있으면 좋겠고 음 또 노란색이 없으면 좋겠다 그리고 좀 땀이 흡수가 잘되면 좋을듯",
-      "queryNorm": "간지나는티 제일 인기있고 소매에 프린팅이",
-      "queryUsed": "간지나는티 제일 인기있고 소매에 프린팅이",
+      "queryNorm": "간지나는티 제일 인기있고 소매에 프린팅이 있으면 좋겠고 음 또 노란색이 없으면 좋겠다 그리고 좀 땀이 흡수가",
+      "queryUsed": "간지나는티 제일 인기있고 소매에 프린팅이 있으면 좋겠고 음 또 노란색이 없으면 좋겠다 그리고 좀 땀이 흡수가",
       "resultCount": 0,
       "candidates": []
     },
@@ -960,8 +829,8 @@
       "bucket": "R1",
       "partition": "dev",
       "query": "내가 105 입는데 노란색 신발에 어울리는 티셔츠 추천해줘 나 남자야",
-      "queryNorm": "내가 105 입는데 노란색 신발에",
-      "queryUsed": "내가 105 입는데 노란색 신발에",
+      "queryNorm": "내가 105 입는데 노란색 신발에 어울리는 티셔츠 추천해줘 나 남자야",
+      "queryUsed": "내가 105 입는데 노란색 신발에 어울리는 티셔츠 추천해줘 나 남자야",
       "resultCount": 0,
       "candidates": []
     },
@@ -970,8 +839,8 @@
       "bucket": "G5",
       "partition": "progress",
       "query": "놀러갈때 입기 편한 반팔티인데 내가 추위를 많이타서 그나마 두꺼운게 좋을것같고 프린팅은 없으면 좋겠어 또 너무 브랜드가 노출 안되면 좋겠엉",
-      "queryNorm": "놀러갈때 입기 편한 반팔티인데 내가",
-      "queryUsed": "놀러갈때 입기 편한 반팔티인데 내가",
+      "queryNorm": "놀러갈때 입기 편한 반팔티인데 내가 추위를 많이타서 그나마 두꺼운게 좋을것같고 프린팅은 없으면 좋겠어 또 너",
+      "queryUsed": "놀러갈때 입기 편한 반팔티인데 내가 추위를 많이타서 그나마 두꺼운게 좋을것같고 프린팅은 없으면 좋겠어 또 너",
       "resultCount": 0,
       "candidates": []
     },
@@ -980,8 +849,8 @@
       "bucket": "G4",
       "partition": "progress",
       "query": "레이어드해서 입기 좋은 반팔티를 찾고있는데 아래기장이 좀 길면 좋겠어",
-      "queryNorm": "레이어드해서 입기 좋은 반팔티를 찾고있는데",
-      "queryUsed": "레이어드해서 입기 좋은 반팔티를 찾고있는데",
+      "queryNorm": "레이어드해서 입기 좋은 반팔티를 찾고있는데 아래기장이 좀 길면 좋겠어",
+      "queryUsed": "레이어드해서 입기 좋은 반팔티를 찾고있는데 아래기장이 좀 길면 좋겠어",
       "resultCount": 0,
       "candidates": []
     },
@@ -1030,8 +899,8 @@
       "bucket": "G4",
       "partition": "dev",
       "query": "2만원 이하에 가성비있는 반팔티를찾고있는뒈 바람이 슝슝통하고 그림도 간지있고 기장은 좀 그나마 길었으면 조켔ㅇㅇ",
-      "queryNorm": "2만원 이하에 가성비있는 반팔티를찾고있는뒈 바람이",
-      "queryUsed": "2만원 이하에 가성비있는 반팔티를찾고있는뒈 바람이",
+      "queryNorm": "2만원 이하에 가성비있는 반팔티를찾고있는뒈 바람이 슝슝통하고 그림도 간지있고 기장은 좀 그나마 길었으면 조켔",
+      "queryUsed": "2만원 이하에 가성비있는 반팔티를찾고있는뒈 바람이 슝슝통하고 그림도 간지있고 기장은 좀 그나마 길었으면 조켔",
       "resultCount": 0,
       "candidates": []
     },
@@ -1040,8 +909,8 @@
       "bucket": "G4",
       "partition": "progress",
       "query": "나는 등판에 개발자관련 글씨가 쓰여있고 통풍이 잘되는 회색 반팔티를 찾고있는데 오버핏이면 더 좋을것같고 목은 라운드넥이면 더 좋을것같아",
-      "queryNorm": "나는 등판에 개발자관련 글씨가 쓰여있고",
-      "queryUsed": "나는 등판에 개발자관련 글씨가 쓰여있고",
+      "queryNorm": "나는 등판에 개발자관련 글씨가 쓰여있고 통풍이 잘되는 회색 반팔티를 찾고있는데 오버핏이면 더 좋을것같고 목은",
+      "queryUsed": "나는 등판에 개발자관련 글씨가 쓰여있고 통풍이 잘되는 회색 반팔티를 찾고있는데 오버핏이면 더 좋을것같고 목은",
       "resultCount": 0,
       "candidates": []
     },
@@ -1050,8 +919,8 @@
       "bucket": "G4",
       "partition": "dev",
       "query": "등판에 노란 레터링 있는 시원한 오버핏 흰티",
-      "queryNorm": "등판에 노란 레터링 있는 시원한",
-      "queryUsed": "등판에 노란 레터링 있는 시원한",
+      "queryNorm": "등판에 노란 레터링 있는 시원한 오버핏 흰티",
+      "queryUsed": "등판에 노란 레터링 있는 시원한 오버핏 흰티",
       "resultCount": 0,
       "candidates": []
     },
@@ -12006,8 +11875,8 @@
       "bucket": "G4",
       "partition": "dev",
       "query": "커플로 입을 수 있는 무지 반팔 남녀 사이즈",
-      "queryNorm": "커플로 입을 수 있는 무지",
-      "queryUsed": "커플로 입을 수 있는 무지",
+      "queryNorm": "커플로 입을 수 있는 무지 반팔 남녀 사이즈",
+      "queryUsed": "커플로 입을 수 있는 무지 반팔 남녀 사이즈",
       "resultCount": 0,
       "candidates": []
     },
@@ -12016,8 +11885,8 @@
       "bucket": "G4",
       "partition": "progress",
       "query": "회색 오버핏 반팔에 작은 로고 있는 것",
-      "queryNorm": "회색 오버핏 반팔에 작은 로고",
-      "queryUsed": "회색 오버핏 반팔에 작은 로고",
+      "queryNorm": "회색 오버핏 반팔에 작은 로고 있는 것",
+      "queryUsed": "회색 오버핏 반팔에 작은 로고 있는 것",
       "resultCount": 0,
       "candidates": []
     },
@@ -12026,8 +11895,8 @@
       "bucket": "G4",
       "partition": "dev",
       "query": "린넨 느낌 나는 시원한 남성 반팔",
-      "queryNorm": "린넨 느낌 나는 시원한 남성",
-      "queryUsed": "린넨 느낌 나는 시원한 남성",
+      "queryNorm": "린넨 느낌 나는 시원한 남성 반팔",
+      "queryUsed": "린넨 느낌 나는 시원한 남성 반팔",
       "resultCount": 0,
       "candidates": []
     },
@@ -12278,8 +12147,8 @@
       "bucket": "G5",
       "partition": "holdout",
       "query": "그림 너무 크지 않은 그래픽 티",
-      "queryNorm": "그림 너무 크지 않은 그래픽",
-      "queryUsed": "그림 너무 크지 않은 그래픽",
+      "queryNorm": "그림 너무 크지 않은 그래픽 티",
+      "queryUsed": "그림 너무 크지 않은 그래픽 티",
       "resultCount": 0,
       "candidates": []
     },
