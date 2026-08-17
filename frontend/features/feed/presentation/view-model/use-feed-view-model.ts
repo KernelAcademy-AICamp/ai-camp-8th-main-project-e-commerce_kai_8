@@ -17,7 +17,7 @@ import type {
 } from "@/features/feed/presentation/view-model/card-view-data";
 import type { ProfileSummary } from "@/shared/profile/profile-store";
 import { getFeedProfileSummary, logImpression } from "@/shared/signals/signals";
-import type { FeedPolicy, SourceBucket } from "@/shared/signals/types";
+import type { FeedPolicy, SourceBucket, Surface } from "@/shared/signals/types";
 
 const PAGE_SIZE = 30;
 // 유사 첫 페이지 크기 — 재정렬 후보(×20)가 크기에 비례해 콜드 응답을 좌우한다.
@@ -48,16 +48,29 @@ export interface FeedOptions {
    * (IntersectionObserver는 가려짐을 모르므로 여기서 막아야 유령 노출이 없다)
    */
   paused?: boolean;
+  /**
+   * 이 피드가 놓인 자리. 노출 기록에 실어 보낸다.
+   *
+   * 검색 대체 피드는 **같은 훅을 그대로 재사용**하므로(개인화·폴백·무한 스크롤이
+   * 이미 여기 다 있다) 자리만 밖에서 알려 준다. 훅을 복제하면 두 벌이 갈린다.
+   */
+  surface?: Surface;
 }
 
 export function useFeedViewModel(options?: FeedOptions) {
   const exploreFrom = options?.exploreFrom;
   const paused = options?.paused === true;
+  const surface = options?.surface;
   // 콜백(loadMore·onImpress)이 호출 시점의 최신 값을 보게 ref로 미러링
   const pausedRef = useRef(paused);
   useEffect(() => {
     pausedRef.current = paused;
   }, [paused]);
+  // 노출 콜백이 호출 시점의 자리를 보게 ref로 미러링 (paused와 같은 이유)
+  const surfaceRef = useRef(surface);
+  useEffect(() => {
+    surfaceRef.current = surface;
+  }, [surface]);
   const seed = useMemo(() => {
     const sessionSeed = getSessionSeed();
     return exploreFrom == null ? sessionSeed : deriveSeed(sessionSeed, exploreFrom);
@@ -224,6 +237,7 @@ export function useFeedViewModel(options?: FeedOptions) {
         screenY: info.screenY,
         slot: card.product.matchedImage?.slot ?? 0,
         seed,
+        surface: surfaceRef.current,
       });
     },
     [seed],

@@ -13,6 +13,16 @@ export type SignalEventType =
 
 export type FeedPolicy = "random" | "personalized" | "fallback";
 
+/**
+ * 노출·탭이 일어난 **자리**. 정책(어떻게 골랐나)과 다른 축이다.
+ * 생략 = 메인 피드나 상세(기본).
+ *
+ * `search_replacement`는 검색 결과가 없거나 소진돼 이어 붙인 취향 피드다.
+ * 화면에서는 경계를 지우지만 계측은 구분한다 — 그러지 않으면 나중에
+ * "검색이 답을 준 것인가 피드가 대신한 것인가"를 물을 수 없다.
+ */
+export type Surface = "search_replacement";
+
 /** 노출의 포트폴리오 유형. similar = 상세 하단 유사 탐색 그리드 */
 export type SourceBucket =
   "longterm" | "session" | "partial" | "opposite" | "diversity" | "similar";
@@ -31,6 +41,7 @@ export interface SignalEvent {
   experiment?: string;
   // 노출 이벤트 전용 (PRD §7 계측 요구)
   source_bucket?: SourceBucket;
+  surface?: Surface;
   is_fresh?: boolean;
   rank?: number;
   col?: number;
