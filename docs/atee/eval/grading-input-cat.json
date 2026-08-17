@@ -1,0 +1,1204 @@
+{
+  "meta": {
+    "purpose": "블라인드 채점 입력. 시스템·순위 정보를 담지 않고 순서를 섞었다.",
+    "rubric": "docs/atee/eval/rubric.md — 이 문서를 읽고 채점한다",
+    "partitions": [
+      "dev"
+    ],
+    "pool": "pool-a.json",
+    "excludeGraded": true,
+    "gradedFiles": [
+      "grading-codex-all.json",
+      "grading-codex-a-new.json",
+      "grading-codex-a2.json",
+      "grading-codex-a3.json",
+      "grading-codex-typo.json"
+    ],
+    "count": 87,
+    "gradeScale": {
+      "2": "질의가 명시한 조건을 전부 만족",
+      "1": "일부만 만족하거나 근접, 또는 텍스트로 확인 불가",
+      "0": "무관, 또는 계열 규칙 위반(브랜드 불일치·하드조건 위반·부정조건 위반)"
+    },
+    "needsImage": "이미지를 봐야 판단되면 true로 표시하고 등급은 1을 준다",
+    "outputFormat": "[{\"itemId\": \"...\", \"grade\": 0|1|2, \"needsImage\": true|false}]"
+  },
+  "items": [
+    {
+      "itemId": "b14-3096679",
+      "queryId": "b14",
+      "bucket": "G1",
+      "rule": "브랜드 질의. 그 브랜드가 아니면 무조건 0.",
+      "query": "다이나핏",
+      "product": {
+        "title": "PALMA (파르마) 남성 반팔티_Vanilla",
+        "brand": "다이나핏",
+        "price": 25000,
+        "gender": "남성"
+      }
+    },
+    {
+      "itemId": "b16-3449538",
+      "queryId": "b16",
+      "bucket": "G1",
+      "rule": "브랜드 질의. 그 브랜드가 아니면 무조건 0.",
+      "query": "젝시믹스",
+      "product": {
+        "title": "아이스페더 숏슬리브 시어스킨",
+        "brand": "젝시믹스",
+        "price": 21000,
+        "gender": "여성"
+      }
+    },
+    {
+      "itemId": "b09-996515",
+      "queryId": "b09",
+      "bucket": "G1",
+      "rule": "브랜드 질의. 그 브랜드가 아니면 무조건 0.",
+      "query": "무신사 스탠다드",
+      "product": {
+        "title": "크루 넥 7부 티셔츠 [화이트]",
+        "brand": "무신사 스탠다드",
+        "price": 14590,
+        "gender": "남성"
+      }
+    },
+    {
+      "itemId": "v04-3449535",
+      "queryId": "v04",
+      "bucket": "G3",
+      "rule": "표기 변형. 원본 질의 기준으로 판정하고 변형 자체로 감점하지 않는다.",
+      "query": "wprtlalrtm",
+      "origin": "젝시믹스",
+      "product": {
+        "title": "아이스페더 숏슬리브 메이플베이지",
+        "brand": "젝시믹스",
+        "price": 21000,
+        "gender": "여성"
+      }
+    },
+    {
+      "itemId": "v05-3135991",
+      "queryId": "v05",
+      "bucket": "G3",
+      "rule": "표기 변형. 원본 질의 기준으로 판정하고 변형 자체로 감점하지 않는다.",
+      "query": "ekdlskvlt",
+      "origin": "다이나핏",
+      "product": {
+        "title": "DRY MAX (드라이 맥스) β 반팔티_Lime",
+        "brand": "다이나핏",
+        "price": 25000,
+        "gender": "여성"
+      }
+    },
+    {
+      "itemId": "v08-3773868",
+      "queryId": "v08",
+      "bucket": "G3",
+      "rule": "표기 변형. 원본 질의 기준으로 판정하고 변형 자체로 감점하지 않는다.",
+      "query": "ㅋㅂㄴ",
+      "origin": "커버낫",
+      "product": {
+        "title": "[2PACK] 쿨 코튼 티셔츠 Black+Black",
+        "brand": "커버낫",
+        "price": 44100,
+        "gender": "공용"
+      }
+    },
+    {
+      "itemId": "b14-3135991",
+      "queryId": "b14",
+      "bucket": "G1",
+      "rule": "브랜드 질의. 그 브랜드가 아니면 무조건 0.",
+      "query": "다이나핏",
+      "product": {
+        "title": "DRY MAX (드라이 맥스) β 반팔티_Lime",
+        "brand": "다이나핏",
+        "price": 25000,
+        "gender": "여성"
+      }
+    },
+    {
+      "itemId": "v03-996507",
+      "queryId": "v03",
+      "bucket": "G3",
+      "rule": "표기 변형. 원본 질의 기준으로 판정하고 변형 자체로 감점하지 않는다.",
+      "query": "antlstk tmxosekem",
+      "origin": "무신사 스탠다드",
+      "product": {
+        "title": "릴렉스 핏 크루 넥 포켓 티셔츠 [화이트]",
+        "brand": "무신사 스탠다드",
+        "price": 10090,
+        "gender": "남성"
+      }
+    },
+    {
+      "itemId": "v18-6245397",
+      "queryId": "v18",
+      "bucket": "G3",
+      "rule": "표기 변형. 원본 질의 기준으로 판정하고 변형 자체로 감점하지 않는다.",
+      "query": "커버났",
+      "origin": "커버낫",
+      "product": {
+        "title": "[커버낫 X 미즈노] 씨 네이처 그래픽 티셔츠 차콜",
+        "brand": "커버낫",
+        "price": 47200,
+        "gender": "남성"
+      }
+    },
+    {
+      "itemId": "v03-996510",
+      "queryId": "v03",
+      "bucket": "G3",
+      "rule": "표기 변형. 원본 질의 기준으로 판정하고 변형 자체로 감점하지 않는다.",
+      "query": "antlstk tmxosekem",
+      "origin": "무신사 스탠다드",
+      "product": {
+        "title": "릴렉스 핏 크루 넥 포켓 티셔츠 [네이비]",
+        "brand": "무신사 스탠다드",
+        "price": 10090,
+        "gender": "남성"
+      }
+    },
+    {
+      "itemId": "v05-3135998",
+      "queryId": "v05",
+      "bucket": "G3",
+      "rule": "표기 변형. 원본 질의 기준으로 판정하고 변형 자체로 감점하지 않는다.",
+      "query": "ekdlskvlt",
+      "origin": "다이나핏",
+      "product": {
+        "title": "DRY MAX (드라이 맥스) β 반팔티_White",
+        "brand": "다이나핏",
+        "price": 25000,
+        "gender": "여성"
+      }
+    },
+    {
+      "itemId": "v18-6245401",
+      "queryId": "v18",
+      "bucket": "G3",
+      "rule": "표기 변형. 원본 질의 기준으로 판정하고 변형 자체로 감점하지 않는다.",
+      "query": "커버났",
+      "origin": "커버낫",
+      "product": {
+        "title": "[커버낫 X 미즈노] 씨 네이처 그래픽 티셔츠 오트밀",
+        "brand": "커버낫",
+        "price": 47200,
+        "gender": "남성"
+      }
+    },
+    {
+      "itemId": "b13-1855619",
+      "queryId": "b13",
+      "bucket": "G1",
+      "rule": "브랜드 질의. 그 브랜드가 아니면 무조건 0.",
+      "query": "크림소다랩",
+      "product": {
+        "title": "오지 아크로고 반팔 티셔츠 블랙 핑크",
+        "brand": "크림소다랩",
+        "price": 23100,
+        "gender": "남성"
+      }
+    },
+    {
+      "itemId": "b16-3449570",
+      "queryId": "b16",
+      "bucket": "G1",
+      "rule": "브랜드 질의. 그 브랜드가 아니면 무조건 0.",
+      "query": "젝시믹스",
+      "product": {
+        "title": "퓨어코튼 아치로고 숏슬리브 볼드그린",
+        "brand": "젝시믹스",
+        "price": 34100,
+        "gender": "남성"
+      }
+    },
+    {
+      "itemId": "v10-5148635",
+      "queryId": "v10",
+      "bucket": "G3",
+      "rule": "표기 변형. 원본 질의 기준으로 판정하고 변형 자체로 감점하지 않는다.",
+      "query": "ㅁㅈㅌ",
+      "origin": "무지티",
+      "product": {
+        "title": "시어서커 반팔 유니섹스 무지티",
+        "brand": "오버더와르",
+        "price": 45000,
+        "gender": "남성"
+      }
+    },
+    {
+      "itemId": "b14-3135975",
+      "queryId": "b14",
+      "bucket": "G1",
+      "rule": "브랜드 질의. 그 브랜드가 아니면 무조건 0.",
+      "query": "다이나핏",
+      "product": {
+        "title": "BREATH (브래스) 2.0 여성 반팔티_Light Pink YWM23278P1",
+        "brand": "다이나핏",
+        "price": 25000,
+        "gender": "여성"
+      }
+    },
+    {
+      "itemId": "b14-3087808",
+      "queryId": "b14",
+      "bucket": "G1",
+      "rule": "브랜드 질의. 그 브랜드가 아니면 무조건 0.",
+      "query": "다이나핏",
+      "product": {
+        "title": "SHAKER 2.0 (쉐이커 2.0) α 반팔티_Greyish Khaki",
+        "brand": "다이나핏",
+        "price": 30000,
+        "gender": "남성"
+      }
+    },
+    {
+      "itemId": "b16-3449527",
+      "queryId": "b16",
+      "bucket": "G1",
+      "rule": "브랜드 질의. 그 브랜드가 아니면 무조건 0.",
+      "query": "젝시믹스",
+      "product": {
+        "title": "아이스페더 숏슬리브 코랄무드",
+        "brand": "젝시믹스",
+        "price": 21000,
+        "gender": "여성"
+      }
+    },
+    {
+      "itemId": "v08-3235388",
+      "queryId": "v08",
+      "bucket": "G3",
+      "rule": "표기 변형. 원본 질의 기준으로 판정하고 변형 자체로 감점하지 않는다.",
+      "query": "ㅋㅂㄴ",
+      "origin": "커버낫",
+      "product": {
+        "title": "라운드 포켓 티셔츠 화이트",
+        "brand": "커버낫",
+        "price": 29500,
+        "gender": "공용"
+      }
+    },
+    {
+      "itemId": "v05-3135975",
+      "queryId": "v05",
+      "bucket": "G3",
+      "rule": "표기 변형. 원본 질의 기준으로 판정하고 변형 자체로 감점하지 않는다.",
+      "query": "ekdlskvlt",
+      "origin": "다이나핏",
+      "product": {
+        "title": "BREATH (브래스) 2.0 여성 반팔티_Light Pink YWM23278P1",
+        "brand": "다이나핏",
+        "price": 25000,
+        "gender": "여성"
+      }
+    },
+    {
+      "itemId": "b09-996510",
+      "queryId": "b09",
+      "bucket": "G1",
+      "rule": "브랜드 질의. 그 브랜드가 아니면 무조건 0.",
+      "query": "무신사 스탠다드",
+      "product": {
+        "title": "릴렉스 핏 크루 넥 포켓 티셔츠 [네이비]",
+        "brand": "무신사 스탠다드",
+        "price": 10090,
+        "gender": "남성"
+      }
+    },
+    {
+      "itemId": "v05-3087807",
+      "queryId": "v05",
+      "bucket": "G3",
+      "rule": "표기 변형. 원본 질의 기준으로 판정하고 변형 자체로 감점하지 않는다.",
+      "query": "ekdlskvlt",
+      "origin": "다이나핏",
+      "product": {
+        "title": "ATTENSION (어텐션) β 반팔티_Green",
+        "brand": "다이나핏",
+        "price": 25000,
+        "gender": "여성"
+      }
+    },
+    {
+      "itemId": "b11-4924204",
+      "queryId": "b11",
+      "bucket": "G1",
+      "rule": "브랜드 질의. 그 브랜드가 아니면 무조건 0.",
+      "query": "티글레이크",
+      "product": {
+        "title": "백후드베어 반팔 티셔츠_6color",
+        "brand": "티글레이크",
+        "price": 18900,
+        "gender": "공용"
+      }
+    },
+    {
+      "itemId": "v08-3851216",
+      "queryId": "v08",
+      "bucket": "G3",
+      "rule": "표기 변형. 원본 질의 기준으로 판정하고 변형 자체로 감점하지 않는다.",
+      "query": "ㅋㅂㄴ",
+      "origin": "커버낫",
+      "product": {
+        "title": "C 로고 티셔츠 피치",
+        "brand": "커버낫",
+        "price": 17550,
+        "gender": "공용"
+      }
+    },
+    {
+      "itemId": "v05-3135979",
+      "queryId": "v05",
+      "bucket": "G3",
+      "rule": "표기 변형. 원본 질의 기준으로 판정하고 변형 자체로 감점하지 않는다.",
+      "query": "ekdlskvlt",
+      "origin": "다이나핏",
+      "product": {
+        "title": "FROST (프로스트) β 반팔티_White",
+        "brand": "다이나핏",
+        "price": 25000,
+        "gender": "여성"
+      }
+    },
+    {
+      "itemId": "v04-3449527",
+      "queryId": "v04",
+      "bucket": "G3",
+      "rule": "표기 변형. 원본 질의 기준으로 판정하고 변형 자체로 감점하지 않는다.",
+      "query": "wprtlalrtm",
+      "origin": "젝시믹스",
+      "product": {
+        "title": "아이스페더 숏슬리브 코랄무드",
+        "brand": "젝시믹스",
+        "price": 21000,
+        "gender": "여성"
+      }
+    },
+    {
+      "itemId": "v03-996515",
+      "queryId": "v03",
+      "bucket": "G3",
+      "rule": "표기 변형. 원본 질의 기준으로 판정하고 변형 자체로 감점하지 않는다.",
+      "query": "antlstk tmxosekem",
+      "origin": "무신사 스탠다드",
+      "product": {
+        "title": "크루 넥 7부 티셔츠 [화이트]",
+        "brand": "무신사 스탠다드",
+        "price": 14590,
+        "gender": "남성"
+      }
+    },
+    {
+      "itemId": "v08-3851223",
+      "queryId": "v08",
+      "bucket": "G3",
+      "rule": "표기 변형. 원본 질의 기준으로 판정하고 변형 자체로 감점하지 않는다.",
+      "query": "ㅋㅂㄴ",
+      "origin": "커버낫",
+      "product": {
+        "title": "어센틱 로고 티셔츠 옐로우",
+        "brand": "커버낫",
+        "price": 28080,
+        "gender": "공용"
+      }
+    },
+    {
+      "itemId": "b14-3087807",
+      "queryId": "b14",
+      "bucket": "G1",
+      "rule": "브랜드 질의. 그 브랜드가 아니면 무조건 0.",
+      "query": "다이나핏",
+      "product": {
+        "title": "ATTENSION (어텐션) β 반팔티_Green",
+        "brand": "다이나핏",
+        "price": 25000,
+        "gender": "여성"
+      }
+    },
+    {
+      "itemId": "b16-3449535",
+      "queryId": "b16",
+      "bucket": "G1",
+      "rule": "브랜드 질의. 그 브랜드가 아니면 무조건 0.",
+      "query": "젝시믹스",
+      "product": {
+        "title": "아이스페더 숏슬리브 메이플베이지",
+        "brand": "젝시믹스",
+        "price": 21000,
+        "gender": "여성"
+      }
+    },
+    {
+      "itemId": "v04-3449570",
+      "queryId": "v04",
+      "bucket": "G3",
+      "rule": "표기 변형. 원본 질의 기준으로 판정하고 변형 자체로 감점하지 않는다.",
+      "query": "wprtlalrtm",
+      "origin": "젝시믹스",
+      "product": {
+        "title": "퓨어코튼 아치로고 숏슬리브 볼드그린",
+        "brand": "젝시믹스",
+        "price": 34100,
+        "gender": "남성"
+      }
+    },
+    {
+      "itemId": "v10-4990990",
+      "queryId": "v10",
+      "bucket": "G3",
+      "rule": "표기 변형. 원본 질의 기준으로 판정하고 변형 자체로 감점하지 않는다.",
+      "query": "ㅁㅈㅌ",
+      "origin": "무지티",
+      "product": {
+        "title": "작은 리본 크롭 티셔츠 [마젠타]",
+        "brand": "비디오자키",
+        "price": 19500,
+        "gender": "여성"
+      }
+    },
+    {
+      "itemId": "b16-3449587",
+      "queryId": "b16",
+      "bucket": "G1",
+      "rule": "브랜드 질의. 그 브랜드가 아니면 무조건 0.",
+      "query": "젝시믹스",
+      "product": {
+        "title": "에어센트 숏슬리브 백아이보리",
+        "brand": "젝시믹스",
+        "price": 15600,
+        "gender": "여성"
+      }
+    },
+    {
+      "itemId": "v05-3096674",
+      "queryId": "v05",
+      "bucket": "G3",
+      "rule": "표기 변형. 원본 질의 기준으로 판정하고 변형 자체로 감점하지 않는다.",
+      "query": "ekdlskvlt",
+      "origin": "다이나핏",
+      "product": {
+        "title": "WATER SIGN (워터 싸인) 남성 반팔티_Dark Grey",
+        "brand": "다이나핏",
+        "price": 25000,
+        "gender": "남성"
+      }
+    },
+    {
+      "itemId": "g02-1960700",
+      "queryId": "g02",
+      "bucket": "G2",
+      "rule": "짧은 키워드·속성. 속성이 모두 확인되면 2, 일부만 맞으면 1.",
+      "query": "크롭티",
+      "product": {
+        "title": "여성 체커보드 그래픽 루즈핏크롭티셔츠/MM1WTS02F VIOLET",
+        "brand": "몽키플라워",
+        "price": 18900,
+        "gender": "여성"
+      }
+    },
+    {
+      "itemId": "v08-3851212",
+      "queryId": "v08",
+      "bucket": "G3",
+      "rule": "표기 변형. 원본 질의 기준으로 판정하고 변형 자체로 감점하지 않는다.",
+      "query": "ㅋㅂㄴ",
+      "origin": "커버낫",
+      "product": {
+        "title": "샤인 C 로고 티셔츠 라이트 블루",
+        "brand": "커버낫",
+        "price": 28350,
+        "gender": "공용"
+      }
+    },
+    {
+      "itemId": "g02-1953107",
+      "queryId": "g02",
+      "bucket": "G2",
+      "rule": "짧은 키워드·속성. 속성이 모두 확인되면 2, 일부만 맞으면 1.",
+      "query": "크롭티",
+      "product": {
+        "title": "글리터 로고 언밸런스 크롭티 [블루]",
+        "brand": "러닝하이",
+        "price": 14400,
+        "gender": "여성"
+      }
+    },
+    {
+      "itemId": "g02-1983889",
+      "queryId": "g02",
+      "bucket": "G2",
+      "rule": "짧은 키워드·속성. 속성이 모두 확인되면 2, 일부만 맞으면 1.",
+      "query": "크롭티",
+      "product": {
+        "title": "여성 요가복 DEVI-T0058-블랙 필라테스 티랩 브이 크롭티",
+        "brand": "데비웨어",
+        "price": 29070,
+        "gender": "여성"
+      }
+    },
+    {
+      "itemId": "b14-3096571",
+      "queryId": "b14",
+      "bucket": "G1",
+      "rule": "브랜드 질의. 그 브랜드가 아니면 무조건 0.",
+      "query": "다이나핏",
+      "product": {
+        "title": "ACTION (액션) 여성 반팔티_MINT",
+        "brand": "다이나핏",
+        "price": 25000,
+        "gender": "여성"
+      }
+    },
+    {
+      "itemId": "v05-3087808",
+      "queryId": "v05",
+      "bucket": "G3",
+      "rule": "표기 변형. 원본 질의 기준으로 판정하고 변형 자체로 감점하지 않는다.",
+      "query": "ekdlskvlt",
+      "origin": "다이나핏",
+      "product": {
+        "title": "SHAKER 2.0 (쉐이커 2.0) α 반팔티_Greyish Khaki",
+        "brand": "다이나핏",
+        "price": 30000,
+        "gender": "남성"
+      }
+    },
+    {
+      "itemId": "v03-996518",
+      "queryId": "v03",
+      "bucket": "G3",
+      "rule": "표기 변형. 원본 질의 기준으로 판정하고 변형 자체로 감점하지 않는다.",
+      "query": "antlstk tmxosekem",
+      "origin": "무신사 스탠다드",
+      "product": {
+        "title": "크루 넥 7부 티셔츠 [네이비]",
+        "brand": "무신사 스탠다드",
+        "price": 12090,
+        "gender": "남성"
+      }
+    },
+    {
+      "itemId": "b14-3135998",
+      "queryId": "b14",
+      "bucket": "G1",
+      "rule": "브랜드 질의. 그 브랜드가 아니면 무조건 0.",
+      "query": "다이나핏",
+      "product": {
+        "title": "DRY MAX (드라이 맥스) β 반팔티_White",
+        "brand": "다이나핏",
+        "price": 25000,
+        "gender": "여성"
+      }
+    },
+    {
+      "itemId": "b16-3449568",
+      "queryId": "b16",
+      "bucket": "G1",
+      "rule": "브랜드 질의. 그 브랜드가 아니면 무조건 0.",
+      "query": "젝시믹스",
+      "product": {
+        "title": "퓨어코튼 아치로고 숏슬리브 볼드라임",
+        "brand": "젝시믹스",
+        "price": 49000,
+        "gender": "남성"
+      }
+    },
+    {
+      "itemId": "b14-3096587",
+      "queryId": "b14",
+      "bucket": "G1",
+      "rule": "브랜드 질의. 그 브랜드가 아니면 무조건 0.",
+      "query": "다이나핏",
+      "product": {
+        "title": "ACTION (액션) 남성 반팔티_Blue",
+        "brand": "다이나핏",
+        "price": 25000,
+        "gender": "남성"
+      }
+    },
+    {
+      "itemId": "v08-3851218",
+      "queryId": "v08",
+      "bucket": "G3",
+      "rule": "표기 변형. 원본 질의 기준으로 판정하고 변형 자체로 감점하지 않는다.",
+      "query": "ㅋㅂㄴ",
+      "origin": "커버낫",
+      "product": {
+        "title": "C 로고 티셔츠 그린",
+        "brand": "커버낫",
+        "price": 17550,
+        "gender": "공용"
+      }
+    },
+    {
+      "itemId": "g02-1967921",
+      "queryId": "g02",
+      "bucket": "G2",
+      "rule": "짧은 키워드·속성. 속성이 모두 확인되면 2, 일부만 맞으면 1.",
+      "query": "크롭티",
+      "product": {
+        "title": "뿌르 팜므 로고 프린팅 크롭티 화이트",
+        "brand": "코드아이엠",
+        "price": 23900,
+        "gender": "여성"
+      }
+    },
+    {
+      "itemId": "v05-3096628",
+      "queryId": "v05",
+      "bucket": "G3",
+      "rule": "표기 변형. 원본 질의 기준으로 판정하고 변형 자체로 감점하지 않는다.",
+      "query": "ekdlskvlt",
+      "origin": "다이나핏",
+      "product": {
+        "title": "KEEP (킵) 남성 반팔티_Off White",
+        "brand": "다이나핏",
+        "price": 25000,
+        "gender": "남성"
+      }
+    },
+    {
+      "itemId": "g02-1968018",
+      "queryId": "g02",
+      "bucket": "G2",
+      "rule": "짧은 키워드·속성. 속성이 모두 확인되면 2, 일부만 맞으면 1.",
+      "query": "크롭티",
+      "product": {
+        "title": "뿌르 팜므 로고 프린팅 크롭티 네이비",
+        "brand": "코드아이엠",
+        "price": 23900,
+        "gender": "여성"
+      }
+    },
+    {
+      "itemId": "g02-1960677",
+      "queryId": "g02",
+      "bucket": "G2",
+      "rule": "짧은 키워드·속성. 속성이 모두 확인되면 2, 일부만 맞으면 1.",
+      "query": "크롭티",
+      "product": {
+        "title": "여성 체커보드 그래픽 루즈핏크롭티셔츠/MM1WTS02F WHITE",
+        "brand": "몽키플라워",
+        "price": 18900,
+        "gender": "여성"
+      }
+    },
+    {
+      "itemId": "b14-3096628",
+      "queryId": "b14",
+      "bucket": "G1",
+      "rule": "브랜드 질의. 그 브랜드가 아니면 무조건 0.",
+      "query": "다이나핏",
+      "product": {
+        "title": "KEEP (킵) 남성 반팔티_Off White",
+        "brand": "다이나핏",
+        "price": 25000,
+        "gender": "남성"
+      }
+    },
+    {
+      "itemId": "b14-3096674",
+      "queryId": "b14",
+      "bucket": "G1",
+      "rule": "브랜드 질의. 그 브랜드가 아니면 무조건 0.",
+      "query": "다이나핏",
+      "product": {
+        "title": "WATER SIGN (워터 싸인) 남성 반팔티_Dark Grey",
+        "brand": "다이나핏",
+        "price": 25000,
+        "gender": "남성"
+      }
+    },
+    {
+      "itemId": "v04-3449530",
+      "queryId": "v04",
+      "bucket": "G3",
+      "rule": "표기 변형. 원본 질의 기준으로 판정하고 변형 자체로 감점하지 않는다.",
+      "query": "wprtlalrtm",
+      "origin": "젝시믹스",
+      "product": {
+        "title": "아이스페더 숏슬리브 블랑라벤더",
+        "brand": "젝시믹스",
+        "price": 21000,
+        "gender": "여성"
+      }
+    },
+    {
+      "itemId": "b14-3135979",
+      "queryId": "b14",
+      "bucket": "G1",
+      "rule": "브랜드 질의. 그 브랜드가 아니면 무조건 0.",
+      "query": "다이나핏",
+      "product": {
+        "title": "FROST (프로스트) β 반팔티_White",
+        "brand": "다이나핏",
+        "price": 25000,
+        "gender": "여성"
+      }
+    },
+    {
+      "itemId": "b09-996516",
+      "queryId": "b09",
+      "bucket": "G1",
+      "rule": "브랜드 질의. 그 브랜드가 아니면 무조건 0.",
+      "query": "무신사 스탠다드",
+      "product": {
+        "title": "크루 넥 7부 티셔츠 [블랙]",
+        "brand": "무신사 스탠다드",
+        "price": 18490,
+        "gender": "남성"
+      }
+    },
+    {
+      "itemId": "b14-3135987",
+      "queryId": "b14",
+      "bucket": "G1",
+      "rule": "브랜드 질의. 그 브랜드가 아니면 무조건 0.",
+      "query": "다이나핏",
+      "product": {
+        "title": "FROST (프로스트) β 반팔티_Lime",
+        "brand": "다이나핏",
+        "price": 25000,
+        "gender": "여성"
+      }
+    },
+    {
+      "itemId": "v05-3135987",
+      "queryId": "v05",
+      "bucket": "G3",
+      "rule": "표기 변형. 원본 질의 기준으로 판정하고 변형 자체로 감점하지 않는다.",
+      "query": "ekdlskvlt",
+      "origin": "다이나핏",
+      "product": {
+        "title": "FROST (프로스트) β 반팔티_Lime",
+        "brand": "다이나핏",
+        "price": 25000,
+        "gender": "여성"
+      }
+    },
+    {
+      "itemId": "v03-996516",
+      "queryId": "v03",
+      "bucket": "G3",
+      "rule": "표기 변형. 원본 질의 기준으로 판정하고 변형 자체로 감점하지 않는다.",
+      "query": "antlstk tmxosekem",
+      "origin": "무신사 스탠다드",
+      "product": {
+        "title": "크루 넥 7부 티셔츠 [블랙]",
+        "brand": "무신사 스탠다드",
+        "price": 18490,
+        "gender": "남성"
+      }
+    },
+    {
+      "itemId": "g02-1967988",
+      "queryId": "g02",
+      "bucket": "G2",
+      "rule": "짧은 키워드·속성. 속성이 모두 확인되면 2, 일부만 맞으면 1.",
+      "query": "크롭티",
+      "product": {
+        "title": "뿌르 팜므 로고 프린팅 크롭티 카키",
+        "brand": "코드아이엠",
+        "price": 23900,
+        "gender": "여성"
+      }
+    },
+    {
+      "itemId": "b13-1855618",
+      "queryId": "b13",
+      "bucket": "G1",
+      "rule": "브랜드 질의. 그 브랜드가 아니면 무조건 0.",
+      "query": "크림소다랩",
+      "product": {
+        "title": "오지 아크로고 반팔 티셔츠 블랙",
+        "brand": "크림소다랩",
+        "price": 21000,
+        "gender": "남성"
+      }
+    },
+    {
+      "itemId": "v05-3135970",
+      "queryId": "v05",
+      "bucket": "G3",
+      "rule": "표기 변형. 원본 질의 기준으로 판정하고 변형 자체로 감점하지 않는다.",
+      "query": "ekdlskvlt",
+      "origin": "다이나핏",
+      "product": {
+        "title": "BREATH (브래스) 2.0 β 반팔티_Pearl",
+        "brand": "다이나핏",
+        "price": 25000,
+        "gender": "여성"
+      }
+    },
+    {
+      "itemId": "b16-3449530",
+      "queryId": "b16",
+      "bucket": "G1",
+      "rule": "브랜드 질의. 그 브랜드가 아니면 무조건 0.",
+      "query": "젝시믹스",
+      "product": {
+        "title": "아이스페더 숏슬리브 블랑라벤더",
+        "brand": "젝시믹스",
+        "price": 21000,
+        "gender": "여성"
+      }
+    },
+    {
+      "itemId": "v10-6089466",
+      "queryId": "v10",
+      "bucket": "G3",
+      "rule": "표기 변형. 원본 질의 기준으로 판정하고 변형 자체로 감점하지 않는다.",
+      "query": "ㅁㅈㅌ",
+      "origin": "무지티",
+      "product": {
+        "title": "우먼 베이비핏 로고 티셔츠 마젠타",
+        "brand": "커버낫 우먼",
+        "price": 35100,
+        "gender": "여성"
+      }
+    },
+    {
+      "itemId": "v04-3449587",
+      "queryId": "v04",
+      "bucket": "G3",
+      "rule": "표기 변형. 원본 질의 기준으로 판정하고 변형 자체로 감점하지 않는다.",
+      "query": "wprtlalrtm",
+      "origin": "젝시믹스",
+      "product": {
+        "title": "에어센트 숏슬리브 백아이보리",
+        "brand": "젝시믹스",
+        "price": 15600,
+        "gender": "여성"
+      }
+    },
+    {
+      "itemId": "v05-3096587",
+      "queryId": "v05",
+      "bucket": "G3",
+      "rule": "표기 변형. 원본 질의 기준으로 판정하고 변형 자체로 감점하지 않는다.",
+      "query": "ekdlskvlt",
+      "origin": "다이나핏",
+      "product": {
+        "title": "ACTION (액션) 남성 반팔티_Blue",
+        "brand": "다이나핏",
+        "price": 25000,
+        "gender": "남성"
+      }
+    },
+    {
+      "itemId": "v05-3096571",
+      "queryId": "v05",
+      "bucket": "G3",
+      "rule": "표기 변형. 원본 질의 기준으로 판정하고 변형 자체로 감점하지 않는다.",
+      "query": "ekdlskvlt",
+      "origin": "다이나핏",
+      "product": {
+        "title": "ACTION (액션) 여성 반팔티_MINT",
+        "brand": "다이나핏",
+        "price": 25000,
+        "gender": "여성"
+      }
+    },
+    {
+      "itemId": "b14-3096575",
+      "queryId": "b14",
+      "bucket": "G1",
+      "rule": "브랜드 질의. 그 브랜드가 아니면 무조건 0.",
+      "query": "다이나핏",
+      "product": {
+        "title": "DRY MAX (드라이 맥스) 남성 반팔티_White",
+        "brand": "다이나핏",
+        "price": 25000,
+        "gender": "남성"
+      }
+    },
+    {
+      "itemId": "g02-1960728",
+      "queryId": "g02",
+      "bucket": "G2",
+      "rule": "짧은 키워드·속성. 속성이 모두 확인되면 2, 일부만 맞으면 1.",
+      "query": "크롭티",
+      "product": {
+        "title": "여성 체커보드 그래픽 루즈핏크롭티셔츠/MM1WTS02F BLACK",
+        "brand": "몽키플라워",
+        "price": 18900,
+        "gender": "여성"
+      }
+    },
+    {
+      "itemId": "v10-4860869",
+      "queryId": "v10",
+      "bucket": "G3",
+      "rule": "표기 변형. 원본 질의 기준으로 판정하고 변형 자체로 감점하지 않는다.",
+      "query": "ㅁㅈㅌ",
+      "origin": "무지티",
+      "product": {
+        "title": "타이다이 스타 로고 티셔츠 / 마젠타",
+        "brand": "어널로이드",
+        "price": 17700,
+        "gender": "남성"
+      }
+    },
+    {
+      "itemId": "b07-3418833",
+      "queryId": "b07",
+      "bucket": "G1",
+      "rule": "브랜드 질의. 그 브랜드가 아니면 무조건 0.",
+      "query": "아스트랄 프로젝션",
+      "product": {
+        "title": "[오버핏]아스트랄 58 13수 면 라운드 넥 반팔 티셔츠_블랙",
+        "brand": "아스트랄 프로젝션",
+        "price": 19900,
+        "gender": "남성"
+      }
+    },
+    {
+      "itemId": "b14-3096572",
+      "queryId": "b14",
+      "bucket": "G1",
+      "rule": "브랜드 질의. 그 브랜드가 아니면 무조건 0.",
+      "query": "다이나핏",
+      "product": {
+        "title": "ACTION (액션) 여성 반팔티_Black",
+        "brand": "다이나핏",
+        "price": 25000,
+        "gender": "여성"
+      }
+    },
+    {
+      "itemId": "v08-3851215",
+      "queryId": "v08",
+      "bucket": "G3",
+      "rule": "표기 변형. 원본 질의 기준으로 판정하고 변형 자체로 감점하지 않는다.",
+      "query": "ㅋㅂㄴ",
+      "origin": "커버낫",
+      "product": {
+        "title": "C 로고 티셔츠 레드",
+        "brand": "커버낫",
+        "price": 17550,
+        "gender": "공용"
+      }
+    },
+    {
+      "itemId": "v18-6245403",
+      "queryId": "v18",
+      "bucket": "G3",
+      "rule": "표기 변형. 원본 질의 기준으로 판정하고 변형 자체로 감점하지 않는다.",
+      "query": "커버났",
+      "origin": "커버낫",
+      "product": {
+        "title": "[커버낫 X 미즈노] 빅 로고 다잉 티셔츠 터스크",
+        "brand": "커버낫",
+        "price": 47200,
+        "gender": "남성"
+      }
+    },
+    {
+      "itemId": "v05-3096679",
+      "queryId": "v05",
+      "bucket": "G3",
+      "rule": "표기 변형. 원본 질의 기준으로 판정하고 변형 자체로 감점하지 않는다.",
+      "query": "ekdlskvlt",
+      "origin": "다이나핏",
+      "product": {
+        "title": "PALMA (파르마) 남성 반팔티_Vanilla",
+        "brand": "다이나핏",
+        "price": 25000,
+        "gender": "남성"
+      }
+    },
+    {
+      "itemId": "v08-3340373",
+      "queryId": "v08",
+      "bucket": "G3",
+      "rule": "표기 변형. 원본 질의 기준으로 판정하고 변형 자체로 감점하지 않는다.",
+      "query": "ㅋㅂㄴ",
+      "origin": "커버낫",
+      "product": {
+        "title": "핫썸머 C 로고 티셔츠 더스티 블루",
+        "brand": "커버낫",
+        "price": 29400,
+        "gender": "공용"
+      }
+    },
+    {
+      "itemId": "b09-996508",
+      "queryId": "b09",
+      "bucket": "G1",
+      "rule": "브랜드 질의. 그 브랜드가 아니면 무조건 0.",
+      "query": "무신사 스탠다드",
+      "product": {
+        "title": "릴렉스 핏 크루 넥 포켓 티셔츠 [블랙]",
+        "brand": "무신사 스탠다드",
+        "price": 10090,
+        "gender": "남성"
+      }
+    },
+    {
+      "itemId": "v05-3096572",
+      "queryId": "v05",
+      "bucket": "G3",
+      "rule": "표기 변형. 원본 질의 기준으로 판정하고 변형 자체로 감점하지 않는다.",
+      "query": "ekdlskvlt",
+      "origin": "다이나핏",
+      "product": {
+        "title": "ACTION (액션) 여성 반팔티_Black",
+        "brand": "다이나핏",
+        "price": 25000,
+        "gender": "여성"
+      }
+    },
+    {
+      "itemId": "b09-996507",
+      "queryId": "b09",
+      "bucket": "G1",
+      "rule": "브랜드 질의. 그 브랜드가 아니면 무조건 0.",
+      "query": "무신사 스탠다드",
+      "product": {
+        "title": "릴렉스 핏 크루 넥 포켓 티셔츠 [화이트]",
+        "brand": "무신사 스탠다드",
+        "price": 10090,
+        "gender": "남성"
+      }
+    },
+    {
+      "itemId": "v04-3449538",
+      "queryId": "v04",
+      "bucket": "G3",
+      "rule": "표기 변형. 원본 질의 기준으로 판정하고 변형 자체로 감점하지 않는다.",
+      "query": "wprtlalrtm",
+      "origin": "젝시믹스",
+      "product": {
+        "title": "아이스페더 숏슬리브 시어스킨",
+        "brand": "젝시믹스",
+        "price": 21000,
+        "gender": "여성"
+      }
+    },
+    {
+      "itemId": "v05-3096575",
+      "queryId": "v05",
+      "bucket": "G3",
+      "rule": "표기 변형. 원본 질의 기준으로 판정하고 변형 자체로 감점하지 않는다.",
+      "query": "ekdlskvlt",
+      "origin": "다이나핏",
+      "product": {
+        "title": "DRY MAX (드라이 맥스) 남성 반팔티_White",
+        "brand": "다이나핏",
+        "price": 25000,
+        "gender": "남성"
+      }
+    },
+    {
+      "itemId": "v03-996508",
+      "queryId": "v03",
+      "bucket": "G3",
+      "rule": "표기 변형. 원본 질의 기준으로 판정하고 변형 자체로 감점하지 않는다.",
+      "query": "antlstk tmxosekem",
+      "origin": "무신사 스탠다드",
+      "product": {
+        "title": "릴렉스 핏 크루 넥 포켓 티셔츠 [블랙]",
+        "brand": "무신사 스탠다드",
+        "price": 10090,
+        "gender": "남성"
+      }
+    },
+    {
+      "itemId": "b09-996518",
+      "queryId": "b09",
+      "bucket": "G1",
+      "rule": "브랜드 질의. 그 브랜드가 아니면 무조건 0.",
+      "query": "무신사 스탠다드",
+      "product": {
+        "title": "크루 넥 7부 티셔츠 [네이비]",
+        "brand": "무신사 스탠다드",
+        "price": 12090,
+        "gender": "남성"
+      }
+    },
+    {
+      "itemId": "b07-3418824",
+      "queryId": "b07",
+      "bucket": "G1",
+      "rule": "브랜드 질의. 그 브랜드가 아니면 무조건 0.",
+      "query": "아스트랄 프로젝션",
+      "product": {
+        "title": "[오버핏]아스트랄 58 13수 면 라운드 넥 반팔 티셔츠_네이비",
+        "brand": "아스트랄 프로젝션",
+        "price": 19900,
+        "gender": "남성"
+      }
+    },
+    {
+      "itemId": "b14-3135970",
+      "queryId": "b14",
+      "bucket": "G1",
+      "rule": "브랜드 질의. 그 브랜드가 아니면 무조건 0.",
+      "query": "다이나핏",
+      "product": {
+        "title": "BREATH (브래스) 2.0 β 반팔티_Pearl",
+        "brand": "다이나핏",
+        "price": 25000,
+        "gender": "여성"
+      }
+    },
+    {
+      "itemId": "b11-4924215",
+      "queryId": "b11",
+      "bucket": "G1",
+      "rule": "브랜드 질의. 그 브랜드가 아니면 무조건 0.",
+      "query": "티글레이크",
+      "product": {
+        "title": "뉴욕후드베어 반팔 티셔츠_6color",
+        "brand": "티글레이크",
+        "price": 18900,
+        "gender": "공용"
+      }
+    },
+    {
+      "itemId": "v04-3449568",
+      "queryId": "v04",
+      "bucket": "G3",
+      "rule": "표기 변형. 원본 질의 기준으로 판정하고 변형 자체로 감점하지 않는다.",
+      "query": "wprtlalrtm",
+      "origin": "젝시믹스",
+      "product": {
+        "title": "퓨어코튼 아치로고 숏슬리브 볼드라임",
+        "brand": "젝시믹스",
+        "price": 49000,
+        "gender": "남성"
+      }
+    },
+    {
+      "itemId": "v08-3235383",
+      "queryId": "v08",
+      "bucket": "G3",
+      "rule": "표기 변형. 원본 질의 기준으로 판정하고 변형 자체로 감점하지 않는다.",
+      "query": "ㅋㅂㄴ",
+      "origin": "커버낫",
+      "product": {
+        "title": "라운드 포켓 티셔츠 베이지",
+        "brand": "커버낫",
+        "price": 29500,
+        "gender": "공용"
+      }
+    },
+    {
+      "itemId": "v08-3235372",
+      "queryId": "v08",
+      "bucket": "G3",
+      "rule": "표기 변형. 원본 질의 기준으로 판정하고 변형 자체로 감점하지 않는다.",
+      "query": "ㅋㅂㄴ",
+      "origin": "커버낫",
+      "product": {
+        "title": "실켓 라운드 티셔츠 터콰이즈",
+        "brand": "커버낫",
+        "price": 41300,
+        "gender": "공용"
+      }
+    }
+  ]
+}

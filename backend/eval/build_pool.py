@@ -41,6 +41,11 @@ SYSTEM_CHANGELOG = {
         "2026-08-17: 서버 표기 폴백 추가, query_used 반환",
         "2026-08-17: 오타 교정을 브랜드 사전 + 자모 거리로 좁힘",
         "2026-08-17: 폴백을 첫 페이지에서만 결정 (이후 페이지는 query_used로 이어간다)",
+        "2026-08-17 C-1: 티셔츠 판정을 제목 정규식에서 카테고리 순위로",
+        "2026-08-17 C-2: 색 표현을 텍스트에서 빼내 색 라벨 필터로 (브랜드명 보호 포함)",
+        "2026-08-17 C-3: 가격 표현을 텍스트에서 빼내 가격 범위 필터로",
+        "2026-08-17 C-3 리뷰 반영: `미만` 경계·숫자 상한·5단어 절단 순서·"
+        "단어 단위 자판 복원·역할어 조사 허용",
     ],
 }
 
@@ -53,12 +58,37 @@ SYSTEMS = {
         # v1도 서버에서 자판 복원·오타 교정을 한다. 지금 다시 만들면
         # dkelektm·아디다드가 0건이 아니게 된다. A단계 개선폭을 말할 때
         # "같은 시스템 비교"가 아님을 기억해야 한다(SYSTEM_CHANGELOG 참고).
-        "sql": "select goods_no, title, brand_name, price_final, gender, query_used from c_search_page(%s, null, %s)",
+        "sql": (
+            "select r.goods_no, r.title, r.brand_name, r.price_final, r.gender, r.query_used,"
+            " (select string_agg(cg.name_ko, '/' order by cg.code) from c_color_groups cg"
+            "   where cg.code = any(g.color_codes)) as color_label,"
+            " g.category"
+            " from c_search_page(%s, null, %s) with ordinality as r("
+            "   goods_no, title, brand_name, price_final, thumbnail, gender, gallery,"
+            "   width, height, query_used, ord)"
+            " join c_goods g using (goods_no) order by r.ord"
+        ),
         "args": lambda q, n: (q, n),
     },
     "a": {
         "name": "a-c_search_page_v2-pgroonga-bigram",
-        "sql": "select goods_no, title, brand_name, price_final, gender, query_used from c_search_page_v2(%s, null, null, %s)",
+        "sql": (
+            # 색 라벨·카테고리를 함께 가져온다. 검색이 이 값들로 거르고 순위를
+            # 매기는데 채점자에게 안 보여 주면 **측정 장치가 측정 대상을 못 본다** —
+            # 실제로 색 라벨이 검정인 상품들이 제목에 '검정'이 없다는 이유로
+            # 등급 1을 받아, 색 필터 도입이 개선인지 회귀인지 알 수 없었다.
+            # ⚠️ `with ordinality` + `order by ord`가 **필수**다. 조인은 함수가 낸
+            # 순서를 보존하지 않는다. 처음에 빠뜨렸더니 풀의 순위가 뒤섞여
+            # 순위에 민감한 P@20·nDCG가 조용히 달라졌다(ㅋㅂㄴ 0.95 → 0.80).
+            "select r.goods_no, r.title, r.brand_name, r.price_final, r.gender, r.query_used,"
+            " (select string_agg(cg.name_ko, '/' order by cg.code) from c_color_groups cg"
+            "   where cg.code = any(g.color_codes)) as color_label,"
+            " g.category"
+            " from c_search_page_v2(%s, null, null, %s) with ordinality as r("
+            "   goods_no, title, brand_name, price_final, gender, gallery, thumbnail,"
+            "   width, height, score, query_used, ord)"
+            " join c_goods g using (goods_no) order by r.ord"
+        ),
         "args": lambda q, n: (q, n),
     },
 }
@@ -78,13 +108,17 @@ UNJUDGED_POLICY = {
 }
 
 MAX_QUERY_CHARS = 60
-MAX_QUERY_WORDS = 5
 
 
 def normalize_query(raw: str) -> str:
-    """프론트·서버 공통 정규화와 같은 규칙 (use-search-state.ts normalizeQuery)."""
+    """프론트·서버 공통 정규화와 같은 규칙 (use-search-state.ts normalizeQuery).
+
+    ⚠️ **단어 수는 자르지 않는다.** 예전엔 앞 5단어만 넘겼는데, 그러면 서버가
+    문장 뒤의 가격·색 조건을 볼 기회 자체가 없어져 **평가가 그 실패를 숨긴다.**
+    서버는 조건을 뽑은 뒤에 텍스트 단어만 5개로 자른다(교차 리뷰 M1).
+    """
     words = [w for w in re.split(r"\s+", raw[:MAX_QUERY_CHARS]) if w]
-    return " ".join(words[:MAX_QUERY_WORDS])
+    return " ".join(words)
 
 
 # 한영 자판 복원·오타 교정은 **서버(c_search_page_v2)에 있다.** 예전엔 여기에
@@ -161,6 +195,9 @@ def build(system: str) -> dict:  # noqa: C901
                                 "brandName": r[2],
                                 "priceFinal": r[3],
                                 "gender": r[4],
+                                # 아래 둘은 검색이 실제로 쓰는 값이다
+                                "colorLabel": r[6],
+                                "category": r[7],
                             }
                             for i, r in enumerate(rows)
                         ],
@@ -188,7 +225,10 @@ def build(system: str) -> dict:  # noqa: C901
                 ),
             },
             "unjudgedPolicy": UNJUDGED_POLICY,
-            "normalization": f"앞 {MAX_QUERY_CHARS}자 → 공백 분리 → 앞 {MAX_QUERY_WORDS}단어 (프론트와 동일)",
+            "normalization": (
+                f"앞 {MAX_QUERY_CHARS}자 → 공백 분리 (프론트와 동일). "
+                "단어 수 제한은 서버가 구조화 조건을 뽑은 뒤 텍스트에만 적용한다"
+            ),
         },
         "queries": results,
     }

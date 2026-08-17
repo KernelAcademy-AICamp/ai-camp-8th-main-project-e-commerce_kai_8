@@ -4,18 +4,24 @@ import { useCallback, useRef, useState } from "react";
 
 import { touchSession } from "@/shared/signals/signals";
 
-// 서버(c_search_page)의 입력 방어와 같은 값 — 화면 라벨과 실제 검색 조건이
-// 어긋나지 않게 제출 시점에 같은 정규화를 미리 적용한다 (외부 리뷰 지적)
+// 서버의 입력 방어와 같은 값 — 화면 라벨과 실제 검색 조건이 어긋나지 않게
+// 제출 시점에 같은 정규화를 미리 적용한다.
+//
+// ⚠️ **단어 수는 여기서 자르지 않는다.** 예전엔 앞 5단어만 보냈는데, 서버가
+// 색·가격 같은 조건을 뽑아내는 지금은 그게 조건을 통째로 삼킨다 —
+// `여름에 입을 검정 반팔티 3만원 이하`는 여섯 번째 단어 `이하`가 잘려 가격
+// 조건이 사라졌다. 서버는 조건을 뽑은 **뒤에** 텍스트 단어만 5개로 자른다.
+// 여기서 미리 자르면 서버의 수정이 사용자에게 닿지 않는다(교차 리뷰 M1).
+//
+// 60자 상한은 그대로 둔다 — 그게 실제 방어선이다.
 const MAX_QUERY_CHARS = 60;
-const MAX_QUERY_WORDS = 5;
 
-/** 서버와 동일한 정규화: 앞 60자 → 공백 분리 → 앞 5단어 → 단일 공백 결합 */
+/** 서버와 동일한 정규화: 앞 60자 → 공백 분리 → 단일 공백 결합 */
 export function normalizeQuery(raw: string): string {
   return raw
     .slice(0, MAX_QUERY_CHARS)
     .split(/\s+/)
     .filter((word) => word !== "")
-    .slice(0, MAX_QUERY_WORDS)
     .join(" ");
 }
 

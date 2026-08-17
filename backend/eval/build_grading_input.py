@@ -36,6 +36,18 @@ GRADED_FILES = (
     "grading-codex-a2.json",
     "grading-codex-a3.json",
     "grading-codex-typo.json",
+    "grading-codex-cat.json",
+    "grading-codex-color.json",
+    # 아래 둘은 기준서 v3(색 라벨·카테고리를 보여준다)으로 매긴 것이다.
+    #
+    # ⚠️ **이 함수에서는 순서가 의미 없다.** already_graded()는 itemId를 집합에
+    # 넣을 뿐 등급을 읽지 않는다. "마지막 파일이 이긴다"가 성립하는 곳은
+    # compute_baseline.py의 점수 계산(딕셔너리를 덮어쓴다)뿐이다.
+    # 여기서 v3 파일을 넣는 이유는 그 항목들을 "이미 판정됨"으로 세기 위해서다.
+    "grading-codex-color2.json",
+    "grading-codex-color3.json",
+    "grading-codex-range.json",   # 기준서 v3.1 (제품 범위 명시)
+    "grading-codex-price.json",   # C-3 가격 조건
 )
 
 # 세지 않는 파일과 그 이유 — 지우지 말고 여기 남긴다
@@ -101,6 +113,12 @@ def build(partitions: set[str], pool_name: str, exclude_graded: bool) -> dict:
                         "brand": cand["brandName"],
                         "price": cand["priceFinal"],
                         "gender": cand["gender"],
+                        # ⚠️ 아래 둘은 **판매자 라벨(정본)**이지 제목에서 읽은 것이
+                        # 아니다. 검색이 이 값으로 거르고 순위를 매기므로 채점자도
+                        # 봐야 한다 — 안 보여 주면 색 라벨이 검정인 상품이 제목에
+                        # '검정'이 없다는 이유로 "확인 불가(1)"가 된다.
+                        "colorLabel": cand.get("colorLabel"),
+                        "category": cand.get("category"),
                     },
                 }
             )
@@ -131,6 +149,14 @@ def build(partitions: set[str], pool_name: str, exclude_graded: bool) -> dict:
                 "0": "무관, 또는 계열 규칙 위반(브랜드 불일치·하드조건 위반·부정조건 위반)",
             },
             "needsImage": "이미지를 봐야 판단되면 true로 표시하고 등급은 1을 준다",
+            "colorLabel": (
+                "판매자가 등록한 색 라벨(정본). 제목에 색이 안 적혀 있어도 이 값이 "
+                "질의의 색과 맞으면 색 조건은 **확인된 것**으로 본다"
+            ),
+            "category": (
+                "무신사 카테고리 정본. 001001 반팔 티셔츠 · 001003 피케·카라 · "
+                "001004 후드·맨투맨 · 001010 긴팔 · 001011 민소매"
+            ),
             "outputFormat": '[{"itemId": "...", "grade": 0|1|2, "needsImage": true|false}]',
         },
         "items": items,

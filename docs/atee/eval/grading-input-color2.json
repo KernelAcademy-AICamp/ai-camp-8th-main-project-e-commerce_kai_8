@@ -1,0 +1,310 @@
+{
+  "meta": {
+    "purpose": "색 라벨·카테고리를 **보여준 뒤** 다시 채점한다. 이전 채점본은 이 값들을 못 봤다.",
+    "why": "검색이 색 라벨로 거르는데 채점자는 제목만 봤다. 그래서 실제로 검정인 상품이 제목에 '검정'이 없다는 이유로 '확인 불가(1)'를 받았고, 색 필터가 개선인지 회귀인지 알 수 없었다.",
+    "rubricChange": "colorLabel이 질의의 색과 맞으면 색 조건은 확인된 것으로 본다. category는 제품군 정본이다.",
+    "count": 20
+  },
+  "items": [
+    {
+      "itemId": "a-g2-03-1425234",
+      "queryId": "a-g2-03",
+      "bucket": "G2",
+      "rule": "짧은 키워드·속성. 속성이 모두 확인되면 2, 일부만 맞으면 1.",
+      "query": "검정 반팔",
+      "product": {
+        "title": "[SET]아이스버그 반팔 STST3279 + 스플래쉬 반팔 STST3278",
+        "brandName": "티떠블유엔",
+        "priceFinal": 39800,
+        "gender": "남성",
+        "colorLabel": "블랙",
+        "category": "001001"
+      }
+    },
+    {
+      "itemId": "a-g2-03-1511686",
+      "queryId": "a-g2-03",
+      "bucket": "G2",
+      "rule": "짧은 키워드·속성. 속성이 모두 확인되면 2, 일부만 맞으면 1.",
+      "query": "검정 반팔",
+      "product": {
+        "title": "베이직 블랙 티셔츠 / 로고반팔티 남녀공용 반팔 커플티",
+        "brandName": "얼티메이크",
+        "priceFinal": 59000,
+        "gender": "남성",
+        "colorLabel": "블랙",
+        "category": "001001"
+      }
+    },
+    {
+      "itemId": "a-g2-03-1970658",
+      "queryId": "a-g2-03",
+      "bucket": "G2",
+      "rule": "짧은 키워드·속성. 속성이 모두 확인되면 2, 일부만 맞으면 1.",
+      "query": "검정 반팔",
+      "product": {
+        "title": "서퍼X서퍼 2 반팔 티셔츠 반팔 티셔츠  (블랙)",
+        "brandName": "이모션플래닛",
+        "priceFinal": 15000,
+        "gender": "남성",
+        "colorLabel": "블랙",
+        "category": "001001"
+      }
+    },
+    {
+      "itemId": "a-g2-03-3214647",
+      "queryId": "a-g2-03",
+      "bucket": "G2",
+      "rule": "짧은 키워드·속성. 속성이 모두 확인되면 2, 일부만 맞으면 1.",
+      "query": "검정 반팔",
+      "product": {
+        "title": "[SET] 매니지 반팔티셔츠 + 크랙 텍스쳐 반팔티셔츠 SET(SHST6690+SHST6689)",
+        "brandName": "에즈카톤",
+        "priceFinal": 38900,
+        "gender": "남성",
+        "colorLabel": "블랙",
+        "category": "001001"
+      }
+    },
+    {
+      "itemId": "a-g2-03-3228238",
+      "queryId": "a-g2-03",
+      "bucket": "G2",
+      "rule": "짧은 키워드·속성. 속성이 모두 확인되면 2, 일부만 맞으면 1.",
+      "query": "검정 반팔",
+      "product": {
+        "title": "[SET] 스릴 반팔 4종 WSST6210 + 트위스트 반팔 3종 WSST6211",
+        "brandName": "펀치라인",
+        "priceFinal": 39800,
+        "gender": "남성",
+        "colorLabel": "블랙",
+        "category": "001001"
+      }
+    },
+    {
+      "itemId": "a-g2-03-3258223",
+      "queryId": "a-g2-03",
+      "bucket": "G2",
+      "rule": "짧은 키워드·속성. 속성이 모두 확인되면 2, 일부만 맞으면 1.",
+      "query": "검정 반팔",
+      "product": {
+        "title": "[2PACK]MAIN LOGO 쿨 코튼 반팔&피그먼트 반팔",
+        "brandName": "1989스탠다드",
+        "priceFinal": 51400,
+        "gender": "남성",
+        "colorLabel": "블랙",
+        "category": "001001"
+      }
+    },
+    {
+      "itemId": "a-g2-03-3277817",
+      "queryId": "a-g2-03",
+      "bucket": "G2",
+      "rule": "짧은 키워드·속성. 속성이 모두 확인되면 2, 일부만 맞으면 1.",
+      "query": "검정 반팔",
+      "product": {
+        "title": "[2PACK] 데몬 반팔 5종 JYST3490 + 비트리오 반팔 4종 JYST3493",
+        "brandName": "티떠블유엔",
+        "priceFinal": 39800,
+        "gender": "남성",
+        "colorLabel": "블랙",
+        "category": "001001"
+      }
+    },
+    {
+      "itemId": "a-g2-03-3293535",
+      "queryId": "a-g2-03",
+      "bucket": "G2",
+      "rule": "짧은 키워드·속성. 속성이 모두 확인되면 2, 일부만 맞으면 1.",
+      "query": "검정 반팔",
+      "product": {
+        "title": "[SET] 마인드셋 반팔 5종 ISST6214 + 무버 반팔 5종 ISST6216",
+        "brandName": "펀치라인",
+        "priceFinal": 39800,
+        "gender": "남성",
+        "colorLabel": "블랙",
+        "category": "001001"
+      }
+    },
+    {
+      "itemId": "a-g2-03-3967663",
+      "queryId": "a-g2-03",
+      "bucket": "G2",
+      "rule": "짧은 키워드·속성. 속성이 모두 확인되면 2, 일부만 맞으면 1.",
+      "query": "검정 반팔",
+      "product": {
+        "title": "올 굿 크롭 반팔티 반팔 티셔츠",
+        "brandName": "칙스",
+        "priceFinal": 13230,
+        "gender": "여성",
+        "colorLabel": "화이트/블랙",
+        "category": "001001"
+      }
+    },
+    {
+      "itemId": "a-g2-03-3968697",
+      "queryId": "a-g2-03",
+      "bucket": "G2",
+      "rule": "짧은 키워드·속성. 속성이 모두 확인되면 2, 일부만 맞으면 1.",
+      "query": "검정 반팔",
+      "product": {
+        "title": "973 반팔티 반팔 티셔츠 화이트 3color",
+        "brandName": "칙스",
+        "priceFinal": 25900,
+        "gender": "공용",
+        "colorLabel": "화이트/블랙/라이트 그레이",
+        "category": "001001"
+      }
+    },
+    {
+      "itemId": "a-g2-03-4046501",
+      "queryId": "a-g2-03",
+      "bucket": "G2",
+      "rule": "짧은 키워드·속성. 속성이 모두 확인되면 2, 일부만 맞으면 1.",
+      "query": "검정 반팔",
+      "product": {
+        "title": "[SET]어드벤쳐 트럭커 포켓 반팔티셔츠+무빙 쉐도우 반팔티셔츠 (FST141+FST149)",
+        "brandName": "플루크",
+        "priceFinal": 30800,
+        "gender": "남성",
+        "colorLabel": "화이트/블랙/브라운/네이비",
+        "category": "001001"
+      }
+    },
+    {
+      "itemId": "a-g2-03-4080149",
+      "queryId": "a-g2-03",
+      "bucket": "G2",
+      "rule": "짧은 키워드·속성. 속성이 모두 확인되면 2, 일부만 맞으면 1.",
+      "query": "검정 반팔",
+      "product": {
+        "title": "[SET] 마크메이커 피그먼트 반팔 4종 SMST4633 + 더 갓 피그먼트 반팔 4종 BJST4637",
+        "brandName": "퍼스텝",
+        "priceFinal": 43900,
+        "gender": "남성",
+        "colorLabel": "블랙",
+        "category": "001001"
+      }
+    },
+    {
+      "itemId": "a-g2-03-4089105",
+      "queryId": "a-g2-03",
+      "bucket": "G2",
+      "rule": "짧은 키워드·속성. 속성이 모두 확인되면 2, 일부만 맞으면 1.",
+      "query": "검정 반팔",
+      "product": {
+        "title": "[SET] 맨인어프 반팔 4종 HHST3563 + 컨시스턴트 반팔 5종 JYST3550",
+        "brandName": "티떠블유엔",
+        "priceFinal": 39800,
+        "gender": "남성",
+        "colorLabel": "블랙",
+        "category": "001001"
+      }
+    },
+    {
+      "itemId": "a-g2-03-4111892",
+      "queryId": "a-g2-03",
+      "bucket": "G2",
+      "rule": "짧은 키워드·속성. 속성이 모두 확인되면 2, 일부만 맞으면 1.",
+      "query": "검정 반팔",
+      "product": {
+        "title": "[SET] 캐치더웨이브 반팔 4종 BJST4631 + 베리언스 반팔 4종 BJST4640",
+        "brandName": "퍼스텝",
+        "priceFinal": 38900,
+        "gender": "남성",
+        "colorLabel": "블랙",
+        "category": "001001"
+      }
+    },
+    {
+      "itemId": "a-g2-03-4119353",
+      "queryId": "a-g2-03",
+      "bucket": "G2",
+      "rule": "짧은 키워드·속성. 속성이 모두 확인되면 2, 일부만 맞으면 1.",
+      "query": "검정 반팔",
+      "product": {
+        "title": "[4colors] 아이스 쿨링 여름 냉장고 무지 반팔 [MEN] 오버핏 반팔티 ver.",
+        "brandName": "콜릿",
+        "priceFinal": 21000,
+        "gender": "남성",
+        "colorLabel": "화이트/블랙/그레이/오트밀",
+        "category": "001001"
+      }
+    },
+    {
+      "itemId": "a-g2-03-4188865",
+      "queryId": "a-g2-03",
+      "bucket": "G2",
+      "rule": "짧은 키워드·속성. 속성이 모두 확인되면 2, 일부만 맞으면 1.",
+      "query": "검정 반팔",
+      "product": {
+        "title": "[CP] Gorilla 골퍼 오버핏 반팔티 오버핏 반팔티 AST4596 (4 COLOR)",
+        "brandName": "앨빈클로",
+        "priceFinal": 24900,
+        "gender": "남성",
+        "colorLabel": "화이트/블랙/아이보리/다크 블루",
+        "category": "001001"
+      }
+    },
+    {
+      "itemId": "a-g2-03-4259445",
+      "queryId": "a-g2-03",
+      "bucket": "G2",
+      "rule": "짧은 키워드·속성. 속성이 모두 확인되면 2, 일부만 맞으면 1.",
+      "query": "검정 반팔",
+      "product": {
+        "title": "[SET] 퍼펙트 특양면 오버핏 숄더 2중절개 무지 반팔 티셔츠_7Color + 퍼펙트 특양면 무지 머슬핏 반팔 티셔츠_7Color",
+        "brandName": "바이젝",
+        "priceFinal": 68400,
+        "gender": "남성",
+        "colorLabel": "화이트/블랙/다크 그레이/오트밀/다크 네이비/다크 그린/카키",
+        "category": "001001"
+      }
+    },
+    {
+      "itemId": "a-g2-03-5265754",
+      "queryId": "a-g2-03",
+      "bucket": "G2",
+      "rule": "짧은 키워드·속성. 속성이 모두 확인되면 2, 일부만 맞으면 1.",
+      "query": "검정 반팔",
+      "product": {
+        "title": "프리미엄 반팔 블랙 빅로고 오버핏 반팔티",
+        "brandName": "저스트행",
+        "priceFinal": 43020,
+        "gender": "남성",
+        "colorLabel": "블랙",
+        "category": "001001"
+      }
+    },
+    {
+      "itemId": "a-g2-03-5519916",
+      "queryId": "a-g2-03",
+      "bucket": "G2",
+      "rule": "짧은 키워드·속성. 속성이 모두 확인되면 2, 일부만 맞으면 1.",
+      "query": "검정 반팔",
+      "product": {
+        "title": "시그니처 그래피티 오버핏 반팔 기능성 짐웨어 헬스 러닝 운동복 반팔 W 블랙2",
+        "brandName": "레이지비",
+        "priceFinal": 34900,
+        "gender": "공용",
+        "colorLabel": "블랙",
+        "category": "001001"
+      }
+    },
+    {
+      "itemId": "a-g2-03-5519923",
+      "queryId": "a-g2-03",
+      "bucket": "G2",
+      "rule": "짧은 키워드·속성. 속성이 모두 확인되면 2, 일부만 맞으면 1.",
+      "query": "검정 반팔",
+      "product": {
+        "title": "시그니처 그래피티 오버핏 반팔 기능성 짐웨어 헬스 러닝 운동복 반팔 M 블랙2",
+        "brandName": "레이지비",
+        "priceFinal": 34900,
+        "gender": "공용",
+        "colorLabel": "블랙",
+        "category": "001001"
+      }
+    }
+  ]
+}

@@ -146,31 +146,52 @@ begin
 end
 $$;
 
--- 자판 복원을 시도할 만한 질의인가 — 한글이 없고 두벌식 자판 글자로만 이뤄졌을 때.
--- ⚠️ 이것만으로 영어 단어와 구분할 수 없다(`nike`도 자판 글자다). 그래서 바로
--- 치환하지 않고 **원문이 0건일 때만** 폴백으로 쓴다.
+-- 자판으로 잘못 친 부분을 되돌린다. **단어마다 따로 판단한다.**
+--
+-- 예전엔 질의 **전체**가 두벌식 글자로만 이뤄져야 시도했다. 그래서 한글이나
+-- 숫자가 하나라도 섞이면 통째로 포기했고, `rjawjd qksvkf 3만원 이하`는 가격
+-- 표현 때문에 자판 복원이 막혀 0건이 됐다(교차 리뷰 M4). 사람은 한 단어만
+-- 잘못 치기도 한다.
+--
+-- ⚠️ 단어 하나만으로는 영어 단어와 구분할 수 없다(`nike`도 자판 글자다).
+-- 그래서 ⓐ 한글 음절이 실제로 만들어질 때만 바꾸고 ⓑ **원문이 0건일 때만**
+-- 폴백으로 쓴다. 결과가 있으면 그게 사용자 의도다.
 create or replace function c_restore_hangul_typing(p_query text)
 returns text
 language plpgsql immutable
 set search_path = public, pg_catalog, pg_temp
 as $$
 declare
-  v_trim text := btrim(coalesce(p_query, ''));
-  v_letters text := replace(v_trim, ' ', '');
-  v_restored text;
+  v_out   text[] := '{}';
+  v_hit   boolean := false;
+  w       text;
+  restored text;
 begin
-  if v_trim = '' then return null; end if;
-  if v_trim ~ '[가-힣ㄱ-ㅎㅏ-ㅣ]' then return null; end if;   -- 이미 한글이 있다
-  if length(v_letters) < 2 then return null; end if;
-  -- 전부 두벌식 자판 글자여야 한다 (영어 단어를 잘못 바꾸지 않도록)
-  if v_letters ~ '[^rRseEfaqQtTdwWczxvgkoiOjpuPhynbml]' then return null; end if;
+  if btrim(coalesce(p_query, '')) = '' then
+    return null;
+  end if;
 
-  v_restored := c_qwerty_to_hangul(v_trim);
-  return case when v_restored ~ '[가-힣]' then v_restored else null end;
+  foreach w in array regexp_split_to_array(btrim(p_query), '\s+') loop
+    if length(w) >= 2                                        -- 한 글자는 대상이 아니다
+       and w !~ '[가-힣ㄱ-ㅎㅏ-ㅣ]'                            -- 이미 한글이면 손대지 않는다
+       and w ~ '^[rRseEfaqQtTdwWczxvgkoiOjpuPhynbml]+$' then  -- 두벌식 자판 글자만
+      restored := c_qwerty_to_hangul(w);
+      if restored ~ '[가-힣]' then                            -- 음절이 실제로 만들어졌다
+        v_out := v_out || restored;
+        v_hit := true;
+        continue;
+      end if;
+    end if;
+    v_out := v_out || w;
+  end loop;
+
+  if not v_hit then
+    return null;   -- 바꾼 것이 없다 — 호출자가 폴백을 건너뛴다
+  end if;
+  return array_to_string(v_out, ' ');
 end
 $$;
 
--- 역할을 명시해서 지운다 — `from public`만으로는 Supabase 기본 권한이 남는다.
 revoke all on function c_compose_hangul(text, text, text) from public, anon, authenticated;
 revoke all on function c_qwerty_to_hangul(text) from public, anon, authenticated;
 revoke all on function c_restore_hangul_typing(text) from public, anon, authenticated;
