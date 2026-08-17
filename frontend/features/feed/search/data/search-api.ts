@@ -10,11 +10,21 @@ const SEARCH_TIMEOUT_MS = 10_000;
 /**
  * 새 검색 경로(A단계 — PGroonga 한국어 색인·관련도 정렬)를 쓸지.
  *
- * `NEXT_PUBLIC_SEARCH_V2=off`면 즉시 구 경로(`c_search_page`)로 돌아간다.
- * 구 RPC와 구 색인 테이블을 일정 기간 유지하므로 **코드 변경 없이 환경변수만으로
- * 되돌릴 수 있다**(2차 리뷰 M11 — 캐시된 구버전 클라이언트 보호).
+ * **기본은 꺼짐(구 경로).** `NEXT_PUBLIC_SEARCH_V2=on`을 명시해야 켜진다.
+ * A단계가 완료 기준 5개 중 2개만 충족했고(오타 교정 미구현·띄어쓰기 미해결·G2 회귀),
+ * 성능 게이트 3개가 미측정이라 기본 활성은 이르다.
+ *
+ * ⚠️ **이 값은 빌드 시 번들에 고정된다.** `NEXT_PUBLIC_*`는 런타임 환경변수가
+ * 아니므로 끄고 켜려면 **재빌드·재배포가 필요하다.** 이전 주석이 "환경변수만으로
+ * 되돌릴 수 있다"고 한 것은 틀렸다(구현 리뷰 B1). 배포 없이 끌 수 있는 스위치가
+ * 필요하면 서버가 내려주는 설정으로 옮겨야 한다 — 아직 안 했다.
  */
-export const USE_SEARCH_V2 = process.env.NEXT_PUBLIC_SEARCH_V2 !== "off";
+export const isSearchV2Enabled = (): boolean =>
+  process.env.NEXT_PUBLIC_SEARCH_V2 === "on";
+
+/** 검색 로그·비교에 남길 실행 경로 식별자 */
+export const searchVersion = (): string =>
+  isSearchV2Enabled() ? "search-v2-pgroonga-bigram" : "search-v1-substring";
 
 /**
  * 검색 커서. 구 경로는 `goods_no` 하나였지만 관련도 정렬에서는 (점수, 번호)
@@ -47,7 +57,7 @@ export async function fetchSearchPage(
   cursor: SearchCursor | null,
   size: number,
 ): Promise<SearchPage> {
-  if (!USE_SEARCH_V2) {
+  if (!isSearchV2Enabled()) {
     const dtos = await rpcPost<FeedProductDto[]>(
       "c_search_page",
       { p_query: query, p_after: cursor?.goodsNo ?? null, p_size: size },

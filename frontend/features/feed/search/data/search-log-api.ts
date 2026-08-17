@@ -1,10 +1,10 @@
+import { searchVersion } from "@/features/feed/search/data/search-api";
 import { getDeviceId } from "@/shared/signals/device-id";
 import { rpcPost } from "@/shared/supabase-rpc";
 
-// 검색 알고리즘 버전 — 피드 개인화 버전(MODEL_VER)과 **분리한다**.
-// 같이 쓰면 A단계 색인이 배포돼도 기존 검색과 구분할 수 없고, 구분하려고
-// 값을 바꾸면 행동 로그 버전까지 불필요하게 바뀐다(구현 리뷰 지적).
-export const SEARCH_VER = "search-v1-substring";
+// 검색 알고리즘 버전은 **실제 실행된 경로**에서 가져온다(search-api).
+// 상수로 박아두면 v2가 도는데 로그는 v1로 남아 전환 전후 비교가 통째로
+// 오염된다 — 실제로 그 상태였다(구현 리뷰 M9).
 
 /**
  * 검색어 기록 (검색 0단계 계획 1단계 · 방침 O-32).
@@ -30,6 +30,11 @@ export interface SearchLogInput {
   sessionId: string;
   /** **제출 시각** (응답 시각이 아니다) */
   occurredAt: string;
+  /**
+   * 실제 검색에 쓰인 질의. 한영 자판 폴백이 걸리면 정규화 질의와 다르다 —
+   * 무엇으로 찾았는지 모르면 로그로 원인을 되짚을 수 없다(구현 리뷰 M9).
+   */
+  queryUsed: string;
 }
 
 export async function postSearchLog(input: SearchLogInput): Promise<void> {
@@ -45,7 +50,8 @@ export async function postSearchLog(input: SearchLogInput): Promise<void> {
           query_norm: input.queryNorm,
           result_count: input.resultCount,
           occurred_at: input.occurredAt,
-          model_ver: SEARCH_VER,
+          query_used: input.queryUsed,
+          model_ver: searchVersion(),
         },
       ],
     },

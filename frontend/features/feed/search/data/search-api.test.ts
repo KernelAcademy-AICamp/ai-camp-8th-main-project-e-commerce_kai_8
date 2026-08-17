@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { fetchSearchPage } from "@/features/feed/search/data/search-api";
 import { rpcPost } from "@/shared/supabase-rpc";
@@ -21,6 +21,39 @@ const dto = {
 
 beforeEach(() => {
   rpcPostMock.mockReset();
+  // v2는 명시적 opt-in이다 — 기본은 구 경로
+  vi.stubEnv("NEXT_PUBLIC_SEARCH_V2", "on");
+});
+
+afterEach(() => {
+  vi.unstubAllEnvs();
+});
+
+describe("경로 전환", () => {
+  it("기본은 구 경로다 — v2는 명시적 opt-in", async () => {
+    vi.unstubAllEnvs();
+    rpcPostMock.mockResolvedValue([]);
+    await fetchSearchPage("나이키", null, 30);
+    expect(rpcPostMock.mock.calls[0][0]).toBe("c_search_page");
+  });
+
+  it("잘못된 값이면 켜지지 않는다 — fail-open이 아니다", async () => {
+    for (const v of ["off", "true", "1", ""]) {
+      vi.stubEnv("NEXT_PUBLIC_SEARCH_V2", v);
+      rpcPostMock.mockReset();
+      rpcPostMock.mockResolvedValue([]);
+      await fetchSearchPage("나이키", null, 30);
+      expect(rpcPostMock.mock.calls[0][0]).toBe("c_search_page");
+    }
+  });
+
+  it("구 경로도 같은 SearchPage 계약을 돌려준다", async () => {
+    vi.unstubAllEnvs();
+    rpcPostMock.mockResolvedValue([{ ...dto, goods_no: 7 }]);
+    const page = await fetchSearchPage("나이키", null, 30);
+    expect(page.products).toHaveLength(1);
+    expect(page.nextCursor).toEqual({ score: 0, goodsNo: 7 });
+  });
 });
 
 describe("fetchSearchPage", () => {

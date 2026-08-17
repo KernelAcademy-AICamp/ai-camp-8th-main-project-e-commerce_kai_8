@@ -35,6 +35,8 @@ export interface SearchFeedOptions {
 /** 결과 상태 — 표시용으로 자신을 만든 검색어를 기억한다 */
 interface ResultState {
   query: string | null;
+  /** 자판 폴백으로 실제 검색에 쓰인 질의 (원문과 다르면 화면이 알릴 수 있다) */
+  usedQuery: string | null;
   items: FeedItem[];
   ready: boolean;
   error: boolean;
@@ -63,6 +65,7 @@ interface Progress {
 export function useSearchFeed({ query, submission, paused }: SearchFeedOptions) {
   const [result, setResult] = useState<ResultState>({
     query: null,
+    usedQuery: null,
     items: [],
     ready: false,
     error: false,
@@ -100,7 +103,7 @@ export function useSearchFeed({ query, submission, paused }: SearchFeedOptions) 
   const [lastQuery, setLastQuery] = useState(identity);
   if (lastQuery !== identity) {
     setLastQuery(identity);
-    setResult({ query: null, items: [], ready: false, error: false });
+    setResult({ query: null, usedQuery: null, items: [], ready: false, error: false });
   }
 
   // 검색어가 바뀌거나 해제될 때마다 새 세대 — 이전 요청·오류·커서를 무효화한다.
@@ -149,6 +152,8 @@ export function useSearchFeed({ query, submission, paused }: SearchFeedOptions) 
         logId,
         queryRaw: sub.queryRaw,
         queryNorm: sub.queryNorm,
+        // 자판 폴백이 걸렸으면 정규화 질의와 다르다 — 무엇으로 찾았는지 남긴다
+        queryUsed: usedQueryRef.current ?? sub.queryNorm,
         resultCount,
         sessionId: sub.sessionId,
         occurredAt: sub.occurredAt,
@@ -171,7 +176,7 @@ export function useSearchFeed({ query, submission, paused }: SearchFeedOptions) 
           // 새 세대의 첫 페이지는 빈 목록에서 시작 — 이전 세션 결과에 잇지 않는다
           const base = !isFirstPage && prev.query === query ? prev.items : [];
           const page = appendFeedPage(base, products);
-          return { query, items: page.items, ready: true, error: false };
+          return { query, usedQuery, items: page.items, ready: true, error: false };
         });
       })
       .catch((cause: unknown) => {
@@ -182,7 +187,7 @@ export function useSearchFeed({ query, submission, paused }: SearchFeedOptions) 
         setResult((prev) =>
           prev.query === query
             ? { ...prev, error: true }
-            : { query, items: [], ready: false, error: true },
+            : { query, usedQuery: null, items: [], ready: false, error: true },
         );
       })
       .finally(() => {
@@ -241,6 +246,8 @@ export function useSearchFeed({ query, submission, paused }: SearchFeedOptions) 
   return {
     columns,
     sentinelRef,
+    /** 자판 폴백으로 실제 검색에 쓰인 질의 — 원문과 다르면 화면이 알릴 수 있다 */
+    usedQuery: active ? result.usedQuery : null,
     showSkeleton: query != null && !ready && !error,
     isEmpty: ready && items.length === 0,
     error,

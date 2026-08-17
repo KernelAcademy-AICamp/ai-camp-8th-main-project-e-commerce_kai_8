@@ -1,10 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-import {
-  logSearch,
-  postSearchLog,
-  SEARCH_VER,
-} from "@/features/feed/search/data/search-log-api";
+import { searchVersion } from "@/features/feed/search/data/search-api";
+import { logSearch, postSearchLog } from "@/features/feed/search/data/search-log-api";
 import { getDeviceId } from "@/shared/signals/device-id";
 import { rpcPost } from "@/shared/supabase-rpc";
 
@@ -21,6 +18,7 @@ const input = {
   resultCount: 12,
   sessionId: "11111111-1111-4111-8111-111111111111",
   occurredAt: "2026-08-17T00:00:00.000Z",
+  queryUsed: "흰 무지 오버핏 반팔",
 };
 
 beforeEach(() => {
@@ -98,12 +96,22 @@ describe("postSearchLog", () => {
     expect(body.p_logs[0].occurred_at).toBe(input.occurredAt);
   });
 
-  it("검색 버전을 남긴다 — 피드 개인화 버전과 분리돼 있다", async () => {
+  it("실제 실행된 경로를 버전으로 남긴다 — 상수로 박으면 비교가 오염된다", async () => {
     rpcPostMock.mockResolvedValue(1);
     await postSearchLog(input);
     const body = rpcPostMock.mock.calls[0][1] as { p_logs: { model_ver: string }[] };
-    expect(body.p_logs[0].model_ver).toBe(SEARCH_VER);
+    expect(body.p_logs[0].model_ver).toBe(searchVersion());
     expect(body.p_logs[0].model_ver).not.toContain("siglip");
+  });
+
+  it("실제 검색에 쓰인 질의를 함께 남긴다 — 자판 폴백을 되짚을 수 있어야 한다", async () => {
+    rpcPostMock.mockResolvedValue(1);
+    await postSearchLog({ ...input, queryNorm: "skdlzl", queryUsed: "나이키" });
+    const body = rpcPostMock.mock.calls[0][1] as {
+      p_logs: { query_norm: string; query_used: string }[];
+    };
+    expect(body.p_logs[0].query_norm).toBe("skdlzl");
+    expect(body.p_logs[0].query_used).toBe("나이키");
   });
 });
 
