@@ -17,10 +17,20 @@ import { rpcPost } from "@/shared/supabase-rpc";
  */
 const LOG_TIMEOUT_MS = 5_000;
 
+/**
+ * 로그에 싣기 전에 원문을 자르는 길이.
+ *
+ * 서버가 200자로 잘라 저장하지만, **자르기 전에** 요청 전체가 16KB를 넘으면
+ * 통째로 거부한다. 검색 입력에는 길이 제한이 없어서 긴 붙여넣기가 들어오면
+ * 검색은 정상인데 **로그만 조용히 사라진다**(교차 리뷰 M4). 보낼 이유가 없는
+ * 나머지를 여기서 버린다.
+ */
+const RAW_QUERY_LIMIT = 200;
+
 export interface SearchLogInput {
   /** 제출마다 하나. 실패 후 재시도 때 같은 값을 보내면 결과 수만 보정된다 */
   logId: string;
-  /** 사용자가 친 원문 (서버가 200자로 자른다) */
+  /** 사용자가 친 원문 (보내기 전에 200자로 자른다 — 서버도 같은 길이로 저장한다) */
   queryRaw: string;
   /** 프론트·서버 공통 정규화를 거친 질의 */
   queryNorm: string;
@@ -46,7 +56,7 @@ export async function postSearchLog(input: SearchLogInput): Promise<void> {
         {
           log_id: input.logId,
           session_id: input.sessionId,
-          query_raw: input.queryRaw,
+          query_raw: input.queryRaw.slice(0, RAW_QUERY_LIMIT),
           query_norm: input.queryNorm,
           result_count: input.resultCount,
           occurred_at: input.occurredAt,

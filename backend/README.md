@@ -62,6 +62,10 @@ venv/bin/python run_c_ingest.py status --run-id r1
 
 `c_*` 마이그레이션은 **`supabase_migrations.schema_migrations`에 기록되지 않는다.** psql로 손으로 적용해 왔고, 추적 테이블에는 2026-08-05 이전 것만 있다. 따라서:
 
+- ⚠️ **새 DB에는 사전 조건이 있다.** `20260817200000`이 PGroonga 색인을 만드는데
+  마이그레이션에는 확장 설치가 없다(현 공유 DB에는 손으로 켜 뒀다). PGroonga가
+  꺼진 DB에서는 파일 순서가 맞아도 **여기서 멈춘다.** `fuzzystrmatch`는
+  `20260817600000`이 직접 켠다.
 - **파일 이름 순서가 곧 배포 순서다.** 새 DB를 세울 때 이름순으로 돌린다. (그래서 `c_chosung`은 그것을 쓰는 `c_search_docs`보다 앞 번호여야 한다 — 원래 뒤에 있어서 새 DB 구축이 깨졌다.)
 - **이미 적용된 파일을 고쳤으면 그 파일을 다시 돌려야 반영된다.** RPC 정의가 테이블 빌드와 같은 파일에 있는 `20260817200000`이 특히 그렇다. 이 파일은 shadow 교체 방식이라 재실행이 안전하고, 2회 연속 실행으로 실증했다.
 - 반환 열이 바뀌면 `create or replace`가 실패하므로(`cannot change return type`) 해당 파일이 먼저 `drop function if exists`를 한다.
