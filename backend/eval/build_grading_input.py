@@ -50,6 +50,7 @@ GRADED_FILES = (
     "grading-codex-price.json",   # C-3 가격 조건
     # 색 넓이 정렬로 상위 20에 새로 들어온 1건 (기준서 v3.2 — 명암 수식 규칙)
     "grading-claude-color-width.json",
+    "grading-codex-color-width.json",   # 같은 1건의 독립 2차 판정
 )
 
 # 세지 않는 파일과 그 이유 — 지우지 말고 여기 남긴다
