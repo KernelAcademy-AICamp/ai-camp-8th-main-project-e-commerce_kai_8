@@ -31,7 +31,13 @@ create table c_search_docs_next (
   title    text not null default '',   -- 상품명
   tags     text not null default '',   -- 자유 태그(보유율 75.4%) — 공백으로 결합
   -- 색인·검색용 결합 문서. 재현율은 여기서 나오고 정밀도는 위 필드 가중치로 잡는다.
-  doc      text not null default ''
+  doc      text not null default '',
+  -- 초성 검색용 단어 배열. RPC가 참조하므로 **여기서** 만든다 — 뒤 마이그레이션에
+  -- 미루면 그 사이 구간이나 실패 시 새 RPC가 깨진 상태로 노출된다.
+  chosung_words text[] not null default '{}',
+  -- 반소매 티셔츠 제품군인가. 기준서 §3-1 ④(티셔츠가 아니면 최대 1)를 검색에서
+  -- 미리 반영한다. 제목 키워드 기준이라 위양성이 있다(§ 한계).
+  is_tee   boolean not null default true
 );
 
 comment on table c_search_docs_next is
@@ -39,7 +45,7 @@ comment on table c_search_docs_next is
 
 -- 노출 자격은 기존과 동일하다 (c_feed_page·현행 검색과 같은 조건).
 -- 뷰(c_feed_products)에는 card_ok가 없으므로 c_thumb_dims를 직접 조인한다.
-insert into c_search_docs_next (goods_no, brand, title, tags, doc)
+insert into c_search_docs_next (goods_no, brand, title, tags, doc, chosung_words, is_tee)
 select
   g.goods_no,
   coalesce(g.brand_name, ''),
@@ -47,7 +53,16 @@ select
   coalesce(array_to_string(g.tags, ' '), ''),
   -- ⚠️ 태그는 **문서에 넣지 않는다**. 상품과 느슨하게 붙어 있어 정밀도를 깎았다
   -- (실측: G2 P@20 58.2% → 48.9% 회귀). tags 컬럼은 C단계 필터 재료로 남긴다.
-  lower(coalesce(g.brand_name, '') || ' ' || coalesce(g.title, ''))
+  lower(coalesce(g.brand_name, '') || ' ' || coalesce(g.title, '')),
+  coalesce((
+    select array_agg(w)
+    from unnest(string_to_array(
+      c_chosung(coalesce(g.brand_name, '') || ' ' || coalesce(g.title, '')), ' ')) w
+    where w <> ''
+  ), '{}'::text[]),
+  -- 후드·맨투맨·니트·자켓은 반소매 티셔츠가 아니다. A단계 평가에서 '그래픽 티'가
+  -- 1.00 → 0.00으로 무너진 최대 원인이 그래픽 후드티 유입이었다.
+  coalesce(g.title, '') !~ '후드|후디|hood|맨투맨|스웨트|sweat|니트|가디건|자켓|재킷|점퍼|바람막이'
 from c_goods g
 join c_thumb_dims d using (goods_no)
 where d.width > 0
@@ -57,14 +72,11 @@ where d.width > 0
   and g.price_final > 0;
 
 -- ── 2. 색인 ────────────────────────────────────────────────────────────────
--- doc: 재현율용 전문 색인. brand: 브랜드 정확 매칭 우대용 별도 색인.
 create index c_search_docs_next_doc_idx on c_search_docs_next
   using pgroonga (doc)
   with (tokenizer = 'TokenBigram', normalizer = 'NormalizerAuto');
 
-create index c_search_docs_next_brand_idx on c_search_docs_next
-  using pgroonga (brand)
-  with (tokenizer = 'TokenBigram', normalizer = 'NormalizerAuto');
+create index c_search_docs_next_chosung_idx on c_search_docs_next using gin (chosung_words);
 
 analyze c_search_docs_next;
 
@@ -77,25 +89,40 @@ begin;
 
 drop table if exists c_search_docs;
 alter table c_search_docs_next rename to c_search_docs;
-alter index c_search_docs_next_doc_idx   rename to c_search_docs_doc_idx;
-alter index c_search_docs_next_brand_idx rename to c_search_docs_brand_idx;
+-- ⚠️ 기본키가 자동 생성한 인덱스 이름도 바꿔야 한다. 안 바꾸면 본 테이블이
+-- `c_search_docs_next_pkey`를 계속 소유해, 다음 재실행에서 _next를 만들 때
+-- 같은 이름이 충돌해 실패한다(실측 — "재실행 가능" 계약이 깨져 있었다).
+alter index c_search_docs_next_doc_idx     rename to c_search_docs_doc_idx;
+alter index c_search_docs_next_chosung_idx rename to c_search_docs_chosung_words_idx;
+-- 기본키 인덱스의 실제 이름은 생성 시점에 무엇이 점유돼 있었는지에 따라 달라진다
+-- (`_pkey`가 이미 쓰이면 `_pkey1`이 된다). 이름을 찾아서 바꾼다.
+do $rename$
+declare v_idx text;
+begin
+  select i.relname into v_idx
+  from pg_index x
+  join pg_class i on i.oid = x.indexrelid
+  join pg_class t on t.oid = x.indrelid
+  where t.relname = 'c_search_docs' and x.indisprimary;
+  if v_idx is not null and v_idx <> 'c_search_docs_pkey' then
+    execute format('alter index %I rename to c_search_docs_pkey', v_idx);
+  end if;
+end
+$rename$;
 
 comment on table c_search_docs is
   '검색 색인 텍스트. 노출 자격(card_ok 등)을 만족하는 상품만. 갱신은 이 마이그레이션 재실행.';
 
 -- 관련도 정렬 검색 (A단계 4단계).
 --
--- 반환에 score를 포함한다 — 커서가 (점수, goods_no)여야 관련도순 페이징이
--- 중복·누락 없이 성립한다. B단계에서 갈래가 늘어도 이 형태를 확장할 수 있게
--- 숫자 하나가 아니라 두 값을 주고받는다(구현 리뷰 YAGNI 지적 반영 — 융합
--- 커서의 모드·고정집합까지 지금 만들지는 않는다).
+-- 커서는 (점수, goods_no) 쌍이다. **둘 다 주거나 둘 다 안 주거나**여야 한다 —
+-- 한쪽만 주면 첫 페이지를 다시 주거나(점수만 null) 동점 행이 통째로 누락된다
+-- (goods_no만 null → `goods_no > NULL`이 항상 false). 검증해서 거른다.
 --
--- 입력 방어: 질의 문법을 허용하지 않는다. 각 단어를 pgroonga_query_escape로
--- 통과시키고 AND로 잇는다. LIKE용 escape는 여기서 통하지 않는다(2차 리뷰 M7).
---
--- 브랜드 우대는 **별도 색인 스캔**으로 앞에 붙인다. 점수 식에 case로 넣으면
--- 매칭된 모든 행(10만 건)에서 brand &@~ 가 평가돼 느려진다. 브랜드에 걸리는
--- 상품은 훨씬 적으므로 따로 뽑아 먼저 채우는 편이 싸고 빠르다.
+-- 입력 방어: **질의 문법을 쓰지 못하게 각 단어를 큰따옴표로 감싼다.**
+-- pgroonga_query_escape만으로는 부족하다 — `OR`·`AND`는 특수문자가 아니라
+-- escape를 통과하고 그대로 연산자로 해석된다(실측: escape('OR') = 'OR').
+-- 큰따옴표 안은 리터럴 구문이라 예약어가 무력화된다.
 create or replace function c_search_page_v2(
   p_query   text,
   p_after_score real   default null,
@@ -115,34 +142,40 @@ returns table (
   score       real
 )
 language plpgsql stable security definer
-set search_path = public, extensions
+set search_path = public, extensions, pg_temp
 as $$
 declare
   v_size  int := least(greatest(coalesce(p_size, 30), 1), 60);
+  v_words text[];
   v_terms text[];
   v_q     text;
   v_chosung boolean;
-  v_cho_terms text[];
 begin
-  -- 앞 60자 · 앞 5단어 (프론트 정규화와 동일). 각 단어는 escape 후 AND.
-  select array_agg(pgroonga_query_escape(w)) into v_terms
+  -- 커서 쌍 검증 — 한쪽만 온 요청은 받지 않는다
+  if (p_after_score is null) <> (p_after is null) then
+    return;
+  end if;
+
+  -- 앞 60자 · 앞 5단어 (프론트 정규화와 동일). **초성 분기도 이 결과를 쓴다** —
+  -- 원본을 쓰면 상한을 우회해 임의 길이 입력이 GIN 조건으로 들어간다.
+  select array_agg(w) into v_words
   from (
     select w from regexp_split_to_table(left(coalesce(p_query, ''), 60), '\s+') w
     where w <> '' limit 5
   ) t;
 
-  if v_terms is null then
+  if v_words is null then
     return;  -- 빈 질의: 전체 스캔 금지
   end if;
-  v_q := array_to_string(v_terms, ' ');
 
   -- 초성만으로 이뤄진 질의(ㄴㅇㅋ)는 본문에 그 형태로 없다. 초성 색인으로 보낸다.
-  -- 한 글자짜리는 후보가 너무 많아 의미가 없으므로 2자 이상만 받는다.
-  v_chosung := p_query ~ '^[ㄱ-ㅎ ]+$' and length(replace(p_query, ' ', '')) >= 2;
-  if v_chosung then
-    select array_agg(w) into v_cho_terms
-    from unnest(string_to_array(trim(p_query), ' ')) w where w <> '';
-  end if;
+  v_chosung := array_to_string(v_words, '') ~ '^[ㄱ-ㅎ]+$'
+               and length(array_to_string(v_words, '')) >= 2;
+
+  -- 큰따옴표로 감싸 리터럴로 만든다 (예약어 무력화). 내부 따옴표는 escape.
+  select array_agg('"' || replace(pgroonga_query_escape(w), '"', '\"') || '"')
+  into v_terms from unnest(v_words) w;
+  v_q := array_to_string(v_terms, ' ');
 
   return query
   -- ⚠️ 후보를 **조인 전에** 자른다. 처음엔 매칭 전체(예: '반팔' 103,221건)를
@@ -153,10 +186,11 @@ begin
       s.goods_no,
       pgroonga_score(s.tableoid, s.ctid)::real as sc
     from c_search_docs s
-    -- 초성 질의는 **단어 단위 정확 매칭**이다. bigram 부분 일치로 두면
-    -- 'ㅁㄴㅇㄹ'(자판 뭉개기)이 19건을 물어와 G6(0건이 정답) 게이트를 깼다.
-    where (case when v_chosung
-                then s.chosung_words && v_cho_terms
+    where s.is_tee                      -- 기준서 §3-1 ④ — 티셔츠 제품군만
+      and (case when v_chosung
+                -- 초성은 **모든 단어**를 만족해야 한다. `&&`(겹침)는 OR라서
+                -- 'ㄴㅇㅋ ㅂㅍ'가 두 조건의 AND가 아니게 된다.
+                then s.chosung_words @> v_words
                 else s.doc &@~ v_q end)
       and (p_after_score is null
            or pgroonga_score(s.tableoid, s.ctid)::real < p_after_score
@@ -176,6 +210,9 @@ $$;
 
 revoke all on function c_search_page_v2(text, real, bigint, int) from public;
 grant execute on function c_search_page_v2(text, real, bigint, int) to anon, authenticated;
+
+-- 보조 함수는 anon에 열지 않는다 (계산 경로를 하나 더 열어줄 이유가 없다)
+revoke all on function c_chosung(text) from public;
 
 commit;
 

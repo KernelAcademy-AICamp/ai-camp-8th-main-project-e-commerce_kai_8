@@ -4,7 +4,7 @@
     "generatedBy": "backend/eval/build_pool.py",
     "system": "a-c_search_page_v2-pgroonga-bigram",
     "topN": 20,
-    "collectedAt": "2026-08-16T20:03:14.026798+00:00",
+    "collectedAt": "2026-08-17T01:59:43.244324+00:00",
     "catalogSnapshot": {
       "c_goods_rows": 226320,
       "c_search_text_rows": 226304,
@@ -1159,94 +1159,6 @@
       "candidates": [
         {
           "rank": 0,
-          "goodsNo": 669546,
-          "title": "[돌돌] URAZ_HOODY_02 슈퍼카 우라즈 버팔로 들소 캐릭터 후드티 후디",
-          "brandName": "돌돌",
-          "priceFinal": 69000,
-          "gender": "남성"
-        },
-        {
-          "rank": 1,
-          "goodsNo": 694912,
-          "title": "[돌돌 스페샬 후디] LK-AFRICA_HOODY-10 엘케이 아프리카 캠핑 여행 아웃도어 캐릭터 후드티 후디",
-          "brandName": "돌돌",
-          "priceFinal": 85000,
-          "gender": "남성"
-        },
-        {
-          "rank": 2,
-          "goodsNo": 694913,
-          "title": "[돌돌 스페샬 후디] DMK_HOODY_28 그래피티 아티스트 데빌몽키 dmk 캐릭터 후드티 후디",
-          "brandName": "돌돌",
-          "priceFinal": 85000,
-          "gender": "남성"
-        },
-        {
-          "rank": 3,
-          "goodsNo": 694914,
-          "title": "[돌돌 스페샬 후디] RUNCH-HOODY-41 런닝 치타 런치 캐릭터 후드티 후디",
-          "brandName": "돌돌",
-          "priceFinal": 85000,
-          "gender": "남성"
-        },
-        {
-          "rank": 4,
-          "goodsNo": 694915,
-          "title": "[돌돌 스페샬 후디] RODUCK_HOODY_12 로드바이크 오리 로덕 캐릭터 후디 후드티",
-          "brandName": "돌돌",
-          "priceFinal": 85000,
-          "gender": "남성"
-        },
-        {
-          "rank": 5,
-          "goodsNo": 694916,
-          "title": "[돌돌 스페샬 후디] ALLY_HOODY_19 숲속의 mtb 바이커 사슴 엘리 자전거 캠핑 캐릭터 후디 후드티",
-          "brandName": "돌돌",
-          "priceFinal": 85000,
-          "gender": "남성"
-        },
-        {
-          "rank": 6,
-          "goodsNo": 720406,
-          "title": "[돌돌스페셜후드] WOOP_HOODY_62 스케이트보드 고양이 웁스 캐릭터 후디",
-          "brandName": "돌돌",
-          "priceFinal": 98000,
-          "gender": "남성"
-        },
-        {
-          "rank": 7,
-          "goodsNo": 720407,
-          "title": "[돌돌 스페샬 후디] SNUK_HOODY_32 북극곰 스노우보드 선수 스누크 캐릭터 후드티 후디",
-          "brandName": "돌돌",
-          "priceFinal": 85000,
-          "gender": "남성"
-        },
-        {
-          "rank": 8,
-          "goodsNo": 720408,
-          "title": "[돌돌 스페샬 후디] SHARK-DOG-HOODY-08 불독 상어 사크독 서퍼 서핑 캐릭터 후드티 후디",
-          "brandName": "돌돌",
-          "priceFinal": 85000,
-          "gender": "남성"
-        },
-        {
-          "rank": 9,
-          "goodsNo": 720409,
-          "title": "[돌돌 스페샬 후디] DITTO_HOODY_10 그래피티 아이스 펭귄 디또 캐릭터 후드티 후디드티 후디",
-          "brandName": "돌돌",
-          "priceFinal": 85000,
-          "gender": "남성"
-        },
-        {
-          "rank": 10,
-          "goodsNo": 720410,
-          "title": "[돌돌 스페샬 후디] Bike-rabbit_HOODY_36 바이크 라빗 토끼 바빗 캐릭터 후드티 후디",
-          "brandName": "돌돌",
-          "priceFinal": 85000,
-          "gender": "남성"
-        },
-        {
-          "rank": 11,
           "goodsNo": 180295,
           "title": "SHARK DOG_T-shirts_S01-1",
           "brandName": "돌돌",
@@ -1254,7 +1166,7 @@
           "gender": "남성"
         },
         {
-          "rank": 12,
+          "rank": 1,
           "goodsNo": 180296,
           "title": "SHARK DOG_T-shirts_S01-2",
           "brandName": "돌돌",
@@ -1262,7 +1174,7 @@
           "gender": "남성"
         },
         {
-          "rank": 13,
+          "rank": 2,
           "goodsNo": 180298,
           "title": "SHARK DOG_T-shirts_S01-4",
           "brandName": "돌돌",
@@ -1270,7 +1182,7 @@
           "gender": "남성"
         },
         {
-          "rank": 14,
+          "rank": 3,
           "goodsNo": 189076,
           "title": "Gangster guile_T-shirts_01",
           "brandName": "돌돌",
@@ -1278,7 +1190,7 @@
           "gender": "남성"
         },
         {
-          "rank": 15,
+          "rank": 4,
           "goodsNo": 189077,
           "title": "Gangster guile_T-shirts_03",
           "brandName": "돌돌",
@@ -1286,7 +1198,7 @@
           "gender": "남성"
         },
         {
-          "rank": 16,
+          "rank": 5,
           "goodsNo": 189078,
           "title": "Gangster guile_T-shirts_05",
           "brandName": "돌돌",
@@ -1294,7 +1206,7 @@
           "gender": "남성"
         },
         {
-          "rank": 17,
+          "rank": 6,
           "goodsNo": 189079,
           "title": "Gangster guile_T-shirts_06",
           "brandName": "돌돌",
@@ -1302,7 +1214,7 @@
           "gender": "남성"
         },
         {
-          "rank": 18,
+          "rank": 7,
           "goodsNo": 189080,
           "title": "Gangster guile_T-shirts_07",
           "brandName": "돌돌",
@@ -1310,9 +1222,97 @@
           "gender": "남성"
         },
         {
-          "rank": 19,
+          "rank": 8,
           "goodsNo": 198360,
           "title": "woops-T-09",
+          "brandName": "돌돌",
+          "priceFinal": 36000,
+          "gender": "남성"
+        },
+        {
+          "rank": 9,
+          "goodsNo": 198361,
+          "title": "woops-T-10",
+          "brandName": "돌돌",
+          "priceFinal": 36000,
+          "gender": "남성"
+        },
+        {
+          "rank": 10,
+          "goodsNo": 201731,
+          "title": "woops-T-04",
+          "brandName": "돌돌",
+          "priceFinal": 36000,
+          "gender": "남성"
+        },
+        {
+          "rank": 11,
+          "goodsNo": 201733,
+          "title": "woops-T-18",
+          "brandName": "돌돌",
+          "priceFinal": 36000,
+          "gender": "남성"
+        },
+        {
+          "rank": 12,
+          "goodsNo": 208804,
+          "title": "SHARK-DOG-T-19",
+          "brandName": "돌돌",
+          "priceFinal": 37000,
+          "gender": "남성"
+        },
+        {
+          "rank": 13,
+          "goodsNo": 214475,
+          "title": "woops-T-06",
+          "brandName": "돌돌",
+          "priceFinal": 36000,
+          "gender": "남성"
+        },
+        {
+          "rank": 14,
+          "goodsNo": 218887,
+          "title": "Black Lucifer_T_05",
+          "brandName": "돌돌",
+          "priceFinal": 36000,
+          "gender": "남성"
+        },
+        {
+          "rank": 15,
+          "goodsNo": 322290,
+          "title": "Bike Rabbit_T-shirts_S01-2",
+          "brandName": "돌돌",
+          "priceFinal": 36000,
+          "gender": "남성"
+        },
+        {
+          "rank": 16,
+          "goodsNo": 322292,
+          "title": "Bike Rabbit_T-shirts_S01-3",
+          "brandName": "돌돌",
+          "priceFinal": 36000,
+          "gender": "남성"
+        },
+        {
+          "rank": 17,
+          "goodsNo": 322293,
+          "title": "Bike Rabbit_T-shirts_S01-4",
+          "brandName": "돌돌",
+          "priceFinal": 36000,
+          "gender": "남성"
+        },
+        {
+          "rank": 18,
+          "goodsNo": 341943,
+          "title": "URAZ_T-shirts_12 캐릭터 티셔츠",
+          "brandName": "돌돌",
+          "priceFinal": 36000,
+          "gender": "남성"
+        },
+        {
+          "rank": 19,
+          "goodsNo": 341944,
+          "title": "URAZ_T-shirts_03 캐릭터 티셔츠",
           "brandName": "돌돌",
           "priceFinal": 36000,
           "gender": "남성"
@@ -1859,22 +1859,6 @@
         },
         {
           "rank": 2,
-          "goodsNo": 1325832,
-          "title": "[UNISEX]스트릿 하트보드 후드티_4color",
-          "brandName": "그레이버",
-          "priceFinal": 51100,
-          "gender": "여성"
-        },
-        {
-          "rank": 3,
-          "goodsNo": 1325889,
-          "title": "[UNISEX]스트릿 스마일보드 후드티_4color",
-          "brandName": "그레이버",
-          "priceFinal": 51100,
-          "gender": "여성"
-        },
-        {
-          "rank": 4,
           "goodsNo": 1376311,
           "title": "[UNISEX]엘보우 도트스마일 롱슬리브_블랙",
           "brandName": "그레이버",
@@ -1882,7 +1866,7 @@
           "gender": "남성"
         },
         {
-          "rank": 5,
+          "rank": 3,
           "goodsNo": 1376318,
           "title": "[UNISEX]엘보우 하트스마일 롱슬리브_블랙",
           "brandName": "그레이버",
@@ -1890,7 +1874,7 @@
           "gender": "공용"
         },
         {
-          "rank": 6,
+          "rank": 4,
           "goodsNo": 1445681,
           "title": "[UNISEX]라이프 로고 폰트 반팔티_네이비",
           "brandName": "그레이버",
@@ -1898,7 +1882,7 @@
           "gender": "여성"
         },
         {
-          "rank": 7,
+          "rank": 5,
           "goodsNo": 1445685,
           "title": "[UNISEX]라이프 로고 폰트 반팔티_화이트",
           "brandName": "그레이버",
@@ -1906,7 +1890,7 @@
           "gender": "여성"
         },
         {
-          "rank": 8,
+          "rank": 6,
           "goodsNo": 1445713,
           "title": "[UNISEX]빅 플라워도트 반팔티_네이비",
           "brandName": "그레이버",
@@ -1914,7 +1898,7 @@
           "gender": "남성"
         },
         {
-          "rank": 9,
+          "rank": 7,
           "goodsNo": 1445715,
           "title": "[UNISEX]빅 플라워도트 반팔티_화이트",
           "brandName": "그레이버",
@@ -1922,7 +1906,7 @@
           "gender": "여성"
         },
         {
-          "rank": 10,
+          "rank": 8,
           "goodsNo": 1445729,
           "title": "[UNISEX]빅 플라워도트 반팔티_2color",
           "brandName": "그레이버",
@@ -1930,7 +1914,7 @@
           "gender": "공용"
         },
         {
-          "rank": 11,
+          "rank": 9,
           "goodsNo": 1455054,
           "title": "[UNISEX]도트 보드 드로잉 반팔티_네이비",
           "brandName": "그레이버",
@@ -1938,7 +1922,7 @@
           "gender": "남성"
         },
         {
-          "rank": 12,
+          "rank": 10,
           "goodsNo": 1455099,
           "title": "[UNISEX]도트 보드 드로잉 반팔티_화이트",
           "brandName": "그레이버",
@@ -1946,7 +1930,7 @@
           "gender": "여성"
         },
         {
-          "rank": 13,
+          "rank": 11,
           "goodsNo": 1455109,
           "title": "[UNISEX]도트 보드 드로잉 반팔티_블랙",
           "brandName": "그레이버",
@@ -1954,7 +1938,7 @@
           "gender": "남성"
         },
         {
-          "rank": 14,
+          "rank": 12,
           "goodsNo": 1466129,
           "title": "[UNISEX]하트 서핑 보드 반팔티_화이트",
           "brandName": "그레이버",
@@ -1962,7 +1946,7 @@
           "gender": "남성"
         },
         {
-          "rank": 15,
+          "rank": 13,
           "goodsNo": 1466143,
           "title": "[UNISEX]하트 서핑 보드 반팔티_블랙",
           "brandName": "그레이버",
@@ -1970,7 +1954,7 @@
           "gender": "남성"
         },
         {
-          "rank": 16,
+          "rank": 14,
           "goodsNo": 1471210,
           "title": "[UNISEX]드로잉하트 백로고 반팔티_네이비",
           "brandName": "그레이버",
@@ -1978,7 +1962,7 @@
           "gender": "공용"
         },
         {
-          "rank": 17,
+          "rank": 15,
           "goodsNo": 1471437,
           "title": "[UNISEX]드로잉하트 백로고 반팔티_화이트",
           "brandName": "그레이버",
@@ -1986,7 +1970,7 @@
           "gender": "공용"
         },
         {
-          "rank": 18,
+          "rank": 16,
           "goodsNo": 1473427,
           "title": "[UNISEX]드로잉하트 백로고 반팔티_블랙",
           "brandName": "그레이버",
@@ -1994,11 +1978,27 @@
           "gender": "공용"
         },
         {
-          "rank": 19,
+          "rank": 17,
           "goodsNo": 1473430,
           "title": "[UNISEX]도트 서핑 보드 반팔티_화이트",
           "brandName": "그레이버",
           "priceFinal": 21400,
+          "gender": "공용"
+        },
+        {
+          "rank": 18,
+          "goodsNo": 1473435,
+          "title": "[UNISEX]도트 서핑 보드 반팔티_블랙",
+          "brandName": "그레이버",
+          "priceFinal": 21400,
+          "gender": "공용"
+        },
+        {
+          "rank": 19,
+          "goodsNo": 1481349,
+          "title": "[UNISEX]드로잉도트 백로고 반팔티_화이트",
+          "brandName": "그레이버",
+          "priceFinal": 23000,
           "gender": "공용"
         }
       ]
@@ -2329,16 +2329,16 @@
         },
         {
           "rank": 18,
-          "goodsNo": 2719801,
-          "title": "아스트랄 디자인 스튜디오 와플 쮸리 후디_차콜",
+          "goodsNo": 2804028,
+          "title": "아스트랄 디자인 스튜디오  라운드 넥 13수 면 롱 슬리브 티셔츠_네이비",
           "brandName": "아스트랄 프로젝션",
           "priceFinal": 19900,
-          "gender": "여성"
+          "gender": "남성"
         },
         {
           "rank": 19,
-          "goodsNo": 2804028,
-          "title": "아스트랄 디자인 스튜디오  라운드 넥 13수 면 롱 슬리브 티셔츠_네이비",
+          "goodsNo": 2804052,
+          "title": "아스트랄 디자인 스튜디오  라운드 넥 13수 면 롱 슬리브 티셔츠_블랙",
           "brandName": "아스트랄 프로젝션",
           "priceFinal": 19900,
           "gender": "남성"
@@ -2396,70 +2396,6 @@
         },
         {
           "rank": 5,
-          "goodsNo": 3903974,
-          "title": "트루러브 프린트 크롭 후드티 블랙",
-          "brandName": "이스케이프프롬",
-          "priceFinal": 29900,
-          "gender": "여성"
-        },
-        {
-          "rank": 6,
-          "goodsNo": 3904225,
-          "title": "화이트 그래피티 ESCF 로고 프린트 후드티 딥블루",
-          "brandName": "이스케이프프롬",
-          "priceFinal": 54900,
-          "gender": "공용"
-        },
-        {
-          "rank": 7,
-          "goodsNo": 3904311,
-          "title": "스윗 슬립 프린트 후드티 블랙",
-          "brandName": "이스케이프프롬",
-          "priceFinal": 33900,
-          "gender": "공용"
-        },
-        {
-          "rank": 8,
-          "goodsNo": 3916873,
-          "title": "버스데이 케이크 프린트 크롭 후드티 블랙",
-          "brandName": "이스케이프프롬",
-          "priceFinal": 29900,
-          "gender": "여성"
-        },
-        {
-          "rank": 9,
-          "goodsNo": 3916875,
-          "title": "힌트 이스케이프 프린트 크롭 후드티 블랙",
-          "brandName": "이스케이프프롬",
-          "priceFinal": 29900,
-          "gender": "여성"
-        },
-        {
-          "rank": 10,
-          "goodsNo": 3916876,
-          "title": "핑크 쓰리스타 로고 프린트 크롭 후드티 블랙",
-          "brandName": "이스케이프프롬",
-          "priceFinal": 29900,
-          "gender": "여성"
-        },
-        {
-          "rank": 11,
-          "goodsNo": 3916888,
-          "title": "이스케이프 스트로베리 프린트 크롭 후드티 블랙",
-          "brandName": "이스케이프프롬",
-          "priceFinal": 29900,
-          "gender": "여성"
-        },
-        {
-          "rank": 12,
-          "goodsNo": 3916890,
-          "title": "ESCF 에센셜 크롭 후드티 블랙",
-          "brandName": "이스케이프프롬",
-          "priceFinal": 29900,
-          "gender": "여성"
-        },
-        {
-          "rank": 13,
           "goodsNo": 3917000,
           "title": "버닝 스윗홈 프린트 롱슬리브 블랙",
           "brandName": "이스케이프프롬",
@@ -2467,7 +2403,7 @@
           "gender": "공용"
         },
         {
-          "rank": 14,
+          "rank": 6,
           "goodsNo": 3917001,
           "title": "06 브레이크 프린트 롱슬리브 블랙",
           "brandName": "이스케이프프롬",
@@ -2475,7 +2411,7 @@
           "gender": "공용"
         },
         {
-          "rank": 15,
+          "rank": 7,
           "goodsNo": 3917002,
           "title": "트루러브 프린트 롱슬리브 블랙",
           "brandName": "이스케이프프롬",
@@ -2483,7 +2419,7 @@
           "gender": "공용"
         },
         {
-          "rank": 16,
+          "rank": 8,
           "goodsNo": 3917008,
           "title": "민트 쿨워터 프린트 롱슬리브 화이트",
           "brandName": "이스케이프프롬",
@@ -2491,7 +2427,7 @@
           "gender": "공용"
         },
         {
-          "rank": 17,
+          "rank": 9,
           "goodsNo": 3917012,
           "title": "NO ESCAPE RABBIT 프린트 롱슬리브 블랙",
           "brandName": "이스케이프프롬",
@@ -2499,19 +2435,83 @@
           "gender": "공용"
         },
         {
-          "rank": 18,
-          "goodsNo": 3917020,
-          "title": "06 브레이크 프린트 후드티 딥블루",
+          "rank": 10,
+          "goodsNo": 3919670,
+          "title": "ESCF 스포츠 프린트 롱슬리브 화이트",
           "brandName": "이스케이프프롬",
-          "priceFinal": 54900,
+          "priceFinal": 35900,
+          "gender": "공용"
+        },
+        {
+          "rank": 11,
+          "goodsNo": 3919673,
+          "title": "블랙 키티 캣츠 프린트 롱슬리브 블랙",
+          "brandName": "이스케이프프롬",
+          "priceFinal": 38900,
+          "gender": "공용"
+        },
+        {
+          "rank": 12,
+          "goodsNo": 3919675,
+          "title": "어바웃 어스 프린트 롱슬리브 화이트",
+          "brandName": "이스케이프프롬",
+          "priceFinal": 38900,
+          "gender": "공용"
+        },
+        {
+          "rank": 13,
+          "goodsNo": 3919676,
+          "title": "어바웃 어스 프린트 롱슬리브 블랙",
+          "brandName": "이스케이프프롬",
+          "priceFinal": 38900,
+          "gender": "공용"
+        },
+        {
+          "rank": 14,
+          "goodsNo": 3919677,
+          "title": "더 퍼펙트 이스케이프 클럽 프린트 롱슬리브 블랙",
+          "brandName": "이스케이프프롬",
+          "priceFinal": 25900,
+          "gender": "공용"
+        },
+        {
+          "rank": 15,
+          "goodsNo": 3919678,
+          "title": "더 퍼펙트 이스케이프 클럽 프린트 롱슬리브 화이트",
+          "brandName": "이스케이프프롬",
+          "priceFinal": 25900,
+          "gender": "공용"
+        },
+        {
+          "rank": 16,
+          "goodsNo": 3919679,
+          "title": "낭만 프린트 롱슬리브 화이트",
+          "brandName": "이스케이프프롬",
+          "priceFinal": 25900,
+          "gender": "공용"
+        },
+        {
+          "rank": 17,
+          "goodsNo": 3919680,
+          "title": "힙 캣 스케이트보드 프린트 롱슬리브 화이트",
+          "brandName": "이스케이프프롬",
+          "priceFinal": 25900,
+          "gender": "공용"
+        },
+        {
+          "rank": 18,
+          "goodsNo": 3919681,
+          "title": "힙 캣 스케이트보드 프린트 롱슬리브 블랙",
+          "brandName": "이스케이프프롬",
+          "priceFinal": 25900,
           "gender": "공용"
         },
         {
           "rank": 19,
-          "goodsNo": 3917021,
-          "title": "06 브레이크 프린트 후드티 그레이",
+          "goodsNo": 3919682,
+          "title": "메탈 팀 넘버 06 프린트 롱슬리브 화이트",
           "brandName": "이스케이프프롬",
-          "priceFinal": 54900,
+          "priceFinal": 25900,
           "gender": "공용"
         }
       ]
@@ -2527,38 +2527,6 @@
       "candidates": [
         {
           "rank": 0,
-          "goodsNo": 947077,
-          "title": "후디드 스웨트셔츠 [블랙]",
-          "brandName": "무신사 스탠다드",
-          "priceFinal": 37890,
-          "gender": "남성"
-        },
-        {
-          "rank": 1,
-          "goodsNo": 947078,
-          "title": "후디드 스웨트셔츠 [멜란지 그레이]",
-          "brandName": "무신사 스탠다드",
-          "priceFinal": 37890,
-          "gender": "남성"
-        },
-        {
-          "rank": 2,
-          "goodsNo": 947080,
-          "title": "후디드 스웨트셔츠 [오트밀]",
-          "brandName": "무신사 스탠다드",
-          "priceFinal": 37890,
-          "gender": "남성"
-        },
-        {
-          "rank": 3,
-          "goodsNo": 947081,
-          "title": "후디드 스웨트셔츠 [네이비]",
-          "brandName": "무신사 스탠다드",
-          "priceFinal": 37890,
-          "gender": "남성"
-        },
-        {
-          "rank": 4,
           "goodsNo": 996177,
           "title": "릴렉스 핏 크루 넥 티셔츠 [화이트]",
           "brandName": "무신사 스탠다드",
@@ -2566,7 +2534,7 @@
           "gender": "남성"
         },
         {
-          "rank": 5,
+          "rank": 1,
           "goodsNo": 996178,
           "title": "릴렉스 핏 크루 넥 티셔츠 [블랙]",
           "brandName": "무신사 스탠다드",
@@ -2574,7 +2542,7 @@
           "gender": "남성"
         },
         {
-          "rank": 6,
+          "rank": 2,
           "goodsNo": 996179,
           "title": "릴렉스 핏 크루 넥 티셔츠 [다크 그레이]",
           "brandName": "무신사 스탠다드",
@@ -2582,7 +2550,7 @@
           "gender": "남성"
         },
         {
-          "rank": 7,
+          "rank": 3,
           "goodsNo": 996180,
           "title": "릴렉스 핏 크루 넥 티셔츠 [네이비]",
           "brandName": "무신사 스탠다드",
@@ -2590,7 +2558,7 @@
           "gender": "남성"
         },
         {
-          "rank": 8,
+          "rank": 4,
           "goodsNo": 996184,
           "title": "릴렉스 핏 크루 넥 티셔츠 [베이지]",
           "brandName": "무신사 스탠다드",
@@ -2598,7 +2566,7 @@
           "gender": "남성"
         },
         {
-          "rank": 9,
+          "rank": 5,
           "goodsNo": 996187,
           "title": "릴렉스 핏 크루 넥 티셔츠 [블루]",
           "brandName": "무신사 스탠다드",
@@ -2606,7 +2574,7 @@
           "gender": "남성"
         },
         {
-          "rank": 10,
+          "rank": 6,
           "goodsNo": 996189,
           "title": "릴렉스 핏 크루 넥 티셔츠 [라이트 그레이]",
           "brandName": "무신사 스탠다드",
@@ -2614,7 +2582,7 @@
           "gender": "남성"
         },
         {
-          "rank": 11,
+          "rank": 7,
           "goodsNo": 996233,
           "title": "크루 넥 긴소매 티셔츠 [화이트]",
           "brandName": "무신사 스탠다드",
@@ -2622,7 +2590,7 @@
           "gender": "남성"
         },
         {
-          "rank": 12,
+          "rank": 8,
           "goodsNo": 996234,
           "title": "크루 넥 긴소매 티셔츠 [블랙]",
           "brandName": "무신사 스탠다드",
@@ -2630,7 +2598,7 @@
           "gender": "남성"
         },
         {
-          "rank": 13,
+          "rank": 9,
           "goodsNo": 996235,
           "title": "크루 넥 긴소매 티셔츠 [오트밀]",
           "brandName": "무신사 스탠다드",
@@ -2638,7 +2606,7 @@
           "gender": "남성"
         },
         {
-          "rank": 14,
+          "rank": 10,
           "goodsNo": 996236,
           "title": "크루 넥 긴소매 티셔츠 [네이비]",
           "brandName": "무신사 스탠다드",
@@ -2646,7 +2614,7 @@
           "gender": "남성"
         },
         {
-          "rank": 15,
+          "rank": 11,
           "goodsNo": 996237,
           "title": "크루 넥 긴소매 티셔츠 [다크 그레이]",
           "brandName": "무신사 스탠다드",
@@ -2654,7 +2622,7 @@
           "gender": "남성"
         },
         {
-          "rank": 16,
+          "rank": 12,
           "goodsNo": 996238,
           "title": "크루 넥 긴소매 티셔츠 [카키]",
           "brandName": "무신사 스탠다드",
@@ -2662,7 +2630,7 @@
           "gender": "남성"
         },
         {
-          "rank": 17,
+          "rank": 13,
           "goodsNo": 996497,
           "title": "베이식 크루 넥 티셔츠 [화이트]",
           "brandName": "무신사 스탠다드",
@@ -2670,7 +2638,7 @@
           "gender": "남성"
         },
         {
-          "rank": 18,
+          "rank": 14,
           "goodsNo": 996498,
           "title": "베이식 크루 넥 티셔츠 [블랙]",
           "brandName": "무신사 스탠다드",
@@ -2678,11 +2646,43 @@
           "gender": "남성"
         },
         {
-          "rank": 19,
+          "rank": 15,
           "goodsNo": 996499,
           "title": "베이식 크루 넥 티셔츠 [오트밀]",
           "brandName": "무신사 스탠다드",
           "priceFinal": 11090,
+          "gender": "남성"
+        },
+        {
+          "rank": 16,
+          "goodsNo": 996500,
+          "title": "베이식 크루 넥 티셔츠 [멜란지 그레이]",
+          "brandName": "무신사 스탠다드",
+          "priceFinal": 11590,
+          "gender": "남성"
+        },
+        {
+          "rank": 17,
+          "goodsNo": 996501,
+          "title": "베이식 크루 넥 티셔츠 [네이비]",
+          "brandName": "무신사 스탠다드",
+          "priceFinal": 11090,
+          "gender": "남성"
+        },
+        {
+          "rank": 18,
+          "goodsNo": 996503,
+          "title": "베이식 크루 넥 티셔츠 [딥 그린]",
+          "brandName": "무신사 스탠다드",
+          "priceFinal": 10290,
+          "gender": "남성"
+        },
+        {
+          "rank": 19,
+          "goodsNo": 996504,
+          "title": "베이식 크루 넥 티셔츠 [잉크 블루]",
+          "brandName": "무신사 스탠다드",
+          "priceFinal": 10290,
           "gender": "남성"
         }
       ]
@@ -2698,46 +2698,6 @@
       "candidates": [
         {
           "rank": 0,
-          "goodsNo": 1629864,
-          "title": "영 앳 하트 후드 크림",
-          "brandName": "라디네오",
-          "priceFinal": 62400,
-          "gender": "남성"
-        },
-        {
-          "rank": 1,
-          "goodsNo": 1629866,
-          "title": "영 앳 하트 후드 블랙",
-          "brandName": "라디네오",
-          "priceFinal": 62400,
-          "gender": "남성"
-        },
-        {
-          "rank": 2,
-          "goodsNo": 1629868,
-          "title": "영 앳 하트 후드 그레이",
-          "brandName": "라디네오",
-          "priceFinal": 62400,
-          "gender": "남성"
-        },
-        {
-          "rank": 3,
-          "goodsNo": 1689664,
-          "title": "어 플러피 베어 후드 블랙",
-          "brandName": "라디네오",
-          "priceFinal": 54600,
-          "gender": "남성"
-        },
-        {
-          "rank": 4,
-          "goodsNo": 1689680,
-          "title": "어 플러피 베어 후드 그레이",
-          "brandName": "라디네오",
-          "priceFinal": 62400,
-          "gender": "남성"
-        },
-        {
-          "rank": 5,
           "goodsNo": 1891320,
           "title": "영 앳 하트 네이비 반팔 티셔츠",
           "brandName": "라디네오",
@@ -2745,7 +2705,7 @@
           "gender": "남성"
         },
         {
-          "rank": 6,
+          "rank": 1,
           "goodsNo": 1891327,
           "title": "영 앳 하트 그레이 반팔 티셔츠",
           "brandName": "라디네오",
@@ -2753,7 +2713,7 @@
           "gender": "남성"
         },
         {
-          "rank": 7,
+          "rank": 2,
           "goodsNo": 1891332,
           "title": "영 앳 하트 베이지 반팔 티셔츠",
           "brandName": "라디네오",
@@ -2761,7 +2721,7 @@
           "gender": "남성"
         },
         {
-          "rank": 8,
+          "rank": 3,
           "goodsNo": 1891340,
           "title": "영 앳 하트 화이트 반팔 티셔츠",
           "brandName": "라디네오",
@@ -2769,7 +2729,7 @@
           "gender": "남성"
         },
         {
-          "rank": 9,
+          "rank": 4,
           "goodsNo": 1893610,
           "title": "아치 로고 블랙 반팔 티셔츠",
           "brandName": "라디네오",
@@ -2777,7 +2737,7 @@
           "gender": "남성"
         },
         {
-          "rank": 10,
+          "rank": 5,
           "goodsNo": 1893629,
           "title": "아치 로고 베이지 반팔 티셔츠",
           "brandName": "라디네오",
@@ -2785,7 +2745,7 @@
           "gender": "남성"
         },
         {
-          "rank": 11,
+          "rank": 6,
           "goodsNo": 1918160,
           "title": "러블리 퍼피 블랙 크롭 탑",
           "brandName": "라디네오",
@@ -2793,7 +2753,7 @@
           "gender": "여성"
         },
         {
-          "rank": 12,
+          "rank": 7,
           "goodsNo": 1918192,
           "title": "러블리 퍼피 화이트 크롭 탑",
           "brandName": "라디네오",
@@ -2801,7 +2761,7 @@
           "gender": "여성"
         },
         {
-          "rank": 13,
+          "rank": 8,
           "goodsNo": 1936541,
           "title": "캣 앤 펀칭 블랙 크롭 탑",
           "brandName": "라디네오",
@@ -2809,7 +2769,7 @@
           "gender": "여성"
         },
         {
-          "rank": 14,
+          "rank": 9,
           "goodsNo": 1936585,
           "title": "캣 앤 펀칭 화이트 크롭 탑",
           "brandName": "라디네오",
@@ -2817,7 +2777,7 @@
           "gender": "여성"
         },
         {
-          "rank": 15,
+          "rank": 10,
           "goodsNo": 1988875,
           "title": "플러피 하트 핑크 블랙 크롭 탑",
           "brandName": "라디네오",
@@ -2825,7 +2785,7 @@
           "gender": "여성"
         },
         {
-          "rank": 16,
+          "rank": 11,
           "goodsNo": 1988884,
           "title": "플러피 하트 핑크 화이트 크롭 탑",
           "brandName": "라디네오",
@@ -2833,7 +2793,7 @@
           "gender": "여성"
         },
         {
-          "rank": 17,
+          "rank": 12,
           "goodsNo": 1992650,
           "title": "어 플러피 베어 그레이 반팔 티셔츠",
           "brandName": "라디네오",
@@ -2841,7 +2801,7 @@
           "gender": "남성"
         },
         {
-          "rank": 18,
+          "rank": 13,
           "goodsNo": 1992655,
           "title": "어 플러피 베어 베이지 반팔 티셔츠",
           "brandName": "라디네오",
@@ -2849,11 +2809,51 @@
           "gender": "남성"
         },
         {
-          "rank": 19,
+          "rank": 14,
           "goodsNo": 1992668,
           "title": "어 플러피 베어 화이트 반팔 티셔츠",
           "brandName": "라디네오",
           "priceFinal": 48000,
+          "gender": "남성"
+        },
+        {
+          "rank": 15,
+          "goodsNo": 2009905,
+          "title": "디노 네이비 반팔 티셔츠",
+          "brandName": "라디네오",
+          "priceFinal": 38400,
+          "gender": "남성"
+        },
+        {
+          "rank": 16,
+          "goodsNo": 2009912,
+          "title": "디노 그레이 반팔 티셔츠",
+          "brandName": "라디네오",
+          "priceFinal": 38400,
+          "gender": "남성"
+        },
+        {
+          "rank": 17,
+          "goodsNo": 2009916,
+          "title": "디노 블랙 반팔 티셔츠",
+          "brandName": "라디네오",
+          "priceFinal": 38400,
+          "gender": "남성"
+        },
+        {
+          "rank": 18,
+          "goodsNo": 2009919,
+          "title": "디노 화이트 반팔 티셔츠",
+          "brandName": "라디네오",
+          "priceFinal": 48000,
+          "gender": "남성"
+        },
+        {
+          "rank": 19,
+          "goodsNo": 2017690,
+          "title": "피타 네이비 반팔 티셔츠",
+          "brandName": "라디네오",
+          "priceFinal": 38400,
           "gender": "남성"
         }
       ]
@@ -2869,22 +2869,6 @@
       "candidates": [
         {
           "rank": 0,
-          "goodsNo": 4478476,
-          "title": "티글레이크 레터링 오버핏 기모 후드티셔츠 그레이",
-          "brandName": "티글레이크",
-          "priceFinal": 32900,
-          "gender": "남성"
-        },
-        {
-          "rank": 1,
-          "goodsNo": 4478477,
-          "title": "티글레이크 레터링 오버핏 기모 후드티셔츠 블랙",
-          "brandName": "티글레이크",
-          "priceFinal": 32900,
-          "gender": "남성"
-        },
-        {
-          "rank": 2,
           "goodsNo": 4924262,
           "title": "티글레이크도그 반팔 티셔츠_6color",
           "brandName": "티글레이크",
@@ -2892,139 +2876,155 @@
           "gender": "공용"
         },
         {
-          "rank": 3,
-          "goodsNo": 4478469,
-          "title": "TGLK 로고 오버핏 기모 후드티셔츠 네이비",
+          "rank": 1,
+          "goodsNo": 4924173,
+          "title": "페이크러브 반팔 티셔츠_6color",
           "brandName": "티글레이크",
-          "priceFinal": 32900,
-          "gender": "여성"
+          "priceFinal": 18900,
+          "gender": "공용"
+        },
+        {
+          "rank": 2,
+          "goodsNo": 4924182,
+          "title": "캄니스스튜디오 반팔 티셔츠_6color",
+          "brandName": "티글레이크",
+          "priceFinal": 18900,
+          "gender": "공용"
+        },
+        {
+          "rank": 3,
+          "goodsNo": 4924235,
+          "title": "쇼핑베어 반팔 티셔츠_6color",
+          "brandName": "티글레이크",
+          "priceFinal": 18900,
+          "gender": "공용"
         },
         {
           "rank": 4,
-          "goodsNo": 4478471,
-          "title": "TGLK 로고 오버핏 기모 후드티셔츠 오트밀",
+          "goodsNo": 4924252,
+          "title": "1990캄니스 반팔 티셔츠_6color",
           "brandName": "티글레이크",
-          "priceFinal": 32900,
-          "gender": "남성"
+          "priceFinal": 18900,
+          "gender": "공용"
         },
         {
           "rank": 5,
-          "goodsNo": 4478478,
-          "title": "위아영 오버핏 기모 후드티셔츠 그레이",
+          "goodsNo": 4924266,
+          "title": "캠핑베어 반팔 티셔츠_6color",
           "brandName": "티글레이크",
-          "priceFinal": 32900,
-          "gender": "남성"
+          "priceFinal": 18900,
+          "gender": "공용"
         },
         {
           "rank": 6,
-          "goodsNo": 4478479,
-          "title": "위아영 오버핏 기모 후드티셔츠 오트밀",
+          "goodsNo": 4924276,
+          "title": "위니드아치로고 반팔 티셔츠_6color",
           "brandName": "티글레이크",
-          "priceFinal": 32900,
-          "gender": "남성"
+          "priceFinal": 18900,
+          "gender": "공용"
         },
         {
           "rank": 7,
-          "goodsNo": 4478480,
-          "title": "마이프렌드 오버핏 기모 후드티셔츠 네이비",
+          "goodsNo": 4924299,
+          "title": "TGLK90스토리 반팔 티셔츠_6color",
           "brandName": "티글레이크",
-          "priceFinal": 32900,
-          "gender": "여성"
+          "priceFinal": 18900,
+          "gender": "공용"
         },
         {
           "rank": 8,
-          "goodsNo": 4478483,
-          "title": "마이프렌드 오버핏 기모 후드티셔츠 라이트그레이",
+          "goodsNo": 4924324,
+          "title": "TGK로고 반팔 티셔츠_6color",
           "brandName": "티글레이크",
-          "priceFinal": 32900,
-          "gender": "남성"
+          "priceFinal": 18900,
+          "gender": "공용"
         },
         {
           "rank": 9,
-          "goodsNo": 4478484,
-          "title": "오리지널 에디션 오버핏 기모 후드티셔츠 그레이",
+          "goodsNo": 4924398,
+          "title": "네버겟  반팔 티셔츠_6color",
           "brandName": "티글레이크",
-          "priceFinal": 32900,
-          "gender": "여성"
+          "priceFinal": 18900,
+          "gender": "공용"
         },
         {
           "rank": 10,
-          "goodsNo": 4478485,
-          "title": "오리지널 에디션 오버핏 기모 후드티셔츠 오트밀",
+          "goodsNo": 4924520,
+          "title": "1978오리지널 반팔 티셔츠_6color",
           "brandName": "티글레이크",
-          "priceFinal": 32900,
-          "gender": "남성"
+          "priceFinal": 18900,
+          "gender": "공용"
         },
         {
           "rank": 11,
-          "goodsNo": 4484679,
-          "title": "무지 오버핏 기모 후드티 조거 트레이닝바지 세트 그레이",
+          "goodsNo": 4924526,
+          "title": "패치로고 반팔 티셔츠_6color",
           "brandName": "티글레이크",
-          "priceFinal": 62900,
+          "priceFinal": 18900,
           "gender": "공용"
         },
         {
           "rank": 12,
-          "goodsNo": 4484682,
-          "title": "무지 오버핏 기모 후드티 조거 트레이닝바지 세트 네이비",
+          "goodsNo": 4924530,
+          "title": "유고앙 반팔 티셔츠_6color",
           "brandName": "티글레이크",
-          "priceFinal": 62900,
+          "priceFinal": 18900,
           "gender": "공용"
         },
         {
           "rank": 13,
-          "goodsNo": 4484683,
-          "title": "무지 오버핏 기모 후드티 조거 트레이닝바지 세트 다크그레이",
+          "goodsNo": 4924574,
+          "title": "투톤TGLK로고 반팔 티셔츠_6color",
           "brandName": "티글레이크",
-          "priceFinal": 62900,
+          "priceFinal": 18900,
           "gender": "공용"
         },
         {
           "rank": 14,
-          "goodsNo": 4484685,
-          "title": "무지 오버핏 기모 후드티 조거 트레이닝바지 세트 라이트그레이",
+          "goodsNo": 4924591,
+          "title": "콘넥트 반팔 티셔츠_6color",
           "brandName": "티글레이크",
-          "priceFinal": 62900,
+          "priceFinal": 18900,
           "gender": "공용"
         },
         {
           "rank": 15,
-          "goodsNo": 4484688,
-          "title": "무지 오버핏 기모 후드티 조거 트레이닝바지 세트 블랙",
+          "goodsNo": 4924648,
+          "title": "커넥트 반팔 티셔츠_6color",
           "brandName": "티글레이크",
-          "priceFinal": 62900,
+          "priceFinal": 18900,
           "gender": "공용"
         },
         {
           "rank": 16,
-          "goodsNo": 4484690,
-          "title": "무지 오버핏 기모 후드티 조거 트레이닝바지 세트 오트밀",
+          "goodsNo": 4924782,
+          "title": "쉐도우로고 반팔 티셔츠_6color",
           "brandName": "티글레이크",
-          "priceFinal": 62900,
+          "priceFinal": 18900,
           "gender": "공용"
         },
         {
           "rank": 17,
-          "goodsNo": 4484702,
-          "title": "무지 오버핏 기모 후드티셔츠 그레이",
+          "goodsNo": 4924940,
+          "title": "홀드베어 반팔 티셔츠_6color",
           "brandName": "티글레이크",
-          "priceFinal": 26900,
+          "priceFinal": 18900,
           "gender": "공용"
         },
         {
           "rank": 18,
-          "goodsNo": 4484703,
-          "title": "무지 오버핏 기모 후드티셔츠 네이비",
+          "goodsNo": 4924942,
+          "title": "리본베어 반팔 티셔츠_6color",
           "brandName": "티글레이크",
-          "priceFinal": 26900,
+          "priceFinal": 18900,
           "gender": "공용"
         },
         {
           "rank": 19,
-          "goodsNo": 4484705,
-          "title": "무지 오버핏 기모 후드티셔츠 다크그레이",
+          "goodsNo": 4924956,
+          "title": "유니버시티로고 반팔 티셔츠_6color",
           "brandName": "티글레이크",
-          "priceFinal": 26900,
+          "priceFinal": 18900,
           "gender": "공용"
         }
       ]
@@ -3040,14 +3040,6 @@
       "candidates": [
         {
           "rank": 0,
-          "goodsNo": 4097733,
-          "title": "엘라모엣지 후드티 남녀공용 빅사이즈 M~4XL",
-          "brandName": "엘라모",
-          "priceFinal": 35900,
-          "gender": "공용"
-        },
-        {
-          "rank": 1,
           "goodsNo": 4097758,
           "title": "스페이스엘라모 반팔티셔츠 남녀공용 빅사이즈 S~4XL",
           "brandName": "엘라모",
@@ -3055,7 +3047,7 @@
           "gender": "공용"
         },
         {
-          "rank": 2,
+          "rank": 1,
           "goodsNo": 4119255,
           "title": "큐빅엘라모이글 반팔티셔츠 남녀공용 빅사이즈 S~4XL",
           "brandName": "엘라모",
@@ -3063,7 +3055,7 @@
           "gender": "공용"
         },
         {
-          "rank": 3,
+          "rank": 2,
           "goodsNo": 4130538,
           "title": "엘라모하우스 반팔티셔츠 남녀공용 빅사이즈 S~4XL",
           "brandName": "엘라모",
@@ -3071,7 +3063,7 @@
           "gender": "공용"
         },
         {
-          "rank": 4,
+          "rank": 3,
           "goodsNo": 4138187,
           "title": "그래피티엘라모 반팔티셔츠 남녀공용 빅사이즈 S~4XL",
           "brandName": "엘라모",
@@ -3079,7 +3071,7 @@
           "gender": "공용"
         },
         {
-          "rank": 5,
+          "rank": 4,
           "goodsNo": 4144846,
           "title": "패치엘라모 반팔티셔츠 남녀공용 빅사이즈 S~4XL",
           "brandName": "엘라모",
@@ -3087,7 +3079,7 @@
           "gender": "공용"
         },
         {
-          "rank": 6,
+          "rank": 5,
           "goodsNo": 4145452,
           "title": "엘라모 래빗러브 반팔티셔츠 남녀공용 빅사이즈 S~4XL",
           "brandName": "엘라모",
@@ -3095,7 +3087,7 @@
           "gender": "공용"
         },
         {
-          "rank": 7,
+          "rank": 6,
           "goodsNo": 4152229,
           "title": "큐빅엘라모캡 반팔티셔츠 남녀공용 빅사이즈 S~4XL",
           "brandName": "엘라모",
@@ -3103,7 +3095,7 @@
           "gender": "공용"
         },
         {
-          "rank": 8,
+          "rank": 7,
           "goodsNo": 4152240,
           "title": "엘라모NO5 반팔티셔츠 남녀공용 빅사이즈 S~4XL",
           "brandName": "엘라모",
@@ -3111,7 +3103,7 @@
           "gender": "공용"
         },
         {
-          "rank": 9,
+          "rank": 8,
           "goodsNo": 4160284,
           "title": "엘라모사람로고 포켓 반팔티셔츠 남녀공용 빅사이즈 XS~XL",
           "brandName": "엘라모",
@@ -3119,7 +3111,7 @@
           "gender": "남성"
         },
         {
-          "rank": 10,
+          "rank": 9,
           "goodsNo": 4160286,
           "title": "엘라모로고 기본 반팔티셔츠 남녀공용 빅사이즈 XS~XL",
           "brandName": "엘라모",
@@ -3127,7 +3119,7 @@
           "gender": "남성"
         },
         {
-          "rank": 11,
+          "rank": 10,
           "goodsNo": 4164159,
           "title": "엘라모 남성 머슬핏 반팔 티셔츠 M~XL",
           "brandName": "엘라모",
@@ -3135,7 +3127,7 @@
           "gender": "남성"
         },
         {
-          "rank": 12,
+          "rank": 11,
           "goodsNo": 4164161,
           "title": "엘라모 남성 머슬핏 트임 반팔 티셔츠 M~XL",
           "brandName": "엘라모",
@@ -3143,7 +3135,7 @@
           "gender": "남성"
         },
         {
-          "rank": 13,
+          "rank": 12,
           "goodsNo": 4164164,
           "title": "엘라모 남성 머슬핏 긴팔 티셔츠 M~XL",
           "brandName": "엘라모",
@@ -3151,7 +3143,7 @@
           "gender": "남성"
         },
         {
-          "rank": 14,
+          "rank": 13,
           "goodsNo": 4164165,
           "title": "엘라모 여성 머슬핏 반팔 티셔츠 XS~S",
           "brandName": "엘라모",
@@ -3159,7 +3151,7 @@
           "gender": "여성"
         },
         {
-          "rank": 15,
+          "rank": 14,
           "goodsNo": 4164166,
           "title": "엘라모 여성 머슬핏 크롭 반팔 티셔츠 XS~S",
           "brandName": "엘라모",
@@ -3167,7 +3159,7 @@
           "gender": "여성"
         },
         {
-          "rank": 16,
+          "rank": 15,
           "goodsNo": 4175819,
           "title": "네츄럴엘라모 오버핏 반팔 티셔츠",
           "brandName": "엘라모",
@@ -3175,28 +3167,36 @@
           "gender": "공용"
         },
         {
-          "rank": 17,
-          "goodsNo": 4228799,
-          "title": "믹스엘라모 후드티 남녀공용 빅사이즈 M~4XL",
+          "rank": 16,
+          "goodsNo": 4093390,
+          "title": "큐티멜로우 반팔티셔츠 남녀공용 빅사이즈 S~4XL",
           "brandName": "엘라모",
-          "priceFinal": 35540,
-          "gender": "남성"
+          "priceFinal": 14310,
+          "gender": "공용"
+        },
+        {
+          "rank": 17,
+          "goodsNo": 4094222,
+          "title": "네온베어 반팔티셔츠 남녀공용 빅사이즈 S~4XL",
+          "brandName": "엘라모",
+          "priceFinal": 17010,
+          "gender": "공용"
         },
         {
           "rank": 18,
-          "goodsNo": 4236463,
-          "title": "엘라모베이스볼 후드티 남녀공용 빅사이즈 M~4XL",
+          "goodsNo": 4094462,
+          "title": "돌핀 반팔티셔츠 남녀공용 빅사이즈 S~4XL",
           "brandName": "엘라모",
-          "priceFinal": 38780,
-          "gender": "남성"
+          "priceFinal": 15210,
+          "gender": "공용"
         },
         {
           "rank": 19,
-          "goodsNo": 4627394,
-          "title": "기모H 믹스엘라모 후드티 남녀공용 빅사이즈 M~4XL",
+          "goodsNo": 4094592,
+          "title": "통조림 반팔티셔츠 남녀공용 빅사이즈 S~4XL",
           "brandName": "엘라모",
-          "priceFinal": 36620,
-          "gender": "남성"
+          "priceFinal": 14310,
+          "gender": "공용"
         }
       ]
     },
@@ -3339,35 +3339,35 @@
         },
         {
           "rank": 16,
-          "goodsNo": 4684331,
-          "title": "크림소다랩 스마일 블랙 스웨트 셔츠",
+          "goodsNo": 5049547,
+          "title": "크림소다랩 파쿠 서클 로고 포켓 반팔티",
           "brandName": "크림소다랩",
-          "priceFinal": 27750,
+          "priceFinal": 27600,
           "gender": "공용"
         },
         {
           "rank": 17,
-          "goodsNo": 4684890,
-          "title": "크림소다랩 스마일 그레이 스웨트 셔츠",
+          "goodsNo": 1855613,
+          "title": "베이스볼 클럽 반팔 티셔츠 라이트 그레이",
           "brandName": "크림소다랩",
-          "priceFinal": 24000,
-          "gender": "공용"
+          "priceFinal": 21000,
+          "gender": "남성"
         },
         {
           "rank": 18,
-          "goodsNo": 4684893,
-          "title": "크림소다랩 스마일 라이트그레이 스웨트 셔츠",
+          "goodsNo": 1855614,
+          "title": "베이스볼 클럽 반팔 티셔츠 블랙",
           "brandName": "크림소다랩",
-          "priceFinal": 27750,
-          "gender": "공용"
+          "priceFinal": 23100,
+          "gender": "남성"
         },
         {
           "rank": 19,
-          "goodsNo": 4684904,
-          "title": "크림소다랩 스마일 오트밀 스웨트 셔츠",
+          "goodsNo": 1855615,
+          "title": "오지 아크로고 반팔 티셔츠 그레이",
           "brandName": "크림소다랩",
-          "priceFinal": 27750,
-          "gender": "공용"
+          "priceFinal": 23100,
+          "gender": "남성"
         }
       ]
     },
@@ -3943,14 +3943,6 @@
         },
         {
           "rank": 6,
-          "goodsNo": 6222078,
-          "title": "스케이트보딩 아디다스 코르포 솔루션 후디 KC2261",
-          "brandName": "아디다스",
-          "priceFinal": 109000,
-          "gender": "남성"
-        },
-        {
-          "rank": 7,
           "goodsNo": 6222117,
           "title": "아디다스 헤리티지 그래픽 티셔츠 KB9442",
           "brandName": "아디다스",
@@ -3958,15 +3950,7 @@
           "gender": "남성"
         },
         {
-          "rank": 8,
-          "goodsNo": 6246984,
-          "title": "스케이트보딩 아디다스 코르포 솔루션 후디 KC2260",
-          "brandName": "아디다스",
-          "priceFinal": 76300,
-          "gender": "남성"
-        },
-        {
-          "rank": 9,
+          "rank": 7,
           "goodsNo": 6571314,
           "title": "아디다스X코카콜라 팀가이스트 26 저지 KY2104",
           "brandName": "아디다스",
@@ -3974,7 +3958,7 @@
           "gender": "남성"
         },
         {
-          "rank": 10,
+          "rank": 8,
           "goodsNo": 6571318,
           "title": "아디다스X코카콜라 팀가이스트 26 저지 KY2103",
           "brandName": "아디다스",
@@ -3982,7 +3966,7 @@
           "gender": "남성"
         },
         {
-          "rank": 11,
+          "rank": 9,
           "goodsNo": 6571329,
           "title": "아디다스X코카콜라 크롭 저지 KY7571",
           "brandName": "아디다스",
@@ -3990,7 +3974,7 @@
           "gender": "여성"
         },
         {
-          "rank": 12,
+          "rank": 10,
           "goodsNo": 6571343,
           "title": "아디다스X코카콜라 3-스트라이프 티 KY7558",
           "brandName": "아디다스",
@@ -3998,7 +3982,7 @@
           "gender": "여성"
         },
         {
-          "rank": 13,
+          "rank": 11,
           "goodsNo": 6571350,
           "title": "아디다스X코카콜라 클래식 스포츠 그래픽 트레피 티 KY2109",
           "brandName": "아디다스",
@@ -4006,7 +3990,7 @@
           "gender": "남성"
         },
         {
-          "rank": 14,
+          "rank": 12,
           "goodsNo": 6571352,
           "title": "아디다스X코카콜라 클래식 스포츠 캘리 티 KY2114",
           "brandName": "아디다스",
@@ -4014,7 +3998,7 @@
           "gender": "남성"
         },
         {
-          "rank": 15,
+          "rank": 13,
           "goodsNo": 6584336,
           "title": "아디다스X코카콜라 클래식 스포츠 매쉬 업 저지 KY2106",
           "brandName": "아디다스",
@@ -4022,7 +4006,7 @@
           "gender": "남성"
         },
         {
-          "rank": 16,
+          "rank": 14,
           "goodsNo": 6859609,
           "title": "아디다스 Z.N.E. 루즈 핏 티셔츠 KF3823",
           "brandName": "아디다스",
@@ -4030,7 +4014,7 @@
           "gender": "남성"
         },
         {
-          "rank": 17,
+          "rank": 15,
           "goodsNo": 6928934,
           "title": "아디다스 Z.N.E. 루즈 핏 티셔츠 KF3818",
           "brandName": "아디다스",
@@ -4038,7 +4022,7 @@
           "gender": "남성"
         },
         {
-          "rank": 18,
+          "rank": 16,
           "goodsNo": 6968738,
           "title": "adi365 아디다스 러너스 티셔츠 KT4847",
           "brandName": "아디다스",
@@ -4046,11 +4030,27 @@
           "gender": "남성"
         },
         {
-          "rank": 19,
+          "rank": 17,
           "goodsNo": 2562243,
           "title": "SL 티셔츠 M GK9639",
           "brandName": "아디다스",
           "priceFinal": 31200,
+          "gender": "남성"
+        },
+        {
+          "rank": 18,
+          "goodsNo": 2562669,
+          "title": "클럽 3스트라이프 폴로 H34701",
+          "brandName": "아디다스",
+          "priceFinal": 69000,
+          "gender": "남성"
+        },
+        {
+          "rank": 19,
+          "goodsNo": 3249655,
+          "title": "티로 23 리그 저지 HT6128",
+          "brandName": "아디다스",
+          "priceFinal": 31500,
           "gender": "남성"
         }
       ]
@@ -4106,22 +4106,6 @@
         },
         {
           "rank": 5,
-          "goodsNo": 4618687,
-          "title": "[커버낫 X MAMA] 그래픽 후디 헤더 그레이",
-          "brandName": "커버낫",
-          "priceFinal": 69300,
-          "gender": "공용"
-        },
-        {
-          "rank": 6,
-          "goodsNo": 4618688,
-          "title": "[커버낫 X 2024 MAMA AWARDS] 그래픽 후디 블랙",
-          "brandName": "커버낫",
-          "priceFinal": 69300,
-          "gender": "공용"
-        },
-        {
-          "rank": 7,
           "goodsNo": 5096227,
           "title": "[커버낫X르망고] 우먼 그래픽 오버핏 티셔츠 Navy",
           "brandName": "커버낫 우먼",
@@ -4129,7 +4113,7 @@
           "gender": "여성"
         },
         {
-          "rank": 8,
+          "rank": 6,
           "goodsNo": 5096228,
           "title": "[커버낫X르망고] 우먼 그래픽 오버핏 티셔츠 Ivory",
           "brandName": "커버낫 우먼",
@@ -4137,7 +4121,7 @@
           "gender": "여성"
         },
         {
-          "rank": 9,
+          "rank": 7,
           "goodsNo": 5096230,
           "title": "[커버낫X르망고] 우먼 그래픽 크롭 티셔츠 Pink",
           "brandName": "커버낫 우먼",
@@ -4145,7 +4129,7 @@
           "gender": "여성"
         },
         {
-          "rank": 10,
+          "rank": 8,
           "goodsNo": 5096231,
           "title": "[커버낫X르망고] 우먼 그래픽 크롭 티셔츠 Off White",
           "brandName": "커버낫 우먼",
@@ -4153,7 +4137,7 @@
           "gender": "여성"
         },
         {
-          "rank": 11,
+          "rank": 9,
           "goodsNo": 5305337,
           "title": "[커버낫X하이다나] 럭키 씨리얼 로고 티셔츠 Heather Gray",
           "brandName": "커버낫",
@@ -4161,7 +4145,7 @@
           "gender": "남성"
         },
         {
-          "rank": 12,
+          "rank": 10,
           "goodsNo": 5305340,
           "title": "[커버낫X하이다나] 럭키 씨리얼 로고 티셔츠 Off White",
           "brandName": "커버낫",
@@ -4169,7 +4153,7 @@
           "gender": "여성"
         },
         {
-          "rank": 13,
+          "rank": 11,
           "goodsNo": 5305342,
           "title": "[커버낫X하이다나] 럭키 씨리얼 링거 티셔츠 Sky Blue",
           "brandName": "커버낫",
@@ -4177,7 +4161,7 @@
           "gender": "여성"
         },
         {
-          "rank": 14,
+          "rank": 12,
           "goodsNo": 5305344,
           "title": "[커버낫X하이다나] 럭키 씨리얼 링거 티셔츠 Off White",
           "brandName": "커버낫",
@@ -4185,7 +4169,7 @@
           "gender": "남성"
         },
         {
-          "rank": 15,
+          "rank": 13,
           "goodsNo": 5305345,
           "title": "[커버낫X하이다나] 럭키 씨리얼 링거 티셔츠 Navy",
           "brandName": "커버낫",
@@ -4193,7 +4177,7 @@
           "gender": "여성"
         },
         {
-          "rank": 16,
+          "rank": 14,
           "goodsNo": 5506392,
           "title": "[커버낫 X 요시고] 온 더 루트 레이어드 롱슬리브 올리브",
           "brandName": "커버낫",
@@ -4201,7 +4185,7 @@
           "gender": "공용"
         },
         {
-          "rank": 17,
+          "rank": 15,
           "goodsNo": 5506394,
           "title": "[커버낫 X 요시고] 플라스틱 스틸 라이프 레이어드 롱슬리브 Off White",
           "brandName": "커버낫",
@@ -4209,7 +4193,7 @@
           "gender": "공용"
         },
         {
-          "rank": 18,
+          "rank": 16,
           "goodsNo": 5506397,
           "title": "[커버낫 X 요시고] 벌룬 페스티벌 링거 롱슬리브 Ivory",
           "brandName": "커버낫",
@@ -4217,12 +4201,28 @@
           "gender": "공용"
         },
         {
-          "rank": 19,
-          "goodsNo": 5506399,
-          "title": "[커버낫 X 요시고] 미드나잇 시티 폴라로이드 그래픽 후디 Dark Navy",
+          "rank": 17,
+          "goodsNo": 6245389,
+          "title": "[커버낫 X 미즈노] 소로나 트랙 레터링 그래픽 메쉬 티셔츠 라이트그레이",
           "brandName": "커버낫",
-          "priceFinal": 69300,
-          "gender": "공용"
+          "priceFinal": 55200,
+          "gender": "남성"
+        },
+        {
+          "rank": 18,
+          "goodsNo": 6245391,
+          "title": "[커버낫 X 미즈노] 쿨 코튼 쉘 그래픽 티셔츠 카키",
+          "brandName": "커버낫",
+          "priceFinal": 47200,
+          "gender": "남성"
+        },
+        {
+          "rank": 19,
+          "goodsNo": 6245394,
+          "title": "[커버낫 X 미즈노] 쿨 코튼 쉘 그래픽 티셔츠 화이트",
+          "brandName": "커버낫",
+          "priceFinal": 47200,
+          "gender": "남성"
         }
       ]
     },
@@ -4285,14 +4285,6 @@
         },
         {
           "rank": 6,
-          "goodsNo": 6222078,
-          "title": "스케이트보딩 아디다스 코르포 솔루션 후디 KC2261",
-          "brandName": "아디다스",
-          "priceFinal": 109000,
-          "gender": "남성"
-        },
-        {
-          "rank": 7,
           "goodsNo": 6222117,
           "title": "아디다스 헤리티지 그래픽 티셔츠 KB9442",
           "brandName": "아디다스",
@@ -4300,15 +4292,7 @@
           "gender": "남성"
         },
         {
-          "rank": 8,
-          "goodsNo": 6246984,
-          "title": "스케이트보딩 아디다스 코르포 솔루션 후디 KC2260",
-          "brandName": "아디다스",
-          "priceFinal": 76300,
-          "gender": "남성"
-        },
-        {
-          "rank": 9,
+          "rank": 7,
           "goodsNo": 6571314,
           "title": "아디다스X코카콜라 팀가이스트 26 저지 KY2104",
           "brandName": "아디다스",
@@ -4316,7 +4300,7 @@
           "gender": "남성"
         },
         {
-          "rank": 10,
+          "rank": 8,
           "goodsNo": 6571318,
           "title": "아디다스X코카콜라 팀가이스트 26 저지 KY2103",
           "brandName": "아디다스",
@@ -4324,7 +4308,7 @@
           "gender": "남성"
         },
         {
-          "rank": 11,
+          "rank": 9,
           "goodsNo": 6571329,
           "title": "아디다스X코카콜라 크롭 저지 KY7571",
           "brandName": "아디다스",
@@ -4332,7 +4316,7 @@
           "gender": "여성"
         },
         {
-          "rank": 12,
+          "rank": 10,
           "goodsNo": 6571343,
           "title": "아디다스X코카콜라 3-스트라이프 티 KY7558",
           "brandName": "아디다스",
@@ -4340,7 +4324,7 @@
           "gender": "여성"
         },
         {
-          "rank": 13,
+          "rank": 11,
           "goodsNo": 6571350,
           "title": "아디다스X코카콜라 클래식 스포츠 그래픽 트레피 티 KY2109",
           "brandName": "아디다스",
@@ -4348,7 +4332,7 @@
           "gender": "남성"
         },
         {
-          "rank": 14,
+          "rank": 12,
           "goodsNo": 6571352,
           "title": "아디다스X코카콜라 클래식 스포츠 캘리 티 KY2114",
           "brandName": "아디다스",
@@ -4356,7 +4340,7 @@
           "gender": "남성"
         },
         {
-          "rank": 15,
+          "rank": 13,
           "goodsNo": 6584336,
           "title": "아디다스X코카콜라 클래식 스포츠 매쉬 업 저지 KY2106",
           "brandName": "아디다스",
@@ -4364,7 +4348,7 @@
           "gender": "남성"
         },
         {
-          "rank": 16,
+          "rank": 14,
           "goodsNo": 6859609,
           "title": "아디다스 Z.N.E. 루즈 핏 티셔츠 KF3823",
           "brandName": "아디다스",
@@ -4372,7 +4356,7 @@
           "gender": "남성"
         },
         {
-          "rank": 17,
+          "rank": 15,
           "goodsNo": 6928934,
           "title": "아디다스 Z.N.E. 루즈 핏 티셔츠 KF3818",
           "brandName": "아디다스",
@@ -4380,7 +4364,7 @@
           "gender": "남성"
         },
         {
-          "rank": 18,
+          "rank": 16,
           "goodsNo": 6968738,
           "title": "adi365 아디다스 러너스 티셔츠 KT4847",
           "brandName": "아디다스",
@@ -4388,11 +4372,27 @@
           "gender": "남성"
         },
         {
-          "rank": 19,
+          "rank": 17,
           "goodsNo": 2562243,
           "title": "SL 티셔츠 M GK9639",
           "brandName": "아디다스",
           "priceFinal": 31200,
+          "gender": "남성"
+        },
+        {
+          "rank": 18,
+          "goodsNo": 2562669,
+          "title": "클럽 3스트라이프 폴로 H34701",
+          "brandName": "아디다스",
+          "priceFinal": 69000,
+          "gender": "남성"
+        },
+        {
+          "rank": 19,
+          "goodsNo": 3249655,
+          "title": "티로 23 리그 저지 HT6128",
+          "brandName": "아디다스",
+          "priceFinal": 31500,
           "gender": "남성"
         }
       ]
@@ -4448,22 +4448,6 @@
         },
         {
           "rank": 5,
-          "goodsNo": 4618687,
-          "title": "[커버낫 X MAMA] 그래픽 후디 헤더 그레이",
-          "brandName": "커버낫",
-          "priceFinal": 69300,
-          "gender": "공용"
-        },
-        {
-          "rank": 6,
-          "goodsNo": 4618688,
-          "title": "[커버낫 X 2024 MAMA AWARDS] 그래픽 후디 블랙",
-          "brandName": "커버낫",
-          "priceFinal": 69300,
-          "gender": "공용"
-        },
-        {
-          "rank": 7,
           "goodsNo": 5096227,
           "title": "[커버낫X르망고] 우먼 그래픽 오버핏 티셔츠 Navy",
           "brandName": "커버낫 우먼",
@@ -4471,7 +4455,7 @@
           "gender": "여성"
         },
         {
-          "rank": 8,
+          "rank": 6,
           "goodsNo": 5096228,
           "title": "[커버낫X르망고] 우먼 그래픽 오버핏 티셔츠 Ivory",
           "brandName": "커버낫 우먼",
@@ -4479,7 +4463,7 @@
           "gender": "여성"
         },
         {
-          "rank": 9,
+          "rank": 7,
           "goodsNo": 5096230,
           "title": "[커버낫X르망고] 우먼 그래픽 크롭 티셔츠 Pink",
           "brandName": "커버낫 우먼",
@@ -4487,7 +4471,7 @@
           "gender": "여성"
         },
         {
-          "rank": 10,
+          "rank": 8,
           "goodsNo": 5096231,
           "title": "[커버낫X르망고] 우먼 그래픽 크롭 티셔츠 Off White",
           "brandName": "커버낫 우먼",
@@ -4495,7 +4479,7 @@
           "gender": "여성"
         },
         {
-          "rank": 11,
+          "rank": 9,
           "goodsNo": 5305337,
           "title": "[커버낫X하이다나] 럭키 씨리얼 로고 티셔츠 Heather Gray",
           "brandName": "커버낫",
@@ -4503,7 +4487,7 @@
           "gender": "남성"
         },
         {
-          "rank": 12,
+          "rank": 10,
           "goodsNo": 5305340,
           "title": "[커버낫X하이다나] 럭키 씨리얼 로고 티셔츠 Off White",
           "brandName": "커버낫",
@@ -4511,7 +4495,7 @@
           "gender": "여성"
         },
         {
-          "rank": 13,
+          "rank": 11,
           "goodsNo": 5305342,
           "title": "[커버낫X하이다나] 럭키 씨리얼 링거 티셔츠 Sky Blue",
           "brandName": "커버낫",
@@ -4519,7 +4503,7 @@
           "gender": "여성"
         },
         {
-          "rank": 14,
+          "rank": 12,
           "goodsNo": 5305344,
           "title": "[커버낫X하이다나] 럭키 씨리얼 링거 티셔츠 Off White",
           "brandName": "커버낫",
@@ -4527,7 +4511,7 @@
           "gender": "남성"
         },
         {
-          "rank": 15,
+          "rank": 13,
           "goodsNo": 5305345,
           "title": "[커버낫X하이다나] 럭키 씨리얼 링거 티셔츠 Navy",
           "brandName": "커버낫",
@@ -4535,7 +4519,7 @@
           "gender": "여성"
         },
         {
-          "rank": 16,
+          "rank": 14,
           "goodsNo": 5506392,
           "title": "[커버낫 X 요시고] 온 더 루트 레이어드 롱슬리브 올리브",
           "brandName": "커버낫",
@@ -4543,7 +4527,7 @@
           "gender": "공용"
         },
         {
-          "rank": 17,
+          "rank": 15,
           "goodsNo": 5506394,
           "title": "[커버낫 X 요시고] 플라스틱 스틸 라이프 레이어드 롱슬리브 Off White",
           "brandName": "커버낫",
@@ -4551,7 +4535,7 @@
           "gender": "공용"
         },
         {
-          "rank": 18,
+          "rank": 16,
           "goodsNo": 5506397,
           "title": "[커버낫 X 요시고] 벌룬 페스티벌 링거 롱슬리브 Ivory",
           "brandName": "커버낫",
@@ -4559,12 +4543,28 @@
           "gender": "공용"
         },
         {
-          "rank": 19,
-          "goodsNo": 5506399,
-          "title": "[커버낫 X 요시고] 미드나잇 시티 폴라로이드 그래픽 후디 Dark Navy",
+          "rank": 17,
+          "goodsNo": 6245389,
+          "title": "[커버낫 X 미즈노] 소로나 트랙 레터링 그래픽 메쉬 티셔츠 라이트그레이",
           "brandName": "커버낫",
-          "priceFinal": 69300,
-          "gender": "공용"
+          "priceFinal": 55200,
+          "gender": "남성"
+        },
+        {
+          "rank": 18,
+          "goodsNo": 6245391,
+          "title": "[커버낫 X 미즈노] 쿨 코튼 쉘 그래픽 티셔츠 카키",
+          "brandName": "커버낫",
+          "priceFinal": 47200,
+          "gender": "남성"
+        },
+        {
+          "rank": 19,
+          "goodsNo": 6245394,
+          "title": "[커버낫 X 미즈노] 쿨 코튼 쉘 그래픽 티셔츠 화이트",
+          "brandName": "커버낫",
+          "priceFinal": 47200,
+          "gender": "남성"
         }
       ]
     },
@@ -4579,38 +4579,6 @@
       "candidates": [
         {
           "rank": 0,
-          "goodsNo": 947077,
-          "title": "후디드 스웨트셔츠 [블랙]",
-          "brandName": "무신사 스탠다드",
-          "priceFinal": 37890,
-          "gender": "남성"
-        },
-        {
-          "rank": 1,
-          "goodsNo": 947078,
-          "title": "후디드 스웨트셔츠 [멜란지 그레이]",
-          "brandName": "무신사 스탠다드",
-          "priceFinal": 37890,
-          "gender": "남성"
-        },
-        {
-          "rank": 2,
-          "goodsNo": 947080,
-          "title": "후디드 스웨트셔츠 [오트밀]",
-          "brandName": "무신사 스탠다드",
-          "priceFinal": 37890,
-          "gender": "남성"
-        },
-        {
-          "rank": 3,
-          "goodsNo": 947081,
-          "title": "후디드 스웨트셔츠 [네이비]",
-          "brandName": "무신사 스탠다드",
-          "priceFinal": 37890,
-          "gender": "남성"
-        },
-        {
-          "rank": 4,
           "goodsNo": 996177,
           "title": "릴렉스 핏 크루 넥 티셔츠 [화이트]",
           "brandName": "무신사 스탠다드",
@@ -4618,7 +4586,7 @@
           "gender": "남성"
         },
         {
-          "rank": 5,
+          "rank": 1,
           "goodsNo": 996178,
           "title": "릴렉스 핏 크루 넥 티셔츠 [블랙]",
           "brandName": "무신사 스탠다드",
@@ -4626,7 +4594,7 @@
           "gender": "남성"
         },
         {
-          "rank": 6,
+          "rank": 2,
           "goodsNo": 996179,
           "title": "릴렉스 핏 크루 넥 티셔츠 [다크 그레이]",
           "brandName": "무신사 스탠다드",
@@ -4634,7 +4602,7 @@
           "gender": "남성"
         },
         {
-          "rank": 7,
+          "rank": 3,
           "goodsNo": 996180,
           "title": "릴렉스 핏 크루 넥 티셔츠 [네이비]",
           "brandName": "무신사 스탠다드",
@@ -4642,7 +4610,7 @@
           "gender": "남성"
         },
         {
-          "rank": 8,
+          "rank": 4,
           "goodsNo": 996184,
           "title": "릴렉스 핏 크루 넥 티셔츠 [베이지]",
           "brandName": "무신사 스탠다드",
@@ -4650,7 +4618,7 @@
           "gender": "남성"
         },
         {
-          "rank": 9,
+          "rank": 5,
           "goodsNo": 996187,
           "title": "릴렉스 핏 크루 넥 티셔츠 [블루]",
           "brandName": "무신사 스탠다드",
@@ -4658,7 +4626,7 @@
           "gender": "남성"
         },
         {
-          "rank": 10,
+          "rank": 6,
           "goodsNo": 996189,
           "title": "릴렉스 핏 크루 넥 티셔츠 [라이트 그레이]",
           "brandName": "무신사 스탠다드",
@@ -4666,7 +4634,7 @@
           "gender": "남성"
         },
         {
-          "rank": 11,
+          "rank": 7,
           "goodsNo": 996233,
           "title": "크루 넥 긴소매 티셔츠 [화이트]",
           "brandName": "무신사 스탠다드",
@@ -4674,7 +4642,7 @@
           "gender": "남성"
         },
         {
-          "rank": 12,
+          "rank": 8,
           "goodsNo": 996234,
           "title": "크루 넥 긴소매 티셔츠 [블랙]",
           "brandName": "무신사 스탠다드",
@@ -4682,7 +4650,7 @@
           "gender": "남성"
         },
         {
-          "rank": 13,
+          "rank": 9,
           "goodsNo": 996235,
           "title": "크루 넥 긴소매 티셔츠 [오트밀]",
           "brandName": "무신사 스탠다드",
@@ -4690,7 +4658,7 @@
           "gender": "남성"
         },
         {
-          "rank": 14,
+          "rank": 10,
           "goodsNo": 996236,
           "title": "크루 넥 긴소매 티셔츠 [네이비]",
           "brandName": "무신사 스탠다드",
@@ -4698,7 +4666,7 @@
           "gender": "남성"
         },
         {
-          "rank": 15,
+          "rank": 11,
           "goodsNo": 996237,
           "title": "크루 넥 긴소매 티셔츠 [다크 그레이]",
           "brandName": "무신사 스탠다드",
@@ -4706,7 +4674,7 @@
           "gender": "남성"
         },
         {
-          "rank": 16,
+          "rank": 12,
           "goodsNo": 996238,
           "title": "크루 넥 긴소매 티셔츠 [카키]",
           "brandName": "무신사 스탠다드",
@@ -4714,7 +4682,7 @@
           "gender": "남성"
         },
         {
-          "rank": 17,
+          "rank": 13,
           "goodsNo": 996497,
           "title": "베이식 크루 넥 티셔츠 [화이트]",
           "brandName": "무신사 스탠다드",
@@ -4722,7 +4690,7 @@
           "gender": "남성"
         },
         {
-          "rank": 18,
+          "rank": 14,
           "goodsNo": 996498,
           "title": "베이식 크루 넥 티셔츠 [블랙]",
           "brandName": "무신사 스탠다드",
@@ -4730,11 +4698,43 @@
           "gender": "남성"
         },
         {
-          "rank": 19,
+          "rank": 15,
           "goodsNo": 996499,
           "title": "베이식 크루 넥 티셔츠 [오트밀]",
           "brandName": "무신사 스탠다드",
           "priceFinal": 11090,
+          "gender": "남성"
+        },
+        {
+          "rank": 16,
+          "goodsNo": 996500,
+          "title": "베이식 크루 넥 티셔츠 [멜란지 그레이]",
+          "brandName": "무신사 스탠다드",
+          "priceFinal": 11590,
+          "gender": "남성"
+        },
+        {
+          "rank": 17,
+          "goodsNo": 996501,
+          "title": "베이식 크루 넥 티셔츠 [네이비]",
+          "brandName": "무신사 스탠다드",
+          "priceFinal": 11090,
+          "gender": "남성"
+        },
+        {
+          "rank": 18,
+          "goodsNo": 996503,
+          "title": "베이식 크루 넥 티셔츠 [딥 그린]",
+          "brandName": "무신사 스탠다드",
+          "priceFinal": 10290,
+          "gender": "남성"
+        },
+        {
+          "rank": 19,
+          "goodsNo": 996504,
+          "title": "베이식 크루 넥 티셔츠 [잉크 블루]",
+          "brandName": "무신사 스탠다드",
+          "priceFinal": 10290,
           "gender": "남성"
         }
       ]
@@ -5375,14 +5375,6 @@
         },
         {
           "rank": 14,
-          "goodsNo": 3666400,
-          "title": "Z.N.E. 오버헤드 후디 - 실버그레이 / IN5124",
-          "brandName": "아디다스",
-          "priceFinal": 50990,
-          "gender": "여성"
-        },
-        {
-          "rank": 15,
           "goodsNo": 3791164,
           "title": "3S 브라탑 - 화이트 / IN8365",
           "brandName": "아디다스",
@@ -5390,7 +5382,7 @@
           "gender": "여성"
         },
         {
-          "rank": 16,
+          "rank": 15,
           "goodsNo": 3817473,
           "title": "AOP 3S 크롭 탑 - 원더클레이 / IY0779",
           "brandName": "아디다스",
@@ -5398,7 +5390,7 @@
           "gender": "여성"
         },
         {
-          "rank": 17,
+          "rank": 16,
           "goodsNo": 3817474,
           "title": "AOP 3S 크롭 탑 - 베이지 / IY0780",
           "brandName": "아디다스",
@@ -5406,7 +5398,7 @@
           "gender": "여성"
         },
         {
-          "rank": 18,
+          "rank": 17,
           "goodsNo": 3870366,
           "title": "3S 새틴 긴팔 티 - 화이트:블루 / IR6100",
           "brandName": "아디다스",
@@ -5414,12 +5406,20 @@
           "gender": "여성"
         },
         {
-          "rank": 19,
+          "rank": 18,
           "goodsNo": 3873779,
           "title": "3S 새틴 긴팔 티 - 블랙 / IR6099",
           "brandName": "아디다스",
           "priceFinal": 64990,
           "gender": "여성"
+        },
+        {
+          "rank": 19,
+          "goodsNo": 3879815,
+          "title": "그래픽 티 - 화이트 / JF2858",
+          "brandName": "아디다스",
+          "priceFinal": 23990,
+          "gender": "남성"
         }
       ]
     },
@@ -5442,30 +5442,6 @@
         },
         {
           "rank": 1,
-          "goodsNo": 2411507,
-          "title": "쿨 케이블 카라 하프 니트 그린",
-          "brandName": "커버낫",
-          "priceFinal": 59400,
-          "gender": "공용"
-        },
-        {
-          "rank": 2,
-          "goodsNo": 2411508,
-          "title": "쿨 케이블 카라 하프 니트 네이비",
-          "brandName": "커버낫",
-          "priceFinal": 49500,
-          "gender": "공용"
-        },
-        {
-          "rank": 3,
-          "goodsNo": 2411509,
-          "title": "쿨 케이블 카라 하프 니트 블랙",
-          "brandName": "커버낫",
-          "priceFinal": 59400,
-          "gender": "공용"
-        },
-        {
-          "rank": 4,
           "goodsNo": 2411538,
           "title": "테리 폴로티 그레이",
           "brandName": "커버낫",
@@ -5473,7 +5449,7 @@
           "gender": "공용"
         },
         {
-          "rank": 5,
+          "rank": 2,
           "goodsNo": 2530546,
           "title": "카바나 반팔 티셔츠 - 네이비 클라우드",
           "brandName": "케이튼",
@@ -5481,31 +5457,7 @@
           "gender": "남성"
         },
         {
-          "rank": 6,
-          "goodsNo": 2783058,
-          "title": "스포츠클럽 컬러 블록 후디 그린",
-          "brandName": "커버낫",
-          "priceFinal": 49500,
-          "gender": "공용"
-        },
-        {
-          "rank": 7,
-          "goodsNo": 3038965,
-          "title": "어센틱 로고 후디 라벤더",
-          "brandName": "커버낫",
-          "priceFinal": 47400,
-          "gender": "공용"
-        },
-        {
-          "rank": 8,
-          "goodsNo": 3057791,
-          "title": "엠블럼 아치 로고 후디 옐로우",
-          "brandName": "커버낫",
-          "priceFinal": 51000,
-          "gender": "공용"
-        },
-        {
-          "rank": 9,
+          "rank": 3,
           "goodsNo": 3060056,
           "title": "피케 웨일 로고 롱슬리브 화이트",
           "brandName": "커버낫",
@@ -5513,7 +5465,7 @@
           "gender": "공용"
         },
         {
-          "rank": 10,
+          "rank": 4,
           "goodsNo": 3097386,
           "title": "C 로고 카라 티셔츠 블루",
           "brandName": "커버낫",
@@ -5521,7 +5473,7 @@
           "gender": "공용"
         },
         {
-          "rank": 11,
+          "rank": 5,
           "goodsNo": 3097388,
           "title": "C 로고 카라 티셔츠 브라운",
           "brandName": "커버낫",
@@ -5529,7 +5481,7 @@
           "gender": "공용"
         },
         {
-          "rank": 12,
+          "rank": 6,
           "goodsNo": 3132078,
           "title": "다잉 피케 티셔츠 차콜",
           "brandName": "커버낫",
@@ -5537,7 +5489,7 @@
           "gender": "공용"
         },
         {
-          "rank": 13,
+          "rank": 7,
           "goodsNo": 3132081,
           "title": "다잉 피케 티셔츠 에크루",
           "brandName": "커버낫",
@@ -5545,7 +5497,7 @@
           "gender": "공용"
         },
         {
-          "rank": 14,
+          "rank": 8,
           "goodsNo": 3132089,
           "title": "우븐 믹스 티셔츠 블랙",
           "brandName": "커버낫",
@@ -5553,7 +5505,7 @@
           "gender": "공용"
         },
         {
-          "rank": 15,
+          "rank": 9,
           "goodsNo": 3132090,
           "title": "우븐 믹스 티셔츠 화이트",
           "brandName": "커버낫",
@@ -5561,7 +5513,7 @@
           "gender": "공용"
         },
         {
-          "rank": 16,
+          "rank": 10,
           "goodsNo": 3132092,
           "title": "C 로고 캡 카라 티셔츠 네이비",
           "brandName": "커버낫",
@@ -5569,7 +5521,7 @@
           "gender": "공용"
         },
         {
-          "rank": 17,
+          "rank": 11,
           "goodsNo": 3132094,
           "title": "C 로고 캡 카라 티셔츠 화이트",
           "brandName": "커버낫",
@@ -5577,7 +5529,7 @@
           "gender": "공용"
         },
         {
-          "rank": 18,
+          "rank": 12,
           "goodsNo": 3132095,
           "title": "아치 C 로고 레이어 티셔츠 블루",
           "brandName": "커버낫",
@@ -5585,11 +5537,59 @@
           "gender": "공용"
         },
         {
-          "rank": 19,
+          "rank": 13,
           "goodsNo": 3153089,
           "title": "비치 하와이안 티셔츠 옐로우",
           "brandName": "커버낫",
           "priceFinal": 29400,
+          "gender": "공용"
+        },
+        {
+          "rank": 14,
+          "goodsNo": 3153097,
+          "title": "아치 하와이안 티셔츠 에크루",
+          "brandName": "커버낫",
+          "priceFinal": 34300,
+          "gender": "공용"
+        },
+        {
+          "rank": 15,
+          "goodsNo": 3153110,
+          "title": "웨일 로고 슬럽 티셔츠 스카이 블루",
+          "brandName": "커버낫",
+          "priceFinal": 35400,
+          "gender": "공용"
+        },
+        {
+          "rank": 16,
+          "goodsNo": 3153111,
+          "title": "웨일 로고 슬럽 티셔츠 차콜",
+          "brandName": "커버낫",
+          "priceFinal": 35400,
+          "gender": "공용"
+        },
+        {
+          "rank": 17,
+          "goodsNo": 3153114,
+          "title": "웨일 로고 슬럽 티셔츠 에크루",
+          "brandName": "커버낫",
+          "priceFinal": 35400,
+          "gender": "공용"
+        },
+        {
+          "rank": 18,
+          "goodsNo": 3195215,
+          "title": "테리 카라 티셔츠 에크루",
+          "brandName": "커버낫",
+          "priceFinal": 34500,
+          "gender": "공용"
+        },
+        {
+          "rank": 19,
+          "goodsNo": 3195217,
+          "title": "테리 카라 티셔츠 블랙",
+          "brandName": "커버낫",
+          "priceFinal": 34500,
           "gender": "공용"
         }
       ]
@@ -5605,22 +5605,6 @@
       "candidates": [
         {
           "rank": 0,
-          "goodsNo": 1325832,
-          "title": "[UNISEX]스트릿 하트보드 후드티_4color",
-          "brandName": "그레이버",
-          "priceFinal": 51100,
-          "gender": "여성"
-        },
-        {
-          "rank": 1,
-          "goodsNo": 1325889,
-          "title": "[UNISEX]스트릿 스마일보드 후드티_4color",
-          "brandName": "그레이버",
-          "priceFinal": 51100,
-          "gender": "여성"
-        },
-        {
-          "rank": 2,
           "goodsNo": 1376311,
           "title": "[UNISEX]엘보우 도트스마일 롱슬리브_블랙",
           "brandName": "그레이버",
@@ -5628,7 +5612,7 @@
           "gender": "남성"
         },
         {
-          "rank": 3,
+          "rank": 1,
           "goodsNo": 1376318,
           "title": "[UNISEX]엘보우 하트스마일 롱슬리브_블랙",
           "brandName": "그레이버",
@@ -5636,7 +5620,7 @@
           "gender": "공용"
         },
         {
-          "rank": 4,
+          "rank": 2,
           "goodsNo": 1445681,
           "title": "[UNISEX]라이프 로고 폰트 반팔티_네이비",
           "brandName": "그레이버",
@@ -5644,7 +5628,7 @@
           "gender": "여성"
         },
         {
-          "rank": 5,
+          "rank": 3,
           "goodsNo": 1445685,
           "title": "[UNISEX]라이프 로고 폰트 반팔티_화이트",
           "brandName": "그레이버",
@@ -5652,7 +5636,7 @@
           "gender": "여성"
         },
         {
-          "rank": 6,
+          "rank": 4,
           "goodsNo": 1445713,
           "title": "[UNISEX]빅 플라워도트 반팔티_네이비",
           "brandName": "그레이버",
@@ -5660,7 +5644,7 @@
           "gender": "남성"
         },
         {
-          "rank": 7,
+          "rank": 5,
           "goodsNo": 1445715,
           "title": "[UNISEX]빅 플라워도트 반팔티_화이트",
           "brandName": "그레이버",
@@ -5668,7 +5652,7 @@
           "gender": "여성"
         },
         {
-          "rank": 8,
+          "rank": 6,
           "goodsNo": 1445729,
           "title": "[UNISEX]빅 플라워도트 반팔티_2color",
           "brandName": "그레이버",
@@ -5676,7 +5660,7 @@
           "gender": "공용"
         },
         {
-          "rank": 9,
+          "rank": 7,
           "goodsNo": 1455054,
           "title": "[UNISEX]도트 보드 드로잉 반팔티_네이비",
           "brandName": "그레이버",
@@ -5684,7 +5668,7 @@
           "gender": "남성"
         },
         {
-          "rank": 10,
+          "rank": 8,
           "goodsNo": 1455099,
           "title": "[UNISEX]도트 보드 드로잉 반팔티_화이트",
           "brandName": "그레이버",
@@ -5692,7 +5676,7 @@
           "gender": "여성"
         },
         {
-          "rank": 11,
+          "rank": 9,
           "goodsNo": 1455109,
           "title": "[UNISEX]도트 보드 드로잉 반팔티_블랙",
           "brandName": "그레이버",
@@ -5700,7 +5684,7 @@
           "gender": "남성"
         },
         {
-          "rank": 12,
+          "rank": 10,
           "goodsNo": 1466129,
           "title": "[UNISEX]하트 서핑 보드 반팔티_화이트",
           "brandName": "그레이버",
@@ -5708,7 +5692,7 @@
           "gender": "남성"
         },
         {
-          "rank": 13,
+          "rank": 11,
           "goodsNo": 1466143,
           "title": "[UNISEX]하트 서핑 보드 반팔티_블랙",
           "brandName": "그레이버",
@@ -5716,7 +5700,7 @@
           "gender": "남성"
         },
         {
-          "rank": 14,
+          "rank": 12,
           "goodsNo": 1471210,
           "title": "[UNISEX]드로잉하트 백로고 반팔티_네이비",
           "brandName": "그레이버",
@@ -5724,7 +5708,7 @@
           "gender": "공용"
         },
         {
-          "rank": 15,
+          "rank": 13,
           "goodsNo": 1471437,
           "title": "[UNISEX]드로잉하트 백로고 반팔티_화이트",
           "brandName": "그레이버",
@@ -5732,7 +5716,7 @@
           "gender": "공용"
         },
         {
-          "rank": 16,
+          "rank": 14,
           "goodsNo": 1473427,
           "title": "[UNISEX]드로잉하트 백로고 반팔티_블랙",
           "brandName": "그레이버",
@@ -5740,7 +5724,7 @@
           "gender": "공용"
         },
         {
-          "rank": 17,
+          "rank": 15,
           "goodsNo": 1473430,
           "title": "[UNISEX]도트 서핑 보드 반팔티_화이트",
           "brandName": "그레이버",
@@ -5748,7 +5732,7 @@
           "gender": "공용"
         },
         {
-          "rank": 18,
+          "rank": 16,
           "goodsNo": 1473435,
           "title": "[UNISEX]도트 서핑 보드 반팔티_블랙",
           "brandName": "그레이버",
@@ -5756,12 +5740,28 @@
           "gender": "공용"
         },
         {
-          "rank": 19,
+          "rank": 17,
           "goodsNo": 1481349,
           "title": "[UNISEX]드로잉도트 백로고 반팔티_화이트",
           "brandName": "그레이버",
           "priceFinal": 23000,
           "gender": "공용"
+        },
+        {
+          "rank": 18,
+          "goodsNo": 1481354,
+          "title": "[UNISEX]드로잉도트 백로고 반팔티_블랙",
+          "brandName": "그레이버",
+          "priceFinal": 23000,
+          "gender": "공용"
+        },
+        {
+          "rank": 19,
+          "goodsNo": 1487498,
+          "title": "[UNISEX]드로잉 플라워 로고 반팔티_2color",
+          "brandName": "그레이버",
+          "priceFinal": 21000,
+          "gender": "남성"
         }
       ]
     },
@@ -5848,14 +5848,6 @@
         },
         {
           "rank": 9,
-          "goodsNo": 3058818,
-          "title": "950G 솔리드 후드-비바 마젠타-",
-          "brandName": "소버먼트",
-          "priceFinal": 62400,
-          "gender": "공용"
-        },
-        {
-          "rank": 10,
           "goodsNo": 3085517,
           "title": "(23SS)나이스 베어 프렌즈 로고 비바 마젠타 반팔 티셔츠 화이트",
           "brandName": "어썸어스",
@@ -5863,7 +5855,7 @@
           "gender": "남성"
         },
         {
-          "rank": 11,
+          "rank": 10,
           "goodsNo": 3132891,
           "title": "리즌 트레일 피그먼트 반팔티 마젠타",
           "brandName": "트래블",
@@ -5871,7 +5863,7 @@
           "gender": "공용"
         },
         {
-          "rank": 12,
+          "rank": 11,
           "goodsNo": 3182325,
           "title": "로고 라인업 피그먼트 반팔티 마젠타",
           "brandName": "트래블",
@@ -5879,7 +5871,7 @@
           "gender": "공용"
         },
         {
-          "rank": 13,
+          "rank": 12,
           "goodsNo": 3216258,
           "title": "루나 마젠타 슬릿 탑 [GREY]",
           "brandName": "제로플래닛",
@@ -5887,7 +5879,7 @@
           "gender": "여성"
         },
         {
-          "rank": 14,
+          "rank": 13,
           "goodsNo": 3216259,
           "title": "루나 마젠타 슬릿 탑 [MAGENTA]",
           "brandName": "제로플래닛",
@@ -5895,7 +5887,7 @@
           "gender": "여성"
         },
         {
-          "rank": 15,
+          "rank": 14,
           "goodsNo": 3254209,
           "title": "슬리핑 로즈 티셔츠 [마젠타]",
           "brandName": "아더월들리",
@@ -5903,7 +5895,7 @@
           "gender": "여성"
         },
         {
-          "rank": 16,
+          "rank": 15,
           "goodsNo": 3399784,
           "title": "리즌 트레일 피그먼트 롱 슬리브 마젠타",
           "brandName": "트래블",
@@ -5911,28 +5903,36 @@
           "gender": "공용"
         },
         {
-          "rank": 17,
-          "goodsNo": 3702521,
-          "title": "아메리칸 래빗 하프 크롭 후드티 - 마젠타 핑크",
-          "brandName": "얀코 아르프",
-          "priceFinal": 69000,
-          "gender": "여성"
-        },
-        {
-          "rank": 18,
-          "goodsNo": 3802852,
-          "title": "워크샵 라인 래글런 나일론 믹스 후드티 마젠타",
-          "brandName": "트래블",
-          "priceFinal": 39500,
-          "gender": "공용"
-        },
-        {
-          "rank": 19,
+          "rank": 16,
           "goodsNo": 3822241,
           "title": "우먼즈 베이식 크루 넥 티셔츠 [더스티 마젠타]",
           "brandName": "무신사 스탠다드 우먼",
           "priceFinal": 9540,
           "gender": "여성"
+        },
+        {
+          "rank": 17,
+          "goodsNo": 4066557,
+          "title": "트레블링 피그먼트 반팔티 마젠타",
+          "brandName": "써치410",
+          "priceFinal": 34300,
+          "gender": "남성"
+        },
+        {
+          "rank": 18,
+          "goodsNo": 4120932,
+          "title": "그래피티 엠씨  티셔츠 마젠타",
+          "brandName": "미스터차일드",
+          "priceFinal": 44100,
+          "gender": "남성"
+        },
+        {
+          "rank": 19,
+          "goodsNo": 4121038,
+          "title": "하트 비트 티셔츠 마젠타",
+          "brandName": "미스터차일드",
+          "priceFinal": 44100,
+          "gender": "남성"
         }
       ]
     },
@@ -5955,70 +5955,6 @@
         },
         {
           "rank": 1,
-          "goodsNo": 401811,
-          "title": "7부 오버핏 스웨트셔츠 블랙",
-          "brandName": "세븐틴스",
-          "priceFinal": 23400,
-          "gender": "남성"
-        },
-        {
-          "rank": 2,
-          "goodsNo": 438201,
-          "title": "오버핏 후드맨투맨 커트코베인(기모)",
-          "brandName": "플라스틱",
-          "priceFinal": 78000,
-          "gender": "남성"
-        },
-        {
-          "rank": 3,
-          "goodsNo": 438202,
-          "title": "오버핏 후드맨투맨 베이직(기모)",
-          "brandName": "플라스틱",
-          "priceFinal": 72000,
-          "gender": "남성"
-        },
-        {
-          "rank": 4,
-          "goodsNo": 438203,
-          "title": "오버핏 후드맨투맨 프랑켄슈타인 회색(기모)",
-          "brandName": "플라스틱",
-          "priceFinal": 78000,
-          "gender": "남성"
-        },
-        {
-          "rank": 5,
-          "goodsNo": 441684,
-          "title": "오버핏 후드맨투맨 프랑켄 블루(기모)",
-          "brandName": "플라스틱",
-          "priceFinal": 78000,
-          "gender": "남성"
-        },
-        {
-          "rank": 6,
-          "goodsNo": 441686,
-          "title": "오버핏 후드맨투맨 너바나(기모)",
-          "brandName": "플라스틱",
-          "priceFinal": 78000,
-          "gender": "남성"
-        },
-        {
-          "rank": 7,
-          "goodsNo": 489549,
-          "title": "[한량] HANRYANG HOODIE OVER FIT BLACK 쭈리 오버핏 무지 후드티 후디",
-          "brandName": "한량 컬렉티브",
-          "priceFinal": 57000,
-          "gender": "남성"
-        },
-        {
-          "rank": 8,
-          "goodsNo": 489550,
-          "title": "[한량] HANRYANG HOODIE OVER FIT GRAY 쭈리 오버핏 무지 후드티 후디",
-          "brandName": "한량 컬렉티브",
-          "priceFinal": 57000,
-          "gender": "남성"
-        },
-        {
-          "rank": 9,
           "goodsNo": 500914,
           "title": "[레이쿠] reiku overfit roll-up short sleeve gray 오버핏 롤업 슬리브",
           "brandName": "레이쿠",
@@ -6026,7 +5962,7 @@
           "gender": "남성"
         },
         {
-          "rank": 10,
+          "rank": 2,
           "goodsNo": 500915,
           "title": "[레이쿠] reiku overfit roll-up short sleeve black 오버핏 롤업 슬리브",
           "brandName": "레이쿠",
@@ -6034,7 +5970,7 @@
           "gender": "남성"
         },
         {
-          "rank": 11,
+          "rank": 3,
           "goodsNo": 503399,
           "title": "[16수] 레터링 타투 오버핏 티셔츠 화이트",
           "brandName": "꼼파뇨",
@@ -6042,7 +5978,7 @@
           "gender": "공용"
         },
         {
-          "rank": 12,
+          "rank": 4,
           "goodsNo": 503413,
           "title": "[16수] 레터링 타투 오버핏 티셔츠 블랙",
           "brandName": "꼼파뇨",
@@ -6050,7 +5986,7 @@
           "gender": "공용"
         },
         {
-          "rank": 13,
+          "rank": 5,
           "goodsNo": 532246,
           "title": "[UNISEX] 45수 특양면 옆트임 오버핏 반팔티 (블랙)",
           "brandName": "티아즈",
@@ -6058,7 +5994,7 @@
           "gender": "남성"
         },
         {
-          "rank": 14,
+          "rank": 6,
           "goodsNo": 538836,
           "title": "헤비 오버핏 무지 반팔티 블랙",
           "brandName": "꼼파뇨",
@@ -6066,7 +6002,7 @@
           "gender": "공용"
         },
         {
-          "rank": 15,
+          "rank": 7,
           "goodsNo": 540420,
           "title": "오리지널 로고 오버핏 반팔티 (RL001 OG LOGO TEE) - BLACK",
           "brandName": "로얄라이프",
@@ -6074,7 +6010,7 @@
           "gender": "공용"
         },
         {
-          "rank": 16,
+          "rank": 8,
           "goodsNo": 540421,
           "title": "오리지널 로고 오버핏 반팔티 (RL001 OG LOGO TEE) - WHITE",
           "brandName": "로얄라이프",
@@ -6082,7 +6018,7 @@
           "gender": "공용"
         },
         {
-          "rank": 17,
+          "rank": 9,
           "goodsNo": 546361,
           "title": "[오버핏] 넘버플랜트 로고 반팔 블랙 no.2",
           "brandName": "넘버플랜트",
@@ -6090,7 +6026,7 @@
           "gender": "남성"
         },
         {
-          "rank": 18,
+          "rank": 10,
           "goodsNo": 550020,
           "title": "[20수] 헤비 오버핏 보더 반팔티 레드",
           "brandName": "꼼파뇨",
@@ -6098,12 +6034,76 @@
           "gender": "공용"
         },
         {
-          "rank": 19,
+          "rank": 11,
           "goodsNo": 555040,
           "title": "psln 런던 오버핏 반팔티셔츠 네이비 남녀공용",
           "brandName": "아타르",
           "priceFinal": 31980,
           "gender": "여성"
+        },
+        {
+          "rank": 12,
+          "goodsNo": 559954,
+          "title": "헤비 오버핏 무지 반팔티 화이트",
+          "brandName": "꼼파뇨",
+          "priceFinal": 23000,
+          "gender": "공용"
+        },
+        {
+          "rank": 13,
+          "goodsNo": 566650,
+          "title": "사하라 오버핏 반팔티셔츠 (블랙)",
+          "brandName": "어텐션로우",
+          "priceFinal": 37000,
+          "gender": "남성"
+        },
+        {
+          "rank": 14,
+          "goodsNo": 576454,
+          "title": "유니버시티 오버핏 반팔 티셔츠 올그린 남녀공용",
+          "brandName": "아타르",
+          "priceFinal": 31980,
+          "gender": "남성"
+        },
+        {
+          "rank": 15,
+          "goodsNo": 577957,
+          "title": "[레이쿠] reiku overfit tshirt gw 배색 오버핏 무지 반팔티",
+          "brandName": "레이쿠",
+          "priceFinal": 37000,
+          "gender": "남성"
+        },
+        {
+          "rank": 16,
+          "goodsNo": 577958,
+          "title": "[레이쿠] reiku overfit tshirt bc 배색 오버핏 무지 반팔티",
+          "brandName": "레이쿠",
+          "priceFinal": 37000,
+          "gender": "남성"
+        },
+        {
+          "rank": 17,
+          "goodsNo": 579500,
+          "title": "[레이쿠] reiku imagination overfit tshirt gw 배색 오버핏 반팔티",
+          "brandName": "레이쿠",
+          "priceFinal": 39000,
+          "gender": "남성"
+        },
+        {
+          "rank": 18,
+          "goodsNo": 579501,
+          "title": "[레이쿠] reiku imagination overfit tshirt r-bc 배색 오버핏 반팔티",
+          "brandName": "레이쿠",
+          "priceFinal": 39000,
+          "gender": "남성"
+        },
+        {
+          "rank": 19,
+          "goodsNo": 581439,
+          "title": "[레이쿠] reiku poket overfit cream 포켓 오버핏 무지 반팔티",
+          "brandName": "레이쿠",
+          "priceFinal": 37000,
+          "gender": "남성"
         }
       ]
     },
@@ -6308,14 +6308,6 @@
       "candidates": [
         {
           "rank": 0,
-          "goodsNo": 2157797,
-          "title": "[2PACK] 하비스트 오버핏 기모 후드 OYHD2393 + 코드 오버핏 기모 후드 OYHD2378",
-          "brandName": "제멋",
-          "priceFinal": 74900,
-          "gender": "남성"
-        },
-        {
-          "rank": 1,
           "goodsNo": 3306615,
           "title": "[SETUP] 애슬레틱 오버핏 반팔티셔츠 & 오버핏 하프팬츠",
           "brandName": "라이크더모스트",
@@ -6323,7 +6315,7 @@
           "gender": "공용"
         },
         {
-          "rank": 2,
+          "rank": 1,
           "goodsNo": 4188865,
           "title": "[CP] Gorilla 골퍼 오버핏 반팔티 오버핏 반팔티 AST4596 (4 COLOR)",
           "brandName": "앨빈클로",
@@ -6331,15 +6323,7 @@
           "gender": "남성"
         },
         {
-          "rank": 3,
-          "goodsNo": 4572214,
-          "title": "베이직 오버핏 트랙 우먼 오버핏 후드티셔츠 3 Color [ULZI_4001]",
-          "brandName": "유라이프지",
-          "priceFinal": 37100,
-          "gender": "여성"
-        },
-        {
-          "rank": 4,
+          "rank": 2,
           "goodsNo": 4878145,
           "title": "[SET] 에센셜 오버핏 숏 슬리브  + 에센셜 오버핏 버뮤다 쇼츠",
           "brandName": "페르메논",
@@ -6347,7 +6331,7 @@
           "gender": "남성"
         },
         {
-          "rank": 5,
+          "rank": 3,
           "goodsNo": 4878150,
           "title": "[SET] 에센셜 오버핏 롱 슬리브  + 에센셜 오버핏 버뮤다 쇼츠",
           "brandName": "페르메논",
@@ -6355,7 +6339,7 @@
           "gender": "남성"
         },
         {
-          "rank": 6,
+          "rank": 4,
           "goodsNo": 4878154,
           "title": "[SET] 슈퍼 오버핏 로고 반팔 티셔츠 + 에센셜 오버핏 버뮤다 쇼츠",
           "brandName": "페르메논",
@@ -6363,7 +6347,7 @@
           "gender": "남성"
         },
         {
-          "rank": 7,
+          "rank": 5,
           "goodsNo": 4878160,
           "title": "[SET] 슈퍼 오버핏 무지 반팔 티셔츠 + 에센셜 오버핏 버뮤다 쇼츠",
           "brandName": "페르메논",
@@ -6371,7 +6355,7 @@
           "gender": "남성"
         },
         {
-          "rank": 8,
+          "rank": 6,
           "goodsNo": 5073443,
           "title": "[2PACK] 오버핏 크루넥 로고 반팔 티셔츠 & 크루넥 오버핏 유니버셜 티셔츠",
           "brandName": "블론드나인",
@@ -6379,55 +6363,7 @@
           "gender": "공용"
         },
         {
-          "rank": 9,
-          "goodsNo": 5641283,
-          "title": "[SET] 피그먼트 오버핏 절개 후드티 + 피그먼트 오버핏 와이드 스트링 조거 팬츠 (3COLOR)",
-          "brandName": "페르메논",
-          "priceFinal": 104670,
-          "gender": "남성"
-        },
-        {
-          "rank": 10,
-          "goodsNo": 5673610,
-          "title": "[2PACK] MELLOW 트랙 오버핏 후드티 SANCTUARY 트랙 오버핏 후드티 2종 패키지",
-          "brandName": "앨빈클로",
-          "priceFinal": 74800,
-          "gender": "남성"
-        },
-        {
-          "rank": 11,
-          "goodsNo": 5868441,
-          "title": "[2PACK] 피그먼트 오버핏 절개 2WAY 후드 집업 + 피그먼트 오버핏 절개 후드티 (3COLOR)",
-          "brandName": "페르메논",
-          "priceFinal": 112320,
-          "gender": "남성"
-        },
-        {
-          "rank": 12,
-          "goodsNo": 5868497,
-          "title": "[2PACK] 피그먼트 오버핏 절개 2WAY 후드 집업 + 피그먼트 오버핏 절개 스트링 맨투맨 (3COLOR)",
-          "brandName": "페르메논",
-          "priceFinal": 103320,
-          "gender": "남성"
-        },
-        {
-          "rank": 13,
-          "goodsNo": 5868510,
-          "title": "[2PACK] 피그먼트 오버핏 절개 후드티 + 피그먼트 오버핏 절개 스트링 맨투맨 (3COLOR)",
-          "brandName": "페르메논",
-          "priceFinal": 98820,
-          "gender": "남성"
-        },
-        {
-          "rank": 14,
-          "goodsNo": 6096761,
-          "title": "[SET]  오버핏 크롭 스웨트 후드 티셔츠 + 오버핏 와이드 스웨트 팬츠 (3COLOR)",
-          "brandName": "페르메논",
-          "priceFinal": 80910,
-          "gender": "남성"
-        },
-        {
-          "rank": 15,
+          "rank": 7,
           "goodsNo": 6508607,
           "title": "[2PACK]_C73 머쉬룸트윈즈 오버핏 반팔+C77 핫도그프렌즈 오버핏 반팔",
           "brandName": "오실롯",
@@ -6435,7 +6371,7 @@
           "gender": "공용"
         },
         {
-          "rank": 16,
+          "rank": 8,
           "goodsNo": 6508611,
           "title": "[2PACK]_C76 치즈케이크 오버핏 반팔+C81 컬러 두들링 오버핏 반팔",
           "brandName": "오실롯",
@@ -6443,7 +6379,7 @@
           "gender": "공용"
         },
         {
-          "rank": 17,
+          "rank": 9,
           "goodsNo": 401056,
           "title": "7부 오버핏 긴팔 티셔츠 화이트",
           "brandName": "세븐틴스",
@@ -6451,19 +6387,83 @@
           "gender": "남성"
         },
         {
-          "rank": 18,
-          "goodsNo": 401811,
-          "title": "7부 오버핏 스웨트셔츠 블랙",
-          "brandName": "세븐틴스",
-          "priceFinal": 23400,
+          "rank": 10,
+          "goodsNo": 438204,
+          "title": "박시 원피스 롱티셔츠(오버핏)",
+          "brandName": "플라스틱",
+          "priceFinal": 48000,
+          "gender": "여성"
+        },
+        {
+          "rank": 11,
+          "goodsNo": 500914,
+          "title": "[레이쿠] reiku overfit roll-up short sleeve gray 오버핏 롤업 슬리브",
+          "brandName": "레이쿠",
+          "priceFinal": 37000,
           "gender": "남성"
         },
         {
+          "rank": 12,
+          "goodsNo": 500915,
+          "title": "[레이쿠] reiku overfit roll-up short sleeve black 오버핏 롤업 슬리브",
+          "brandName": "레이쿠",
+          "priceFinal": 37000,
+          "gender": "남성"
+        },
+        {
+          "rank": 13,
+          "goodsNo": 503399,
+          "title": "[16수] 레터링 타투 오버핏 티셔츠 화이트",
+          "brandName": "꼼파뇨",
+          "priceFinal": 28000,
+          "gender": "공용"
+        },
+        {
+          "rank": 14,
+          "goodsNo": 503413,
+          "title": "[16수] 레터링 타투 오버핏 티셔츠 블랙",
+          "brandName": "꼼파뇨",
+          "priceFinal": 28000,
+          "gender": "공용"
+        },
+        {
+          "rank": 15,
+          "goodsNo": 532246,
+          "title": "[UNISEX] 45수 특양면 옆트임 오버핏 반팔티 (블랙)",
+          "brandName": "티아즈",
+          "priceFinal": 16800,
+          "gender": "남성"
+        },
+        {
+          "rank": 16,
+          "goodsNo": 538836,
+          "title": "헤비 오버핏 무지 반팔티 블랙",
+          "brandName": "꼼파뇨",
+          "priceFinal": 26880,
+          "gender": "공용"
+        },
+        {
+          "rank": 17,
+          "goodsNo": 540420,
+          "title": "오리지널 로고 오버핏 반팔티 (RL001 OG LOGO TEE) - BLACK",
+          "brandName": "로얄라이프",
+          "priceFinal": 25600,
+          "gender": "공용"
+        },
+        {
+          "rank": 18,
+          "goodsNo": 540421,
+          "title": "오리지널 로고 오버핏 반팔티 (RL001 OG LOGO TEE) - WHITE",
+          "brandName": "로얄라이프",
+          "priceFinal": 25600,
+          "gender": "공용"
+        },
+        {
           "rank": 19,
-          "goodsNo": 438201,
-          "title": "오버핏 후드맨투맨 커트코베인(기모)",
-          "brandName": "플라스틱",
-          "priceFinal": 78000,
+          "goodsNo": 546361,
+          "title": "[오버핏] 넘버플랜트 로고 반팔 블랙 no.2",
+          "brandName": "넘버플랜트",
+          "priceFinal": 19800,
           "gender": "남성"
         }
       ]
@@ -6701,7 +6701,7 @@
       "query": "ㅁㄴㅇㄹ",
       "queryNorm": "ㅁㄴㅇㄹ",
       "queryUsed": "ㅁㄴㅇㄹ",
-      "resultCount": 19,
+      "resultCount": 16,
       "candidates": [
         {
           "rank": 0,
@@ -6753,22 +6753,6 @@
         },
         {
           "rank": 6,
-          "goodsNo": 6880735,
-          "title": "스퀘어넥  펀칭 니트 나시_그레이 슬리브리스",
-          "brandName": "모노에라",
-          "priceFinal": 34300,
-          "gender": "여성"
-        },
-        {
-          "rank": 7,
-          "goodsNo": 6880739,
-          "title": "스퀘어넥 펀칭 니트 나시_핑크 슬리브리스",
-          "brandName": "모노에라",
-          "priceFinal": 34300,
-          "gender": "여성"
-        },
-        {
-          "rank": 8,
           "goodsNo": 6883761,
           "title": "핀 스트라이프  끈나시_레드 슬리브리스 탑",
           "brandName": "모노에라",
@@ -6776,7 +6760,7 @@
           "gender": "여성"
         },
         {
-          "rank": 9,
+          "rank": 7,
           "goodsNo": 6888949,
           "title": "커브 컷팅 라운드넥 나시_핑크 슬리브리스 탑",
           "brandName": "모노에라",
@@ -6784,7 +6768,7 @@
           "gender": "여성"
         },
         {
-          "rank": 10,
+          "rank": 8,
           "goodsNo": 6889071,
           "title": "커브 컷팅 라운드넥 나시_스카이 블루 슬리브리스 탑",
           "brandName": "모노에라",
@@ -6792,7 +6776,7 @@
           "gender": "여성"
         },
         {
-          "rank": 11,
+          "rank": 9,
           "goodsNo": 6889149,
           "title": "커브 컷팅 라운드넥 나시_화이트 슬리브리스 탑",
           "brandName": "모노에라",
@@ -6800,7 +6784,7 @@
           "gender": "여성"
         },
         {
-          "rank": 12,
+          "rank": 10,
           "goodsNo": 6889226,
           "title": "바이오 스퀘어넥 버튼 슬리브리스 탑_화이트 나시",
           "brandName": "모노에라",
@@ -6808,7 +6792,7 @@
           "gender": "여성"
         },
         {
-          "rank": 13,
+          "rank": 11,
           "goodsNo": 6889291,
           "title": "바이오 스퀘어넥 버튼 슬리브리스 탑_블랙 나시",
           "brandName": "모노에라",
@@ -6816,15 +6800,7 @@
           "gender": "여성"
         },
         {
-          "rank": 14,
-          "goodsNo": 6925010,
-          "title": "스퀘어넥  나시 니트 탑_블랙 슬리브리스",
-          "brandName": "모노에라",
-          "priceFinal": 33600,
-          "gender": "여성"
-        },
-        {
-          "rank": 15,
+          "rank": 12,
           "goodsNo": 6925061,
           "title": "피그먼트 워싱 코스탈 보트넥 티셔츠_차콜 그레이",
           "brandName": "모노에라",
@@ -6832,7 +6808,7 @@
           "gender": "여성"
         },
         {
-          "rank": 16,
+          "rank": 13,
           "goodsNo": 6925065,
           "title": "모노 블룸 오버핏 그래픽 피그먼트 티셔츠_그레이",
           "brandName": "모노에라",
@@ -6840,7 +6816,7 @@
           "gender": "여성"
         },
         {
-          "rank": 17,
+          "rank": 14,
           "goodsNo": 6925067,
           "title": "모노 블룸 오버핏 그래픽 피그먼트 티셔츠_차콜 그레이",
           "brandName": "모노에라",
@@ -6848,7 +6824,7 @@
           "gender": "여성"
         },
         {
-          "rank": 18,
+          "rank": 15,
           "goodsNo": 7038173,
           "title": "홀터넥 나시 레이어드 탑_5컬러",
           "brandName": "모노에라",
@@ -7105,24 +7081,24 @@
         },
         {
           "rank": 17,
-          "goodsNo": 5150346,
-          "title": "반팔 바람막이 BOVK-341 (검정)",
+          "goodsNo": 5154831,
+          "title": "반팔티셔츠 BOTK-623 (검정)",
           "brandName": "제트",
-          "priceFinal": 49500,
+          "priceFinal": 31500,
           "gender": "남성"
         },
         {
           "rank": 18,
-          "goodsNo": 5150350,
-          "title": "반팔 바람막이 BOVK-313 (검정)",
+          "goodsNo": 5154833,
+          "title": "반팔티셔츠 BOTK-382 (검정)",
           "brandName": "제트",
-          "priceFinal": 67500,
+          "priceFinal": 28800,
           "gender": "남성"
         },
         {
           "rank": 19,
-          "goodsNo": 5154831,
-          "title": "반팔티셔츠 BOTK-623 (검정)",
+          "goodsNo": 5154839,
+          "title": "반팔티셔츠 BOTK-6514 (검정)",
           "brandName": "제트",
           "priceFinal": 31500,
           "gender": "남성"
@@ -7685,10 +7661,10 @@
         },
         {
           "rank": 19,
-          "goodsNo": 3417106,
-          "title": "M 모던 CP 로고 라운드넥 반팔 맨투맨 (Black)",
+          "goodsNo": 3417135,
+          "title": "M 모노그램 자카드 투톤 라운드넥 반팔 티셔츠 (Navy)",
           "brandName": "세르지오 타키니",
-          "priceFinal": 35700,
+          "priceFinal": 41700,
           "gender": "남성"
         }
       ]
@@ -7768,78 +7744,6 @@
         },
         {
           "rank": 8,
-          "goodsNo": 4478476,
-          "title": "티글레이크 레터링 오버핏 기모 후드티셔츠 그레이",
-          "brandName": "티글레이크",
-          "priceFinal": 32900,
-          "gender": "남성"
-        },
-        {
-          "rank": 9,
-          "goodsNo": 4478477,
-          "title": "티글레이크 레터링 오버핏 기모 후드티셔츠 블랙",
-          "brandName": "티글레이크",
-          "priceFinal": 32900,
-          "gender": "남성"
-        },
-        {
-          "rank": 10,
-          "goodsNo": 4650101,
-          "title": "원형 레터링 기모 오버핏 후드티 [그레이]",
-          "brandName": "비마이티",
-          "priceFinal": 48300,
-          "gender": "남성"
-        },
-        {
-          "rank": 11,
-          "goodsNo": 4650109,
-          "title": "원형 레터링 기모 오버핏 후드티 [네이비]",
-          "brandName": "비마이티",
-          "priceFinal": 48300,
-          "gender": "남성"
-        },
-        {
-          "rank": 12,
-          "goodsNo": 4650112,
-          "title": "원형 레터링 기모 오버핏 후드티 [블랙]",
-          "brandName": "비마이티",
-          "priceFinal": 48300,
-          "gender": "남성"
-        },
-        {
-          "rank": 13,
-          "goodsNo": 4651025,
-          "title": "낙서 레터링 기모 오버핏 후드티 [그레이]",
-          "brandName": "비마이티",
-          "priceFinal": 43400,
-          "gender": "남성"
-        },
-        {
-          "rank": 14,
-          "goodsNo": 4651318,
-          "title": "낙서 레터링 기모 오버핏 후드티 [오트밀]",
-          "brandName": "비마이티",
-          "priceFinal": 43400,
-          "gender": "남성"
-        },
-        {
-          "rank": 15,
-          "goodsNo": 4651327,
-          "title": "낙서 레터링 기모 오버핏 후드티 [블랙]",
-          "brandName": "비마이티",
-          "priceFinal": 43400,
-          "gender": "남성"
-        },
-        {
-          "rank": 16,
-          "goodsNo": 4651382,
-          "title": "낙서 레터링 기모 오버핏 후드티 [네이비]",
-          "brandName": "비마이티",
-          "priceFinal": 43400,
-          "gender": "남성"
-        },
-        {
-          "rank": 17,
           "goodsNo": 4980372,
           "title": "레터링 폰테 레터링 반팔 티셔츠 화이트",
           "brandName": "와키윌리",
@@ -7847,7 +7751,7 @@
           "gender": "공용"
         },
         {
-          "rank": 18,
+          "rank": 9,
           "goodsNo": 4980373,
           "title": "레터링 폰테 레터링 반팔 티셔츠 블랙",
           "brandName": "와키윌리",
@@ -7855,12 +7759,84 @@
           "gender": "공용"
         },
         {
-          "rank": 19,
+          "rank": 10,
           "goodsNo": 5401757,
           "title": "핸드레터링 소매 시보리 긴팔티 [블랙]",
           "brandName": "비마이티",
           "priceFinal": 39200,
           "gender": "남성"
+        },
+        {
+          "rank": 11,
+          "goodsNo": 5401779,
+          "title": "핸드레터링 소매 시보리 긴팔티 [화이트]",
+          "brandName": "비마이티",
+          "priceFinal": 39200,
+          "gender": "남성"
+        },
+        {
+          "rank": 12,
+          "goodsNo": 5401799,
+          "title": "레터링 플레이 소매 시보리 긴팔티 [화이트]",
+          "brandName": "비마이티",
+          "priceFinal": 33600,
+          "gender": "남성"
+        },
+        {
+          "rank": 13,
+          "goodsNo": 5401843,
+          "title": "레터링 플레이 소매 시보리 긴팔티 [블랙]",
+          "brandName": "비마이티",
+          "priceFinal": 33600,
+          "gender": "남성"
+        },
+        {
+          "rank": 14,
+          "goodsNo": 5418134,
+          "title": "밀로티 하트 레터링 로고 카모 반팔 티 남녀공용",
+          "brandName": "무센트",
+          "priceFinal": 35710,
+          "gender": "공용"
+        },
+        {
+          "rank": 15,
+          "goodsNo": 5806104,
+          "title": "크로우 그래피티 레터링 롱 슬리브 티",
+          "brandName": "캣세이브더월드",
+          "priceFinal": 35900,
+          "gender": "여성"
+        },
+        {
+          "rank": 16,
+          "goodsNo": 503399,
+          "title": "[16수] 레터링 타투 오버핏 티셔츠 화이트",
+          "brandName": "꼼파뇨",
+          "priceFinal": 28000,
+          "gender": "공용"
+        },
+        {
+          "rank": 17,
+          "goodsNo": 503413,
+          "title": "[16수] 레터링 타투 오버핏 티셔츠 블랙",
+          "brandName": "꼼파뇨",
+          "priceFinal": 28000,
+          "gender": "공용"
+        },
+        {
+          "rank": 18,
+          "goodsNo": 589618,
+          "title": "[UNISEX] 비욘드 레터링 특양면 반팔티(블랙)",
+          "brandName": "티아즈",
+          "priceFinal": 28700,
+          "gender": "남성"
+        },
+        {
+          "rank": 19,
+          "goodsNo": 784770,
+          "title": "레터링 티셔츠_다크 오렌지",
+          "brandName": "비유비피",
+          "priceFinal": 15600,
+          "gender": "여성"
         }
       ]
     },
@@ -8217,162 +8193,162 @@
       "candidates": [
         {
           "rank": 0,
-          "goodsNo": 1634554,
-          "title": "DMK_HOODY_81 그래피티 아티스트 데빌몽키 dmk 타투 캐릭터 그래피티 그래픽 디자인 후드티 후디",
-          "brandName": "돌돌",
-          "priceFinal": 76000,
-          "gender": "남성"
+          "goodsNo": 5087224,
+          "title": "[2PACK] OG 에센셜 그래피티 그래픽 반팔티",
+          "brandName": "요세미티",
+          "priceFinal": 36500,
+          "gender": "공용"
         },
         {
           "rank": 1,
-          "goodsNo": 1634555,
-          "title": "DMK_HOODY_82 그래피티 아티스트 데빌몽키 dmk 타투 캐릭터 그래피티 그래픽 디자인 후드티 후디",
-          "brandName": "돌돌",
-          "priceFinal": 76000,
+          "goodsNo": 1494631,
+          "title": "[그래픽스 X 모노하 Gold Label] 이 또한 지나가리라 Premium 반팔 티셔츠",
+          "brandName": "그래픽스",
+          "priceFinal": 27840,
           "gender": "남성"
         },
         {
           "rank": 2,
-          "goodsNo": 1634556,
-          "title": "DMK_HOODY_83 그래피티 아티스트 데빌몽키 dmk 타투 캐릭터 그래피티 그래픽 디자인 후드티 후디",
-          "brandName": "돌돌",
-          "priceFinal": 76000,
+          "goodsNo": 1494689,
+          "title": "[그래픽스 X 모노하 Gold Label] 스케이트 보드 Premium 반팔 티셔츠",
+          "brandName": "그래픽스",
+          "priceFinal": 27840,
           "gender": "남성"
         },
         {
           "rank": 3,
-          "goodsNo": 1637437,
-          "title": "DMK_HOODY_84 그래피티 아티스트 데빌몽키 dmk 타투 캐릭터 그래피티 그래픽 디자인 후드티 후디",
-          "brandName": "돌돌",
-          "priceFinal": 76000,
+          "goodsNo": 1494722,
+          "title": "[그래픽스 X 미스터 머스타드 스튜디오 Gold Label] 2 in 1 Premium 반팔 티셔츠",
+          "brandName": "그래픽스",
+          "priceFinal": 27840,
           "gender": "남성"
         },
         {
           "rank": 4,
-          "goodsNo": 1637439,
-          "title": "DMK_HOODY_86 그래피티 아티스트 데빌몽키 dmk 타투 캐릭터 그래피티 그래픽 디자인 후드티 후디",
-          "brandName": "돌돌",
-          "priceFinal": 76000,
+          "goodsNo": 1494737,
+          "title": "[그래픽스 X 미스터 머스타드 스튜디오 Gold Label] Love Together Premium 반팔 티셔츠",
+          "brandName": "그래픽스",
+          "priceFinal": 27840,
           "gender": "남성"
         },
         {
           "rank": 5,
-          "goodsNo": 1640198,
-          "title": "DMK_HOODY_85 그래피티 아티스트 데빌몽키 dmk 타투 캐릭터 그래피티 그래픽 디자인 후드티 후디",
+          "goodsNo": 1628496,
+          "title": "Lily-tshirts-16 러블리 릴리 여자 북극곰 스노우보드 선수 익스트림 캐릭터 그래픽 그래피티 디자인 티셔츠 티",
           "brandName": "돌돌",
-          "priceFinal": 76000,
+          "priceFinal": 38000,
           "gender": "남성"
         },
         {
           "rank": 6,
-          "goodsNo": 1640199,
-          "title": "DMK_HOODY_87 그래피티 아티스트 데빌몽키 dmk 타투 캐릭터 그래피티 그래픽 디자인 후드티 후디",
+          "goodsNo": 1628497,
+          "title": "Lily-tshirts-17 러블리 릴리 여자 북극곰 스노우보드 선수 익스트림 캐릭터 그래픽 그래피티 디자인 티셔츠 티",
           "brandName": "돌돌",
-          "priceFinal": 76000,
+          "priceFinal": 38000,
           "gender": "남성"
         },
         {
           "rank": 7,
-          "goodsNo": 1640200,
-          "title": "DMK_HOODY_88 그래피티 아티스트 데빌몽키 dmk 타투 캐릭터 그래피티 그래픽 디자인 후드티 후디",
+          "goodsNo": 1628499,
+          "title": "Lily-tshirts-18 러블리 릴리 여자 북극곰 스노우보드 선수 익스트림 캐릭터 그래픽 그래피티 디자인 티셔츠 티",
           "brandName": "돌돌",
-          "priceFinal": 76000,
+          "priceFinal": 38000,
           "gender": "남성"
         },
         {
           "rank": 8,
-          "goodsNo": 1640201,
-          "title": "DMK_HOODY_89 그래피티 아티스트 데빌몽키 dmk 타투 캐릭터 그래피티 그래픽 디자인 후드티 후디",
+          "goodsNo": 1817553,
+          "title": "Lily-tshirts-25 러블리 릴리 여자 북극곰 스노우보드 선수 익스트림 캐릭터 그래픽 디자인 그래피티 디자이너 티셔츠 티",
           "brandName": "돌돌",
-          "priceFinal": 76000,
+          "priceFinal": 38000,
           "gender": "남성"
         },
         {
           "rank": 9,
-          "goodsNo": 1643042,
-          "title": "DMK_HOODY_90 그래피티 아티스트 데빌몽키 dmk 타투 캐릭터 그래피티 그래픽 디자인 후드티 후디",
+          "goodsNo": 1817554,
+          "title": "Lily-tshirts-26 러블리 릴리 여자 북극곰 스노우보드 선수 익스트림 캐릭터 그래픽 디자인 그래피티 디자이너 티셔츠 티",
           "brandName": "돌돌",
-          "priceFinal": 76000,
+          "priceFinal": 38000,
           "gender": "남성"
         },
         {
           "rank": 10,
-          "goodsNo": 1643043,
-          "title": "DMK_HOODY_91 그래피티 아티스트 데빌몽키 dmk 타투 캐릭터 그래피티 그래픽 디자인 후드티 후디",
+          "goodsNo": 1817555,
+          "title": "Lily-tshirts-27 러블리 릴리 여자 북극곰 스노우보드 선수 익스트림 캐릭터 그래픽 디자인 그래피티 디자이너 티셔츠 티",
           "brandName": "돌돌",
-          "priceFinal": 79000,
+          "priceFinal": 38000,
           "gender": "남성"
         },
         {
           "rank": 11,
-          "goodsNo": 1643044,
-          "title": "DMK_HOODY_92 그래피티 아티스트 데빌몽키 dmk 타투 캐릭터 그래피티 그래픽 디자인 후드티 후디",
+          "goodsNo": 1820563,
+          "title": "Lily-tshirts-28 러블리 릴리 여자 북극곰 스노우보드 선수 익스트림 캐릭터 그래픽 디자인 그래피티 디자이너 티셔츠 티",
           "brandName": "돌돌",
-          "priceFinal": 79000,
+          "priceFinal": 38000,
           "gender": "남성"
         },
         {
           "rank": 12,
-          "goodsNo": 1645004,
-          "title": "DMK_HOODY_93 그래피티 아티스트 데빌몽키 dmk 타투 캐릭터 그래피티 그래픽 디자인 후드티 후디",
+          "goodsNo": 1820564,
+          "title": "Lily-tshirts-29 러블리 릴리 여자 북극곰 스노우보드 선수 익스트림 캐릭터 그래픽 디자인 그래피티 디자이너 티셔츠 티",
           "brandName": "돌돌",
-          "priceFinal": 79000,
+          "priceFinal": 38000,
           "gender": "남성"
         },
         {
           "rank": 13,
-          "goodsNo": 1645005,
-          "title": "DMK_HOODY_94 그래피티 아티스트 데빌몽키 dmk 타투 캐릭터 그래피티 그래픽 디자인 후드티 후디",
+          "goodsNo": 1820565,
+          "title": "Lily-tshirts-30 러블리 릴리 여자 북극곰 스노우보드 선수 익스트림 캐릭터 그래픽 디자인 그래피티 디자이너 티셔츠 티",
           "brandName": "돌돌",
-          "priceFinal": 79000,
+          "priceFinal": 38000,
           "gender": "남성"
         },
         {
           "rank": 14,
-          "goodsNo": 1645006,
-          "title": "DMK_HOODY_95 그래피티 아티스트 데빌몽키 dmk 타투 캐릭터 그래피티 그래픽 디자인 후드티 후디",
+          "goodsNo": 1822346,
+          "title": "Lily-tshirts-31 러블리 릴리 여자 북극곰 스노우보드 선수 익스트림 캐릭터 그래픽 디자인 그래피티 디자이너 티셔츠 티",
           "brandName": "돌돌",
-          "priceFinal": 79000,
+          "priceFinal": 38000,
           "gender": "남성"
         },
         {
           "rank": 15,
-          "goodsNo": 1647217,
-          "title": "DMK_HOODY_96 그래피티 아티스트 데빌몽키 dmk 타투 캐릭터 그래피티 그래픽 디자인 후드티 후디",
+          "goodsNo": 1822347,
+          "title": "Lily-tshirts-32 러블리 릴리 여자 북극곰 스노우보드 선수 익스트림 캐릭터 그래픽 디자인 그래피티 디자이너 티셔츠 티",
           "brandName": "돌돌",
-          "priceFinal": 79000,
+          "priceFinal": 38000,
           "gender": "남성"
         },
         {
           "rank": 16,
-          "goodsNo": 1647218,
-          "title": "DMK_HOODY_97 그래피티 아티스트 데빌몽키 dmk 타투 캐릭터 그래피티 그래픽 디자인 후드티 후디",
-          "brandName": "돌돌",
-          "priceFinal": 79000,
+          "goodsNo": 2038810,
+          "title": "[UNISEX]빅 라이프로고 멀티 그래픽 반팔티_화이트",
+          "brandName": "그레이버",
+          "priceFinal": 22500,
           "gender": "남성"
         },
         {
           "rank": 17,
-          "goodsNo": 1647219,
-          "title": "DMK_HOODY_98 그래피티 아티스트 데빌몽키 dmk 타투 캐릭터 그래피티 그래픽 디자인 후드티 후디",
-          "brandName": "돌돌",
-          "priceFinal": 79000,
+          "goodsNo": 2038812,
+          "title": "[UNISEX]빅 라이프로고 멀티 그래픽 반팔티_블랙",
+          "brandName": "그레이버",
+          "priceFinal": 22500,
           "gender": "남성"
         },
         {
           "rank": 18,
-          "goodsNo": 1652977,
-          "title": "DMK_HOODY_99 그래피티 아티스트 데빌몽키 dmk 타투 캐릭터 그래피티 그래픽 디자인 후드티 후디",
+          "goodsNo": 3144973,
+          "title": "DMK_T-shirts_60 그래피티 아티스트 데빌몽키 dmk 캐릭터 그래픽 티셔츠 반팔티",
           "brandName": "돌돌",
-          "priceFinal": 79000,
+          "priceFinal": 43000,
           "gender": "남성"
         },
         {
           "rank": 19,
-          "goodsNo": 1652978,
-          "title": "DMK_HOODY_100 그래피티 아티스트 데빌몽키 dmk 타투 캐릭터 그래피티 그래픽 디자인 후드티 후디",
+          "goodsNo": 3144975,
+          "title": "DMK_T-shirts_61 그래피티 아티스트 데빌몽키 dmk 캐릭터 그래픽 티셔츠 반팔티",
           "brandName": "돌돌",
-          "priceFinal": 79000,
+          "priceFinal": 43000,
           "gender": "남성"
         }
       ]
@@ -8508,14 +8484,6 @@
         },
         {
           "rank": 15,
-          "goodsNo": 2750482,
-          "title": "브이넥 골지 니트 긴소매 티셔츠 화이트",
-          "brandName": "어썸스튜디오",
-          "priceFinal": 15200,
-          "gender": "여성"
-        },
-        {
-          "rank": 16,
           "goodsNo": 2769730,
           "title": "레이온 혼방 브이넥 티셔츠 4COLOR",
           "brandName": "빠니깔레",
@@ -8523,7 +8491,7 @@
           "gender": "남성"
         },
         {
-          "rank": 17,
+          "rank": 16,
           "goodsNo": 2790585,
           "title": "M_브이넥 클래식 & 베이직 핏 반소매 티셔츠 (180gsm) MJT1734",
           "brandName": "와이잭",
@@ -8531,7 +8499,7 @@
           "gender": "남성"
         },
         {
-          "rank": 18,
+          "rank": 17,
           "goodsNo": 3060364,
           "title": "하트 브이넥 티셔츠 라이트 퍼플",
           "brandName": "디어피어",
@@ -8539,11 +8507,19 @@
           "gender": "여성"
         },
         {
-          "rank": 19,
+          "rank": 18,
           "goodsNo": 3100374,
           "title": "여성) 골지 브이넥 티셔츠_AN2WTS356-OW",
           "brandName": "잠뱅이",
           "priceFinal": 17900,
+          "gender": "여성"
+        },
+        {
+          "rank": 19,
+          "goodsNo": 3100375,
+          "title": "여성) 골지 브이넥 티셔츠_AN2WTS356-BK",
+          "brandName": "잠뱅이",
+          "priceFinal": 22000,
           "gender": "여성"
         }
       ]
@@ -8555,137 +8531,8 @@
       "query": "니트 가디건",
       "queryNorm": "니트 가디건",
       "queryUsed": "니트 가디건",
-      "resultCount": 16,
-      "candidates": [
-        {
-          "rank": 0,
-          "goodsNo": 4093342,
-          "title": "코스믹 가디건 셔츠 반팔니트 그린",
-          "brandName": "레테르코모",
-          "priceFinal": 24800,
-          "gender": "남성"
-        },
-        {
-          "rank": 1,
-          "goodsNo": 4128795,
-          "title": "에이시메트리 니트 가디건-크림",
-          "brandName": "에디텀",
-          "priceFinal": 99000,
-          "gender": "여성"
-        },
-        {
-          "rank": 2,
-          "goodsNo": 4130910,
-          "title": "에이시메트리 니트 가디건-레드",
-          "brandName": "에디텀",
-          "priceFinal": 99000,
-          "gender": "여성"
-        },
-        {
-          "rank": 3,
-          "goodsNo": 5712562,
-          "title": "니트 가디건 레이어 롱슬리브 티_차콜",
-          "brandName": "파르티멘토 우먼",
-          "priceFinal": 32400,
-          "gender": "여성"
-        },
-        {
-          "rank": 4,
-          "goodsNo": 5712563,
-          "title": "니트 가디건 레이어 롱슬리브 티_멜란지",
-          "brandName": "파르티멘토 우먼",
-          "priceFinal": 32400,
-          "gender": "여성"
-        },
-        {
-          "rank": 5,
-          "goodsNo": 6091546,
-          "title": "쿨썸머 프렌치 니트 가디건 - 4 COLOR",
-          "brandName": "테이크이지",
-          "priceFinal": 29900,
-          "gender": "남성"
-        },
-        {
-          "rank": 6,
-          "goodsNo": 6102735,
-          "title": "우먼스 케이블 라이트 니트 가디건",
-          "brandName": "제이엘브",
-          "priceFinal": 44200,
-          "gender": "여성"
-        },
-        {
-          "rank": 7,
-          "goodsNo": 6212911,
-          "title": "파에사노(라이트 아이보리)(남성 니트가디건)",
-          "brandName": "듀베티카",
-          "priceFinal": 390000,
-          "gender": "남성"
-        },
-        {
-          "rank": 8,
-          "goodsNo": 6312163,
-          "title": "바뇨네(핑크)(여성 니트가디건)",
-          "brandName": "듀베티카",
-          "priceFinal": 350000,
-          "gender": "여성"
-        },
-        {
-          "rank": 9,
-          "goodsNo": 6312166,
-          "title": "바뇨네(다크 네이비)(여성 니트가디건)",
-          "brandName": "듀베티카",
-          "priceFinal": 350000,
-          "gender": "여성"
-        },
-        {
-          "rank": 10,
-          "goodsNo": 6322893,
-          "title": "브리즈 니트 가디건 + 슬리브리스 SET [4COLORS]",
-          "brandName": "드로우핏 우먼",
-          "priceFinal": 77440,
-          "gender": "여성"
-        },
-        {
-          "rank": 11,
-          "goodsNo": 6338683,
-          "title": "빅 버튼 니트 나시 가디건",
-          "brandName": "나이엔",
-          "priceFinal": 59000,
-          "gender": "여성"
-        },
-        {
-          "rank": 12,
-          "goodsNo": 6391555,
-          "title": "비스코스 라운드 하프 니트 가디건 GEE265-106 아이보리",
-          "brandName": "지쿤",
-          "priceFinal": 42660,
-          "gender": "남성"
-        },
-        {
-          "rank": 13,
-          "goodsNo": 6391556,
-          "title": "비스코스 라운드 하프 니트 가디건 GEE265-106 네이비",
-          "brandName": "지쿤",
-          "priceFinal": 42660,
-          "gender": "남성"
-        },
-        {
-          "rank": 14,
-          "goodsNo": 6669326,
-          "title": "러플 니트 반팔 가디건 NEW6ME525",
-          "brandName": "온앤온",
-          "priceFinal": 109000,
-          "gender": "여성"
-        },
-        {
-          "rank": 15,
-          "goodsNo": 6686525,
-          "title": "모이 니트 가디건",
-          "brandName": "비키비키",
-          "priceFinal": 23370,
-          "gender": "여성"
-        }
-      ]
+      "resultCount": 0,
+      "candidates": []
     },
     {
       "id": "a-g4-01",
