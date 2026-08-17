@@ -24,7 +24,9 @@ pytestmark = pytest.mark.skipif(not DSN, reason="SEARCH_TEST_DSN 미설정 — �
 
 @pytest.fixture(scope="module")
 def cur():
-    with psycopg.connect(DSN) as conn, conn.cursor() as c:
+    # autocommit — 한 문장이 실패해도 트랜잭션이 죽어 나머지가 전부
+    # "current transaction is aborted"로 무너지지 않게 한다
+    with psycopg.connect(DSN, autocommit=True) as conn, conn.cursor() as c:
         yield c
 
 
@@ -165,3 +167,54 @@ def test_fallback_does_not_hijack_a_query_that_already_works(cur):
     cur.execute("select count(*) from c_search_page_v2('반팔', null, null, 30)")
     assert cur.fetchone()[0] == 30
     assert scalar(cur, "select c_search_correct_query(%s)", "반팔") is None
+
+
+# ⚠️ 스크롤 도중 검색어가 바뀌지 않는가.
+#
+# 폴백을 "본 검색이 0건이면"으로 판단하던 때, 그 0건이 **질의가 0건**인지
+# **커서 뒤가 없을 뿐**인지 구분하지 않았다. 원문 결과가 한 페이지보다 적으면
+# 2페이지에서 원문이 소진되고 폴백이 걸려 다른 질의 결과가 나왔다 —
+# 실측: `타일러` 1페이지 1건 → 2페이지가 `타일레` 30건. 커서도 다른 질의의
+# 점수 공간에 적용됐다. 교차 리뷰가 Blocker로 잡았다.
+@pytest.mark.parametrize("query", ["타일러", "밀로티", "클로에"])
+def test_short_result_set_does_not_switch_query_on_next_page(cur, query):
+    cur.execute(
+        "select score, goods_no from c_search_page_v2(%s, null, null, 30)"
+        " order by score, goods_no desc limit 1",
+        (query,),
+    )
+    last = cur.fetchone()
+    assert last is not None, f"{query}: 1페이지에 결과가 있어야 이 검사가 성립한다"
+
+    cur.execute(
+        "select count(*) from c_search_page_v2(%s, %s::real, %s::bigint, 30)",
+        (query, last[0], last[1]),
+    )
+    assert cur.fetchone()[0] == 0, f"{query}: 소진 뒤에는 0건이어야 한다(다른 질의로 갈아타면 안 된다)"
+
+    cur.execute("select max(goods_no) from c_search_page(%s, null, 30)", (query,))
+    v1_last = cur.fetchone()[0]
+    cur.execute("select count(*) from c_search_page(%s, %s, 30)", (query, v1_last))
+    assert cur.fetchone()[0] == 0, f"{query}: v1도 마찬가지다"
+
+
+@pytest.mark.parametrize(
+    "query,expect_second_page",
+    [
+        ("skdlzl", True),    # 처음부터 폴백 — 2페이지도 이어져야 한다
+        ("반팔", True),       # 결과가 많은 정상 질의
+        ("후드집업", True),   # is_tee 감점으로 점수가 음수인 갈래
+    ],
+)
+def test_pagination_still_continues_where_it_should(cur, query, expect_second_page):
+    cur.execute(
+        "select score, goods_no from c_search_page_v2(%s, null, null, 30)"
+        " order by score, goods_no desc limit 1",
+        (query,),
+    )
+    last = cur.fetchone()
+    cur.execute(
+        "select count(*) from c_search_page_v2(%s, %s::real, %s::bigint, 30)",
+        (query, last[0], last[1]),
+    )
+    assert (cur.fetchone()[0] > 0) is expect_second_page

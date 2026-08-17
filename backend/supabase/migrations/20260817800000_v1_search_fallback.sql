@@ -67,6 +67,7 @@ declare
   v_raw  text[];
   v_norm text;
   v_alt  text;
+  v_cand text[];
 begin
   -- 정규화(60자·5단어)를 먼저 하고 **그 결과로** 폴백을 판단한다. 원문을 넘기면
   -- 상한이 이 경로만 비켜 간다(v2와 같은 이유 — 리뷰 M2).
@@ -86,12 +87,33 @@ begin
     return;
   end if;
 
+    -- ⚠️ `FOUND`가 말하는 것은 "이 **페이지**가 0건"이지 "이 **질의**가 0건"이
+    -- 아니다. 원문 결과가 한 페이지보다 적으면 다음 페이지에서 원문이 소진되고,
+    -- 그때 폴백이 걸려 **스크롤 도중 검색어가 바뀐다** — 실측: `타일러` 1페이지
+    -- 1건 → 2페이지가 `타일레` 30건. 커서도 다른 질의의 공간에 적용된다.
+    -- 그래서 페이지가 비었을 때만 "커서를 무시하고 걸리는 게 있는가"를 묻는다.
+    -- 있으면 소진된 것이므로 폴백하지 않는다. 이 확인은 **빈 페이지에서만**
+    -- 일어나므로 보통 질의의 비용은 그대로다.
+  -- 확인은 **c_search_docs의 PGroonga 색인**으로 한다. c_search_text에 같은
+  -- 질문을 하면 색인이 없어 3.3초가 걸렸다(실측, 희귀어일수록 나쁘다).
+  -- 두 테이블은 같은 카탈로그·같은 노출 자격이고 여기서 묻는 것은 "이 질의에
+  -- 걸리는 상품이 존재하는가"뿐이라 근사로 충분하다. bigram과 LIKE가 갈리는
+  -- 드문 경우에 폴백이 한 번 더 걸릴 수 있을 뿐, 반환 결과가 틀리지는 않는다.
+  if p_after is not null and c_search_has_hit(v_raw) then
+    return;
+  end if;
+
   -- 후보는 순서대로 하나씩 만든다 — 배열에 담아 순회하면 자판 복원이
   -- 성공해도 오타 교정이 함께 계산된다(배열 원소는 선평가된다).
   v_alt := c_restore_hangul_typing(v_norm);
   if v_alt is not null and v_alt <> v_norm then
-    return query select * from c_v1_rows(c_like_all_patterns(c_search_split(v_alt)), p_after, v_size);
+    v_cand := c_search_split(v_alt);
+    return query select * from c_v1_rows(c_like_all_patterns(v_cand), p_after, v_size);
     if found then
+      return;
+    end if;
+    -- 대안도 소진된 것일 수 있다 — 같은 이유로 확인한다
+    if p_after is not null and c_search_has_hit(v_cand) then
       return;
     end if;
   end if;

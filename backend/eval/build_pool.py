@@ -29,6 +29,19 @@ EVAL_DIR = ROOT / "docs" / "atee" / "eval"
 SET_PATH = EVAL_DIR / "query-set.json"
 OUT_PATH = EVAL_DIR / "pool-baseline.json"
 
+# 시스템 구현이 바뀐 시점. 같은 이름의 산출물을 비교할 때 이것을 먼저 본다.
+SYSTEM_CHANGELOG = {
+    "baseline": [
+        "2026-08-17: 서버 표기 폴백(자판 복원·오타 교정) 추가 — 커밋된 "
+        "pool-baseline.json은 이 변경 **이전** 측정이라 재현되지 않는다"
+    ],
+    "a": [
+        "2026-08-17: is_tee를 hard filter에서 순위 감점으로",
+        "2026-08-17: 서버 표기 폴백 추가, query_used 반환",
+        "2026-08-17: 오타 교정을 브랜드 사전 + 자모 거리로 좁힘",
+    ],
+}
+
 TOP_N = 20  # 판정 대상 상위 개수 — P@20·nDCG@20의 K와 같게 맞춘다
 SYSTEMS = {
     "baseline": {
@@ -94,7 +107,7 @@ def load_db_url() -> str:
     return url
 
 
-def build(system: str) -> dict:
+def build(system: str) -> dict:  # noqa: C901
     import psycopg
 
     spec = SYSTEMS[system]
@@ -160,6 +173,9 @@ def build(system: str) -> dict:
             "purpose": f"후보 풀 — 시스템 '{spec['name']}'의 상위 {TOP_N}건. 판정 대상이다.",
             "generatedBy": "backend/eval/build_pool.py",
             "system": spec["name"],
+            # 같은 이름이라도 구현이 바뀌면 다른 시스템이다. 언제 무엇이 바뀌었는지
+            # 산출물 자체에 남긴다 — 주석은 산출물을 따라오지 않는다.
+            "systemChangedAt": SYSTEM_CHANGELOG.get(system, []),
             "topN": TOP_N,
             "collectedAt": datetime.now(timezone.utc).isoformat(),
             "catalogSnapshot": {
@@ -210,6 +226,11 @@ def summarize(doc: dict) -> None:
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--summary", action="store_true", help="재생성 없이 요약만")
+    parser.add_argument(
+        "--overwrite-baseline",
+        action="store_true",
+        help="커밋된 pool-baseline.json을 덮어쓴다 (아래 경고를 읽고 쓸 것)",
+    )
     parser.add_argument("--system", default="baseline", choices=sorted(SYSTEMS))
     parser.add_argument("--out", default=None)
     args = parser.parse_args()
@@ -218,6 +239,18 @@ def main() -> int:
     if args.summary:
         doc = json.loads(out_path.read_text(encoding="utf-8"))
     else:
+        # 커밋된 기준선은 **역사적 산출물**이다. 실수로 덮어쓰면 A단계 개선폭의
+        # 비교 대상이 사라진다.
+        if out_path.name == "pool-baseline.json" and not args.overwrite_baseline:
+            raise SystemExit(
+                "거부: pool-baseline.json은 역사적 산출물이다.\n"
+                "  기준선 27.8%는 v1(c_search_page)에 표기 폴백이 없던 시점의 측정인데,\n"
+                "  2026-08-17부터 v1도 서버에서 자판 복원·오타 교정을 한다. 지금 다시\n"
+                "  만들면 이름은 같고 의미는 다른 결과가 되어, 같은 시스템 비교가\n"
+                "  아니게 된다(SYSTEM_CHANGELOG 참고).\n"
+                "  정말 새 기준선을 재려면 --overwrite-baseline과 함께 실행하고,\n"
+                "  계획의 실행 기록에 '기준선을 다시 쟀다'고 남길 것."
+            )
         doc = build(args.system)
         out_path.write_text(
             json.dumps(doc, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
