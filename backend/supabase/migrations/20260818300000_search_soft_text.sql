@@ -67,6 +67,7 @@ declare
   v_n     int := 0; -- 갈래 ①이 준 행 수
   v_more  int;      -- 갈래 ②가 준 행 수
   v_ok    boolean := false;  -- 이 후보가 질의에 답했나
+  v_and   boolean;  -- 모든 단어 AND만으로 이 페이지가 채워지나
   -- 원문(try 0)의 문맥. 어떤 후보도 못 맞췄을 때 갈래 ②가 이것을 쓴다 —
   -- 그때 변수에는 마지막 후보(오타 교정)의 값이 남아 있기 때문이다.
   v0_brand text; v0_codes text[]; v0_pmin int; v0_pmax int;
@@ -201,6 +202,27 @@ begin
     -- 직렬화됐다. 클라이언트가 그 값을 커서로 돌려보내면 어느 행과도 맞지 않아
     -- **2페이지가 1페이지를 그대로 다시 준다**(실측 — `클로에` 7건이 두 번 나왔다).
     -- 매칭 최소값 106 > 나머지 최대값 0이라 100이면 갈래는 충분히 갈린다.
+    -- AND로 이 페이지가 채워지는지 먼저 본다. AND는 선택도가 높아 싸다.
+    v_and := false;
+    if v_words is not null and not v_chosung and array_length(v_words, 1) > 1 then
+      select count(*) >= v_size into v_and from (
+        select 1 from c_search_docs s
+        where (v_brand is null or s.brand = v_brand)
+          and (v_codes is null or s.color_codes && v_codes)
+          and (v_pmin is null or s.price_final >= v_pmin)
+          and (v_pmax is null or s.price_final <= v_pmax)
+          and s.doc &@ v_words[1]
+          and (v_words[2] is null or s.doc &@ v_words[2])
+          and (v_words[3] is null or s.doc &@ v_words[3])
+          and (v_words[4] is null or s.doc &@ v_words[4])
+          and (v_words[5] is null or s.doc &@ v_words[5])
+          and (p_after_score is null
+               or (100 + 10 * pgroonga_score(s.tableoid, s.ctid) - s.cat_rank)::real < p_after_score
+               or ((100 + 10 * pgroonga_score(s.tableoid, s.ctid) - s.cat_rank)::real = p_after_score
+                   and s.goods_no > p_after))
+        limit v_size) t;
+    end if;
+
     return query
   with hit as (
     select s.goods_no, (100 + 10 * pgroonga_score(s.tableoid, s.ctid) - s.cat_rank)::real as sc
@@ -211,8 +233,26 @@ begin
       and (v_pmin is null or s.price_final >= v_pmin)
       and (v_pmax is null or s.price_final <= v_pmax)
       and v_words is not null
-      and case when v_chosung then s.chosung_words @> v_words
-               else s.doc &@| v_words end
+      and case
+            when v_chosung then s.chosung_words @> v_words
+            -- **모든 단어 AND로 페이지가 채워지면 그것만 본다.**
+            --
+            -- OR는 흔한 말에서 후보를 12만 건으로 키워 느리다 — `그래픽 티` 259ms,
+            -- `무지 티셔츠` 152ms. 같은 질의를 AND로 걸면 33ms·14ms다(실측).
+            --
+            -- **결과는 달라지지 않는다.** pgroonga_score는 매칭한 단어 수이고 AND 행은
+            -- 그 값이 최대다. 계수 10이 카테고리 감점(최대 4)보다 커서 AND 행은
+            -- **언제나 OR 정렬의 맨 앞**이다 — 즉 AND 결과는 OR 결과의 앞부분과 같다.
+            -- 점수도 두 형태에서 같은 값임을 실측으로 확인했다.
+            when v_and then
+              s.doc &@ v_words[1]
+              and (v_words[2] is null or s.doc &@ v_words[2])
+              and (v_words[3] is null or s.doc &@ v_words[3])
+              and (v_words[4] is null or s.doc &@ v_words[4])
+              and (v_words[5] is null or s.doc &@ v_words[5])
+            -- 텍스트는 **하나 이상**이면 된다. `&@|`는 배열을 키워드 목록으로만 읽어
+            -- 질의 문법을 해석하지 않는다 — 사용자 입력을 문법으로 넘기면 주입이 된다.
+            else s.doc &@| v_words end
       and (p_after_score is null
            or (100 + 10 * pgroonga_score(s.tableoid, s.ctid) - s.cat_rank)::real < p_after_score
            or ((100 + 10 * pgroonga_score(s.tableoid, s.ctid) - s.cat_rank)::real = p_after_score and s.goods_no > p_after))
