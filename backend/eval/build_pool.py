@@ -33,7 +33,14 @@ TOP_N = 20  # 판정 대상 상위 개수 — P@20·nDCG@20의 K와 같게 맞�
 SYSTEMS = {
     "baseline": {
         "name": "baseline-c_search_page",
-        # 구 검색은 폴백이 없어 실제로 쓴 질의가 늘 원문이다 — 자리를 맞춰 둔다
+        # ⚠️ v1도 2026-08-17부터 서버에서 표기 폴백을 탄다. 다만 반환형이
+        # c_feed_products 고정이라 **무엇으로 찾았는지 알려줄 자리가 없다** —
+        # 그래서 여기 queryUsed는 원문이고, v1에 한해 실제와 다를 수 있다.
+        #
+        # 그 결과 **커밋된 pool-baseline.json은 이제 이 스크립트로 재현되지
+        # 않는다.** 기준선(27.8%)은 v1에 폴백이 없던 시점의 측정이고, 지금
+        # 다시 만들면 dkelektm·아디다드가 0건이 아니게 된다. A단계 개선폭을
+        # 말할 때 "같은 시스템 비교"가 아님을 기억해야 한다.
         "sql": "select goods_no, title, brand_name, price_final, gender, %s::text from c_search_page(%s, null, %s)",
         "args": lambda q, n: (q, q, n),
     },
@@ -121,9 +128,9 @@ def build(system: str) -> dict:
                 norm = normalize_query(e["query"])
                 cur.execute(spec["sql"], spec["args"](norm, TOP_N))
                 rows = cur.fetchall()
-                # 폴백(자판·오타)은 서버 안에서 일어난다. 무엇으로 찾았는지는
-                # 서버가 query_used로 알려주므로 그대로 받는다 — 여기서 다시
-                # 계산하면 평가와 서버가 갈린다.
+                # 폴백(자판·오타)은 서버 안에서 일어난다. v2는 query_used로
+                # 알려주므로 그대로 받는다 — 여기서 다시 계산하면 평가와
+                # 서버가 갈린다. v1은 알려줄 자리가 없어 원문이 그대로 온다.
                 used = rows[0][5] if rows else norm
                 results.append(
                     {

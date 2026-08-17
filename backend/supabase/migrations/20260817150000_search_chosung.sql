@@ -32,18 +32,16 @@ $$;
 comment on function c_chosung(text) is
   '한글 초성 추출 (나이키 → ㄴㅇㅋ). 초성 검색 색인·질의 양쪽에 쓴다.';
 
-alter table c_search_docs add column if not exists chosung text;
-
-update c_search_docs
-set chosung = c_chosung(brand || ' ' || title)
-where chosung is null;
-
--- 초성은 짧고 종류가 적어 bigram이면 충분하다.
-create index if not exists c_search_docs_chosung_idx on c_search_docs
-  using pgroonga (chosung)
-  with (tokenizer = 'TokenBigram', normalizer = 'NormalizerAuto');
-
-analyze c_search_docs;
+-- ⚠️ 이 파일은 **함수만 만든다.** 예전엔 여기서 c_search_docs에 `chosung`
+-- 열과 PGroonga 색인까지 붙였는데, 두 가지 이유로 걷어냈다:
+--   ① 죽은 코드다. 검색 RPC는 `chosung_words`(단어 배열 + GIN)를 쓴다.
+--      `chosung` 열은 아무도 읽지 않으면서 22.6만 행짜리 PGroonga 색인을
+--      하나 더 유지하고 있었다.
+--   ② clean bootstrap을 깬다. 이 파일은 c_search_docs를 만드는 파일보다
+--      **앞**에 와야 하는데(그 파일이 c_chosung을 부른다), 여기서 그 테이블을
+--      건드리면 새 DB에서 `relation "c_search_docs" does not exist`로 멈춘다.
+--      번호만 앞당기고 이 꼬리를 남긴 것이 리뷰 B1의 지적이었다.
+-- 남아 있는 열·색인은 다음 c_search_docs 재생성 때 사라진다.
 
 -- 역할을 명시해서 지운다 — `from public`만으로는 Supabase 기본 권한(새 함수에
 -- anon·authenticated 실행권을 따로 부여)이 남는다. 이 함수는 길이 제한 없이

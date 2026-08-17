@@ -76,6 +76,11 @@ def test_restore_applies_to_mistyped(cur):
     [
         ("아디다드", "아디다스"),
         ("커버났", "커버낫"),
+        ("나이킈", "나이키"),
+        # 여러 단어 브랜드는 한 단어만 틀려도 고쳐야 한다 — 사전에 브랜드명
+        # 전체만 넣으면 길이가 안 맞아 못 고친다
+        ("무신사 스탠다그", "무신사 스탠다드"),
+        ("아스트랄 프로젝숀", "아스트랄 프로젝션"),
     ],
 )
 def test_typo_correction(cur, query, expected):
@@ -86,6 +91,18 @@ def test_typo_correction(cur, query, expected):
 def test_typo_correction_leaves_known_and_unfixable_alone(cur, query):
     """사전에 있는 말과 고칠 수 없는 말은 모두 null — 호출자가 폴백을 건너뛴다."""
     assert scalar(cur, "select c_search_correct_query(%s)", query) is None
+
+
+@pytest.mark.parametrize(
+    "query,why",
+    [
+        ("아디다", "음절 하나가 빠진 것은 자모 거리 2다 — 거리 2를 허용하면 모자→모달이 열린다"),
+        ("슬리퍼", "브랜드 어절 `슬리피`는 3음절이라 사전에 없다"),
+    ],
+)
+def test_documented_limits_of_typo_correction(cur, query, why):
+    """**못 고치는 것**을 명시한다. 지원 범위를 넓게 말하지 않기 위한 테스트다."""
+    assert scalar(cur, "select c_search_correct_query(%s)", query) is None, why
 
 
 # ⚠️ 이 묶음은 실제로 깨졌던 게이트를 막는다.

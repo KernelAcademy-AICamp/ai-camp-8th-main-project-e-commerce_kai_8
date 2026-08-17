@@ -17,18 +17,44 @@ create extension if not exists fuzzystrmatch with schema extensions;
 -- 속성어까지 넣으면 다른 품목 질의가 티셔츠로 끌려온다 — 실측한 오검출:
 --   샌들 슬리퍼 → 샌드 슬리브 (20건) · 운동화 → 운동복 · 백팩 → 백씨
 -- 이건 기준서의 G6(0건이 정답)을 100% → 93.3%로 떨어뜨린 실제 게이트 실패였다.
--- 브랜드는 닫힌 집합이고 실제 오타의 대부분이라, 여기만 고치고 속성어 오타는
--- **다루지 않는다.** 못 고치는 것을 안 고치는 쪽이 엉뚱한 물건을 주는 것보다 낫다.
+-- 브랜드는 닫힌 집합이라 여기만 고치고 속성어 오타는 **다루지 않는다.**
+-- 못 고치는 것을 안 고치는 쪽이 엉뚱한 물건을 주는 것보다 낫다.
+--
+-- ⚠️ **지원 범위를 정직하게 적는다.** "실제 오타의 대부분"이라고 말할 근거
+-- 데이터는 아직 없다 — 검색 로그가 쌓이면 재야 한다(리뷰 M3). 지금 고칠 수
+-- 있는 것은 이것뿐이다:
+--   · 첫 글자가 같고
+--   · 3음절 이상이고 (2음절은 모자·바지처럼 다른 품목과 부딪힌다)
+--   · 자모 하나만 어긋난 (음절 하나가 빠지거나 더해진 `아디다 → 아디다스`는
+--     자모 거리 2라 **못 고친다.** 거리 2를 허용하면 모자 → 모달이 열린다)
+--   · 브랜드명 전체 또는 여러 단어 브랜드의 4음절 이상 어절
 --
 -- ⚠️ 교체는 shadow 방식이다. drop 후 재생성하면 그 사이(또는 실패 시)
 -- 살아 있는 c_search_correct_*가 없는 테이블을 참조한다 — 공유 DB에서 위험하다.
 drop table if exists c_search_vocab_next;
 
+-- 두 갈래를 합친다:
+--   ① 브랜드명 **전체** (3음절 이상)
+--   ② 여러 단어 브랜드의 **어절** (4음절 이상)
+-- ②가 필요한 이유: 교정기는 질의를 공백으로 나눠 단어별로 본다. 전체 이름만
+-- 넣으면 `무신사 스탠다그`·`아스트랄 프로젝숀`처럼 **한 단어만 틀린** 실제
+-- 브랜드 오타를 고칠 수 없다(리뷰 M3).
+-- ②에 4음절 하한을 두는 이유: 3음절 어절까지 받으면 `슬리퍼`가 어느 브랜드의
+-- 어절 `슬리피`로 교정된다 — 다시 다른 품목을 끌어오는 길이 열린다.
 create table c_search_vocab_next as
-select lower(brand) as term, count(*)::int as freq
-from c_search_docs
-where brand <> ''
-group by lower(brand);
+select term, sum(freq)::int as freq
+from (
+  select lower(brand) as term, count(*) as freq
+  from c_search_docs
+  where brand <> '' and length(brand) >= 3
+  group by lower(brand)
+  union all
+  select lower(w), count(*)
+  from c_search_docs, unnest(string_to_array(brand, ' ')) w
+  where brand like '% %' and length(w) >= 4
+  group by lower(w)
+) t
+group by term;
 
 alter table c_search_vocab_next add primary key (term);
 create index c_search_vocab_next_len_idx on c_search_vocab_next (length(term), freq desc);
@@ -117,9 +143,14 @@ as $$
     and left(v.term, 1) = left(p_word, 1)          -- 첫 글자는 보통 안 틀린다
     -- **자모 단위** 편집거리. 음절 단위로 재면 다른 물건을 오타로 본다.
     and levenshtein(c_jamo(v.term), c_jamo(p_word)) <= greatest(p_max_dist, 1)
-  order by levenshtein(c_jamo(v.term), c_jamo(p_word)), v.freq desc
+  -- 동점이면 짧은 쪽을 먼저 본다 — 어절이 브랜드명 전체보다 질의어에 가깝다
+  order by levenshtein(c_jamo(v.term), c_jamo(p_word)), length(v.term), v.freq desc
   limit 1;
 $$;
+
+-- ⚠️ 역할 명시 필수. `from public`만으로는 Supabase 기본 권한이 남는다.
+-- security definer라 c_search_correct_query 내부 호출은 영향받지 않는다.
+revoke all on function c_search_correct_word(text, int) from public, anon, authenticated;
 
 -- 질의 전체 교정. 사전에 있는 단어는 그대로 두고, 없는 단어만 교정을 시도한다.
 -- 하나도 못 고치면 null을 돌려 호출자가 폴백을 건너뛰게 한다.

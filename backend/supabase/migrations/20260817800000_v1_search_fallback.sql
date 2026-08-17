@@ -30,65 +30,76 @@ $$;
 
 revoke all on function c_like_all_patterns(text[]) from public, anon, authenticated;
 
+-- 한 벌의 **완성된 LIKE 패턴**으로 실제 검색을 한다. v2의 c_search_rows와
+-- 같은 역할이다.
+--
+-- ⚠️ 패턴을 여기서 만들지 않고 **받는다.** where 절 안에서
+-- `c_like_all_patterns(p_words)`를 부르면 상수로 접히지 않고 22.6만 행마다
+-- 다시 계산돼 statement timeout까지 갔다(실측). 원래 코드가 패턴을 변수에
+-- 미리 담았던 이유가 이것이다.
+create or replace function c_v1_rows(p_patterns text[], p_after bigint, p_size int)
+returns setof c_feed_products
+language sql stable security definer
+set search_path = public, pg_temp
+as $$
+  select v.*
+  from (
+    select s.goods_no
+    from c_search_text s
+    where (p_after is null or s.goods_no > p_after)
+      and s.txt like all (p_patterns)
+    order by s.goods_no
+    limit p_size
+  ) page
+  join c_feed_products v using (goods_no)
+  order by v.goods_no;
+$$;
+
+revoke all on function c_v1_rows(text[], bigint, int) from public, anon, authenticated;
+
 create or replace function c_search_page(p_query text, p_after bigint default null, p_size int default 30)
 returns setof c_feed_products
 language plpgsql stable security definer
 set search_path = public, extensions, pg_temp
 as $$
 declare
-  v_size  int := least(greatest(coalesce(p_size, 30), 1), 60);
-  v_norm  text;
-  v_raw   text[];
-  v_words text[];
-  v_alt   text;
+  v_size int := least(greatest(coalesce(p_size, 30), 1), 60);
+  v_raw  text[];
+  v_norm text;
+  v_alt  text;
 begin
   -- 정규화(60자·5단어)를 먼저 하고 **그 결과로** 폴백을 판단한다. 원문을 넘기면
   -- 상한이 이 경로만 비켜 간다(v2와 같은 이유 — 리뷰 M2).
-  select array_agg(w) into v_raw
-  from (
-    select w from regexp_split_to_table(left(coalesce(p_query, ''), 60), '\s+') w
-    where w <> '' limit 5
-  ) t;
-
+  v_raw := c_search_split(p_query);
   if v_raw is null then
     return;  -- 빈 검색어: 전체 카탈로그 스캔 금지
   end if;
   v_norm := array_to_string(v_raw, ' ');
 
-  -- 원문이 0건일 때만 대안을 찾는다
-  if not exists (
-    select 1 from c_search_text s where s.txt like all (c_like_all_patterns(v_raw)) limit 1
-  ) then
-    foreach v_alt in array array[
-      c_restore_hangul_typing(v_norm),
-      c_search_correct_query(v_norm)
-    ] loop
-      continue when v_alt is null or v_alt = v_norm;
-      select array_agg(w) into v_raw
-      from (select w from regexp_split_to_table(v_alt, '\s+') w where w <> '' limit 5) t;
-      exit when v_raw is not null and exists (
-        select 1 from c_search_text s where s.txt like all (c_like_all_patterns(v_raw)) limit 1
-      );
-      -- 이 후보도 헛돌면 원문으로 되돌리고 다음 후보를 본다
-      select array_agg(w) into v_raw
-      from (select w from regexp_split_to_table(v_norm, '\s+') w where w <> '' limit 5) t;
-    end loop;
+  -- ⚠️ **탐침을 따로 돌리지 않는다.** 처음엔 "걸리는 게 있나"를 exists로 먼저
+  -- 확인했는데, c_search_text는 색인이 없는 full scan 테이블이라 결과가 있는
+  -- 보통 질의도 두 번 읽게 됐다 — 정상 질의 p95가 385ms → 892ms, 폴백 질의는
+  -- 3.4초였다(리뷰 M1). 본 검색을 먼저 하고 **0건일 때만** 다음 후보로 간다.
+  -- RETURN QUERY는 FOUND를 세팅하므로 추가 조회 없이 알 수 있다.
+  return query select * from c_v1_rows(c_like_all_patterns(v_raw), p_after, v_size);
+  if found then
+    return;
   end if;
 
-  v_words := c_like_all_patterns(v_raw);
+  -- 후보는 순서대로 하나씩 만든다 — 배열에 담아 순회하면 자판 복원이
+  -- 성공해도 오타 교정이 함께 계산된다(배열 원소는 선평가된다).
+  v_alt := c_restore_hangul_typing(v_norm);
+  if v_alt is not null and v_alt <> v_norm then
+    return query select * from c_v1_rows(c_like_all_patterns(c_search_split(v_alt)), p_after, v_size);
+    if found then
+      return;
+    end if;
+  end if;
 
-  return query
-  select v.*
-  from (
-    select s.goods_no
-    from c_search_text s
-    where (p_after is null or s.goods_no > p_after)
-      and s.txt like all (v_words)
-    order by s.goods_no
-    limit v_size
-  ) page
-  join c_feed_products v using (goods_no)
-  order by v.goods_no;
+  v_alt := c_search_correct_query(v_norm);
+  if v_alt is not null and v_alt <> v_norm then
+    return query select * from c_v1_rows(c_like_all_patterns(c_search_split(v_alt)), p_after, v_size);
+  end if;
 end
 $$;
 

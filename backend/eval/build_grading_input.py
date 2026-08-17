@@ -27,8 +27,6 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
 EVAL_DIR = ROOT / "docs" / "atee" / "eval"
-DEFAULT_POOL = "pool-baseline.json"
-
 # --exclude-graded가 "이미 판정됨"으로 칠 파일 **목록**. glob로 싹 긁으면
 # 폐기본과 부분 라벨까지 완료로 세어 새 입력에서 항목이 조용히 빠진다.
 # 기준서 버전이 다른 채점본을 섞는 것과 같은 실수라 명시 목록으로 둔다.
@@ -142,7 +140,9 @@ def build(partitions: set[str], pool_name: str, exclude_graded: bool) -> dict:
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--partition", required=True, help="dev 또는 progress,holdout")
-    parser.add_argument("--pool", default=DEFAULT_POOL, help="docs/atee/eval 아래 풀 파일명")
+    # 기본값을 두지 않는다. 예전엔 pool-baseline.json이 기본이라, A 풀을
+    # 의도한 호출에서 인자를 빠뜨려도 성공하며 엉뚱한 풀을 읽었다.
+    parser.add_argument("--pool", required=True, help="docs/atee/eval 아래 풀 파일명")
     parser.add_argument(
         "--exclude-graded",
         action="store_true",

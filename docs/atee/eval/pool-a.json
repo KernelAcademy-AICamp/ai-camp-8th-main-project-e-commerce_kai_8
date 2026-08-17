@@ -4,12 +4,12 @@
     "generatedBy": "backend/eval/build_pool.py",
     "system": "a-c_search_page_v2-pgroonga-bigram",
     "topN": 20,
-    "collectedAt": "2026-08-17T04:09:51.171978+00:00",
+    "collectedAt": "2026-08-17T04:46:39.716598+00:00",
     "catalogSnapshot": {
       "c_goods_rows": 226320,
       "c_search_text_rows": 226304,
       "c_search_docs_rows": 226304,
-      "c_search_vocab_rows": 4347,
+      "c_search_vocab_rows": 3989,
       "note": "카탈로그·사전이 바뀌면 판정이 낡는다 — 재측정 시 이 수치와 비교한다. c_search_vocab은 오타 교정 사전이라 여기 결과에 직접 영향을 준다"
     },
     "unjudgedPolicy": {

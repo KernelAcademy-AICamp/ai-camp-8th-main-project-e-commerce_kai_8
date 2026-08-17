@@ -24,24 +24,54 @@ pytestmark = pytest.mark.skipif(not DSN, reason="PG_TEST_DSN 미설정 — Postg
 MIGRATIONS = Path(__file__).resolve().parents[1] / "supabase" / "migrations"
 
 
-def extract(path: str, start: str, end: str | None = None) -> str:
+def extract(path: str, start: str, end: str) -> str:
     """마이그레이션 파일에서 함수 정의 구간만 떼어 온다.
 
     테스트가 실제 배포되는 SQL을 그대로 읽게 하려는 것이다. 정의를 여기 베껴
     두면 마이그레이션과 갈려서, 테스트는 통과하는데 서버는 틀리게 된다.
+
+    ⚠️ 끝 표식은 **필수**다. 예전엔 생략하면 파일 끝까지 가져왔는데, 그 파일
+    끝에 카탈로그를 건드리는 DDL이 붙어 있어 빈 DB에서 setup부터 깨졌다.
+    끝 표식은 시작 지점 **이후**에서 찾는다 — 같은 문구가 앞쪽 주석에 다시
+    나오면 범위가 조용히 달라진다.
     """
     text = (MIGRATIONS / path).read_text(encoding="utf-8")
     i = text.index(start)
-    return text[i:] if end is None else text[i : text.index(end)]
+    j = text.index(end, i + len(start))
+    return text[i:j]
 
 
 @pytest.fixture(scope="module")
 def cur():
     with psycopg.connect(DSN, autocommit=True) as conn, conn.cursor() as c:
+        # 격리 스키마에서 돈다. CI는 빈 Postgres를 주지만 로컬에서 실 DB를
+        # 가리키면 기존 함수를 덮어써 버린다 — 그러면 "빈 DB에서도 되는가"를
+        # 검증하지 못한 채 통과한다(리뷰 B2가 잡은 실패가 정확히 그것이었다).
+        c.execute("drop schema if exists search_fn_test cascade")
+        c.execute("create schema search_fn_test")
+
+        # levenshtein(fuzzystrmatch)이 어느 스키마에 있는지는 환경마다 다르다 —
+        # Supabase는 `extensions`, 맨 Postgres는 `public`. 찾아서 경로에 넣는다.
+        c.execute(
+            "select n.nspname from pg_proc p"
+            " join pg_namespace n on n.oid = p.pronamespace"
+            " where p.proname = 'levenshtein' limit 1"
+        )
+        row = c.fetchone()
+        if row is None:
+            c.execute("create extension fuzzystrmatch with schema search_fn_test")
+            ext_schema = "search_fn_test"
+        else:
+            ext_schema = row[0]
+        c.execute(f"set search_path = search_fn_test, {ext_schema}, pg_catalog")
         # 카탈로그가 필요 없는 함수만 올린다. revoke 대상 역할(anon 등)이 없는
         # 빈 Postgres이므로 revoke 줄은 걷어낸다.
         chunks = [
-            extract("20260817150000_search_chosung.sql", "create or replace function c_chosung"),
+            extract(
+                "20260817150000_search_chosung.sql",
+                "create or replace function c_chosung",
+                "revoke all on function c_chosung",
+            ),
             extract(
                 "20260817700000_search_qwerty.sql",
                 "create or replace function c_compose_hangul",
@@ -59,8 +89,20 @@ def cur():
             ),
         ]
         for chunk in chunks:
-            c.execute(re.sub(r"^revoke .*$", "", chunk, flags=re.MULTILINE))
+            # 주석을 걷어낸 실행문만 본다 — 주석에는 c_search_docs 얘기가 나온다
+            statements = re.sub(r"--[^\n]*", "", chunk)
+            assert "c_search_docs" not in statements, (
+                "카탈로그 테이블을 건드리는 SQL이 섞였다 — 이 테스트는 빈 DB에서 돈다"
+            )
+            sql = re.sub(r"^revoke .*$", "", chunk, flags=re.MULTILINE)
+            # 함수 본문에 `set search_path = public, ...`이 박혀 있다. 그대로
+            # 두면 함수가 자기 스키마가 아니라 public의 실물을 빌려 써서,
+            # 이 테스트가 실 DB에서만 통과하고 빈 CI에서는 깨진다. 치환해서
+            # **테스트 스키마 안에서 자립하는지**를 실제로 확인한다.
+            sql = sql.replace("set search_path = public,", "set search_path = search_fn_test,")
+            c.execute(sql)
         yield c
+        c.execute("drop schema if exists search_fn_test cascade")
 
 
 def scalar(cur, sql, *args):
@@ -136,7 +178,6 @@ def test_jamo_decomposition(cur, word, jamo):
 )
 def test_jamo_distance_separates_typos_from_other_words(cur, a, b, syllable_dist, jamo_dist):
     """음절 거리로는 전부 1이라 구분이 안 된다 — 자모 거리라야 갈린다."""
-    cur.execute("create extension if not exists fuzzystrmatch")
     assert scalar(cur, "select levenshtein(%s, %s)", a, b) == syllable_dist
     assert scalar(cur, "select levenshtein(c_jamo(%s), c_jamo(%s))", a, b) == jamo_dist
 

@@ -35,13 +35,6 @@ create table c_search_docs_next (
   -- 초성 검색용 단어 배열. RPC가 참조하므로 **여기서** 만든다 — 뒤 마이그레이션에
   -- 미루면 그 사이 구간이나 실패 시 새 RPC가 깨진 상태로 노출된다.
   chosung_words text[] not null default '{}',
-  -- 브랜드명을 지운 제목. **브랜드 우연 일치**를 가려낼 재료다 —
-  -- `포켓 티셔츠`가 브랜드 `아워포켓츠`에 걸려 상위를 통째로 먹는 문제.
-  -- bigram은 단어 안쪽도 맞히므로 아워포켓츠 안의 '포켓'이 진짜 포켓 상품
-  -- 1,768개를 밀어낸다. 질의어가 여기에도 있으면 진짜 속성이고, 브랜드에만
-  -- 있으면 우연이다. 질의 시각에 계산하면 매칭 10만 건에 문자열 연산이
-  -- 붙으므로 적재할 때 만들어 둔다.
-  title_wo_brand text not null default '',
   -- 반소매 티셔츠 제품군인가. 기준서 §3-1 ④(티셔츠가 아니면 최대 1)를 검색에서
   -- 미리 반영한다. 제목 키워드 기준이라 위양성이 있다(§ 한계).
   is_tee   boolean not null default true
@@ -52,8 +45,7 @@ comment on table c_search_docs_next is
 
 -- 노출 자격은 기존과 동일하다 (c_feed_page·현행 검색과 같은 조건).
 -- 뷰(c_feed_products)에는 card_ok가 없으므로 c_thumb_dims를 직접 조인한다.
-insert into c_search_docs_next
-  (goods_no, brand, title, tags, doc, title_wo_brand, chosung_words, is_tee)
+insert into c_search_docs_next (goods_no, brand, title, tags, doc, chosung_words, is_tee)
 select
   g.goods_no,
   coalesce(g.brand_name, ''),
@@ -62,13 +54,6 @@ select
   -- ⚠️ 태그는 **문서에 넣지 않는다**. 상품과 느슨하게 붙어 있어 정밀도를 깎았다
   -- (실측: G2 P@20 58.2% → 48.9% 회귀). tags 컬럼은 C단계 필터 재료로 남긴다.
   lower(coalesce(g.brand_name, '') || ' ' || coalesce(g.title, '')),
-  -- 제목에 브랜드가 그대로 박힌 상품은 1.2%뿐이지만, 하필 그것들이 문제를
-  -- 만든다(아워포켓츠는 제목이 브랜드로 시작한다). 지워야 '포켓'이 브랜드
-  -- 때문에만 맞았다는 사실이 드러난다.
-  lower(case
-    when coalesce(g.brand_name, '') = '' then coalesce(g.title, '')
-    else replace(coalesce(g.title, ''), g.brand_name, ' ')
-  end),
   coalesce((
     select array_agg(w)
     from unnest(string_to_array(
@@ -143,27 +128,37 @@ comment on table c_search_docs is
 --   · `&@`는 문자열 전체를 **하나의 키워드**로 본다. 문법 해석이 없어 예약어가
 --     무력화되고, bigram 부분 일치는 그대로라 띄어쓰기 변형도 산다.
 -- 단어 사이 AND는 조건을 이어 붙여 만든다(최대 5단어라 펼쳐 쓴다).
--- 이 단어들로 걸리는 문서가 하나라도 있는가. 폴백을 단계마다 검증하려고 뺐다.
--- `&@`(단일 키워드)를 쓰는 이유는 본 검색과 같다 — `&@~`는 질의 구문을 파싱해
--- 사용자 입력이 연산자로 해석된다.
-create or replace function c_search_has_hit(p_words text[])
-returns boolean
-language sql stable security definer
-set search_path = public, extensions, pg_temp
+-- 질의를 앞 60자·앞 5단어로 자른다. 정규화 규칙이 한 곳에 있어야 본 검색과
+-- 폴백 후보가 같은 상한을 받는다 — 예전엔 폴백만 상한을 비켜 갔다(리뷰 M2).
+create or replace function c_search_split(p_query text)
+returns text[]
+language sql immutable parallel safe
+set search_path = pg_catalog, pg_temp
 as $$
-  select exists (
-    select 1 from c_search_docs s
-    where s.doc &@ p_words[1]
-      and (p_words[2] is null or s.doc &@ p_words[2])
-      and (p_words[3] is null or s.doc &@ p_words[3])
-      and (p_words[4] is null or s.doc &@ p_words[4])
-      and (p_words[5] is null or s.doc &@ p_words[5])
-    limit 1
-  );
+  select array_agg(w)
+  from (
+    select w from regexp_split_to_table(left(coalesce(p_query, ''), 60), '\s+') w
+    where w <> '' limit 5
+  ) t;
 $$;
 
--- 역할 명시 필수 — 열어 두면 anon이 임의 단어의 존재 여부를 무제한 물을 수 있다.
-revoke all on function c_search_has_hit(text[]) from public, anon, authenticated;
+revoke all on function c_search_split(text) from public, anon, authenticated;
+
+-- 질의를 앞 60자·앞 5단어로 자른다. 정규화 규칙이 한 곳에 있어야 본 검색과
+-- 폴백 후보가 같은 상한을 받는다 — 예전엔 폴백만 상한을 비켜 갔다(리뷰 M2).
+create or replace function c_search_split(p_query text)
+returns text[]
+language sql immutable parallel safe
+set search_path = pg_catalog, pg_temp
+as $$
+  select array_agg(w)
+  from (
+    select w from regexp_split_to_table(left(coalesce(p_query, ''), 60), '\s+') w
+    where w <> '' limit 5
+  ) t;
+$$;
+
+revoke all on function c_search_split(text) from public, anon, authenticated;
 
 -- ⚠️ `create or replace`만으로는 **반환 열이 바뀔 때 실패한다**
 -- (cannot change return type of existing function). query_used 열을 더하면서
@@ -199,9 +194,9 @@ declare
   v_size  int := least(greatest(coalesce(p_size, 30), 1), 60);
   v_words text[];
   v_chosung boolean;
-  v_norm text;
-  v_alt text;
-  v_alt_words text[];
+  v_norm  text;
+  v_alt   text;
+  v_try   int;
 begin
   -- 커서 쌍 검증 — 한쪽만 온 요청은 받지 않는다
   if (p_after_score is null) <> (p_after is null) then
@@ -210,53 +205,43 @@ begin
 
   -- 앞 60자 · 앞 5단어 (프론트 정규화와 동일). **초성 분기도 이 결과를 쓴다** —
   -- 원본을 쓰면 상한을 우회해 임의 길이 입력이 GIN 조건으로 들어간다.
-  select array_agg(w) into v_words
-  from (
-    select w from regexp_split_to_table(left(coalesce(p_query, ''), 60), '\s+') w
-    where w <> '' limit 5
-  ) t;
-
+  v_words := c_search_split(p_query);
   if v_words is null then
     return;  -- 빈 질의: 전체 스캔 금지
   end if;
+  v_norm := array_to_string(v_words, ' ');
 
   -- 초성만으로 이뤄진 질의(ㄴㅇㅋ)는 본문에 그 형태로 없다. 초성 색인으로 보낸다.
   v_chosung := array_to_string(v_words, '') ~ '^[ㄱ-ㅎ]+$'
                and length(array_to_string(v_words, '')) >= 2;
 
-
-  -- 표기 폴백 (A단계 3단계). **원문이 0건일 때만** 시도한다 — 결과가 있으면
-  -- 그게 사용자 의도이고, 멀쩡한 질의를 고치면 의도를 덮어쓴다.
-  --
-  -- 후보 순서: ① 한영 자판 복원 ② 브랜드 사전 오타 교정.
+  -- 표기 폴백 (A단계 3단계). **원문이 0건일 때만** 다음 후보로 간다 — 결과가
+  -- 있으면 그게 사용자 의도이고, 멀쩡한 질의를 고치면 의도를 덮어쓴다.
+  --   0회차 = 원문 · 1회차 = 한영 자판 복원 · 2회차 = 브랜드 사전 오타 교정
   -- 자판을 먼저 두는 이유: 영문 나열은 브랜드 사전에 없어 교정이 헛돈다.
   --
-  -- ⚠️ **정규화된 질의(v_norm)를 넘긴다.** 예전엔 원본 p_query를 그대로
-  -- 넘겨서, 60자·5단어 상한이 이 경로만 비켜 갔다. c_search_page_v2는 anon이
-  -- 직접 부를 수 있으므로 임의 길이 입력이 문자 단위 루프로 들어갔다(리뷰 M2).
+  -- ⚠️ **탐침을 따로 돌리지 않는다.** "걸리는 게 있나"를 미리 확인하면 결과가
+  -- 있는 보통 질의도 색인을 두 번 읽는다. RETURN QUERY가 FOUND를 세팅하므로
+  -- 추가 조회 없이 알 수 있다(리뷰 M1).
   --
-  -- 각 후보는 **한 번씩만** 만들고 한 번씩만 확인한다. 예전엔 자판 복원이
-  -- null일 때 같은 교정 함수와 같은 hit 확인을 두 번 돌았다(리뷰 M3).
-  if not v_chosung and not c_search_has_hit(v_words) then
-    v_norm := array_to_string(v_words, ' ');
-    foreach v_alt in array array[
-      c_restore_hangul_typing(v_norm),
-      c_search_correct_query(v_norm)
-    ] loop
+  -- ⚠️ 질의를 별도 함수로 빼지 않는다. `set search_path`가 붙은 SQL 함수는
+  -- 인라인되지 않아 플래너가 top-N 최적화를 못 한다 — 실측 웜 p50이
+  -- 17ms → 954ms로 무너졌다. 루프 안에 한 번만 쓴다.
+  --
+  -- ⚠️ 후보는 CASE로 만든다. 배열에 담아 순회하면 자판 복원이 성공해도
+  -- 오타 교정이 함께 계산된다(배열 원소는 선평가된다 — 리뷰 M3).
+  for v_try in 0 .. 2 loop
+    if v_try > 0 then
+      v_alt := case v_try
+                 when 1 then c_restore_hangul_typing(v_norm)
+                 else c_search_correct_query(v_norm)
+               end;
       continue when v_alt is null or v_alt = v_norm;
-      select array_agg(w) into v_alt_words
-      from (select w from regexp_split_to_table(v_alt, '\s+') w where w <> '' limit 5) t;
-      if v_alt_words is not null and c_search_has_hit(v_alt_words) then
-        v_words := v_alt_words;
-        exit;                       -- 걸리는 후보를 찾았다
-      end if;
-    end loop;
-  end if;
+      v_words := c_search_split(v_alt);
+      continue when v_words is null;
+    end if;
 
-  return query
-  -- ⚠️ 후보를 **조인 전에** 자른다. 처음엔 매칭 전체(예: '반팔' 103,221건)를
-  -- c_feed_products와 조인한 뒤 정렬해 37초가 걸렸다. 색인 스캔 + top-N 정렬
-  -- 자체는 214ms라 병목은 조인이었다.
+    return query
   with hit as (
     select
       s.goods_no,
@@ -273,13 +258,6 @@ begin
       -- 아래 「브랜드 우연 일치」 주석과 계획 실행 기록 참고.
       (pgroonga_score(s.tableoid, s.ctid)
         - case when s.is_tee then 0 else 1000 end
-        -- 브랜드 우연 일치 감점: 질의어가 브랜드명 **안쪽에만** 있고 제목엔
-        -- 없으면, 이 상품이 걸린 이유는 브랜드 이름뿐이다.
-        --   포켓 티셔츠 → 아워포켓츠 : '포켓'이 브랜드 안쪽, 제목엔 없음 → 감점
-        --   나이키       → 나이키     : 질의어 = 브랜드 전체            → 감점 없음
-        --   아워포켓     → 아워포켓츠 : 브랜드의 앞부분(브랜드를 찾는 중) → 감점 없음
-        --   그래픽       → 그래픽스    : 앞부분이라 감점 없음 / 내셔널지오그래픽은 감점
-        -- 감점 폭은 원점수(2~3)보다 커야 뒤집힌다.
         )::real as sc
     from c_search_docs s
     where true
@@ -314,6 +292,10 @@ begin
   from hit h
   join c_feed_products v using (goods_no)
   order by h.sc desc, h.goods_no;
+    if found or v_chosung then
+      return;   -- 초성 갈래는 표기 폴백을 타지 않는다
+    end if;
+  end loop;
 end
 $$;
 
@@ -321,7 +303,8 @@ revoke all on function c_search_page_v2(text, real, bigint, int) from public;
 grant execute on function c_search_page_v2(text, real, bigint, int) to anon, authenticated;
 
 -- 보조 함수는 anon에 열지 않는다 (계산 경로를 하나 더 열어줄 이유가 없다)
-revoke all on function c_chosung(text) from public;
+-- 역할 명시 — `from public`만으로는 Supabase 기본 권한이 남는다
+revoke all on function c_chosung(text) from public, anon, authenticated;
 
 commit;
 
