@@ -27,16 +27,23 @@ export function MosaicFeed() {
   const search = useSearchState();
   const searching = search.submittedQuery != null;
 
-  // 상세가 덮거나 검색 모드면 기본 피드의 추가 로드·노출 계측은 멈춘다.
-  // 그리드 DOM은 검색 모드에서 내리지만 훅 상태(상품·커서)는 여기 남는다.
-  const { columns, sentinelRef, onImpress, showSkeleton } = useFeedViewModel({
-    paused: detailOpen || searching,
-  });
   // 검색 피드는 상세가 덮인 동안 멈춘다 (검색 모드가 아니면 query가 null이라 유휴)
   const searchFeed = useSearchFeed({
     query: search.submittedQuery,
     submission: search.submission,
     paused: detailOpen,
+  });
+  // 검색이 **성공했는데 0건**이면 기본 피드를 대체로 내보낸다. 오류는 아니다 —
+  // 그건 "결과가 없다"가 아니라 "모른다"라서 재시도를 안내한다.
+  const showReplacement = searching && searchFeed.isEmpty;
+
+  // 상세가 덮거나 검색 모드면 기본 피드의 추가 로드·노출 계측은 멈춘다.
+  // 단 **대체로 보여주는 동안은 되살린다** — 스크롤도 노출 계측도 이어져야 한다.
+  // 훅을 새로 만들지 않고 이것을 쓰는 이유: 개인화·콜드스타트 폴백·실패 폴백·
+  // 제외 목록·무한 스크롤이 이미 여기 다 있고, 사용자가 보던 피드가 그대로
+  // 이어져 대기 시간도 없다.
+  const { columns, sentinelRef, onImpress, showSkeleton } = useFeedViewModel({
+    paused: detailOpen || (searching && !showReplacement),
   });
   const { saveFeedScroll, suppressUntilRef } = useSearchScroll(search.submittedQuery);
   const { collapsed, expand } = useSearchCollapse(suppressUntilRef);
@@ -61,6 +68,7 @@ export function MosaicFeed() {
           onSelect={(card, originRect) => {
             open(card.product, originRect);
           }}
+          replacement={{ columns, sentinelRef, onImpress, showSkeleton }}
         />
       ) : (
         <>
