@@ -20,6 +20,7 @@ const base = {
   sentinelRef: { current: null },
   showSkeleton: false,
   isEmpty: false,
+  exhausted: false,
   error: false,
   onRetry: vi.fn(),
   onClear: vi.fn(),
@@ -51,6 +52,17 @@ describe("SearchResults", () => {
     );
     expect(screen.queryByText(/대신 취향에 맞는/)).toBeNull();
     expect(screen.getByTestId("grid").textContent).toBe("1");
+  });
+
+  it("매칭을 다 보여준 뒤에는 경계를 두고 취향 피드로 잇는다", () => {
+    // `감자`는 6건이다. 거기서 스크롤이 끊기면 0건과 똑같이 막다른 길이다.
+    render(<SearchResults {...base} columns={[[{ id: 9 }]] as never} exhausted />);
+    expect(screen.getByText(/결과는 여기까지예요/)).toBeTruthy();
+    // 매칭 그리드와 대체 그리드가 **따로** 있다 (섞지 않는다)
+    expect(screen.getAllByTestId("grid").map((el) => el.textContent)).toEqual([
+      "1",
+      "2",
+    ]);
   });
 
   it("검색이 오류로 실패하면 대체 피드가 아니라 재시도를 안내한다", () => {

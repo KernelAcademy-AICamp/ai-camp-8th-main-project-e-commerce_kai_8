@@ -1,11 +1,19 @@
 "use client";
 
-import { type RefObject, useCallback, useEffect, useState } from "react";
+import { type RefObject, useCallback, useEffect, useRef, useState } from "react";
 
 /** 같은 방향으로 이만큼 누적되면 전환한다 (짧은 흔들림 무시) */
 const TOGGLE_THRESHOLD_PX = 60;
 /** 이 위쪽에서는 항상 확장 상태를 유지한다 */
 const ALWAYS_EXPANDED_BELOW_Y = 80;
+/**
+ * 손으로 펼친 직후 이만큼은 접힘 판정을 멈춘다.
+ *
+ * 펼치면서 입력에 포커스를 주는데, 브라우저가 그 입력을 화면에 넣으려고 스크롤을
+ * 일으킨다. 그 스크롤이 "아래로 내렸다"로 읽혀 **펴지자마자 다시 접혔다.**
+ * 프로그램적 스크롤을 판정에서 빼는 기존 장치와 같은 이유다.
+ */
+const EXPAND_SUPPRESS_MS = 600;
 
 /**
  * 스크롤 방향에 따른 검색창 축소/확장 판정 (설계 §3).
@@ -15,6 +23,8 @@ const ALWAYS_EXPANDED_BELOW_Y = 80;
  */
 export function useSearchCollapse(suppressUntilRef: RefObject<number>) {
   const [collapsed, setCollapsed] = useState(false);
+  // 손으로 펼친 시각 + 억제 구간. 렌더와 무관한 진행 상태라 ref로 둔다.
+  const expandedUntilRef = useRef(0);
 
   useEffect(() => {
     let lastY = window.scrollY;
@@ -28,6 +38,10 @@ export function useSearchCollapse(suppressUntilRef: RefObject<number>) {
       if (y <= ALWAYS_EXPANDED_BELOW_Y) {
         accumulated = 0;
         setCollapsed(false);
+        return;
+      }
+      if (performance.now() < expandedUntilRef.current) {
+        accumulated = 0; // 방금 손으로 펼쳤다 — 포커스가 만든 스크롤이다
         return;
       }
       if (performance.now() < suppressUntilRef.current) {
@@ -48,6 +62,7 @@ export function useSearchCollapse(suppressUntilRef: RefObject<number>) {
 
   /** 축소된 버튼을 탭했을 때 — 검색창으로 재확장 */
   const expand = useCallback(() => {
+    expandedUntilRef.current = performance.now() + EXPAND_SUPPRESS_MS;
     setCollapsed(false);
   }, []);
 

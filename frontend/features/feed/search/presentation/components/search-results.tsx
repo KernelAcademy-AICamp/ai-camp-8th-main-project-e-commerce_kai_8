@@ -16,6 +16,8 @@ interface SearchResultsProps {
   sentinelRef: RefObject<HTMLDivElement | null>;
   showSkeleton: boolean;
   isEmpty: boolean;
+  /** 매칭은 있는데 더 없다 — 그 아래로 취향 피드를 잇는다 */
+  exhausted: boolean;
   error: boolean;
   onRetry: () => void;
   onClear: () => void;
@@ -26,8 +28,11 @@ interface SearchResultsProps {
    * 무한 탐색을 표방하는 앱인데 조건이 안 맞으면 빈 화면을 줬다 — 개발셋
    * 질의의 절반이 그랬다. 완전 랜덤이 아니라 이미 있는 취향 피드를 잇는다.
    *
-   * ⚠️ **매칭 결과와 섞지 않는다.** 매칭이 하나라도 있으면 그것만 보여준다 —
-   * 섞으면 사용자가 무엇이 답인지 알 수 없다.
+   * ⚠️ **매칭 결과와 섞지 않는다.** 매칭이 있으면 먼저 다 보여주고, **다 떨어진
+   * 뒤에** 경계를 두고 잇는다. 섞으면 사용자가 무엇이 답인지 알 수 없다.
+   *
+   * 매칭이 몇 건뿐인 질의가 많다 — `감자`는 6건이고 개발셋에도 1~19건짜리가
+   * 8개다. 거기서 끊기면 0건과 똑같이 막다른 길이다.
    */
   replacement: {
     columns: FeedCardViewData[][];
@@ -50,6 +55,7 @@ export function SearchResults({
   sentinelRef,
   showSkeleton,
   isEmpty,
+  exhausted,
   error,
   onRetry,
   onClear,
@@ -103,7 +109,24 @@ export function SearchResults({
         </>
       )}
       {!isEmpty && (
-        <FeedGrid columns={columns} sentinelRef={sentinelRef} onSelect={onSelect} />
+        <>
+          <FeedGrid columns={columns} sentinelRef={sentinelRef} onSelect={onSelect} />
+          {exhausted && (
+            <>
+              <p className="px-1 py-8 text-center text-sm text-neutral-400">
+                &lsquo;<span className="text-neutral-300">{query}</span>&rsquo; 결과는
+                여기까지예요 — <span className="text-neutral-200">이런 건 어때요</span>
+              </p>
+              {replacement.showSkeleton && <FeedSkeleton />}
+              <FeedGrid
+                columns={replacement.columns}
+                sentinelRef={replacement.sentinelRef}
+                onImpress={replacement.onImpress}
+                onSelect={onSelect}
+              />
+            </>
+          )}
+        </>
       )}
     </div>
   );

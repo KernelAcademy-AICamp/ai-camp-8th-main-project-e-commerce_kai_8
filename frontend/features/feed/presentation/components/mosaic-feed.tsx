@@ -33,9 +33,12 @@ export function MosaicFeed() {
     submission: search.submission,
     paused: detailOpen,
   });
-  // 검색이 **성공했는데 0건**이면 기본 피드를 대체로 내보낸다. 오류는 아니다 —
-  // 그건 "결과가 없다"가 아니라 "모른다"라서 재시도를 안내한다.
-  const showReplacement = searching && searchFeed.isEmpty;
+  // 검색이 **성공했는데 0건**이거나 **매칭을 다 보여줬으면** 기본 피드를 잇는다.
+  // 오류는 아니다 — 그건 "결과가 없다"가 아니라 "모른다"라서 재시도를 안내한다.
+  //
+  // 소진까지 포함하는 이유: 매칭이 몇 건뿐인 질의가 많다(`감자` 6건). 거기서
+  // 스크롤이 끊기면 0건과 똑같이 막다른 길이다.
+  const showReplacement = searching && (searchFeed.isEmpty || searchFeed.exhausted);
 
   // 상세가 덮거나 검색 모드면 기본 피드의 추가 로드·노출 계측은 멈춘다.
   // 단 **대체로 보여주는 동안은 되살린다** — 스크롤도 노출 계측도 이어져야 한다.
@@ -62,6 +65,7 @@ export function MosaicFeed() {
           sentinelRef={searchFeed.sentinelRef}
           showSkeleton={searchFeed.showSkeleton}
           isEmpty={searchFeed.isEmpty}
+          exhausted={searchFeed.exhausted}
           error={searchFeed.error}
           onRetry={searchFeed.retry}
           onClear={search.clear}
