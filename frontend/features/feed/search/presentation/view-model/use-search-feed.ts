@@ -40,6 +40,14 @@ interface ResultState {
   items: FeedItem[];
   ready: boolean;
   error: boolean;
+  /**
+   * 더 가져올 매칭이 없다.
+   *
+   * ref에만 두면 화면이 못 본다. **화면이 알아야 하는 이유**: 매칭이 몇 건뿐이면
+   * 거기서 스크롤이 끊긴다 — `감자`는 6건이다. 무한 탐색을 표방하는 앱에서
+   * 그건 0건과 마찬가지로 막다른 길이라, 소진한 뒤에는 취향 피드로 잇는다.
+   */
+  exhausted: boolean;
 }
 
 /** 진행 상태 — 자신이 속한 세대를 기억한다 (커서·오류·로딩) */
@@ -69,6 +77,7 @@ export function useSearchFeed({ query, submission, paused }: SearchFeedOptions) 
     items: [],
     ready: false,
     error: false,
+    exhausted: false,
   });
   // 커서·중복 로드 방지는 렌더링과 무관한 진행 상태라 ref로 둔다 (기본 피드 패턴)
   const generationRef = useRef(0);
@@ -103,7 +112,14 @@ export function useSearchFeed({ query, submission, paused }: SearchFeedOptions) 
   const [lastQuery, setLastQuery] = useState(identity);
   if (lastQuery !== identity) {
     setLastQuery(identity);
-    setResult({ query: null, usedQuery: null, items: [], ready: false, error: false });
+    setResult({
+      query: null,
+      usedQuery: null,
+      items: [],
+      ready: false,
+      error: false,
+      exhausted: false,
+    });
   }
 
   // 검색어가 바뀌거나 해제될 때마다 새 세대 — 이전 요청·오류·커서를 무효화한다.
@@ -170,13 +186,21 @@ export function useSearchFeed({ query, submission, paused }: SearchFeedOptions) 
         if (generation !== generationRef.current) return; // 늦은 응답 폐기
         if (isFirstPage) usedQueryRef.current = usedQuery;
         logOnce(products.length);
-        if (products.length === 0) progress.exhausted = true;
+        const noMore = products.length === 0;
+        if (noMore) progress.exhausted = true;
         else progress.cursor = nextCursor;
         setResult((prev) => {
           // 새 세대의 첫 페이지는 빈 목록에서 시작 — 이전 세션 결과에 잇지 않는다
           const base = !isFirstPage && prev.query === query ? prev.items : [];
           const page = appendFeedPage(base, products);
-          return { query, usedQuery, items: page.items, ready: true, error: false };
+          return {
+            query,
+            usedQuery,
+            items: page.items,
+            ready: true,
+            error: false,
+            exhausted: noMore || prev.exhausted,
+          };
         });
       })
       .catch((cause: unknown) => {
@@ -187,7 +211,14 @@ export function useSearchFeed({ query, submission, paused }: SearchFeedOptions) 
         setResult((prev) =>
           prev.query === query
             ? { ...prev, error: true }
-            : { query, usedQuery: null, items: [], ready: false, error: true },
+            : {
+                query,
+                usedQuery: null,
+                items: [],
+                ready: false,
+                error: true,
+                exhausted: false,
+              },
         );
       })
       .finally(() => {
@@ -250,6 +281,8 @@ export function useSearchFeed({ query, submission, paused }: SearchFeedOptions) 
     usedQuery: active ? result.usedQuery : null,
     showSkeleton: query != null && !ready && !error,
     isEmpty: ready && items.length === 0,
+    /** 매칭은 있는데 더 없다 — 여기서 끊기지 않게 취향 피드로 잇는다 */
+    exhausted: active && result.exhausted && items.length > 0,
     error,
     retry,
   };

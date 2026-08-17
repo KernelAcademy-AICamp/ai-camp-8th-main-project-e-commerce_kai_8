@@ -79,9 +79,18 @@ export function FloatingSearch({
       >
         {collapsed ? (
           <button
+            // ⚠️ **key로 제출 버튼과 갈라 둔다.** 없으면 React가 같은 자리의
+            // `<button>`을 재사용해 `type`만 "button"→"submit"으로 바꾼다.
+            key="expand"
             type="button"
             aria-label="검색창 열기"
-            onClick={() => {
+            onClick={(event) => {
+              // ⚠️ **기본 동작을 막는다.** onExpand()의 상태 변경은 이 핸들러
+              // 안에서 동기 반영되고, 브라우저는 **그 뒤에** 클릭의 기본 동작을
+              // 실행한다. 그때 이 버튼은 이미 제출 버튼이라 폼이 제출됐다 —
+              // 같은 검색어가 재제출(seq 1→2)되면서 결과가 통째로 버려지고
+              // 스켈레톤부터 다시 그렸다. 그게 "펼치면 배경이 사라졌다 돌아온다".
+              event.preventDefault();
               onExpand();
               inputRef.current?.focus(); // 재확장하며 바로 입력 가능 (설계 §3)
             }}
@@ -91,6 +100,7 @@ export function FloatingSearch({
           </button>
         ) : (
           <button
+            key="submit"
             type="submit"
             aria-label="검색"
             className="flex h-6 w-6 shrink-0 cursor-pointer items-center justify-center"
