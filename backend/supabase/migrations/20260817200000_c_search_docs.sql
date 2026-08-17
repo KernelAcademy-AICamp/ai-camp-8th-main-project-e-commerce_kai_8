@@ -35,9 +35,20 @@ create table c_search_docs_next (
   -- 초성 검색용 단어 배열. RPC가 참조하므로 **여기서** 만든다 — 뒤 마이그레이션에
   -- 미루면 그 사이 구간이나 실패 시 새 RPC가 깨진 상태로 노출된다.
   chosung_words text[] not null default '{}',
-  -- 반소매 티셔츠 제품군인가. 기준서 §3-1 ④(티셔츠가 아니면 최대 1)를 검색에서
-  -- 미리 반영한다. 제목 키워드 기준이라 위양성이 있다(§ 한계).
-  is_tee   boolean not null default true
+  -- 무신사 카테고리 정본(001001 반팔 티셔츠 · 001003 피케·카라 · 001004 후드·맨투맨
+  -- · 001010 긴팔 · 001011 민소매). 커버리지 100%.
+  --
+  -- 예전엔 제목 정규식으로 "후드·맨투맨이 아닌 것"을 가려 순위를 매겼다. 두 군데가
+  -- 틀렸다: ⓐ 정규식이 후드만 겨냥해 **긴팔 38,948개·민소매 19,250개를 전혀 거르지
+  -- 않았고** ⓑ 대소문자를 구분해 제목이 `HOODIE`인 4,896개가 그대로 통과했다.
+  -- 반팔 티셔츠를 탐색하는 앱인데 반팔이 아닌 76,911개가 반팔티와 동등하게 순위됐다.
+  --
+  -- ⚠️ 카테고리 **코드가 아니라 순위**를 저장한다. 코드를 두고 질의 시각에
+  -- 함수로 바꾸면, 그 텍스트 열을 매칭 전체(예: `반팔` 5.3만 행)에서 힙으로
+  -- 읽는다 — 실측 웜 p95가 117ms → 469ms였다. 브랜드 우연 일치 감점을
+  -- 되돌린 것과 같은 함정이다. 좁은 정수면 그 비용이 사라진다.
+  -- 순위의 뜻은 c_category_rank에 적혀 있다.
+  cat_rank smallint not null default 1
 );
 
 comment on table c_search_docs_next is
@@ -45,7 +56,7 @@ comment on table c_search_docs_next is
 
 -- 노출 자격은 기존과 동일하다 (c_feed_page·현행 검색과 같은 조건).
 -- 뷰(c_feed_products)에는 card_ok가 없으므로 c_thumb_dims를 직접 조인한다.
-insert into c_search_docs_next (goods_no, brand, title, tags, doc, chosung_words, is_tee)
+insert into c_search_docs_next (goods_no, brand, title, tags, doc, chosung_words, cat_rank)
 select
   g.goods_no,
   coalesce(g.brand_name, ''),
@@ -60,9 +71,7 @@ select
       c_chosung(coalesce(g.brand_name, '') || ' ' || coalesce(g.title, '')), ' ')) w
     where w <> ''
   ), '{}'::text[]),
-  -- 후드·맨투맨·니트·자켓은 반소매 티셔츠가 아니다. A단계 평가에서 '그래픽 티'가
-  -- 1.00 → 0.00으로 무너진 최대 원인이 그래픽 후드티 유입이었다.
-  coalesce(g.title, '') !~ '후드|후디|hood|맨투맨|스웨트|sweat|니트|가디건|자켓|재킷|점퍼|바람막이'
+  c_category_rank(coalesce(g.category, ''))
 from c_goods g
 join c_thumb_dims d using (goods_no)
 where d.width > 0
@@ -128,6 +137,40 @@ comment on table c_search_docs is
 --   · `&@`는 문자열 전체를 **하나의 키워드**로 본다. 문법 해석이 없어 예약어가
 --     무력화되고, bigram 부분 일치는 그대로라 띄어쓰기 변형도 산다.
 -- 단어 사이 AND는 조건을 이어 붙여 만든다(최대 5단어라 펼쳐 쓴다).
+-- 반팔 티셔츠에서 얼마나 먼가. 0이 목표 제품군이고 클수록 아래로 간다.
+-- **적재할 때 한 번 계산해 cat_rank에 넣는다** — 질의 시각에 부르면 매칭 전체에서
+-- 카테고리 텍스트를 힙으로 읽어 느려진다(위 열 주석 참고).
+--
+-- 배치의 근거:
+--   0 반팔 티셔츠(001001) · **피케·카라(001003)** — 둘 다 반팔 상의다.
+--     피케를 감점했다가 되돌렸다. `검정 반팔` 질의에서 `도미넌트 폴로 카라 반팔
+--     티셔츠`가 20위 밖으로 밀렸는데 채점자는 그것을 **등급 2**로 봤다.
+--     카라만 다른 반팔 티셔츠라 감점할 이유가 없다(실측 후 정정).
+--   1 긴팔(001010)  — 같은 옷의 소매 차이
+--   2 민소매(001011) — 실루엣이 다름
+--   3 후드·맨투맨(001004) — 다른 옷
+-- 알 수 없는 카테고리는 1로 둔다 — 벌주지도, 반팔티와 동급으로 올리지도 않는다.
+-- (커버리지가 100%라 실제로는 나오지 않는다.)
+--
+-- ⚠️ 이 순위로 고칠 수 **없는** 것: 카탈로그 자체의 오분류. `반팔 바람막이`가
+-- 001001로 들어와 있는 상품이 198개다. 카테고리를 믿는 이상 같이 올라온다.
+create or replace function c_category_rank(p_category text)
+returns int
+language sql immutable parallel safe
+set search_path = pg_catalog, pg_temp
+as $$
+  select case p_category
+    when '001001' then 0   -- 반팔 티셔츠
+    when '001003' then 0   -- 피케·카라 (반팔 상의 — 동급)
+    when '001010' then 1   -- 긴팔
+    when '001011' then 2   -- 민소매
+    when '001004' then 3   -- 후드·맨투맨
+    else 1                 -- 알 수 없음
+  end;
+$$;
+
+revoke all on function c_category_rank(text) from public, anon, authenticated;
+
 -- 질의를 앞 60자·앞 5단어로 자른다. 정규화 규칙이 한 곳에 있어야 본 검색과
 -- 폴백 후보가 같은 상한을 받는다 — 예전엔 폴백만 상한을 비켜 갔다(리뷰 M2).
 create or replace function c_search_split(p_query text)
@@ -239,19 +282,18 @@ begin
   with hit as (
     select
       s.goods_no,
-      -- 티셔츠 제품군이 아니면 **후순위로 밀되 침묵시키지 않는다.**
+      -- 반팔 티셔츠가 아니면 **후순위로 밀되 침묵시키지 않는다.**
       -- 기준서 §3-1 ④는 "최대 1점"이지 "제외"가 아니다. hard filter로 두면
-      -- 노출 자격 22.6만 중 2.8만을 제목 정규식으로 검색에서 지우는
-      -- 정책 변경이 되고, 위양성('후드집업 저지 반팔')까지 함께 사라진다
-      -- (구현 리뷰 M11). 티셔츠가 부족할 때만 아래에 나타난다.
+      -- 노출 자격의 절반을 검색에서 지우는 정책 변경이 된다. 반팔 티셔츠가
+      -- 부족할 때만 아래에 나타난다.
       -- ⚠️ pgroonga_score는 사실상 **매칭 횟수**다. 실측하면 2~3에 몰려 있고
       -- 동점은 goods_no 순으로 깨진다. 그래서 우연 일치가 한 브랜드에 많으면
       -- 상위를 통째로 먹는다 — `포켓 티셔츠` 상위 10개 중 9개가 아워포켓츠였다.
-      -- 즉 지금 실질적인 순위 신호는 is_tee 하나뿐이다. 브랜드 우연 일치
+      -- 즉 지금 실질적인 순위 신호는 카테고리 하나뿐이다. 브랜드 우연 일치
       -- 감점(c_brand_only_hits)을 여기 넣어 봤지만 **성능 상한을 넘어 뺐다** —
       -- 아래 「브랜드 우연 일치」 주석과 계획 실행 기록 참고.
       (pgroonga_score(s.tableoid, s.ctid)
-        - case when s.is_tee then 0 else 1000 end
+        - 1000 * s.cat_rank
         )::real as sc
     from c_search_docs s
     where true
@@ -266,15 +308,15 @@ begin
                      and (v_words[4] is null or s.doc &@ v_words[4])
                      and (v_words[5] is null or s.doc &@ v_words[5])
                 end)
-      -- ⚠️ 커서 필터는 **정렬식과 같아야 한다.** 예전엔 정렬은 sc(is_tee 감점
+      -- ⚠️ 커서 필터는 **정렬식과 같아야 한다.** 예전엔 정렬은 sc(카테고리 감점
       -- 반영)로 하면서 여기서는 원점수와 비교했다. 그 결과 감점받은 행이
       -- 1페이지에 나오면 커서 점수가 -999가 되고, 원점수(2~3)는 그보다 작을 수
       -- 없어 **2페이지가 통째로 0건**이 됐다(실측: `후드집업` 30건 → 0건).
       and (p_after_score is null
            or (pgroonga_score(s.tableoid, s.ctid)
-               - case when s.is_tee then 0 else 1000 end)::real < p_after_score
+               - 1000 * s.cat_rank)::real < p_after_score
            or ((pgroonga_score(s.tableoid, s.ctid)
-                - case when s.is_tee then 0 else 1000 end)::real = p_after_score
+                - 1000 * s.cat_rank)::real = p_after_score
                and s.goods_no > p_after))
     order by 2 desc, 1
     limit v_size

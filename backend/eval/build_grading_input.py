@@ -36,6 +36,7 @@ GRADED_FILES = (
     "grading-codex-a2.json",
     "grading-codex-a3.json",
     "grading-codex-typo.json",
+    "grading-codex-cat.json",
 )
 
 # 세지 않는 파일과 그 이유 — 지우지 말고 여기 남긴다
