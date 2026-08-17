@@ -135,14 +135,19 @@ def test_other_categories_are_never_corrected_into_tshirts(cur, query, blocked_b
 
 
 def test_g6_query_that_broke_stays_at_zero(cur):
-    """평가 세트의 실제 G6 질의(a-g6-08). 교정이 뚫으면 여기서 잡힌다.
+    """뜻 없는 문자열은 여전히 0건이어야 한다.
 
-    다른 품목 이름이 0건이라고 단정하지는 않는다 — `백팩 프린트 티셔츠`처럼
-    제목에 그 말이 실제로 든 티셔츠가 있고, 그건 옳은 결과다. 교정이 만들어낸
-    결과와 원문이 직접 맞은 결과는 다르다.
+    ⚠️ **G6의 판정선이 내려갔다. 알고 내렸다.** 텍스트를 하드 AND에서 점수로
+    내리면서 `샌들 슬리퍼`·`강아지 사료`처럼 **우리가 안 파는 물건을 정확히
+    지목한 질의**는 결과를 갖게 된다(사람이 정함, 2026-08-17 — 앱 컨셉상
+    그게 자연스럽다). 지표는 지우지 않고 waiver로 남긴다.
+
+    여기서 지키는 것은 그보다 아래 선이다 — **뜻이 없는 입력**은 여전히 0건이다.
+    이것까지 뚫리면 그건 새로운 회귀다.
     """
-    cur.execute("select count(*) from c_search_page_v2(%s, null, null, 20)", ("샌들 슬리퍼",))
-    assert cur.fetchone()[0] == 0, "샌들 슬리퍼: 0건이 정답이다 (기준서 G6)"
+    for q in ("asdfasdf", "12345", "흐으으으음"):
+        cur.execute("select count(*) from c_search_page_v2(%s, null, null, 20)", (q,))
+        assert cur.fetchone()[0] == 0, f"{q}: 뜻 없는 입력은 0건이어야 한다"
 
 
 # 검색 경로 전체. 폴백은 **원문이 0건일 때만** 걸린다.
@@ -683,14 +688,24 @@ def test_brand_is_split_out_of_the_text_query(cur, query, brand, rest):
     assert got_rest == rest
 
 
-def test_brand_extraction_would_fix_brand_plus_attribute_zero_results(cur):
-    """이 조각의 이유. 지금은 `데상트 민소매`가 0건인데 데상트에 민소매가 74개 있다.
+@pytest.mark.parametrize(
+    "query,brand",
+    [("데상트 민소매", "데상트"), ("커버낫 후드", "커버낫"), ("트립션 반팔", "트립션")],
+)
+def test_brand_plus_attribute_no_longer_returns_zero(cur, query, brand):
+    """이 조각의 이유. 세 질의 모두 0건이었다 — 데상트에 민소매가 74개 있는데
+    제목에 `민소매`가 든 것이 0개라서다.
 
-    ⚠️ 여기서는 **파서가 재료를 만드는지**만 본다. 실제로 0건이 아니게 되는 것은
-    2단계(후보 자격)와 4단계(카테고리)가 붙어야 한다 — 이 테스트를 "고쳐졌다"로
-    읽지 않도록 적어 둔다.
+    1단계에서는 파서만 만들고 이 테스트가 **여전히 0건임을 고정**했다.
+    2단계에서 후보 자격을 바꿔 실제로 풀렸다.
     """
-    cur.execute("select brand from c_search_brand_parse(c_search_split('데상트 민소매'))")
-    assert cur.fetchone()[0] == "데상트"
-    cur.execute("select count(*) from c_search_page_v2('데상트 민소매', null, null, 20)")
-    assert cur.fetchone()[0] == 0, "아직 검색 경로에 붙이지 않았다 — 2단계에서 붙인다"
+    cur.execute("select brand from c_search_brand_parse(c_search_split(%s))", (query,))
+    assert cur.fetchone()[0] == brand
+    cur.execute(
+        "select count(*), count(*) filter (where g.brand_name = %s)"
+        " from c_search_page_v2(%s, null, null, 20) r join c_goods g using (goods_no)",
+        (brand, query),
+    )
+    total, same = cur.fetchone()
+    assert total == 20, "하드 조건만으로도 후보 자격이 된다"
+    assert same == total, "브랜드는 하드 조건이라 상위가 전부 그 브랜드여야 한다"
