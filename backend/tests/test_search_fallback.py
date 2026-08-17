@@ -410,3 +410,56 @@ def test_single_word_that_is_both_brand_and_color_stays_a_color(cur):
     """`네이비`는 브랜드(상품 9개)이자 색(20,873개)이다. 색으로 둔다 — 대가를 알고 고른다."""
     cur.execute("select codes from c_search_color_parse(c_search_split('네이비'))")
     assert cur.fetchone()[0] == ["36"]
+
+
+# ── 가격을 텍스트가 아니라 조건으로 (C단계 3단계) ──────────────────────────
+#
+# `3만원`·`이하`는 제목에 실릴 수 없는 말이라, 텍스트로 두면 하나만 섞여도 0건이
+# 된다. 가격을 말하는 dev 질의 4개가 전부 그랬다.
+@pytest.mark.parametrize(
+    "query,pmin,pmax,rest",
+    [
+        ("블랙 오버핏 반팔티 3만원 이하", None, 30000, ["블랙", "오버핏", "반팔티"]),
+        ("3만원 이하 흰 반팔티", None, 30000, ["흰", "반팔티"]),
+        # `N만원대`는 **범위이지 상한이 아니다**. 상한으로 다루면 1만원대가 딸려 온다.
+        ("2만원대 남성 오버핏 반팔", 20000, 29999, ["남성", "오버핏", "반팔"]),
+        # 조사가 붙어도 받는다 — 개발셋에 실제로 있다
+        ("2만원 이하에 가성비있는 반팔티", None, 20000, ["가성비있는", "반팔티"]),
+        ("3만원 이내 반팔", None, 30000, ["반팔"]),
+        # 표에 없는 표현은 손대지 않는다 — 지금처럼 텍스트로 처리된다
+        ("30000원 이하 반팔", None, None, ["30000원", "이하", "반팔"]),
+        ("반팔티", None, None, ["반팔티"]),
+    ],
+)
+def test_price_is_split_out_of_the_text_query(cur, query, pmin, pmax, rest):
+    cur.execute(
+        "select min_price, max_price, rest from c_search_price_parse(c_search_split(%s))",
+        (query,),
+    )
+    got_min, got_max, got_rest = cur.fetchone()
+    assert (got_min, got_max) == (pmin, pmax)
+    assert got_rest == rest
+
+
+@pytest.mark.parametrize(
+    "query,pmin,pmax,code",
+    [
+        ("블랙 오버핏 반팔티 3만원 이하", None, 30000, "2"),
+        ("3만원 이하 흰 반팔티", None, 30000, "1"),
+        ("2만원대 남성 오버핏 반팔", 20000, 29999, None),
+        ("네이비 라운드넥 반팔 3만원 이하", None, 30000, "36"),
+    ],
+)
+def test_hard_conditions_are_never_violated(cur, query, pmin, pmax, code):
+    """기준서 G4는 하드 조건을 하나라도 어기면 0이다. 상위 20개에 위반이 없어야 한다."""
+    cur.execute(
+        "select count(*),"
+        " count(*) filter (where %s::int is not null and g.price_final > %s::int),"
+        " count(*) filter (where %s::int is not null and g.price_final < %s::int),"
+        " count(*) filter (where %s::text is not null and not (g.color_codes && array[%s::text]))"
+        " from c_search_page_v2(%s, null, null, 20) r join c_goods g using (goods_no)",
+        (pmax, pmax, pmin, pmin, code, code, query),
+    )
+    total, over, under, wrong_color = cur.fetchone()
+    assert total > 0, f"{query}: 결과가 있어야 한다 (바꾸기 전에는 0건이었다)"
+    assert (over, under, wrong_color) == (0, 0, 0)

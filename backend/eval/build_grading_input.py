@@ -47,6 +47,7 @@ GRADED_FILES = (
     "grading-codex-color2.json",
     "grading-codex-color3.json",
     "grading-codex-range.json",   # 기준서 v3.1 (제품 범위 명시)
+    "grading-codex-price.json",   # C-3 가격 조건
 )
 
 # 세지 않는 파일과 그 이유 — 지우지 말고 여기 남긴다

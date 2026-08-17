@@ -27,10 +27,10 @@
     "G4": {
       "metric": "p_at_20",
       "queries": 22,
-      "score": 0.020454545454545454,
-      "ndcg": 0.02746857132150242,
-      "unjudgedRate": 0.045454545454545456,
-      "zeroResultRate": 0.9090909090909091
+      "score": 0.17954545454545456,
+      "ndcg": 0.20928675313968423,
+      "unjudgedRate": 0.09090909090909091,
+      "zeroResultRate": 0.6818181818181818
     },
     "G5": {
       "metric": "p_at_20",
@@ -60,12 +60,12 @@
         "G1": 0.9444444444444444,
         "G2": 0.4818181818181818,
         "G3": 0.7090909090909091,
-        "G4": 0.04090909090909091,
+        "G4": 0.3590909090909091,
         "G5": 0.0,
         "G6": 1.0,
         "R1": 0.0
       },
-      "gate": 0.4352525252525252
+      "gate": 0.4988888888888889
     },
     "holdout": {
       "perBucket": {
@@ -102,11 +102,12 @@
       "v07",
       "v17",
       "a-g2-12",
+      "a-g4-10",
       "a-g4-11"
     ],
     "verdict": "재풀링 필요"
   },
-  "overallGate": 0.4120707070707071,
+  "overallGate": 0.44388888888888883,
   "gateBuckets": [
     "G1",
     "G2",
@@ -533,10 +534,10 @@
       "bucket": "G4",
       "partition": "dev",
       "kind": "ranked",
-      "p_at_k": 0.0,
-      "ndcg": 0.0,
+      "p_at_k": 1.0,
+      "ndcg": 1.0,
       "unjudgedRate": 0.0,
-      "zero": true
+      "zero": false
     },
     {
       "id": "g17",
@@ -1053,20 +1054,20 @@
       "bucket": "G4",
       "partition": "dev",
       "kind": "ranked",
-      "p_at_k": 0.0,
-      "ndcg": 0.0,
+      "p_at_k": 1.0,
+      "ndcg": 1.0,
       "unjudgedRate": 0.0,
-      "zero": true
+      "zero": false
     },
     {
       "id": "a-g4-02",
       "bucket": "G4",
       "partition": "dev",
       "kind": "ranked",
-      "p_at_k": 0.0,
-      "ndcg": 0.0,
+      "p_at_k": 0.5,
+      "ndcg": 1.0,
       "unjudgedRate": 0.0,
-      "zero": true
+      "zero": false
     },
     {
       "id": "a-g4-03",
@@ -1103,10 +1104,10 @@
       "bucket": "G4",
       "partition": "dev",
       "kind": "ranked",
-      "p_at_k": 0.0,
-      "ndcg": 0.0,
+      "p_at_k": 1.0,
+      "ndcg": 1.0,
       "unjudgedRate": 0.0,
-      "zero": true
+      "zero": false
     },
     {
       "id": "a-g4-07",
@@ -1145,8 +1146,8 @@
       "kind": "ranked",
       "p_at_k": 0.0,
       "ndcg": 0.0,
-      "unjudgedRate": 0.0,
-      "zero": true
+      "unjudgedRate": 1.0,
+      "zero": false
     },
     {
       "id": "a-g4-11",
@@ -1351,9 +1352,10 @@
       "docs/atee/eval/grading-codex-color.json",
       "docs/atee/eval/grading-codex-color2.json",
       "docs/atee/eval/grading-codex-color3.json",
-      "docs/atee/eval/grading-codex-range.json"
+      "docs/atee/eval/grading-codex-range.json",
+      "docs/atee/eval/grading-codex-price.json"
     ],
-    "judgedItems": 2009,
+    "judgedItems": 2079,
     "k": 20,
     "note": "등급 1은 P@20에서 적합이 아니다(기준서 §1). G6은 질의 단위 zero-result 정확도. nDCG의 ideal은 질의별 판정 풀 전체 상위 K다 — 현재 시스템 반환분으로 만들면 등급 1만 반환한 질의가 nDCG 1.0이 된다(구현 리뷰 M8 정정)."
   }

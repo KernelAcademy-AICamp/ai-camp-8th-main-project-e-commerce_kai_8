@@ -95,7 +95,10 @@ create table c_search_docs_next (
   -- 제목의 색 글자 대신 이것으로 거른다 — 이유는 20260817900000 주석 참고.
   -- 배열이라 GIN 색인을 걸고 `&&`로 거른다. 힙으로 읽지 않으므로 매칭이
   -- 많아도 비용이 붙지 않는다(cat_rank를 정수로 둔 것과 같은 이유).
-  color_codes text[] not null default '{}'
+  color_codes text[] not null default '{}',
+  -- 최종 판매가. 가격 조건을 c_goods 조인 없이 걸기 위해 복사한다.
+  -- 좁은 정수라 매칭이 많아도 힙 읽기 비용이 붙지 않는다(cat_rank와 같은 이유).
+  price_final int not null default 0
 );
 
 comment on table c_search_docs_next is
@@ -104,7 +107,7 @@ comment on table c_search_docs_next is
 -- 노출 자격은 기존과 동일하다 (c_feed_page·현행 검색과 같은 조건).
 -- 뷰(c_feed_products)에는 card_ok가 없으므로 c_thumb_dims를 직접 조인한다.
 insert into c_search_docs_next
-  (goods_no, brand, title, tags, doc, chosung_words, cat_rank, color_codes)
+  (goods_no, brand, title, tags, doc, chosung_words, cat_rank, color_codes, price_final)
 select
   g.goods_no,
   coalesce(g.brand_name, ''),
@@ -120,7 +123,8 @@ select
     where w <> ''
   ), '{}'::text[]),
   c_category_rank(coalesce(g.category, '')),
-  coalesce(g.color_codes, '{}'::text[])
+  coalesce(g.color_codes, '{}'::text[]),
+  coalesce(g.price_final, 0)
 from c_goods g
 join c_thumb_dims d using (goods_no)
 where d.width > 0
@@ -137,6 +141,8 @@ create index c_search_docs_next_doc_idx on c_search_docs_next
 create index c_search_docs_next_chosung_idx on c_search_docs_next using gin (chosung_words);
 
 create index c_search_docs_next_color_idx on c_search_docs_next using gin (color_codes);
+
+create index c_search_docs_next_price_idx on c_search_docs_next (price_final);
 
 analyze c_search_docs_next;
 
@@ -155,6 +161,7 @@ alter table c_search_docs_next rename to c_search_docs;
 alter index c_search_docs_next_doc_idx     rename to c_search_docs_doc_idx;
 alter index c_search_docs_next_chosung_idx rename to c_search_docs_chosung_words_idx;
 alter index c_search_docs_next_color_idx   rename to c_search_docs_color_codes_idx;
+alter index c_search_docs_next_price_idx   rename to c_search_docs_price_final_idx;
 -- 기본키 인덱스의 실제 이름은 생성 시점에 무엇이 점유돼 있었는지에 따라 달라진다
 -- (`_pkey`가 이미 쓰이면 `_pkey1`이 된다). 이름을 찾아서 바꾼다.
 do $rename$
@@ -244,6 +251,8 @@ declare
   v_try   int;
   v_cand  text[];   -- 이번 후보의 단어 전체 (색 포함) — query_used가 된다
   v_codes text[];   -- 이번 후보가 말한 색. null이면 색 조건 없음
+  v_pmin  int;      -- 이번 후보가 말한 가격 하한·상한. null이면 조건 없음
+  v_pmax  int;
 begin
   -- 커서 쌍 검증 — 한쪽만 온 요청은 받지 않는다
   if (p_after_score is null) <> (p_after is null) then
@@ -297,6 +306,13 @@ begin
     -- 20/20이 검정인데 자판 입력은 17/20이었다(교차 리뷰 M1).
     select cp.codes, cp.rest into v_codes, v_words from c_search_color_parse(v_cand) cp;
 
+    -- 가격도 같은 자리에서 뽑는다. `3만원`·`이하`는 제목에 실릴 수 없는 말이라
+    -- 텍스트로 두면 하나만 섞여도 0건이 된다 — 가격을 말하는 dev 질의 4개가
+    -- 전부 그랬다. 색을 뺀 나머지에서 찾는다(순서는 상관없다).
+    select pp.min_price, pp.max_price, pp.rest
+      into v_pmin, v_pmax, v_words
+    from c_search_price_parse(coalesce(v_words, '{}'::text[])) pp;
+
     -- 초성 판정도 색을 뺀 뒤의 단어로 한다
     v_chosung := v_words is not null
                  and array_to_string(v_words, '') ~ '^[ㄱ-ㅎ]+$'
@@ -325,7 +341,10 @@ begin
       -- `&&`(겹침)를 쓰므로 **여러 색으로 나오는 상품도 포함**된다 — 검정으로도
       -- 나오는 티셔츠는 `검정 반팔`의 답이 맞다(전체의 12.1%가 다색).
       and (v_codes is null or s.color_codes && v_codes)
-      -- 색만 말한 질의(`검정`)는 텍스트 조건이 없다
+      -- 가격 조건. `N만원대`는 범위이지 상한이 아니다.
+      and (v_pmin is null or s.price_final >= v_pmin)
+      and (v_pmax is null or s.price_final <= v_pmax)
+      -- 구조화 조건만 말한 질의(`검정`)는 텍스트 조건이 없다
       and (v_words is null
            or case when v_chosung
                 -- 초성은 **모든 단어**를 만족해야 한다. `&&`(겹침)는 OR라서

@@ -12,7 +12,7 @@
       "2026-08-17 C-2: 색 표현을 텍스트에서 빼내 색 라벨 필터로 (브랜드명 보호 포함)"
     ],
     "topN": 20,
-    "collectedAt": "2026-08-17T08:52:29.452823+00:00",
+    "collectedAt": "2026-08-17T09:04:06.287531+00:00",
     "catalogSnapshot": {
       "c_goods_rows": 226320,
       "c_search_text_rows": 226304,
@@ -1100,8 +1100,209 @@
       "query": "블랙 오버핏 반팔티 3만원 이하",
       "queryNorm": "블랙 오버핏 반팔티 3만원 이하",
       "queryUsed": "블랙 오버핏 반팔티 3만원 이하",
-      "resultCount": 0,
-      "candidates": []
+      "resultCount": 20,
+      "candidates": [
+        {
+          "rank": 0,
+          "goodsNo": 4188865,
+          "title": "[CP] Gorilla 골퍼 오버핏 반팔티 오버핏 반팔티 AST4596 (4 COLOR)",
+          "brandName": "앨빈클로",
+          "priceFinal": 24900,
+          "gender": "남성",
+          "colorLabel": "화이트/블랙/아이보리/다크 블루",
+          "category": "001001"
+        },
+        {
+          "rank": 1,
+          "goodsNo": 532246,
+          "title": "[UNISEX] 45수 특양면 옆트임 오버핏 반팔티 (블랙)",
+          "brandName": "티아즈",
+          "priceFinal": 16800,
+          "gender": "남성",
+          "colorLabel": "블랙",
+          "category": "001001"
+        },
+        {
+          "rank": 2,
+          "goodsNo": 538836,
+          "title": "헤비 오버핏 무지 반팔티 블랙",
+          "brandName": "꼼파뇨",
+          "priceFinal": 26880,
+          "gender": "공용",
+          "colorLabel": "블랙",
+          "category": "001001"
+        },
+        {
+          "rank": 3,
+          "goodsNo": 540420,
+          "title": "오리지널 로고 오버핏 반팔티 (RL001 OG LOGO TEE) - BLACK",
+          "brandName": "로얄라이프",
+          "priceFinal": 25600,
+          "gender": "공용",
+          "colorLabel": "블랙",
+          "category": "001001"
+        },
+        {
+          "rank": 4,
+          "goodsNo": 761664,
+          "title": "멀티 로고 오버핏 반팔티 (RL229 MULTI LOGO TEE) BLACK",
+          "brandName": "로얄라이프",
+          "priceFinal": 25600,
+          "gender": "공용",
+          "colorLabel": "블랙",
+          "category": "001001"
+        },
+        {
+          "rank": 5,
+          "goodsNo": 958744,
+          "title": "RYLF 박스 로고 오버핏 반팔티 (RL401 RYLF BOX LOGO TEE) - BLACK",
+          "brandName": "로얄라이프",
+          "priceFinal": 25600,
+          "gender": "공용",
+          "colorLabel": "블랙",
+          "category": "001001"
+        },
+        {
+          "rank": 6,
+          "goodsNo": 987162,
+          "title": "에디 오버핏 반팔티셔츠 블랙 KJST2189",
+          "brandName": "제멋",
+          "priceFinal": 21900,
+          "gender": "여성",
+          "colorLabel": "블랙",
+          "category": "001001"
+        },
+        {
+          "rank": 7,
+          "goodsNo": 997738,
+          "title": "컬러 그라데이션 오버핏 반팔티셔츠 BLACK",
+          "brandName": "트릴리온",
+          "priceFinal": 29800,
+          "gender": "남성",
+          "colorLabel": "블랙",
+          "category": "001001"
+        },
+        {
+          "rank": 8,
+          "goodsNo": 1026685,
+          "title": "오버핏 서핑 반팔티 (블랙)",
+          "brandName": "리스펙트",
+          "priceFinal": 19900,
+          "gender": "여성",
+          "colorLabel": "블랙",
+          "category": "001001"
+        },
+        {
+          "rank": 9,
+          "goodsNo": 1039481,
+          "title": "오버핏 서퍼 반팔티 black",
+          "brandName": "스텔라비",
+          "priceFinal": 18900,
+          "gender": "남성",
+          "colorLabel": "블랙",
+          "category": "001001"
+        },
+        {
+          "rank": 10,
+          "goodsNo": 1039613,
+          "title": "오버핏 필프리 반팔티 black",
+          "brandName": "스텔라비",
+          "priceFinal": 18900,
+          "gender": "남성",
+          "colorLabel": "블랙",
+          "category": "001001"
+        },
+        {
+          "rank": 11,
+          "goodsNo": 1123718,
+          "title": "카타니아 오버핏 무지 반팔티셔츠 밴타블랙",
+          "brandName": "베러댄88",
+          "priceFinal": 18990,
+          "gender": "남성",
+          "colorLabel": "블랙",
+          "category": "001001"
+        },
+        {
+          "rank": 12,
+          "goodsNo": 1420995,
+          "title": "로버스트 헤비 오버핏 반팔티셔츠 MST127 [BLACK]",
+          "brandName": "미니멀프로젝트",
+          "priceFinal": 15330,
+          "gender": "공용",
+          "colorLabel": "블랙",
+          "category": "001001"
+        },
+        {
+          "rank": 13,
+          "goodsNo": 1421004,
+          "title": "로버스트 헤비 오버핏 반팔티셔츠 MST127 / 8COLOR",
+          "brandName": "미니멀프로젝트",
+          "priceFinal": 15330,
+          "gender": "공용",
+          "colorLabel": "화이트/블랙/아이보리/라이트 그레이/민트/네이비/브라운/라이트 핑크",
+          "category": "001001"
+        },
+        {
+          "rank": 14,
+          "goodsNo": 1429657,
+          "title": "EV 오버핏 블랙 반팔티",
+          "brandName": "에잇볼륨",
+          "priceFinal": 24900,
+          "gender": "남성",
+          "colorLabel": "블랙",
+          "category": "001001"
+        },
+        {
+          "rank": 15,
+          "goodsNo": 1480559,
+          "title": "남자여자  오버핏 무지 레이어드 반팔티 블랙",
+          "brandName": "드마크",
+          "priceFinal": 19000,
+          "gender": "남성",
+          "colorLabel": "블랙",
+          "category": "001001"
+        },
+        {
+          "rank": 16,
+          "goodsNo": 1490967,
+          "title": "애스트로넛 프린팅 오버핏 반팔티 블랙",
+          "brandName": "코드아이엠",
+          "priceFinal": 27930,
+          "gender": "남성",
+          "colorLabel": "블랙",
+          "category": "001001"
+        },
+        {
+          "rank": 17,
+          "goodsNo": 1880590,
+          "title": "4색상 플레인 무지 오버핏 반팔티셔츠",
+          "brandName": "모즈모즈",
+          "priceFinal": 11910,
+          "gender": "남성",
+          "colorLabel": "화이트/블랙/아이보리/다크 그레이",
+          "category": "001001"
+        },
+        {
+          "rank": 18,
+          "goodsNo": 1884475,
+          "title": "스테이 오버핏 반팔티셔츠 블랙 SOST2339",
+          "brandName": "제멋",
+          "priceFinal": 24900,
+          "gender": "남성",
+          "colorLabel": "블랙",
+          "category": "001001"
+        },
+        {
+          "rank": 19,
+          "goodsNo": 1917270,
+          "title": "에센셜 오버핏 반팔티 블랙 SJST1316",
+          "brandName": "페플",
+          "priceFinal": 21000,
+          "gender": "남성",
+          "colorLabel": "블랙",
+          "category": "001001"
+        }
+      ]
     },
     {
       "id": "g17",
@@ -11020,8 +11221,209 @@
       "query": "3만원 이하 흰 반팔티",
       "queryNorm": "3만원 이하 흰 반팔티",
       "queryUsed": "3만원 이하 흰 반팔티",
-      "resultCount": 0,
-      "candidates": []
+      "resultCount": 20,
+      "candidates": [
+        {
+          "rank": 0,
+          "goodsNo": 4188865,
+          "title": "[CP] Gorilla 골퍼 오버핏 반팔티 오버핏 반팔티 AST4596 (4 COLOR)",
+          "brandName": "앨빈클로",
+          "priceFinal": 24900,
+          "gender": "남성",
+          "colorLabel": "화이트/블랙/아이보리/다크 블루",
+          "category": "001001"
+        },
+        {
+          "rank": 1,
+          "goodsNo": 235481,
+          "title": "[UNISEX] MPGN 반팔티셔츠 - WHITE",
+          "brandName": "메가폰",
+          "priceFinal": 9900,
+          "gender": "남성",
+          "colorLabel": "화이트",
+          "category": "001001"
+        },
+        {
+          "rank": 2,
+          "goodsNo": 540421,
+          "title": "오리지널 로고 오버핏 반팔티 (RL001 OG LOGO TEE) - WHITE",
+          "brandName": "로얄라이프",
+          "priceFinal": 25600,
+          "gender": "공용",
+          "colorLabel": "화이트",
+          "category": "001001"
+        },
+        {
+          "rank": 3,
+          "goodsNo": 559954,
+          "title": "헤비 오버핏 무지 반팔티 화이트",
+          "brandName": "꼼파뇨",
+          "priceFinal": 23000,
+          "gender": "공용",
+          "colorLabel": "화이트",
+          "category": "001001"
+        },
+        {
+          "rank": 4,
+          "goodsNo": 743514,
+          "title": "어깨라인배색 나그랑 반팔티",
+          "brandName": "기럭지",
+          "priceFinal": 22000,
+          "gender": "남성",
+          "colorLabel": "화이트/핑크/블랙/그레이/그린",
+          "category": "001001"
+        },
+        {
+          "rank": 5,
+          "goodsNo": 751594,
+          "title": "사선 테이핑 스포티 반팔티 화이트",
+          "brandName": "비마이티",
+          "priceFinal": 14800,
+          "gender": "여성",
+          "colorLabel": "화이트",
+          "category": "001001"
+        },
+        {
+          "rank": 6,
+          "goodsNo": 758762,
+          "title": "메쉬배색 컬러블록 오버핏 반팔티 화이트",
+          "brandName": "비마이티",
+          "priceFinal": 14800,
+          "gender": "남성",
+          "colorLabel": "화이트",
+          "category": "001001"
+        },
+        {
+          "rank": 7,
+          "goodsNo": 759785,
+          "title": "파이핑 절개 소매 테이핑 반팔티 화이트",
+          "brandName": "비마이티",
+          "priceFinal": 14800,
+          "gender": "남성",
+          "colorLabel": "화이트",
+          "category": "001001"
+        },
+        {
+          "rank": 8,
+          "goodsNo": 761665,
+          "title": "멀티 로고 오버핏 반팔티 (RL229 MULTI LOGO TEE) WHITE",
+          "brandName": "로얄라이프",
+          "priceFinal": 25600,
+          "gender": "공용",
+          "colorLabel": "화이트",
+          "category": "001001"
+        },
+        {
+          "rank": 9,
+          "goodsNo": 776434,
+          "title": "젠틀맨 화이트 반팔티",
+          "brandName": "이즈오프",
+          "priceFinal": 18850,
+          "gender": "남성",
+          "colorLabel": "화이트",
+          "category": "001001"
+        },
+        {
+          "rank": 10,
+          "goodsNo": 779875,
+          "title": "아임스페이스 화이트 반팔티",
+          "brandName": "이즈오프",
+          "priceFinal": 18850,
+          "gender": "남성",
+          "colorLabel": "화이트",
+          "category": "001001"
+        },
+        {
+          "rank": 11,
+          "goodsNo": 781689,
+          "title": "월드페이머스 반팔티 (화이트)",
+          "brandName": "리스펙트",
+          "priceFinal": 22000,
+          "gender": "남성",
+          "colorLabel": "화이트",
+          "category": "001001"
+        },
+        {
+          "rank": 12,
+          "goodsNo": 823998,
+          "title": "기본 무지 반팔티셔츠",
+          "brandName": "댁스터",
+          "priceFinal": 10000,
+          "gender": "남성",
+          "colorLabel": "화이트/블랙",
+          "category": "001001"
+        },
+        {
+          "rank": 13,
+          "goodsNo": 958745,
+          "title": "RYLF 박스 로고 오버핏 반팔티 (RL401 RYLF BOX LOGO TEE) - WHITE",
+          "brandName": "로얄라이프",
+          "priceFinal": 25600,
+          "gender": "공용",
+          "colorLabel": "화이트",
+          "category": "001001"
+        },
+        {
+          "rank": 14,
+          "goodsNo": 997781,
+          "title": "컬러 그라데이션 오버핏 반팔티셔츠 WHITE",
+          "brandName": "트릴리온",
+          "priceFinal": 14990,
+          "gender": "남성",
+          "colorLabel": "화이트",
+          "category": "001001"
+        },
+        {
+          "rank": 15,
+          "goodsNo": 1026688,
+          "title": "서핑 반팔티 (화이트)",
+          "brandName": "리스펙트",
+          "priceFinal": 22000,
+          "gender": "남성",
+          "colorLabel": "화이트",
+          "category": "001001"
+        },
+        {
+          "rank": 16,
+          "goodsNo": 1039566,
+          "title": "오버핏 알로하 반팔티 white",
+          "brandName": "스텔라비",
+          "priceFinal": 18900,
+          "gender": "남성",
+          "colorLabel": "화이트",
+          "category": "001001"
+        },
+        {
+          "rank": 17,
+          "goodsNo": 1039609,
+          "title": "오버핏 필프리 반팔티 white",
+          "brandName": "스텔라비",
+          "priceFinal": 18900,
+          "gender": "남성",
+          "colorLabel": "화이트",
+          "category": "001001"
+        },
+        {
+          "rank": 18,
+          "goodsNo": 1039616,
+          "title": "오버핏 팜트리 반팔티 white",
+          "brandName": "스텔라비",
+          "priceFinal": 18900,
+          "gender": "남성",
+          "colorLabel": "화이트",
+          "category": "001001"
+        },
+        {
+          "rank": 19,
+          "goodsNo": 1297617,
+          "title": "세로 프린팅 면 반팔티셔츠 루즈핏 드롭숄더 화이트",
+          "brandName": "트리핀셀",
+          "priceFinal": 14000,
+          "gender": "남성",
+          "colorLabel": "화이트",
+          "category": "001001"
+        }
+      ]
     },
     {
       "id": "a-g4-02",
@@ -11030,8 +11432,109 @@
       "query": "2만원대 남성 오버핏 반팔",
       "queryNorm": "2만원대 남성 오버핏 반팔",
       "queryUsed": "2만원대 남성 오버핏 반팔",
-      "resultCount": 0,
-      "candidates": []
+      "resultCount": 10,
+      "candidates": [
+        {
+          "rank": 0,
+          "goodsNo": 5195533,
+          "title": "남성) 소로나 잠뱅이 자수 세미오버핏 반팔 티셔츠 AP2WTS304-CH",
+          "brandName": "잠뱅이",
+          "priceFinal": 27300,
+          "gender": "남성",
+          "colorLabel": "다크 그레이",
+          "category": "001001"
+        },
+        {
+          "rank": 1,
+          "goodsNo": 6025115,
+          "title": "[26SS] 남성) 소로나 레터링 프린트 세미오버핏 반팔 티셔츠 AQ2WTS404-OW",
+          "brandName": "잠뱅이",
+          "priceFinal": 29400,
+          "gender": "남성",
+          "colorLabel": "아이보리",
+          "category": "001001"
+        },
+        {
+          "rank": 2,
+          "goodsNo": 6025129,
+          "title": "[26SS] 남성) 소로나 그래픽 세미오버핏 반팔 티셔츠 AQ2WTS401-WH",
+          "brandName": "잠뱅이",
+          "priceFinal": 29400,
+          "gender": "남성",
+          "colorLabel": "화이트",
+          "category": "001001"
+        },
+        {
+          "rank": 3,
+          "goodsNo": 6025134,
+          "title": "[26SS] 남성) 소로나 그래픽 세미오버핏 반팔 티셔츠 AQ2WTS401-BK",
+          "brandName": "잠뱅이",
+          "priceFinal": 29400,
+          "gender": "남성",
+          "colorLabel": "블랙",
+          "category": "001001"
+        },
+        {
+          "rank": 4,
+          "goodsNo": 6150801,
+          "title": "여름 세미오버핏 면라운드 남성 반팔 이너 티셔츠 DQMMTS02",
+          "brandName": "김영주 골프",
+          "priceFinal": 27600,
+          "gender": "남성",
+          "colorLabel": "화이트/블랙",
+          "category": "001001"
+        },
+        {
+          "rank": 5,
+          "goodsNo": 6605015,
+          "title": "[26SS] 남성) 소로나 프린트 세미오버핏 반팔 티셔츠 AQ2WTS414-OW",
+          "brandName": "잠뱅이",
+          "priceFinal": 29400,
+          "gender": "남성",
+          "colorLabel": "아이보리",
+          "category": "001001"
+        },
+        {
+          "rank": 6,
+          "goodsNo": 6605031,
+          "title": "[26SS] 남성) 소로나 잠뱅이 자수 세미오버핏 반팔 티셔츠 AQ2WTS412-LK",
+          "brandName": "잠뱅이",
+          "priceFinal": 23400,
+          "gender": "남성",
+          "colorLabel": "올리브 그린",
+          "category": "001001"
+        },
+        {
+          "rank": 7,
+          "goodsNo": 6605059,
+          "title": "[26SS] 남성) 분또 프린트 오버핏 반팔 티셔츠 AQ2WTS409-OW",
+          "brandName": "잠뱅이",
+          "priceFinal": 29400,
+          "gender": "남성",
+          "colorLabel": "아이보리",
+          "category": "001001"
+        },
+        {
+          "rank": 8,
+          "goodsNo": 6605063,
+          "title": "[26SS] 남성) 분또 프린트 오버핏 반팔 티셔츠 AQ2WTS409-CG",
+          "brandName": "잠뱅이",
+          "priceFinal": 29400,
+          "gender": "남성",
+          "colorLabel": "다크 그레이",
+          "category": "001001"
+        },
+        {
+          "rank": 9,
+          "goodsNo": 6605087,
+          "title": "[26SS] 남성) 20수 싱글 엠블럼 자수 포켓 디테일 세미오버핏 반팔 티셔츠 AQ2WTS407-DN",
+          "brandName": "잠뱅이",
+          "priceFinal": 23400,
+          "gender": "남성",
+          "colorLabel": "다크 네이비",
+          "category": "001001"
+        }
+      ]
     },
     {
       "id": "a-g4-03",
@@ -11161,8 +11664,209 @@
       "query": "네이비 라운드넥 반팔 3만원 이하",
       "queryNorm": "네이비 라운드넥 반팔 3만원 이하",
       "queryUsed": "네이비 라운드넥 반팔 3만원 이하",
-      "resultCount": 0,
-      "candidates": []
+      "resultCount": 20,
+      "candidates": [
+        {
+          "rank": 0,
+          "goodsNo": 3194525,
+          "title": "마린룩 라운드넥 반팔 티셔츠(SZ4ST30)",
+          "brandName": "숲",
+          "priceFinal": 18900,
+          "gender": "여성",
+          "colorLabel": "화이트/네이비/블루",
+          "category": "001001"
+        },
+        {
+          "rank": 1,
+          "goodsNo": 3232751,
+          "title": "UNI 릴렉스핏 라운드넥 반팔티셔츠 네이비 LATS0105",
+          "brandName": "베이직하우스",
+          "priceFinal": 9900,
+          "gender": "공용",
+          "colorLabel": "네이비",
+          "category": "001001"
+        },
+        {
+          "rank": 2,
+          "goodsNo": 3232758,
+          "title": "[2PACK] UNI 릴렉스핏 라운드넥 반팔티셔츠 2팩 (4컬러) LATS0105",
+          "brandName": "베이직하우스",
+          "priceFinal": 18900,
+          "gender": "공용",
+          "colorLabel": "화이트/블랙/다크 그레이/네이비",
+          "category": "001001"
+        },
+        {
+          "rank": 3,
+          "goodsNo": 3750331,
+          "title": "머슬핏 라운드넥 반팔티셔츠",
+          "brandName": "보스트핏",
+          "priceFinal": 21000,
+          "gender": "남성",
+          "colorLabel": "화이트/블랙/카키/네이비/브라운/베이지",
+          "category": "001001"
+        },
+        {
+          "rank": 4,
+          "goodsNo": 4880149,
+          "title": "숄더 포인트 디자인 라운드넥 반팔티 STEE131",
+          "brandName": "이카룩",
+          "priceFinal": 22250,
+          "gender": "남성",
+          "colorLabel": "화이트/네이비",
+          "category": "001001"
+        },
+        {
+          "rank": 5,
+          "goodsNo": 4973512,
+          "title": "에센셜 라운드넥 반팔 티셔츠 MDTS073_10 Colors",
+          "brandName": "몽돌",
+          "priceFinal": 17500,
+          "gender": "여성",
+          "colorLabel": "화이트/레드/블랙/다크 그레이/그레이/라이트 그린/네이비/브라운/라이트 핑크/블루",
+          "category": "001001"
+        },
+        {
+          "rank": 6,
+          "goodsNo": 5059107,
+          "title": "숄더 포인트 디자인 라운드넥 반팔티 STEE131A",
+          "brandName": "이카룩",
+          "priceFinal": 22250,
+          "gender": "남성",
+          "colorLabel": "화이트/네이비",
+          "category": "001001"
+        },
+        {
+          "rank": 7,
+          "goodsNo": 5063008,
+          "title": "라운드넥 슬릿 반팔 티셔츠 [NAVY]",
+          "brandName": "블랙브라운",
+          "priceFinal": 18900,
+          "gender": "남성",
+          "colorLabel": "네이비",
+          "category": "001001"
+        },
+        {
+          "rank": 8,
+          "goodsNo": 5071404,
+          "title": "슬림핏 라운드넥 반팔 티셔츠 (네이비)",
+          "brandName": "피아네르",
+          "priceFinal": 15210,
+          "gender": "여성",
+          "colorLabel": "네이비",
+          "category": "001001"
+        },
+        {
+          "rank": 9,
+          "goodsNo": 5267594,
+          "title": "모아 도트 하트 로고패치 라운드넥 크롭 반팔 티 (2컬러)",
+          "brandName": "무센트",
+          "priceFinal": 28350,
+          "gender": "여성",
+          "colorLabel": "화이트/네이비",
+          "category": "001001"
+        },
+        {
+          "rank": 10,
+          "goodsNo": 5393250,
+          "title": "아스킨 세미오버핏 라운드넥 반팔티 네이비 LZTS3113",
+          "brandName": "베이직하우스",
+          "priceFinal": 12900,
+          "gender": "남성",
+          "colorLabel": "네이비",
+          "category": "001001"
+        },
+        {
+          "rank": 11,
+          "goodsNo": 5496185,
+          "title": "UV차단 라운드넥 반팔티셔츠 3color",
+          "brandName": "그렉노먼",
+          "priceFinal": 12900,
+          "gender": "남성",
+          "colorLabel": "그레이/민트/네이비",
+          "category": "001001"
+        },
+        {
+          "rank": 12,
+          "goodsNo": 5496232,
+          "title": "UV차단 라운드넥 반팔티셔츠 3color",
+          "brandName": "그렉노먼",
+          "priceFinal": 12900,
+          "gender": "여성",
+          "colorLabel": "화이트/오렌지/네이비",
+          "category": "001001"
+        },
+        {
+          "rank": 13,
+          "goodsNo": 5887892,
+          "title": "여성 골프 면 혼방 라운드넥 반팔 티셔츠",
+          "brandName": "빌트모아",
+          "priceFinal": 29000,
+          "gender": "여성",
+          "colorLabel": "화이트/네이비/그린",
+          "category": "001001"
+        },
+        {
+          "rank": 14,
+          "goodsNo": 5896803,
+          "title": "Supima 코튼 라운드넥 반팔 티셔츠 네이비 (세미오버핏)_STSUB93NSN",
+          "brandName": "에스티코",
+          "priceFinal": 12900,
+          "gender": "남성",
+          "colorLabel": "네이비",
+          "category": "001001"
+        },
+        {
+          "rank": 15,
+          "goodsNo": 6137884,
+          "title": "소프트 터치 아미핏 라운드넥 무지 반팔 티셔츠 1+1",
+          "brandName": "펜타온",
+          "priceFinal": 13860,
+          "gender": "남성",
+          "colorLabel": "화이트/블랙/아이보리/다크 그레이/그레이/카키/네이비",
+          "category": "001001"
+        },
+        {
+          "rank": 16,
+          "goodsNo": 6149979,
+          "title": "[코튼스판] 골지 라운드넥 반팔티_SPRWG37C02",
+          "brandName": "스파오",
+          "priceFinal": 12900,
+          "gender": "공용",
+          "colorLabel": "아이보리/네이비",
+          "category": "001001"
+        },
+        {
+          "rank": 17,
+          "goodsNo": 6276043,
+          "title": "[ECR X MERGO] 골지 라운드넥 반팔 티셔츠 : 4COLOR",
+          "brandName": "이코르",
+          "priceFinal": 9800,
+          "gender": "남성",
+          "colorLabel": "화이트/블랙/다크 그레이/네이비",
+          "category": "001001"
+        },
+        {
+          "rank": 18,
+          "goodsNo": 6339291,
+          "title": "라운드넥 쿨링 루즈핏 반팔 티셔츠 3Color",
+          "brandName": "지크립",
+          "priceFinal": 12670,
+          "gender": "남성",
+          "colorLabel": "화이트/블랙/네이비",
+          "category": "001001"
+        },
+        {
+          "rank": 19,
+          "goodsNo": 6399468,
+          "title": "소프트 터치 아미핏 라운드넥 무지 반팔 티셔츠",
+          "brandName": "펜타온",
+          "priceFinal": 9390,
+          "gender": "남성",
+          "colorLabel": "화이트/블랙/아이보리/다크 그레이/그레이/카키/네이비",
+          "category": "001001"
+        }
+      ]
     },
     {
       "id": "a-g4-07",
@@ -11201,8 +11905,19 @@
       "query": "베이지 루즈핏 반팔티 2만원 이하",
       "queryNorm": "베이지 루즈핏 반팔티 2만원 이하",
       "queryUsed": "베이지 루즈핏 반팔티 2만원 이하",
-      "resultCount": 0,
-      "candidates": []
+      "resultCount": 1,
+      "candidates": [
+        {
+          "rank": 0,
+          "goodsNo": 557100,
+          "title": "더블코튼 루즈핏 반팔티 베이지",
+          "brandName": "유니어패럴",
+          "priceFinal": 18810,
+          "gender": "남성",
+          "colorLabel": "베이지",
+          "category": "001001"
+        }
+      ]
     },
     {
       "id": "a-g4-11",
