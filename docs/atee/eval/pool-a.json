@@ -10,7 +10,7 @@
       "2026-08-17: 폴백을 첫 페이지에서만 결정 (이후 페이지는 query_used로 이어간다)"
     ],
     "topN": 20,
-    "collectedAt": "2026-08-17T07:49:33.316478+00:00",
+    "collectedAt": "2026-08-17T08:05:57.344761+00:00",
     "catalogSnapshot": {
       "c_goods_rows": 226320,
       "c_search_text_rows": 226304,

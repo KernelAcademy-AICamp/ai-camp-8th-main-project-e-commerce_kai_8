@@ -109,6 +109,27 @@ on conflict (term) do update set codes = excluded.codes, note = excluded.note;
 
 analyze c_search_color_terms;
 
+-- 이 질의가 **브랜드 이름 그 자체**인가. 색 표현이 브랜드명의 일부인 경우가 있다:
+--   톰 브라운 · 브라운 스튜디오 · 올리브 데 올리브 · 블랙 퍼플 · 하이퍼 데님 ·
+--   블루 제이너 클럽 · 블루디 블루 · 샌드 사운드 · 카키 스튜디오 · 브라운 아이드 소울
+-- 이때 색을 빼내면 브랜드를 찾을 수 없다 — `하이퍼 데님`은 실제로 0건이 됐다.
+--
+-- **여러 단어짜리 브랜드에만 적용한다.** `네이비`는 브랜드이기도 하지만(상품 9개)
+-- 색으로 쓰는 쪽이 압도적이라(네이비 색 상품 20,873개) 색으로 둔다. 그 브랜드는
+-- 이름으로 찾을 수 없게 되며, 그 대가를 알고 선택한다.
+create or replace function c_search_is_brand_name(p_words text[])
+returns boolean
+language sql stable security definer
+set search_path = public, pg_temp
+as $$
+  select coalesce(array_length(p_words, 1), 0) > 1
+     and exists (
+       select 1 from c_search_vocab v where v.term = lower(array_to_string(p_words, ' '))
+     );
+$$;
+
+revoke all on function c_search_is_brand_name(text[]) from public, anon, authenticated;
+
 -- 질의 단어들에서 색 코드를 뽑는다. 표에 있는 단어가 없으면 null.
 -- 여러 색을 말하면 **합집합**이다 — `검정 흰`은 둘 중 하나를 뜻하는 쪽이 자연스럽다.
 create or replace function c_search_color_codes(p_words text[])
@@ -116,12 +137,12 @@ returns text[]
 language sql stable security definer
 set search_path = public, pg_temp
 as $$
-  select nullif(array(
+  select case when c_search_is_brand_name(p_words) then null else nullif(array(
     select distinct c
     from unnest(p_words) w
     join c_search_color_terms t on t.term = w
     cross join unnest(t.codes) c
-  ), '{}');
+  ), '{}') end;
 $$;
 
 revoke all on function c_search_color_codes(text[]) from public, anon, authenticated;
@@ -132,12 +153,13 @@ returns text[]
 language sql stable security definer
 set search_path = public, pg_temp
 as $$
-  -- 순서를 지킨다 — 이 값이 query_used로 사용자·로그에 그대로 나간다
-  select nullif(array(
+  -- 순서를 지킨다 — 이 값이 query_used로 사용자·로그에 그대로 나간다.
+  -- 브랜드 이름이면 한 단어도 빼지 않는다(위 c_search_is_brand_name).
+  select case when c_search_is_brand_name(p_words) then p_words else nullif(array(
     select w from unnest(p_words) with ordinality as u(w, i)
     where not exists (select 1 from c_search_color_terms t where t.term = w)
     order by i
-  ), '{}');
+  ), '{}') end;
 $$;
 
 revoke all on function c_search_drop_color_words(text[]) from public, anon, authenticated;

@@ -299,3 +299,19 @@ def test_query_used_shows_the_color_condition(cur):
     """로그·평가가 '무엇으로 찾았는지'를 알 수 있어야 한다."""
     cur.execute("select query_used from c_search_page_v2('검정 반팔', null, null, 1)")
     assert cur.fetchone()[0] == "반팔 [색:2]"
+
+
+# 색 표현이 **브랜드명의 일부**인 경우가 있다. 색으로 빼내면 브랜드를 못 찾는다 —
+# `하이퍼 데님`은 실제로 0건이 됐다. 여러 단어짜리 브랜드는 색 추출을 건너뛴다.
+@pytest.mark.parametrize(
+    "query", ["톰 브라운", "브라운 스튜디오", "하이퍼 데님", "올리브 데 올리브", "블랙 퍼플"]
+)
+def test_multiword_brand_names_are_not_split_by_color(cur, query):
+    assert scalar(cur, "select c_search_color_codes(c_search_split(%s))", query) is None
+    cur.execute("select count(*) from c_search_page_v2(%s, null, null, 20)", (query,))
+    assert cur.fetchone()[0] > 0, f"{query}: 브랜드 질의가 결과를 내야 한다"
+
+
+def test_single_word_that_is_both_brand_and_color_stays_a_color(cur):
+    """`네이비`는 브랜드(상품 9개)이자 색(20,873개)이다. 색으로 둔다 — 대가를 알고 고른다."""
+    assert scalar(cur, "select c_search_color_codes(c_search_split('네이비'))") == ["36"]
