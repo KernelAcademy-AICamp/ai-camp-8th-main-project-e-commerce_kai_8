@@ -851,3 +851,81 @@ def test_negation_flags_cover_only_known_violators(cur):
     assert 0 < flagged < total, "전부이거나 비어 있으면 계산이 틀린 것이다"
     cur.execute("select count(*) from c_search_negation_flags where flags = '{}'")
     assert cur.fetchone()[0] == 0, "빈 플래그 행은 있으면 안 된다"
+
+
+# ── 질의 해석 캐시 (부정 조각 2단계) ────────────────────────────────────────
+#
+# LLM 호출은 느리고(1~2초) 돈이 든다. 설계 S-02는 "문장형 질의에만 호출하고
+# 결과를 캐시한다"로 정했다.
+
+_PLAN_Q = "테스트 캐시 질의 로고 없는"
+
+
+@pytest.fixture
+def plan_cache(cur):
+    """검증용 행을 넣고 끝나면 지운다 — 공용 DB라 남기지 않는다."""
+    yield
+    cur.execute("delete from c_search_query_plan where query_norm like '테스트 캐시%%'")
+
+
+def test_plan_cache_round_trips(cur, plan_cache):
+    cur.execute(
+        "select c_search_plan_put(%s, 1, 'test-model', %s::jsonb)",
+        (_PLAN_Q, '{"exclude":["로고"],"expand":["무지"]}'),
+    )
+    assert cur.fetchone()[0] is True
+    cur.execute("select c_search_plan_get(%s, 1, 'test-model')", (_PLAN_Q,))
+    assert cur.fetchone()[0] == {"exclude": ["로고"], "expand": ["무지"]}
+
+
+@pytest.mark.parametrize("ver,model", [(2, "test-model"), (1, "other-model")])
+def test_prompt_version_and_model_are_part_of_the_key(cur, plan_cache, ver, model):
+    """프롬프트를 고치거나 모델을 바꾸면 옛 해석은 **다른 규칙으로 만들어진 것**이다.
+
+    버전이 키에 없으면 "왜 옛날 답이 나오지"를 나중에 알 수 없다.
+    """
+    cur.execute(
+        "select c_search_plan_put(%s, 1, 'test-model', %s::jsonb)",
+        (_PLAN_Q, '{"exclude":["로고"]}'),
+    )
+    cur.execute("select c_search_plan_get(%s, %s, %s)", (_PLAN_Q, ver, model))
+    assert cur.fetchone()[0] is None, "버전·모델이 다르면 캐시가 없어야 한다"
+
+
+@pytest.mark.parametrize(
+    "plan,why",
+    [
+        ('{"exclude":["지어낸축"]}', "부정 항목의 닫힌 집합을 벗어났다"),
+        ('{"exclude_colors":["999"]}', "없는 색 코드다"),
+        ('{"expand":["1","2","3","4","5","6","7","8","9"]}', "확장어 개수 상한을 넘었다"),
+        ('{"exclude":"로고"}', "배열이 아니다"),
+    ],
+)
+def test_plan_cache_rejects_values_outside_the_closed_set(cur, plan_cache, plan, why):
+    """설계 130행 — LLM은 표가 정한 값만 고른다. 벗어나면 **통째로** 거절한다.
+
+    일부만 살리면 "무엇이 적용됐는지"를 나중에 알 수 없다.
+    """
+    cur.execute("select c_search_plan_put(%s, 1, 'test-model', %s::jsonb)", (_PLAN_Q, plan))
+    assert cur.fetchone()[0] is False, why
+
+
+def test_plan_cache_write_is_not_open_to_anon(cur):
+    """⚠️ 이 표는 **다른 사용자의 검색 결과를 바꾼다.**
+
+    검색 로그는 오염돼도 계측만 더러워지지만, 여기는 누구나 `반팔`의 해석을
+    "로고 제외"로 덮어쓰면 그게 결과 조작이다. 값 검증으로는 막을 수 없다 —
+    검증은 형식이 맞나를 보지 그 질의의 옳은 해석인가를 보지 못한다.
+    """
+    cur.execute(
+        "select has_function_privilege('anon', oid, 'execute') from pg_proc"
+        " where proname = 'c_search_plan_put'"
+    )
+    assert cur.fetchone()[0] is False, "쓰기가 anon에 열려 있으면 안 된다"
+    cur.execute(
+        "select has_function_privilege('anon', oid, 'execute') from pg_proc"
+        " where proname = 'c_search_plan_get'"
+    )
+    assert cur.fetchone()[0] is True, "읽기는 열려 있어야 캐시가 쓸모가 있다"
+    cur.execute("select has_table_privilege('anon', 'c_search_query_plan', 'select')")
+    assert cur.fetchone()[0] is False, "표 직접 조회는 막혀 있어야 한다"
