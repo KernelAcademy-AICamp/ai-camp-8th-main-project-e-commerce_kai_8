@@ -1,0 +1,1798 @@
+{
+  "meta": {
+    "purpose": "봉인 평가셋(acceptance 골든셋과 별개, 해석기 커버리지 측정용) — 컬러웨이 결속 검색의 결정적 해석 결과와 결속 계획을 평가한다.",
+    "createdAt": "2026-08-07",
+    "design": "docs/design/2026-08-07-colorway-search-optional-llm-design.md",
+    "decisions": "docs/design/2026-08-07-colorway-search-kickoff-decisions.md",
+    "vocabulary": "client/features/search/data/colorway-vocab.ts",
+    "scope": {
+      "included": "정확 캐논 표현, 문서에서 승인된 고정 alias, 대상 귀속, 동일 객체 결속, 보수적 부정, 외부 맥락 분리.",
+      "excluded": "LLM 의미 해석, 의미·구어 표현의 캐논 추정, 프린팅 없음 강한 조건, 0건 자동 완화."
+    },
+    "layers": {
+      "interpretation": "conditions: target·values·polarity·evidence / external: 상품 조건이 아닌 외부 맥락 / unresolved: 결정적 경로에서 조건으로 만들 수 없는 표현",
+      "plan": "productBaseColors: 상품 수준 바탕색 / printClauses: 동일 프린트 객체 결속 / mustNotBaseColors: 명시적 바탕색 부정 / printExists: 속성 없이 프린팅 존재만 요구"
+    },
+    "bucketCounts": {
+      "binding": 15,
+      "baseOnly": 8,
+      "placementOnly": 6,
+      "graphicType": 5,
+      "multiObject": 4,
+      "negation": 4,
+      "external": 4,
+      "unresolvedOnly": 4
+    },
+    "conventions": [
+      "결정적 파서만 평가하며 LLM은 사용하지 않는다.",
+      "캐논 값은 colorway-vocab.ts의 enum만 사용한다.",
+      "의미·구어 표현과 사전에 없는 표현은 캐논 값으로 추정하지 않고 unresolved에 남긴다.",
+      "external에 기록된 색 표현은 상품 조건으로 컴파일하지 않는다.",
+      "모든 evidence는 query에 실제로 존재하는 부분문자열이다.",
+      "바탕색만 언급되면 productBaseColors로, 프린트 속성과 관계 지어 언급되면 같은 printClause의 baseColors로 컴파일한다."
+    ],
+    "labeling": {
+      "kind": "sealed_evaluation",
+      "frozen": true,
+      "frozenAt": "2026-08-07",
+      "note": "acceptance 골든셋과 분리해 보관하며 구현 결과에 맞춰 기대값을 수정하지 않는다."
+    }
+  },
+  "entries": [
+    {
+      "id": "ev001",
+      "bucket": "binding",
+      "query": "검정 반팔인데 뒤에 화이트 프린팅 있는 걸로 찾아줘",
+      "interpretation": {
+        "conditions": [
+          {
+            "target": "base",
+            "values": ["블랙"],
+            "polarity": "positive",
+            "evidence": "검정 반팔"
+          },
+          {
+            "target": "placement",
+            "values": ["뒤"],
+            "polarity": "positive",
+            "evidence": "뒤에"
+          },
+          {
+            "target": "print",
+            "values": ["화이트"],
+            "polarity": "positive",
+            "evidence": "화이트 프린팅"
+          }
+        ],
+        "external": [],
+        "unresolved": []
+      },
+      "plan": {
+        "productBaseColors": [],
+        "printClauses": [
+          {
+            "baseColors": ["블랙"],
+            "printColors": ["화이트"],
+            "placements": ["뒤"],
+            "graphicTypes": []
+          }
+        ]
+      },
+      "confidence": "high"
+    },
+    {
+      "id": "ev002",
+      "bucket": "binding",
+      "query": "화이트 티 앞에 네이비 로고 들어간 거 보여줘",
+      "interpretation": {
+        "conditions": [
+          {
+            "target": "base",
+            "values": ["화이트"],
+            "polarity": "positive",
+            "evidence": "화이트 티"
+          },
+          {
+            "target": "placement",
+            "values": ["앞"],
+            "polarity": "positive",
+            "evidence": "앞에"
+          },
+          {
+            "target": "print",
+            "values": ["네이비"],
+            "polarity": "positive",
+            "evidence": "네이비 로고"
+          },
+          {
+            "target": "graphic",
+            "values": ["로고"],
+            "polarity": "positive",
+            "evidence": "로고"
+          }
+        ],
+        "external": [],
+        "unresolved": []
+      },
+      "plan": {
+        "productBaseColors": [],
+        "printClauses": [
+          {
+            "baseColors": ["화이트"],
+            "printColors": ["네이비"],
+            "placements": ["앞"],
+            "graphicTypes": ["로고"]
+          }
+        ]
+      },
+      "confidence": "high"
+    },
+    {
+      "id": "ev003",
+      "bucket": "binding",
+      "query": "그레이 바탕 소매에 블랙 레터링 있는 반팔",
+      "interpretation": {
+        "conditions": [
+          {
+            "target": "base",
+            "values": ["그레이"],
+            "polarity": "positive",
+            "evidence": "그레이 바탕"
+          },
+          {
+            "target": "placement",
+            "values": ["소매"],
+            "polarity": "positive",
+            "evidence": "소매에"
+          },
+          {
+            "target": "print",
+            "values": ["블랙"],
+            "polarity": "positive",
+            "evidence": "블랙 레터링"
+          },
+          {
+            "target": "graphic",
+            "values": ["레터링"],
+            "polarity": "positive",
+            "evidence": "레터링"
+          }
+        ],
+        "external": [],
+        "unresolved": []
+      },
+      "plan": {
+        "productBaseColors": [],
+        "printClauses": [
+          {
+            "baseColors": ["그레이"],
+            "printColors": ["블랙"],
+            "placements": ["소매"],
+            "graphicTypes": ["레터링"]
+          }
+        ]
+      },
+      "confidence": "high"
+    },
+    {
+      "id": "ev004",
+      "bucket": "binding",
+      "query": "네이비 티 앞에 옐로우 캐릭터가 있으면 좋겠어",
+      "interpretation": {
+        "conditions": [
+          {
+            "target": "base",
+            "values": ["네이비"],
+            "polarity": "positive",
+            "evidence": "네이비 티"
+          },
+          {
+            "target": "placement",
+            "values": ["앞"],
+            "polarity": "positive",
+            "evidence": "앞에"
+          },
+          {
+            "target": "print",
+            "values": ["옐로우"],
+            "polarity": "positive",
+            "evidence": "옐로우 캐릭터"
+          },
+          {
+            "target": "graphic",
+            "values": ["캐릭터"],
+            "polarity": "positive",
+            "evidence": "캐릭터"
+          }
+        ],
+        "external": [],
+        "unresolved": []
+      },
+      "plan": {
+        "productBaseColors": [],
+        "printClauses": [
+          {
+            "baseColors": ["네이비"],
+            "printColors": ["옐로우"],
+            "placements": ["앞"],
+            "graphicTypes": ["캐릭터"]
+          }
+        ]
+      },
+      "confidence": "high"
+    },
+    {
+      "id": "ev005",
+      "bucket": "binding",
+      "query": "아이보리 바탕에 브라운 그래픽 프린팅 들어간 티",
+      "interpretation": {
+        "conditions": [
+          {
+            "target": "base",
+            "values": ["아이보리"],
+            "polarity": "positive",
+            "evidence": "아이보리 바탕"
+          },
+          {
+            "target": "print",
+            "values": ["브라운"],
+            "polarity": "positive",
+            "evidence": "브라운 그래픽 프린팅"
+          },
+          {
+            "target": "graphic",
+            "values": ["그래픽"],
+            "polarity": "positive",
+            "evidence": "그래픽"
+          }
+        ],
+        "external": [],
+        "unresolved": []
+      },
+      "plan": {
+        "productBaseColors": [],
+        "printClauses": [
+          {
+            "baseColors": ["아이보리"],
+            "printColors": ["브라운"],
+            "placements": [],
+            "graphicTypes": ["그래픽"]
+          }
+        ]
+      },
+      "confidence": "high"
+    },
+    {
+      "id": "ev006",
+      "bucket": "binding",
+      "query": "베이지 티 뒤에 레드 로고 있는 반팔 찾아줘",
+      "interpretation": {
+        "conditions": [
+          {
+            "target": "base",
+            "values": ["베이지"],
+            "polarity": "positive",
+            "evidence": "베이지 티"
+          },
+          {
+            "target": "placement",
+            "values": ["뒤"],
+            "polarity": "positive",
+            "evidence": "뒤에"
+          },
+          {
+            "target": "print",
+            "values": ["레드"],
+            "polarity": "positive",
+            "evidence": "레드 로고"
+          },
+          {
+            "target": "graphic",
+            "values": ["로고"],
+            "polarity": "positive",
+            "evidence": "로고"
+          }
+        ],
+        "external": [],
+        "unresolved": []
+      },
+      "plan": {
+        "productBaseColors": [],
+        "printClauses": [
+          {
+            "baseColors": ["베이지"],
+            "printColors": ["레드"],
+            "placements": ["뒤"],
+            "graphicTypes": ["로고"]
+          }
+        ]
+      },
+      "confidence": "high"
+    },
+    {
+      "id": "ev007",
+      "bucket": "binding",
+      "query": "카키 바탕 소매에 오렌지 레터링 들어간 티셔츠",
+      "interpretation": {
+        "conditions": [
+          {
+            "target": "base",
+            "values": ["카키"],
+            "polarity": "positive",
+            "evidence": "카키 바탕"
+          },
+          {
+            "target": "placement",
+            "values": ["소매"],
+            "polarity": "positive",
+            "evidence": "소매에"
+          },
+          {
+            "target": "print",
+            "values": ["오렌지"],
+            "polarity": "positive",
+            "evidence": "오렌지 레터링"
+          },
+          {
+            "target": "graphic",
+            "values": ["레터링"],
+            "polarity": "positive",
+            "evidence": "레터링"
+          }
+        ],
+        "external": [],
+        "unresolved": []
+      },
+      "plan": {
+        "productBaseColors": [],
+        "printClauses": [
+          {
+            "baseColors": ["카키"],
+            "printColors": ["오렌지"],
+            "placements": ["소매"],
+            "graphicTypes": ["레터링"]
+          }
+        ]
+      },
+      "confidence": "high"
+    },
+    {
+      "id": "ev008",
+      "bucket": "binding",
+      "query": "블루 티 전체에 화이트 그래픽 들어간 걸로 보여줘",
+      "interpretation": {
+        "conditions": [
+          {
+            "target": "base",
+            "values": ["블루"],
+            "polarity": "positive",
+            "evidence": "블루 티"
+          },
+          {
+            "target": "placement",
+            "values": ["전체"],
+            "polarity": "positive",
+            "evidence": "전체에"
+          },
+          {
+            "target": "print",
+            "values": ["화이트"],
+            "polarity": "positive",
+            "evidence": "화이트 그래픽"
+          },
+          {
+            "target": "graphic",
+            "values": ["그래픽"],
+            "polarity": "positive",
+            "evidence": "그래픽"
+          }
+        ],
+        "external": [],
+        "unresolved": []
+      },
+      "plan": {
+        "productBaseColors": [],
+        "printClauses": [
+          {
+            "baseColors": ["블루"],
+            "printColors": ["화이트"],
+            "placements": ["전체"],
+            "graphicTypes": ["그래픽"]
+          }
+        ]
+      },
+      "confidence": "high"
+    },
+    {
+      "id": "ev009",
+      "bucket": "binding",
+      "query": "라이트그레이 바탕 앞에 핑크 캐릭터 있는 티 추천해줘",
+      "interpretation": {
+        "conditions": [
+          {
+            "target": "base",
+            "values": ["라이트그레이"],
+            "polarity": "positive",
+            "evidence": "라이트그레이 바탕"
+          },
+          {
+            "target": "placement",
+            "values": ["앞"],
+            "polarity": "positive",
+            "evidence": "앞에"
+          },
+          {
+            "target": "print",
+            "values": ["핑크"],
+            "polarity": "positive",
+            "evidence": "핑크 캐릭터"
+          },
+          {
+            "target": "graphic",
+            "values": ["캐릭터"],
+            "polarity": "positive",
+            "evidence": "캐릭터"
+          }
+        ],
+        "external": [],
+        "unresolved": []
+      },
+      "plan": {
+        "productBaseColors": [],
+        "printClauses": [
+          {
+            "baseColors": ["라이트그레이"],
+            "printColors": ["핑크"],
+            "placements": ["앞"],
+            "graphicTypes": ["캐릭터"]
+          }
+        ]
+      },
+      "confidence": "high"
+    },
+    {
+      "id": "ev010",
+      "bucket": "binding",
+      "query": "백염 티 뒤에 블랙 레터링 들어간 반팔",
+      "interpretation": {
+        "conditions": [
+          {
+            "target": "base",
+            "values": ["백염"],
+            "polarity": "positive",
+            "evidence": "백염 티"
+          },
+          {
+            "target": "placement",
+            "values": ["뒤"],
+            "polarity": "positive",
+            "evidence": "뒤에"
+          },
+          {
+            "target": "print",
+            "values": ["블랙"],
+            "polarity": "positive",
+            "evidence": "블랙 레터링"
+          },
+          {
+            "target": "graphic",
+            "values": ["레터링"],
+            "polarity": "positive",
+            "evidence": "레터링"
+          }
+        ],
+        "external": [],
+        "unresolved": []
+      },
+      "plan": {
+        "productBaseColors": [],
+        "printClauses": [
+          {
+            "baseColors": ["백염"],
+            "printColors": ["블랙"],
+            "placements": ["뒤"],
+            "graphicTypes": ["레터링"]
+          }
+        ]
+      },
+      "confidence": "high"
+    },
+    {
+      "id": "ev011",
+      "bucket": "binding",
+      "query": "차콜 반팔 소매에 민트 로고 있는 거 찾아줘",
+      "interpretation": {
+        "conditions": [
+          {
+            "target": "base",
+            "values": ["차콜"],
+            "polarity": "positive",
+            "evidence": "차콜 반팔"
+          },
+          {
+            "target": "placement",
+            "values": ["소매"],
+            "polarity": "positive",
+            "evidence": "소매에"
+          },
+          {
+            "target": "print",
+            "values": ["민트"],
+            "polarity": "positive",
+            "evidence": "민트 로고"
+          },
+          {
+            "target": "graphic",
+            "values": ["로고"],
+            "polarity": "positive",
+            "evidence": "로고"
+          }
+        ],
+        "external": [],
+        "unresolved": []
+      },
+      "plan": {
+        "productBaseColors": [],
+        "printClauses": [
+          {
+            "baseColors": ["차콜"],
+            "printColors": ["민트"],
+            "placements": ["소매"],
+            "graphicTypes": ["로고"]
+          }
+        ]
+      },
+      "confidence": "high"
+    },
+    {
+      "id": "ev012",
+      "bucket": "binding",
+      "query": "브라운 티 앞에 아이보리 그래픽 프린트 있는 거",
+      "interpretation": {
+        "conditions": [
+          {
+            "target": "base",
+            "values": ["브라운"],
+            "polarity": "positive",
+            "evidence": "브라운 티"
+          },
+          {
+            "target": "placement",
+            "values": ["앞"],
+            "polarity": "positive",
+            "evidence": "앞에"
+          },
+          {
+            "target": "print",
+            "values": ["아이보리"],
+            "polarity": "positive",
+            "evidence": "아이보리 그래픽 프린트"
+          },
+          {
+            "target": "graphic",
+            "values": ["그래픽"],
+            "polarity": "positive",
+            "evidence": "그래픽"
+          }
+        ],
+        "external": [],
+        "unresolved": []
+      },
+      "plan": {
+        "productBaseColors": [],
+        "printClauses": [
+          {
+            "baseColors": ["브라운"],
+            "printColors": ["아이보리"],
+            "placements": ["앞"],
+            "graphicTypes": ["그래픽"]
+          }
+        ]
+      },
+      "confidence": "high"
+    },
+    {
+      "id": "ev013",
+      "bucket": "binding",
+      "query": "퍼플 바탕에 도트 무늬 들어간 티",
+      "interpretation": {
+        "conditions": [
+          {
+            "target": "base",
+            "values": ["퍼플"],
+            "polarity": "positive",
+            "evidence": "퍼플 바탕"
+          },
+          {
+            "target": "graphic",
+            "values": ["도트"],
+            "polarity": "positive",
+            "evidence": "도트"
+          }
+        ],
+        "external": [],
+        "unresolved": []
+      },
+      "plan": {
+        "productBaseColors": [],
+        "printClauses": [
+          {
+            "baseColors": ["퍼플"],
+            "printColors": [],
+            "placements": [],
+            "graphicTypes": ["도트"]
+          }
+        ]
+      },
+      "confidence": "high"
+    },
+    {
+      "id": "ev014",
+      "bucket": "binding",
+      "query": "스카이블루 티에 스트라이프 들어간 걸로",
+      "interpretation": {
+        "conditions": [
+          {
+            "target": "base",
+            "values": ["스카이블루"],
+            "polarity": "positive",
+            "evidence": "스카이블루 티"
+          },
+          {
+            "target": "graphic",
+            "values": ["스트라이프"],
+            "polarity": "positive",
+            "evidence": "스트라이프"
+          }
+        ],
+        "external": [],
+        "unresolved": []
+      },
+      "plan": {
+        "productBaseColors": [],
+        "printClauses": [
+          {
+            "baseColors": ["스카이블루"],
+            "printColors": [],
+            "placements": [],
+            "graphicTypes": ["스트라이프"]
+          }
+        ]
+      },
+      "confidence": "high"
+    },
+    {
+      "id": "ev015",
+      "bucket": "binding",
+      "query": "민트 바탕에 체크 무늬 있는 반팔티",
+      "interpretation": {
+        "conditions": [
+          {
+            "target": "base",
+            "values": ["민트"],
+            "polarity": "positive",
+            "evidence": "민트 바탕"
+          },
+          {
+            "target": "graphic",
+            "values": ["체크"],
+            "polarity": "positive",
+            "evidence": "체크"
+          }
+        ],
+        "external": [],
+        "unresolved": []
+      },
+      "plan": {
+        "productBaseColors": [],
+        "printClauses": [
+          {
+            "baseColors": ["민트"],
+            "printColors": [],
+            "placements": [],
+            "graphicTypes": ["체크"]
+          }
+        ]
+      },
+      "confidence": "high"
+    },
+    {
+      "id": "ev016",
+      "bucket": "baseOnly",
+      "query": "차콜 반팔티 보여줘",
+      "interpretation": {
+        "conditions": [
+          {
+            "target": "base",
+            "values": ["차콜"],
+            "polarity": "positive",
+            "evidence": "차콜 반팔티"
+          }
+        ],
+        "external": [],
+        "unresolved": []
+      },
+      "plan": {
+        "productBaseColors": ["차콜"],
+        "printClauses": []
+      },
+      "confidence": "high"
+    },
+    {
+      "id": "ev017",
+      "bucket": "baseOnly",
+      "query": "라이트그레이 티셔츠 찾고 있어",
+      "interpretation": {
+        "conditions": [
+          {
+            "target": "base",
+            "values": ["라이트그레이"],
+            "polarity": "positive",
+            "evidence": "라이트그레이 티셔츠"
+          }
+        ],
+        "external": [],
+        "unresolved": []
+      },
+      "plan": {
+        "productBaseColors": ["라이트그레이"],
+        "printClauses": []
+      },
+      "confidence": "high"
+    },
+    {
+      "id": "ev018",
+      "bucket": "baseOnly",
+      "query": "백염 반팔 있으면 보여줘",
+      "interpretation": {
+        "conditions": [
+          {
+            "target": "base",
+            "values": ["백염"],
+            "polarity": "positive",
+            "evidence": "백염 반팔"
+          }
+        ],
+        "external": [],
+        "unresolved": []
+      },
+      "plan": {
+        "productBaseColors": ["백염"],
+        "printClauses": []
+      },
+      "confidence": "high"
+    },
+    {
+      "id": "ev019",
+      "bucket": "baseOnly",
+      "query": "스카이블루 티 추천해줘",
+      "interpretation": {
+        "conditions": [
+          {
+            "target": "base",
+            "values": ["스카이블루"],
+            "polarity": "positive",
+            "evidence": "스카이블루 티"
+          }
+        ],
+        "external": [],
+        "unresolved": []
+      },
+      "plan": {
+        "productBaseColors": ["스카이블루"],
+        "printClauses": []
+      },
+      "confidence": "high"
+    },
+    {
+      "id": "ev020",
+      "bucket": "baseOnly",
+      "query": "민트 반팔티 찾아줘",
+      "interpretation": {
+        "conditions": [
+          {
+            "target": "base",
+            "values": ["민트"],
+            "polarity": "positive",
+            "evidence": "민트 반팔티"
+          }
+        ],
+        "external": [],
+        "unresolved": []
+      },
+      "plan": {
+        "productBaseColors": ["민트"],
+        "printClauses": []
+      },
+      "confidence": "high"
+    },
+    {
+      "id": "ev021",
+      "bucket": "baseOnly",
+      "query": "오렌지 티셔츠 보고 싶어",
+      "interpretation": {
+        "conditions": [
+          {
+            "target": "base",
+            "values": ["오렌지"],
+            "polarity": "positive",
+            "evidence": "오렌지 티셔츠"
+          }
+        ],
+        "external": [],
+        "unresolved": []
+      },
+      "plan": {
+        "productBaseColors": ["오렌지"],
+        "printClauses": []
+      },
+      "confidence": "high"
+    },
+    {
+      "id": "ev022",
+      "bucket": "baseOnly",
+      "query": "핑크 반팔 추천해줘",
+      "interpretation": {
+        "conditions": [
+          {
+            "target": "base",
+            "values": ["핑크"],
+            "polarity": "positive",
+            "evidence": "핑크 반팔"
+          }
+        ],
+        "external": [],
+        "unresolved": []
+      },
+      "plan": {
+        "productBaseColors": ["핑크"],
+        "printClauses": []
+      },
+      "confidence": "high"
+    },
+    {
+      "id": "ev023",
+      "bucket": "baseOnly",
+      "query": "퍼플 티셔츠 있나",
+      "interpretation": {
+        "conditions": [
+          {
+            "target": "base",
+            "values": ["퍼플"],
+            "polarity": "positive",
+            "evidence": "퍼플 티셔츠"
+          }
+        ],
+        "external": [],
+        "unresolved": []
+      },
+      "plan": {
+        "productBaseColors": ["퍼플"],
+        "printClauses": []
+      },
+      "confidence": "high"
+    },
+    {
+      "id": "ev024",
+      "bucket": "placementOnly",
+      "query": "앞에 프린팅 있는 반팔 찾아줘",
+      "interpretation": {
+        "conditions": [
+          {
+            "target": "placement",
+            "values": ["앞"],
+            "polarity": "positive",
+            "evidence": "앞에 프린팅"
+          }
+        ],
+        "external": [],
+        "unresolved": []
+      },
+      "plan": {
+        "productBaseColors": [],
+        "printClauses": [
+          {
+            "baseColors": [],
+            "printColors": [],
+            "placements": ["앞"],
+            "graphicTypes": []
+          }
+        ]
+      },
+      "confidence": "high"
+    },
+    {
+      "id": "ev025",
+      "bucket": "placementOnly",
+      "query": "뒤에 프린트 들어간 티 보여줘",
+      "interpretation": {
+        "conditions": [
+          {
+            "target": "placement",
+            "values": ["뒤"],
+            "polarity": "positive",
+            "evidence": "뒤에 프린트"
+          }
+        ],
+        "external": [],
+        "unresolved": []
+      },
+      "plan": {
+        "productBaseColors": [],
+        "printClauses": [
+          {
+            "baseColors": [],
+            "printColors": [],
+            "placements": ["뒤"],
+            "graphicTypes": []
+          }
+        ]
+      },
+      "confidence": "high"
+    },
+    {
+      "id": "ev026",
+      "bucket": "placementOnly",
+      "query": "소매에 프린팅 있는 티 추천해줘",
+      "interpretation": {
+        "conditions": [
+          {
+            "target": "placement",
+            "values": ["소매"],
+            "polarity": "positive",
+            "evidence": "소매에 프린팅"
+          }
+        ],
+        "external": [],
+        "unresolved": []
+      },
+      "plan": {
+        "productBaseColors": [],
+        "printClauses": [
+          {
+            "baseColors": [],
+            "printColors": [],
+            "placements": ["소매"],
+            "graphicTypes": []
+          }
+        ]
+      },
+      "confidence": "high"
+    },
+    {
+      "id": "ev027",
+      "bucket": "placementOnly",
+      "query": "전체 프린팅된 반팔 찾고 있어",
+      "interpretation": {
+        "conditions": [
+          {
+            "target": "placement",
+            "values": ["전체"],
+            "polarity": "positive",
+            "evidence": "전체 프린팅"
+          }
+        ],
+        "external": [],
+        "unresolved": []
+      },
+      "plan": {
+        "productBaseColors": [],
+        "printClauses": [
+          {
+            "baseColors": [],
+            "printColors": [],
+            "placements": ["전체"],
+            "graphicTypes": []
+          }
+        ]
+      },
+      "confidence": "high"
+    },
+    {
+      "id": "ev028",
+      "bucket": "placementOnly",
+      "query": "등판에 프린팅 들어간 티셔츠",
+      "interpretation": {
+        "conditions": [
+          {
+            "target": "placement",
+            "values": ["뒤"],
+            "polarity": "positive",
+            "evidence": "등판에 프린팅"
+          }
+        ],
+        "external": [],
+        "unresolved": []
+      },
+      "plan": {
+        "productBaseColors": [],
+        "printClauses": [
+          {
+            "baseColors": [],
+            "printColors": [],
+            "placements": ["뒤"],
+            "graphicTypes": []
+          }
+        ]
+      },
+      "confidence": "high"
+    },
+    {
+      "id": "ev029",
+      "bucket": "placementOnly",
+      "query": "앞에 나염 들어간 반팔티 보고 싶어",
+      "interpretation": {
+        "conditions": [
+          {
+            "target": "placement",
+            "values": ["앞"],
+            "polarity": "positive",
+            "evidence": "앞에 나염"
+          }
+        ],
+        "external": [],
+        "unresolved": []
+      },
+      "plan": {
+        "productBaseColors": [],
+        "printClauses": [
+          {
+            "baseColors": [],
+            "printColors": [],
+            "placements": ["앞"],
+            "graphicTypes": []
+          }
+        ]
+      },
+      "confidence": "high"
+    },
+    {
+      "id": "ev030",
+      "bucket": "graphicType",
+      "query": "로고가 들어간 반팔티 찾아줘",
+      "interpretation": {
+        "conditions": [
+          {
+            "target": "graphic",
+            "values": ["로고"],
+            "polarity": "positive",
+            "evidence": "로고"
+          }
+        ],
+        "external": [],
+        "unresolved": []
+      },
+      "plan": {
+        "productBaseColors": [],
+        "printClauses": [
+          {
+            "baseColors": [],
+            "printColors": [],
+            "placements": [],
+            "graphicTypes": ["로고"]
+          }
+        ]
+      },
+      "confidence": "high"
+    },
+    {
+      "id": "ev031",
+      "bucket": "graphicType",
+      "query": "레터링 프린트 티셔츠 보여줘",
+      "interpretation": {
+        "conditions": [
+          {
+            "target": "graphic",
+            "values": ["레터링"],
+            "polarity": "positive",
+            "evidence": "레터링"
+          }
+        ],
+        "external": [],
+        "unresolved": []
+      },
+      "plan": {
+        "productBaseColors": [],
+        "printClauses": [
+          {
+            "baseColors": [],
+            "printColors": [],
+            "placements": [],
+            "graphicTypes": ["레터링"]
+          }
+        ]
+      },
+      "confidence": "high"
+    },
+    {
+      "id": "ev032",
+      "bucket": "graphicType",
+      "query": "캐릭터 프린팅 반팔 추천해줘",
+      "interpretation": {
+        "conditions": [
+          {
+            "target": "graphic",
+            "values": ["캐릭터"],
+            "polarity": "positive",
+            "evidence": "캐릭터"
+          }
+        ],
+        "external": [],
+        "unresolved": []
+      },
+      "plan": {
+        "productBaseColors": [],
+        "printClauses": [
+          {
+            "baseColors": [],
+            "printColors": [],
+            "placements": [],
+            "graphicTypes": ["캐릭터"]
+          }
+        ]
+      },
+      "confidence": "high"
+    },
+    {
+      "id": "ev033",
+      "bucket": "graphicType",
+      "query": "타이다이 반팔티 좀 찾아줘",
+      "interpretation": {
+        "conditions": [
+          {
+            "target": "graphic",
+            "values": ["타이다이"],
+            "polarity": "positive",
+            "evidence": "타이다이"
+          }
+        ],
+        "external": [],
+        "unresolved": []
+      },
+      "plan": {
+        "productBaseColors": [],
+        "printClauses": [
+          {
+            "baseColors": [],
+            "printColors": [],
+            "placements": [],
+            "graphicTypes": ["타이다이"]
+          }
+        ]
+      },
+      "confidence": "high"
+    },
+    {
+      "id": "ev034",
+      "bucket": "graphicType",
+      "query": "패치워크 티셔츠 보고 싶어",
+      "interpretation": {
+        "conditions": [
+          {
+            "target": "graphic",
+            "values": ["패치워크"],
+            "polarity": "positive",
+            "evidence": "패치워크"
+          }
+        ],
+        "external": [],
+        "unresolved": []
+      },
+      "plan": {
+        "productBaseColors": [],
+        "printClauses": [
+          {
+            "baseColors": [],
+            "printColors": [],
+            "placements": [],
+            "graphicTypes": ["패치워크"]
+          }
+        ]
+      },
+      "confidence": "high"
+    },
+    {
+      "id": "ev035",
+      "bucket": "multiObject",
+      "query": "블랙 티인데 앞에는 화이트 로고, 뒤에는 블루 레터링 있는 거",
+      "interpretation": {
+        "conditions": [
+          {
+            "target": "base",
+            "values": ["블랙"],
+            "polarity": "positive",
+            "evidence": "블랙 티"
+          },
+          {
+            "target": "placement",
+            "values": ["앞"],
+            "polarity": "positive",
+            "evidence": "앞에는"
+          },
+          {
+            "target": "print",
+            "values": ["화이트"],
+            "polarity": "positive",
+            "evidence": "화이트 로고"
+          },
+          {
+            "target": "graphic",
+            "values": ["로고"],
+            "polarity": "positive",
+            "evidence": "로고"
+          },
+          {
+            "target": "placement",
+            "values": ["뒤"],
+            "polarity": "positive",
+            "evidence": "뒤에는"
+          },
+          {
+            "target": "print",
+            "values": ["블루"],
+            "polarity": "positive",
+            "evidence": "블루 레터링"
+          },
+          {
+            "target": "graphic",
+            "values": ["레터링"],
+            "polarity": "positive",
+            "evidence": "레터링"
+          }
+        ],
+        "external": [],
+        "unresolved": []
+      },
+      "plan": {
+        "productBaseColors": [],
+        "printClauses": [
+          {
+            "baseColors": ["블랙"],
+            "printColors": ["화이트"],
+            "placements": ["앞"],
+            "graphicTypes": ["로고"]
+          },
+          {
+            "baseColors": ["블랙"],
+            "printColors": ["블루"],
+            "placements": ["뒤"],
+            "graphicTypes": ["레터링"]
+          }
+        ]
+      },
+      "confidence": "high"
+    },
+    {
+      "id": "ev036",
+      "bucket": "multiObject",
+      "query": "화이트 티 앞에 레드 캐릭터, 소매에 네이비 로고 들어간 거 찾아줘",
+      "interpretation": {
+        "conditions": [
+          {
+            "target": "base",
+            "values": ["화이트"],
+            "polarity": "positive",
+            "evidence": "화이트 티"
+          },
+          {
+            "target": "placement",
+            "values": ["앞"],
+            "polarity": "positive",
+            "evidence": "앞에"
+          },
+          {
+            "target": "print",
+            "values": ["레드"],
+            "polarity": "positive",
+            "evidence": "레드 캐릭터"
+          },
+          {
+            "target": "graphic",
+            "values": ["캐릭터"],
+            "polarity": "positive",
+            "evidence": "캐릭터"
+          },
+          {
+            "target": "placement",
+            "values": ["소매"],
+            "polarity": "positive",
+            "evidence": "소매에"
+          },
+          {
+            "target": "print",
+            "values": ["네이비"],
+            "polarity": "positive",
+            "evidence": "네이비 로고"
+          },
+          {
+            "target": "graphic",
+            "values": ["로고"],
+            "polarity": "positive",
+            "evidence": "로고"
+          }
+        ],
+        "external": [],
+        "unresolved": []
+      },
+      "plan": {
+        "productBaseColors": [],
+        "printClauses": [
+          {
+            "baseColors": ["화이트"],
+            "printColors": ["레드"],
+            "placements": ["앞"],
+            "graphicTypes": ["캐릭터"]
+          },
+          {
+            "baseColors": ["화이트"],
+            "printColors": ["네이비"],
+            "placements": ["소매"],
+            "graphicTypes": ["로고"]
+          }
+        ]
+      },
+      "confidence": "high"
+    },
+    {
+      "id": "ev037",
+      "bucket": "multiObject",
+      "query": "앞에 그린 레터링 있고 뒤에 옐로우 그래픽 있는 티",
+      "interpretation": {
+        "conditions": [
+          {
+            "target": "placement",
+            "values": ["앞"],
+            "polarity": "positive",
+            "evidence": "앞에"
+          },
+          {
+            "target": "print",
+            "values": ["그린"],
+            "polarity": "positive",
+            "evidence": "그린 레터링"
+          },
+          {
+            "target": "graphic",
+            "values": ["레터링"],
+            "polarity": "positive",
+            "evidence": "레터링"
+          },
+          {
+            "target": "placement",
+            "values": ["뒤"],
+            "polarity": "positive",
+            "evidence": "뒤에"
+          },
+          {
+            "target": "print",
+            "values": ["옐로우"],
+            "polarity": "positive",
+            "evidence": "옐로우 그래픽"
+          },
+          {
+            "target": "graphic",
+            "values": ["그래픽"],
+            "polarity": "positive",
+            "evidence": "그래픽"
+          }
+        ],
+        "external": [],
+        "unresolved": []
+      },
+      "plan": {
+        "productBaseColors": [],
+        "printClauses": [
+          {
+            "baseColors": [],
+            "printColors": ["그린"],
+            "placements": ["앞"],
+            "graphicTypes": ["레터링"]
+          },
+          {
+            "baseColors": [],
+            "printColors": ["옐로우"],
+            "placements": ["뒤"],
+            "graphicTypes": ["그래픽"]
+          }
+        ]
+      },
+      "confidence": "high"
+    },
+    {
+      "id": "ev038",
+      "bucket": "multiObject",
+      "query": "베이지 반팔인데 소매에는 화이트 로고, 뒤에는 오렌지 캐릭터가 들어가면 좋겠어",
+      "interpretation": {
+        "conditions": [
+          {
+            "target": "base",
+            "values": ["베이지"],
+            "polarity": "positive",
+            "evidence": "베이지 반팔"
+          },
+          {
+            "target": "placement",
+            "values": ["소매"],
+            "polarity": "positive",
+            "evidence": "소매에는"
+          },
+          {
+            "target": "print",
+            "values": ["화이트"],
+            "polarity": "positive",
+            "evidence": "화이트 로고"
+          },
+          {
+            "target": "graphic",
+            "values": ["로고"],
+            "polarity": "positive",
+            "evidence": "로고"
+          },
+          {
+            "target": "placement",
+            "values": ["뒤"],
+            "polarity": "positive",
+            "evidence": "뒤에는"
+          },
+          {
+            "target": "print",
+            "values": ["오렌지"],
+            "polarity": "positive",
+            "evidence": "오렌지 캐릭터"
+          },
+          {
+            "target": "graphic",
+            "values": ["캐릭터"],
+            "polarity": "positive",
+            "evidence": "캐릭터"
+          }
+        ],
+        "external": [],
+        "unresolved": []
+      },
+      "plan": {
+        "productBaseColors": [],
+        "printClauses": [
+          {
+            "baseColors": ["베이지"],
+            "printColors": ["화이트"],
+            "placements": ["소매"],
+            "graphicTypes": ["로고"]
+          },
+          {
+            "baseColors": ["베이지"],
+            "printColors": ["오렌지"],
+            "placements": ["뒤"],
+            "graphicTypes": ["캐릭터"]
+          }
+        ]
+      },
+      "confidence": "high"
+    },
+    {
+      "id": "ev039",
+      "bucket": "negation",
+      "query": "블랙 바탕은 제외하고 화이트 로고 프린팅 있는 티 찾아줘",
+      "interpretation": {
+        "conditions": [
+          {
+            "target": "base",
+            "values": ["블랙"],
+            "polarity": "negative",
+            "evidence": "블랙 바탕은 제외하고"
+          },
+          {
+            "target": "print",
+            "values": ["화이트"],
+            "polarity": "positive",
+            "evidence": "화이트 로고 프린팅"
+          },
+          {
+            "target": "graphic",
+            "values": ["로고"],
+            "polarity": "positive",
+            "evidence": "로고"
+          }
+        ],
+        "external": [],
+        "unresolved": []
+      },
+      "plan": {
+        "productBaseColors": [],
+        "mustNotBaseColors": ["블랙"],
+        "printClauses": [
+          {
+            "baseColors": [],
+            "printColors": ["화이트"],
+            "placements": [],
+            "graphicTypes": ["로고"]
+          }
+        ]
+      },
+      "confidence": "high"
+    },
+    {
+      "id": "ev040",
+      "bucket": "negation",
+      "query": "네이비 옷은 빼고 베이지 반팔 보여줘",
+      "interpretation": {
+        "conditions": [
+          {
+            "target": "base",
+            "values": ["네이비"],
+            "polarity": "negative",
+            "evidence": "네이비 옷은 빼고"
+          },
+          {
+            "target": "base",
+            "values": ["베이지"],
+            "polarity": "positive",
+            "evidence": "베이지 반팔"
+          }
+        ],
+        "external": [],
+        "unresolved": []
+      },
+      "plan": {
+        "productBaseColors": ["베이지"],
+        "mustNotBaseColors": ["네이비"],
+        "printClauses": []
+      },
+      "confidence": "high"
+    },
+    {
+      "id": "ev041",
+      "bucket": "negation",
+      "query": "화이트는 말고 프린팅 들어간 티 추천해줘",
+      "interpretation": {
+        "conditions": [],
+        "external": [],
+        "unresolved": ["화이트는 말고"]
+      },
+      "plan": {
+        "productBaseColors": [],
+        "printClauses": [
+          {
+            "baseColors": [],
+            "printColors": [],
+            "placements": [],
+            "graphicTypes": [],
+            "printExists": true
+          }
+        ]
+      },
+      "confidence": "high"
+    },
+    {
+      "id": "ev042",
+      "bucket": "negation",
+      "query": "로고 없는 차콜 티셔츠 찾아줘",
+      "interpretation": {
+        "conditions": [
+          {
+            "target": "base",
+            "values": ["차콜"],
+            "polarity": "positive",
+            "evidence": "차콜 티셔츠"
+          }
+        ],
+        "external": [],
+        "unresolved": ["로고 없는"]
+      },
+      "plan": {
+        "productBaseColors": ["차콜"],
+        "printClauses": []
+      },
+      "confidence": "high"
+    },
+    {
+      "id": "ev043",
+      "bucket": "external",
+      "query": "파란 청바지랑 입을 아이보리 반팔 찾아줘",
+      "interpretation": {
+        "conditions": [
+          {
+            "target": "base",
+            "values": ["아이보리"],
+            "polarity": "positive",
+            "evidence": "아이보리 반팔"
+          }
+        ],
+        "external": ["파란 청바지"],
+        "unresolved": []
+      },
+      "plan": {
+        "productBaseColors": ["아이보리"],
+        "printClauses": []
+      },
+      "confidence": "high"
+    },
+    {
+      "id": "ev044",
+      "bucket": "external",
+      "query": "화이트 운동화에 맞는 네이비 티 보여줘",
+      "interpretation": {
+        "conditions": [
+          {
+            "target": "base",
+            "values": ["네이비"],
+            "polarity": "positive",
+            "evidence": "네이비 티"
+          }
+        ],
+        "external": ["화이트 운동화"],
+        "unresolved": []
+      },
+      "plan": {
+        "productBaseColors": ["네이비"],
+        "printClauses": []
+      },
+      "confidence": "high"
+    },
+    {
+      "id": "ev045",
+      "bucket": "external",
+      "query": "까무잡잡한 피부에 어울리는 베이지 티 추천해줘",
+      "interpretation": {
+        "conditions": [
+          {
+            "target": "base",
+            "values": ["베이지"],
+            "polarity": "positive",
+            "evidence": "베이지 티"
+          }
+        ],
+        "external": ["까무잡잡한 피부"],
+        "unresolved": []
+      },
+      "plan": {
+        "productBaseColors": ["베이지"],
+        "printClauses": []
+      },
+      "confidence": "high"
+    },
+    {
+      "id": "ev046",
+      "bucket": "external",
+      "query": "빨간 모자랑 코디할 블랙 반팔에 화이트 로고 있는 거",
+      "interpretation": {
+        "conditions": [
+          {
+            "target": "base",
+            "values": ["블랙"],
+            "polarity": "positive",
+            "evidence": "블랙 반팔"
+          },
+          {
+            "target": "print",
+            "values": ["화이트"],
+            "polarity": "positive",
+            "evidence": "화이트 로고"
+          },
+          {
+            "target": "graphic",
+            "values": ["로고"],
+            "polarity": "positive",
+            "evidence": "로고"
+          }
+        ],
+        "external": ["빨간 모자"],
+        "unresolved": []
+      },
+      "plan": {
+        "productBaseColors": [],
+        "printClauses": [
+          {
+            "baseColors": ["블랙"],
+            "printColors": ["화이트"],
+            "placements": [],
+            "graphicTypes": ["로고"]
+          }
+        ]
+      },
+      "confidence": "high"
+    },
+    {
+      "id": "ev047",
+      "bucket": "unresolvedOnly",
+      "query": "먹색 반팔티 찾아줘",
+      "interpretation": {
+        "conditions": [],
+        "external": [],
+        "unresolved": ["먹색"]
+      },
+      "plan": {
+        "productBaseColors": [],
+        "printClauses": []
+      },
+      "confidence": "high"
+    },
+    {
+      "id": "ev048",
+      "bucket": "unresolvedOnly",
+      "query": "시커먼 티에 화이트 로고 들어간 거 찾아줘",
+      "interpretation": {
+        "conditions": [
+          {
+            "target": "print",
+            "values": ["화이트"],
+            "polarity": "positive",
+            "evidence": "화이트 로고"
+          },
+          {
+            "target": "graphic",
+            "values": ["로고"],
+            "polarity": "positive",
+            "evidence": "로고"
+          }
+        ],
+        "external": [],
+        "unresolved": ["시커먼"]
+      },
+      "plan": {
+        "productBaseColors": [],
+        "printClauses": [
+          {
+            "baseColors": [],
+            "printColors": ["화이트"],
+            "placements": [],
+            "graphicTypes": ["로고"]
+          }
+        ]
+      },
+      "confidence": "high"
+    },
+    {
+      "id": "ev049",
+      "bucket": "unresolvedOnly",
+      "query": "파스텔톤 프린팅 들어간 반팔 추천해줘",
+      "interpretation": {
+        "conditions": [],
+        "external": [],
+        "unresolved": ["파스텔톤"]
+      },
+      "plan": {
+        "productBaseColors": [],
+        "printClauses": [
+          {
+            "baseColors": [],
+            "printColors": [],
+            "placements": [],
+            "graphicTypes": [],
+            "printExists": true
+          }
+        ]
+      },
+      "confidence": "high"
+    },
+    {
+      "id": "ev050",
+      "bucket": "unresolvedOnly",
+      "query": "버터색 티에 푸르딩딩한 레터링 있는 거 찾아줘",
+      "interpretation": {
+        "conditions": [
+          {
+            "target": "graphic",
+            "values": ["레터링"],
+            "polarity": "positive",
+            "evidence": "레터링"
+          }
+        ],
+        "external": [],
+        "unresolved": ["버터색", "푸르딩딩한"]
+      },
+      "plan": {
+        "productBaseColors": [],
+        "printClauses": [
+          {
+            "baseColors": [],
+            "printColors": [],
+            "placements": [],
+            "graphicTypes": ["레터링"]
+          }
+        ]
+      },
+      "confidence": "high"
+    }
+  ]
+}
