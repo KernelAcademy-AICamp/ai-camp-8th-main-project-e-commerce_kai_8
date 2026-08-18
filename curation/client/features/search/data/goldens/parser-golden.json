@@ -1,0 +1,2533 @@
+{
+  "meta": {
+    "purpose": "LLM 쿼리 파서(parse-query-intent) 골든셋 250 — 실사용 테스트 20건(2026-08-07 사용자 로그)을 씨앗으로 확장. 쿼리 원문 → 기대 QueryIntent(파서 출력) 검증용.",
+    "createdAt": "2026-08-07",
+    "model": "deepseek-v4-flash 기준(모델 A/B 비교에도 사용)",
+    "conventions": [
+      "expected에 없는 필드는 빈 값([]·null) 기대. wearChars 값은 DB 원문 그대로(파이프 포맷 포함: '약간|두꺼움').",
+      "colors·patterns·materials·fits는 facet 어휘, reviewTags는 REVIEW_TAGS 89종만.",
+      "excludeColors/Patterns/Materials = intent.exclude.* 매핑.",
+      "confidence low/medium 항목은 정책 재량이 있는 것 — 검토자가 기대값을 확정해야 동결 가능."
+    ],
+    "reviewPoints": [
+      "① 부재 표현(프린트 없는)의 exclude 매핑 범위",
+      "② 카탈로그 밖 아이템(니트·셔츠·치마)의 keywords 처리(정직 0건 허용?)",
+      "③ 계열색 확장 범위(어두운색·파스텔 등)",
+      "④ TPO·체형 표현의 태그 매핑 허용선",
+      "⑤ 비키니 케이스 비침 방향(커버 목적=없음 vs 시스루=있음)",
+      "⑥ '무늬 있음' 존재 조건 부재 — 프린트 근사로 갈지",
+      "⑦ 생뚱 표현(장소·행사·주관어)의 근사 매핑 허용선 — 근사 vs 정직한 빈 intent",
+      "⑧ 어휘 밖 유사어의 근사 매핑 vs 정직 빈손 경계(무매핑 버킷) — 색·소재 환각 금지 확인"
+    ],
+    "labeling": {
+      "process": "AI 초안 → 사용자 검토 → 동결",
+      "frozen": true,
+      "freezeNote": "검토 승인 후 frozen: true. 이후 변경은 사유 기록.",
+      "frozenAt": "2026-08-08"
+    },
+    "policies": {
+      "주관어": "직역=facet인 어휘(무지·깔끔·미니멀·심플·베이직·기본·단정→단색)만 매핑, 느낌·무드어(힙한·꾸안꾸·시크·무난·스트릿)는 keyword",
+      "장소→계절": "장소·상황에서 계절 추론 허용(흠뻑쇼·계곡·워터파크·동남아·수영장→여름)",
+      "계열색": "고정 집합 — 파란7값/어두운색(다크그레이·다크네이비·다크브라운)/밝은(화이트·아이보리·라이트그레이·라이트옐로우)/파스텔(라이트핑크·페일핑크·라벤더·민트·스카이블루)/화사한(옐로우·오렌지·핑크·라이트옐로우·민트)/무채색/초록계열",
+      "어휘밖": "구체 명사(소재·기법·넥라인·모티프·스타일명)는 keyword 보존, 순수 형용사는 명사만 추출·나머지 제외. 색·소재 환각 금지"
+    }
+  },
+  "entries": [
+    {
+      "id": "p001",
+      "bucket": "색·제외",
+      "query": "등에 프린트가 없는 와인색 여자 티셔츠",
+      "expected": {
+        "gender": "여성",
+        "colors": ["버건디"],
+        "excludePatterns": ["프린트"]
+      },
+      "note": "와인색→버건디(어휘 실존). '등에' 위치 한정 부재는 파서 계약 밖 — 전역 프린트 제외로 기대(정책 확인 필요)",
+      "confidence": "medium"
+    },
+    {
+      "id": "p002",
+      "bucket": "색·제외",
+      "query": "검정말고 어두운색 티셔츠",
+      "expected": {
+        "excludeColors": ["블랙"],
+        "colors": ["다크 그레이", "다크 네이비", "다크 브라운"]
+      },
+      "note": "'어두운색' 계열 확장 재량 — 단 excludeColors 블랙과 colors 블랙 동시면 모순이라 colors에서 블랙 제외 여부도 검토",
+      "confidence": "low"
+    },
+    {
+      "id": "p003",
+      "bucket": "색·제외",
+      "query": "형광색 빼고 파란 티",
+      "expected": {
+        "colors": ["블루", "스카이 블루", "다크 블루", "데님", "연청", "중청", "진청"]
+      },
+      "note": "'형광색'은 어휘에 없음(라임 정도) — 제외 기대 비움, 파랑 계열 확장",
+      "confidence": "low"
+    },
+    {
+      "id": "p004",
+      "bucket": "색·제외",
+      "query": "베이지색 말고 아이보리 티셔츠",
+      "expected": {
+        "colors": ["아이보리"],
+        "excludeColors": ["베이지"]
+      },
+      "confidence": "high"
+    },
+    {
+      "id": "p005",
+      "bucket": "색·제외",
+      "query": "와인색 반팔",
+      "expected": {
+        "colors": ["버건디"]
+      },
+      "confidence": "high"
+    },
+    {
+      "id": "p006",
+      "bucket": "색·제외",
+      "query": "먹색 티셔츠",
+      "expected": {
+        "colors": ["다크 그레이"]
+      },
+      "note": "먹색→다크 그레이(facet 어휘 기준 — 차콜은 facet에 없음)",
+      "confidence": "medium"
+    },
+    {
+      "id": "p007",
+      "bucket": "색·제외",
+      "query": "파스텔톤 여름 티셔츠",
+      "expected": {
+        "colors": ["라이트 핑크", "라벤더", "민트", "스카이 블루", "페일 핑크"],
+        "wearChars": {
+          "계절": ["여름"]
+        }
+      },
+      "note": "파스텔 계열 확장 범위 재량",
+      "confidence": "low"
+    },
+    {
+      "id": "p008",
+      "bucket": "색·제외",
+      "query": "무지 검정 티셔츠",
+      "expected": {
+        "colors": ["블랙"],
+        "patterns": ["단색"]
+      },
+      "note": "무지→단색 패턴",
+      "confidence": "medium"
+    },
+    {
+      "id": "p009",
+      "bucket": "색·제외",
+      "query": "로고 없는 흰티",
+      "expected": {
+        "colors": ["화이트"],
+        "excludePatterns": ["로고/그래픽"]
+      },
+      "confidence": "high"
+    },
+    {
+      "id": "p010",
+      "bucket": "색·제외",
+      "query": "패턴 없는 네이비 티셔츠",
+      "expected": {
+        "colors": ["네이비"],
+        "patterns": ["단색"]
+      },
+      "note": "'패턴 없음'=단색 vs exclude 나열 — 정책 확인",
+      "confidence": "medium"
+    },
+    {
+      "id": "p011",
+      "bucket": "성별·아이템",
+      "query": "여자 시스루 검은색 여름니트",
+      "expected": {
+        "gender": "여성",
+        "colors": ["블랙"],
+        "wearChars": {
+          "비침": ["있음", "약간 있음"],
+          "계절": ["여름"]
+        },
+        "keywords": ["니트"]
+      },
+      "note": "시스루→비침. '니트'는 반팔티 카탈로그 밖 — keywords로 정직 처리(0건 허용). 정책 확인",
+      "confidence": "medium"
+    },
+    {
+      "id": "p012",
+      "bucket": "성별·아이템",
+      "query": "하와이안 셔츠 xl",
+      "expected": {
+        "sizeStd": [105],
+        "keywords": ["하와이안"]
+      },
+      "note": "'셔츠'는 카탈로그 밖이나 하와이안 프린팅 티는 존재 가능 — 키워드 유지. XL=105",
+      "confidence": "medium"
+    },
+    {
+      "id": "p013",
+      "bucket": "성별·아이템",
+      "query": "남자 오버핏 반팔",
+      "expected": {
+        "gender": "남성",
+        "fits": ["오버"]
+      },
+      "confidence": "high"
+    },
+    {
+      "id": "p014",
+      "bucket": "성별·아이템",
+      "query": "여성용 크롭 티셔츠",
+      "expected": {
+        "gender": "여성",
+        "keywords": ["크롭"]
+      },
+      "confidence": "high"
+    },
+    {
+      "id": "p015",
+      "bucket": "성별·아이템",
+      "query": "커플이 같이 입을 티셔츠",
+      "expected": {
+        "reviewTags": ["커플티"]
+      },
+      "confidence": "high"
+    },
+    {
+      "id": "p016",
+      "bucket": "성별·아이템",
+      "query": "아이랑 같이 입을 가족 티셔츠",
+      "expected": {
+        "reviewTags": ["가족티"]
+      },
+      "confidence": "high"
+    },
+    {
+      "id": "p017",
+      "bucket": "성별·아이템",
+      "query": "남녀공용 무지 티셔츠",
+      "expected": {
+        "gender": "공용",
+        "patterns": ["단색"]
+      },
+      "confidence": "high"
+    },
+    {
+      "id": "p018",
+      "bucket": "성별·아이템",
+      "query": "여자 브이넥 반팔티",
+      "expected": {
+        "gender": "여성",
+        "keywords": ["브이넥"]
+      },
+      "confidence": "high"
+    },
+    {
+      "id": "p019",
+      "bucket": "사이즈",
+      "query": "오버핏 7부 티셔츠",
+      "expected": {
+        "fits": ["오버"],
+        "keywords": ["7부"]
+      },
+      "note": "7부는 소매 기장 — 어휘 없음, 제목 키워드로",
+      "confidence": "medium"
+    },
+    {
+      "id": "p020",
+      "bucket": "사이즈",
+      "query": "95 사이즈 검정 티",
+      "expected": {
+        "sizeStd": [95],
+        "colors": ["블랙"]
+      },
+      "confidence": "high"
+    },
+    {
+      "id": "p021",
+      "bucket": "사이즈",
+      "query": "110 입는 남자인데 넉넉한 티",
+      "expected": {
+        "gender": "남성",
+        "sizeStd": [110, 115],
+        "fits": ["루즈", "오버"],
+        "reviewTags": ["넉넉핏"]
+      },
+      "note": "'넉넉하게'류 인접 큰 값 포함 규칙 + 넉넉→루즈/오버",
+      "confidence": "medium"
+    },
+    {
+      "id": "p022",
+      "bucket": "사이즈",
+      "query": "여자 66 사이즈 티셔츠",
+      "expected": {
+        "gender": "여성",
+        "sizeStd": [95]
+      },
+      "confidence": "high"
+    },
+    {
+      "id": "p023",
+      "bucket": "사이즈",
+      "query": "2XL 반팔 티셔츠",
+      "expected": {
+        "sizeStd": [110]
+      },
+      "confidence": "high"
+    },
+    {
+      "id": "p024",
+      "bucket": "사이즈",
+      "query": "프리사이즈 티셔츠",
+      "expected": {
+        "sizeStd": []
+      },
+      "note": "프리사이즈는 sizeStd 비움(프롬프트 규칙)",
+      "confidence": "high"
+    },
+    {
+      "id": "p025",
+      "bucket": "사이즈",
+      "query": "엑스라지 화이트 티",
+      "expected": {
+        "sizeStd": [105],
+        "colors": ["화이트"]
+      },
+      "note": "한글 표기 XL",
+      "confidence": "medium"
+    },
+    {
+      "id": "p026",
+      "bucket": "사이즈",
+      "query": "44 입는 여자 티셔츠",
+      "expected": {
+        "gender": "여성",
+        "sizeStd": [85]
+      },
+      "confidence": "high"
+    },
+    {
+      "id": "p027",
+      "bucket": "가격",
+      "query": "2만원대 티셔츠",
+      "expected": {
+        "priceMin": 20000,
+        "priceMax": 29999
+      },
+      "note": "결정적 가격 파서가 덮는 값과 일치해야 함",
+      "confidence": "high"
+    },
+    {
+      "id": "p028",
+      "bucket": "가격",
+      "query": "3만원 이하 반팔",
+      "expected": {
+        "priceMax": 30000
+      },
+      "confidence": "high"
+    },
+    {
+      "id": "p029",
+      "bucket": "가격",
+      "query": "만원 이하 무지티",
+      "expected": {
+        "priceMax": 10000,
+        "patterns": ["단색"]
+      },
+      "confidence": "high"
+    },
+    {
+      "id": "p030",
+      "bucket": "가격",
+      "query": "5만원 이상 프리미엄 티셔츠",
+      "expected": {
+        "priceMin": 50000,
+        "keywords": ["프리미엄"]
+      },
+      "confidence": "medium"
+    },
+    {
+      "id": "p031",
+      "bucket": "가격",
+      "query": "1만5천원 이하 티",
+      "expected": {
+        "priceMax": 15000
+      },
+      "confidence": "high"
+    },
+    {
+      "id": "p032",
+      "bucket": "가격",
+      "query": "저렴한 티셔츠",
+      "expected": {
+        "sort": "price_asc"
+      },
+      "note": "'저렴한'=정렬 의도(가격 필터 아님) — 정책 확인",
+      "confidence": "medium"
+    },
+    {
+      "id": "p033",
+      "bucket": "가격",
+      "query": "10만원 안쪽 명품느낌 티셔츠",
+      "expected": {
+        "priceMax": 100000,
+        "keywords": ["명품느낌"]
+      },
+      "note": "'명품느낌' keywords 포함 여부 재량",
+      "confidence": "low"
+    },
+    {
+      "id": "p034",
+      "bucket": "핏",
+      "query": "브이넥 오버핏 티셔츠",
+      "expected": {
+        "fits": ["오버"],
+        "keywords": ["브이넥"]
+      },
+      "confidence": "high"
+    },
+    {
+      "id": "p035",
+      "bucket": "핏",
+      "query": "보트넥 나염 티셔츠",
+      "expected": {
+        "patterns": ["프린트"],
+        "keywords": ["보트넥"]
+      },
+      "note": "나염=프린트 기법→패턴 '프린트'",
+      "confidence": "medium"
+    },
+    {
+      "id": "p036",
+      "bucket": "핏",
+      "query": "슬림핏 검정 반팔",
+      "expected": {
+        "fits": ["슬림"],
+        "colors": ["블랙"]
+      },
+      "confidence": "high"
+    },
+    {
+      "id": "p037",
+      "bucket": "핏",
+      "query": "루즈핏 여름 티셔츠",
+      "expected": {
+        "fits": ["루즈"],
+        "wearChars": {
+          "계절": ["여름"]
+        }
+      },
+      "confidence": "high"
+    },
+    {
+      "id": "p038",
+      "bucket": "핏",
+      "query": "무조건 오버핏으로 그래픽 티",
+      "expected": {
+        "fits": ["오버"],
+        "patterns": ["로고/그래픽", "프린트"],
+        "promote": ["fits"]
+      },
+      "confidence": "medium"
+    },
+    {
+      "id": "p039",
+      "bucket": "핏",
+      "query": "박시한 티셔츠",
+      "expected": {
+        "fits": ["오버", "루즈"],
+        "reviewTags": ["박시핏"]
+      },
+      "note": "박시→오버/루즈 확장 + 리뷰태그",
+      "confidence": "medium"
+    },
+    {
+      "id": "p040",
+      "bucket": "핏",
+      "query": "몸에 붙는 티셔츠",
+      "expected": {
+        "fits": ["슬림"]
+      },
+      "note": "컴프레션 태그 포함 여부 검토",
+      "confidence": "medium"
+    },
+    {
+      "id": "p041",
+      "bucket": "핏",
+      "query": "머슬핏 반팔 티셔츠",
+      "expected": {
+        "fits": ["슬림"],
+        "reviewTags": ["머슬핏"]
+      },
+      "note": "머슬핏 태그 + 슬림 근사",
+      "confidence": "medium"
+    },
+    {
+      "id": "p042",
+      "bucket": "소재·패턴",
+      "query": "동물로고 티셔츠",
+      "expected": {
+        "patterns": ["로고/그래픽"],
+        "keywords": ["동물"]
+      },
+      "confidence": "high"
+    },
+    {
+      "id": "p043",
+      "bucket": "소재·패턴",
+      "query": "순면 100 티셔츠",
+      "expected": {
+        "materials": ["면"]
+      },
+      "confidence": "high"
+    },
+    {
+      "id": "p044",
+      "bucket": "소재·패턴",
+      "query": "폴리 기능성 티셔츠",
+      "expected": {
+        "materials": ["폴리에스테르"],
+        "keywords": ["기능성"]
+      },
+      "note": "기능성→흡습속건 태그 재량",
+      "confidence": "medium"
+    },
+    {
+      "id": "p045",
+      "bucket": "소재·패턴",
+      "query": "스트라이프 반팔티",
+      "expected": {
+        "patterns": ["스트라이프"]
+      },
+      "confidence": "high"
+    },
+    {
+      "id": "p046",
+      "bucket": "소재·패턴",
+      "query": "체크무늬 티셔츠",
+      "expected": {
+        "patterns": ["체크"]
+      },
+      "confidence": "high"
+    },
+    {
+      "id": "p047",
+      "bucket": "소재·패턴",
+      "query": "꽃무늬 여자 티셔츠",
+      "expected": {
+        "gender": "여성",
+        "patterns": ["플라워"]
+      },
+      "confidence": "high"
+    },
+    {
+      "id": "p048",
+      "bucket": "소재·패턴",
+      "query": "타이다이 티셔츠",
+      "expected": {
+        "patterns": ["타이다이"]
+      },
+      "confidence": "high"
+    },
+    {
+      "id": "p049",
+      "bucket": "소재·패턴",
+      "query": "메시 소재 시원한 티",
+      "expected": {
+        "materials": ["메시"],
+        "wearChars": {
+          "계절": ["여름"]
+        },
+        "reviewTags": ["통풍", "냉감"]
+      },
+      "note": "시원한→냉감/통풍 확장 재량",
+      "confidence": "medium"
+    },
+    {
+      "id": "p050",
+      "bucket": "소재·패턴",
+      "query": "울 섞인 티셔츠",
+      "expected": {
+        "materials": ["울"]
+      },
+      "confidence": "high"
+    },
+    {
+      "id": "p051",
+      "bucket": "소재·패턴",
+      "query": "린넨 티셔츠",
+      "expected": {
+        "materials": [],
+        "keywords": ["린넨"]
+      },
+      "note": "린넨은 소재 어휘에 없음 — 키워드 폴백(환각 금지 확인용)",
+      "confidence": "medium"
+    },
+    {
+      "id": "p052",
+      "bucket": "착용감",
+      "query": "바다에서 비키니 위에 입을 얇은 티셔츠",
+      "expected": {
+        "gender": "여성",
+        "wearChars": {
+          "두께": ["얇음", "약간 얇음"]
+        }
+      },
+      "note": "비침 기대 방향 결정 필요: 커버 목적이면 '없음', 시스루면 '있음' — 사용자 로그는 '비침없음(있어야함)'",
+      "confidence": "low"
+    },
+    {
+      "id": "p053",
+      "bucket": "착용감",
+      "query": "부드러운 촉감 티셔츠",
+      "expected": {
+        "wearChars": {
+          "촉감": ["부드러움", "약간|부드러움"]
+        }
+      },
+      "confidence": "high"
+    },
+    {
+      "id": "p054",
+      "bucket": "착용감",
+      "query": "도톰한 티셔츠",
+      "expected": {
+        "wearChars": {
+          "두께": ["약간|두꺼움", "두꺼움"]
+        }
+      },
+      "confidence": "high"
+    },
+    {
+      "id": "p055",
+      "bucket": "착용감",
+      "query": "비침 없는 흰 티셔츠",
+      "expected": {
+        "colors": ["화이트"],
+        "wearChars": {
+          "비침": ["없음", "거의 없음"]
+        }
+      },
+      "confidence": "high"
+    },
+    {
+      "id": "p056",
+      "bucket": "착용감",
+      "query": "쫀쫀한 티셔츠",
+      "expected": {
+        "wearChars": {
+          "신축성": ["있음", "약간 있음"]
+        },
+        "reviewTags": ["신축성좋음"]
+      },
+      "confidence": "high"
+    },
+    {
+      "id": "p057",
+      "bucket": "착용감",
+      "query": "여름에 입기 좋은 티",
+      "expected": {
+        "wearChars": {
+          "계절": ["여름"]
+        }
+      },
+      "confidence": "high"
+    },
+    {
+      "id": "p058",
+      "bucket": "착용감",
+      "query": "까슬하지 않은 티셔츠",
+      "expected": {
+        "wearChars": {
+          "촉감": ["부드러움", "약간|부드러움"]
+        }
+      },
+      "note": "부정형 촉감 — 확장 범위 재량",
+      "confidence": "medium"
+    },
+    {
+      "id": "p059",
+      "bucket": "착용감",
+      "query": "안 비치는 얇은 여름티",
+      "expected": {
+        "wearChars": {
+          "두께": ["얇음", "약간 얇음"],
+          "비침": ["없음", "거의 없음"],
+          "계절": ["여름"]
+        }
+      },
+      "confidence": "high"
+    },
+    {
+      "id": "p060",
+      "bucket": "착용감",
+      "query": "간절기에 입을 도톰한 티",
+      "expected": {
+        "wearChars": {
+          "두께": ["약간|두꺼움", "두꺼움"]
+        },
+        "reviewTags": ["간절기용"]
+      },
+      "confidence": "high"
+    },
+    {
+      "id": "p061",
+      "bucket": "용도",
+      "query": "러닝할 때 입을 시원한 티",
+      "expected": {
+        "reviewTags": ["러닝", "냉감"],
+        "wearChars": {
+          "계절": ["여름"]
+        }
+      },
+      "confidence": "medium"
+    },
+    {
+      "id": "p062",
+      "bucket": "용도",
+      "query": "헬스장에서 입을 운동용 티셔츠",
+      "expected": {
+        "reviewTags": ["운동복"]
+      },
+      "confidence": "high"
+    },
+    {
+      "id": "p063",
+      "bucket": "용도",
+      "query": "등산 갈 때 입을 티",
+      "expected": {
+        "reviewTags": ["등산·산책"]
+      },
+      "confidence": "high"
+    },
+    {
+      "id": "p064",
+      "bucket": "용도",
+      "query": "골프 칠 때 입는 반팔",
+      "expected": {
+        "reviewTags": ["골프"]
+      },
+      "confidence": "high"
+    },
+    {
+      "id": "p065",
+      "bucket": "용도",
+      "query": "필라테스 갈 때 입을 티",
+      "expected": {
+        "reviewTags": ["필라테스"]
+      },
+      "confidence": "high"
+    },
+    {
+      "id": "p066",
+      "bucket": "용도",
+      "query": "잠옷으로 입을 편한 티셔츠",
+      "expected": {
+        "reviewTags": ["홈웨어·잠옷"]
+      },
+      "confidence": "high"
+    },
+    {
+      "id": "p067",
+      "bucket": "용도",
+      "query": "여행 갈 때 입을 티셔츠",
+      "expected": {
+        "reviewTags": ["여행·휴가"]
+      },
+      "confidence": "high"
+    },
+    {
+      "id": "p068",
+      "bucket": "용도",
+      "query": "출근할 때 데일리로 입을 티",
+      "expected": {
+        "reviewTags": ["데일리"]
+      },
+      "confidence": "high"
+    },
+    {
+      "id": "p069",
+      "bucket": "용도",
+      "query": "단체티로 맞출 티셔츠",
+      "expected": {
+        "reviewTags": ["단체티·유니폼"]
+      },
+      "confidence": "high"
+    },
+    {
+      "id": "p070",
+      "bucket": "품질",
+      "query": "보풀안생기는 여름니트",
+      "expected": {
+        "reviewTags": ["보풀안생김"],
+        "wearChars": {
+          "계절": ["여름"]
+        },
+        "keywords": ["니트"]
+      },
+      "note": "니트=카탈로그 밖 키워드(정직 0건 허용)",
+      "confidence": "medium"
+    },
+    {
+      "id": "p071",
+      "bucket": "품질",
+      "query": "목이 안늘어나는 기본 티셔츠",
+      "expected": {
+        "reviewTags": ["목안늘어남"],
+        "patterns": ["단색"]
+      },
+      "note": "'기본'=단색 해석 — 사용자 로그는 '민무늬가 아님' 표기(정책 확인)",
+      "confidence": "medium"
+    },
+    {
+      "id": "p072",
+      "bucket": "품질",
+      "query": "묻어도 세탁이 잘되는 소재의 흰티셔츠",
+      "expected": {
+        "colors": ["화이트"],
+        "reviewTags": ["이염없음"]
+      },
+      "note": "'세탁 잘됨' 매핑 대상 검토(이염없음 vs 세탁후변형없음)",
+      "confidence": "low"
+    },
+    {
+      "id": "p073",
+      "bucket": "품질",
+      "query": "프린팅 안 벗겨지는 티셔츠",
+      "expected": {
+        "reviewTags": ["프린팅튼튼"]
+      },
+      "confidence": "medium"
+    },
+    {
+      "id": "p074",
+      "bucket": "품질",
+      "query": "세탁해도 안 줄어드는 티",
+      "expected": {
+        "reviewTags": ["세탁후변형없음"]
+      },
+      "confidence": "high"
+    },
+    {
+      "id": "p075",
+      "bucket": "품질",
+      "query": "물빠짐 없는 진한색 티",
+      "expected": {
+        "reviewTags": ["이염없음"]
+      },
+      "note": "'물빠짐' 태그는 부정 품질이라 제외 — 이염없음으로",
+      "confidence": "low"
+    },
+    {
+      "id": "p076",
+      "bucket": "품질",
+      "query": "건조기 돌려도 되는 티셔츠",
+      "expected": {
+        "reviewTags": ["건조기OK"]
+      },
+      "confidence": "high"
+    },
+    {
+      "id": "p077",
+      "bucket": "TPO",
+      "query": "클럽에 갈때 입을옷 추천해줘 여자야",
+      "expected": {
+        "gender": "여성"
+      },
+      "note": "TPO 어휘 부재 — 성별만. '행사·공연' 매핑 여부 정책 확인(현재 기대: 안 함)",
+      "confidence": "low"
+    },
+    {
+      "id": "p078",
+      "bucket": "TPO",
+      "query": "싸이 흠뻑쇼갈때 입을옷",
+      "expected": {
+        "reviewTags": ["행사·공연"],
+        "wearChars": {
+          "계절": ["여름"]
+        }
+      },
+      "note": "흠뻑쇼=여름 공연 — 행사·공연+여름. 흡습속건 포함 여부 검토",
+      "confidence": "low"
+    },
+    {
+      "id": "p079",
+      "bucket": "TPO",
+      "query": "데이트갈때 입을 여성스러워보이는 티셔츠",
+      "expected": {
+        "keywords": ["여성스러운"]
+      },
+      "note": "'여성스러운' 스타일 재량 — 현재 기대: 성별만(정책 확인)",
+      "confidence": "low"
+    },
+    {
+      "id": "p080",
+      "bucket": "TPO",
+      "query": "회사에 입고갈만한 깔끔한 티셔츠",
+      "expected": {
+        "patterns": ["단색"],
+        "reviewTags": ["데일리"]
+      },
+      "note": "깔끔→단색+데일리 매핑 재량",
+      "confidence": "low"
+    },
+    {
+      "id": "p081",
+      "bucket": "TPO",
+      "query": "집에서 편하게 입을 티",
+      "expected": {
+        "reviewTags": ["홈웨어·잠옷", "데일리"]
+      },
+      "confidence": "medium"
+    },
+    {
+      "id": "p082",
+      "bucket": "체형",
+      "query": "팔뚝살 커버 여름 반팔 티셔츠",
+      "expected": {
+        "wearChars": {
+          "계절": ["여름"]
+        },
+        "reviewTags": ["체형보정"]
+      },
+      "note": "체형 커버→루즈/오버+체형보정 — 매핑 정책 확인",
+      "confidence": "low"
+    },
+    {
+      "id": "p083",
+      "bucket": "체형",
+      "query": "상체통통 여자가 입어도 예쁜 티셔츠",
+      "expected": {
+        "gender": "여성",
+        "reviewTags": ["체형보정"]
+      },
+      "confidence": "low"
+    },
+    {
+      "id": "p084",
+      "bucket": "체형",
+      "query": "웨이브체형한테 어울리는 여자티셔츠",
+      "expected": {
+        "gender": "여성"
+      },
+      "note": "체형 용어 매핑 불가 — 성별만(정직). 향후 어휘 후보",
+      "confidence": "medium"
+    },
+    {
+      "id": "p085",
+      "bucket": "체형",
+      "query": "키작녀 비율 좋아보이는 티셔츠",
+      "expected": {
+        "gender": "여성",
+        "reviewTags": ["체형보정"]
+      },
+      "note": "키작녀→크롭 추론 재량 — 환각 금지와 충돌 여부 검토",
+      "confidence": "low"
+    },
+    {
+      "id": "p086",
+      "bucket": "체형",
+      "query": "뱃살 가려주는 넉넉한 티",
+      "expected": {
+        "fits": ["루즈", "오버"],
+        "reviewTags": ["체형보정", "넉넉핏"]
+      },
+      "confidence": "low"
+    },
+    {
+      "id": "p087",
+      "bucket": "외부맥락",
+      "query": "흰 롱치마랑 입으면 잘어울리는 여자 티셔츠 무늬가 있었으면 좋겠어",
+      "expected": {
+        "gender": "여성",
+        "patterns": ["프린트"]
+      },
+      "note": "치마 색(화이트)을 옷 색에 넣으면 안 됨. '무늬 있음'→프린트 근사(존재 조건 부재 — 정책 확인)",
+      "confidence": "low"
+    },
+    {
+      "id": "p088",
+      "bucket": "외부맥락",
+      "query": "청바지에 받쳐입을 무난한 티",
+      "expected": {
+        "keywords": ["무난한"]
+      },
+      "note": "바지 색 없음 — 무난→단색 재량",
+      "confidence": "medium"
+    },
+    {
+      "id": "p089",
+      "bucket": "외부맥락",
+      "query": "노란 신발에 어울리는 검정 티",
+      "expected": {
+        "colors": ["블랙"]
+      },
+      "note": "옐로우는 신발 색 — colors 금지",
+      "confidence": "high"
+    },
+    {
+      "id": "p090",
+      "bucket": "외부맥락",
+      "query": "까무잡잡한 피부에 어울리는 밝은 티",
+      "expected": {
+        "colors": ["화이트", "아이보리", "라이트 그레이", "라이트 옐로우"]
+      },
+      "note": "피부색 브라운 금지. '밝은' 계열 확장 재량",
+      "confidence": "low"
+    },
+    {
+      "id": "p091",
+      "bucket": "유행",
+      "query": "요즘 유행하는옷",
+      "expected": {},
+      "note": "파서는 스타일을 넣지 않아야 함(환각 금지) — 무채색 선호는 서버 승격 규칙 담당",
+      "confidence": "medium"
+    },
+    {
+      "id": "p092",
+      "bucket": "유행",
+      "query": "인스타에서 많이 보이는 티셔츠",
+      "expected": {},
+      "note": "근거 없는 스타일 나열 금지 — 빈 intent 기대",
+      "confidence": "medium"
+    },
+    {
+      "id": "p093",
+      "bucket": "유행",
+      "query": "힙한 스트릿 티셔츠",
+      "expected": {
+        "keywords": ["힙한", "스트릿"]
+      },
+      "note": "힙한→그래픽 재량",
+      "confidence": "low"
+    },
+    {
+      "id": "p094",
+      "bucket": "복합",
+      "query": "남자 95 여름에 입을 시원한 오버핏 그래픽 티 3만원 이하",
+      "expected": {
+        "gender": "남성",
+        "sizeStd": [95],
+        "priceMax": 30000,
+        "fits": ["오버"],
+        "patterns": ["로고/그래픽", "프린트"],
+        "wearChars": {
+          "계절": ["여름"]
+        }
+      },
+      "confidence": "medium"
+    },
+    {
+      "id": "p095",
+      "bucket": "복합",
+      "query": "여자친구랑 맞출 커플티인데 흰색이고 등에 귀여운 캐릭터 있는 걸로",
+      "expected": {
+        "colors": ["화이트"],
+        "patterns": ["로고/그래픽"],
+        "reviewTags": ["커플티", "디자인귀여움"],
+        "keywords": ["캐릭터"]
+      },
+      "note": "'등에' 위치는 파서 계약 밖(컬러웨이 레인 담당) — 위치 무시 확인",
+      "confidence": "medium"
+    },
+    {
+      "id": "p096",
+      "bucket": "복합",
+      "query": "면 말고 폴리로 된 운동할 때 입는 반팔",
+      "expected": {
+        "materials": ["폴리에스테르"],
+        "excludeMaterials": ["면"],
+        "reviewTags": ["운동복"]
+      },
+      "confidence": "medium"
+    },
+    {
+      "id": "p097",
+      "bucket": "복합",
+      "query": "54사이즈 아니고 66입는 여자 데일리 무지티",
+      "expected": {
+        "gender": "여성",
+        "sizeStd": [95],
+        "patterns": ["단색"],
+        "reviewTags": ["데일리"]
+      },
+      "note": "'54'는 사전 밖 — 무시하고 66=95만",
+      "confidence": "medium"
+    },
+    {
+      "id": "p098",
+      "bucket": "복합",
+      "query": "엄청 얇고 안 비치는 화이트 무지 티셔츠 두 장 살 거야",
+      "expected": {
+        "colors": ["화이트"],
+        "patterns": ["단색"],
+        "wearChars": {
+          "두께": ["얇음", "약간 얇음"],
+          "비침": ["없음", "거의 없음"]
+        }
+      },
+      "note": "'두 장'은 수량 — 무시 확인",
+      "confidence": "medium"
+    },
+    {
+      "id": "p099",
+      "bucket": "복합",
+      "query": "캠핑 가서 입을 카키색 튼튼한 티",
+      "expected": {
+        "colors": ["카키"],
+        "reviewTags": ["재질좋음", "탄탄함"]
+      },
+      "note": "캠핑 태그 없음 — 등산·산책 포함 여부 검토",
+      "confidence": "low"
+    },
+    {
+      "id": "p100",
+      "bucket": "복합",
+      "query": "5만원 아래로 소개팅 때 입을 깔끔 베이직 반팔",
+      "expected": {
+        "priceMax": 50000,
+        "patterns": ["단색"],
+        "reviewTags": ["데일리"]
+      },
+      "confidence": "low"
+    },
+    {
+      "id": "p101",
+      "bucket": "장소·피서",
+      "query": "피서지에서 입을 티셔츠",
+      "expected": {
+        "reviewTags": ["여행·휴가"],
+        "wearChars": {
+          "계절": ["여름"]
+        }
+      },
+      "confidence": "medium"
+    },
+    {
+      "id": "p102",
+      "bucket": "장소·피서",
+      "query": "휴가지 감성 티셔츠",
+      "expected": {
+        "reviewTags": ["여행·휴가"]
+      },
+      "confidence": "medium"
+    },
+    {
+      "id": "p103",
+      "bucket": "장소·피서",
+      "query": "바닷가에서 입을 시원한 티",
+      "expected": {
+        "reviewTags": ["여행·휴가", "냉감"],
+        "wearChars": {
+          "계절": ["여름"]
+        }
+      },
+      "confidence": "medium"
+    },
+    {
+      "id": "p104",
+      "bucket": "장소·피서",
+      "query": "계곡 갈 때 입을 티셔츠",
+      "expected": {
+        "reviewTags": ["여행·휴가"],
+        "wearChars": {
+          "계절": ["여름"]
+        }
+      },
+      "note": "계곡→물놀이 맥락 — 흡습속건 포함 여부 검토",
+      "confidence": "low"
+    },
+    {
+      "id": "p105",
+      "bucket": "장소·피서",
+      "query": "워터파크에서 입을 래시가드 대신 티",
+      "expected": {
+        "reviewTags": ["여행·휴가"],
+        "wearChars": {
+          "계절": ["여름"]
+        }
+      },
+      "note": "'래시가드'는 카탈로그 밖 — 무시 확인",
+      "confidence": "low"
+    },
+    {
+      "id": "p106",
+      "bucket": "장소·피서",
+      "query": "한강 피크닉 갈 때 입을 티",
+      "expected": {
+        "reviewTags": ["등산·산책", "데일리"]
+      },
+      "note": "피크닉 태그 없음 — 산책/데일리 근사 재량",
+      "confidence": "low"
+    },
+    {
+      "id": "p107",
+      "bucket": "장소·피서",
+      "query": "제주도 여행 때 입을 화사한 티셔츠",
+      "expected": {
+        "reviewTags": ["여행·휴가"],
+        "colors": ["옐로우", "오렌지", "핑크", "라이트 옐로우", "민트"]
+      },
+      "note": "'화사한' 계열 확장 재량",
+      "confidence": "low"
+    },
+    {
+      "id": "p108",
+      "bucket": "장소·피서",
+      "query": "동남아 여행용 얇은 티",
+      "expected": {
+        "reviewTags": ["여행·휴가"],
+        "wearChars": {
+          "두께": ["얇음", "약간 얇음"],
+          "계절": ["여름"]
+        }
+      },
+      "confidence": "medium"
+    },
+    {
+      "id": "p109",
+      "bucket": "장소·피서",
+      "query": "캠핑장에서 불멍할 때 입을 티",
+      "expected": {
+        "reviewTags": ["등산·산책"]
+      },
+      "note": "캠핑·불멍 어휘 없음 — 등산·산책 근사 vs 빈 intent 검토",
+      "confidence": "low"
+    },
+    {
+      "id": "p110",
+      "bucket": "장소·피서",
+      "query": "수영장 파티에 입고 갈 티셔츠",
+      "expected": {
+        "reviewTags": ["여행·휴가", "행사·공연"],
+        "wearChars": {
+          "계절": ["여름"]
+        }
+      },
+      "confidence": "low"
+    },
+    {
+      "id": "p111",
+      "bucket": "행사TPO",
+      "query": "하객룩으로 입을만한 티셔츠",
+      "expected": {
+        "patterns": ["단색"]
+      },
+      "note": "하객룩 어휘 없음 — 단색 근사 vs 빈 intent 정책 확인",
+      "confidence": "low"
+    },
+    {
+      "id": "p112",
+      "bucket": "행사TPO",
+      "query": "장례식장에 입고 갈 검정 티",
+      "expected": {
+        "colors": ["블랙"],
+        "patterns": ["단색"]
+      },
+      "confidence": "medium"
+    },
+    {
+      "id": "p113",
+      "bucket": "행사TPO",
+      "query": "면접 때 셔츠 안에 받쳐 입을 무지 티",
+      "expected": {
+        "patterns": ["단색"],
+        "reviewTags": ["이너·레이어드"]
+      },
+      "confidence": "medium"
+    },
+    {
+      "id": "p114",
+      "bucket": "행사TPO",
+      "query": "입학식에 입을 깔끔한 티셔츠",
+      "expected": {
+        "patterns": ["단색"]
+      },
+      "note": "깔끔→단색 재량(회사 케이스와 동일 정책)",
+      "confidence": "low"
+    },
+    {
+      "id": "p115",
+      "bucket": "행사TPO",
+      "query": "졸업사진 찍을 때 입을 티",
+      "expected": {},
+      "note": "행사 어휘 매핑 불가 — 빈 intent 기대(정직)",
+      "confidence": "medium"
+    },
+    {
+      "id": "p116",
+      "bucket": "행사TPO",
+      "query": "돌잔치 갈 때 입을 단정한 티셔츠",
+      "expected": {
+        "patterns": ["단색"]
+      },
+      "confidence": "low"
+    },
+    {
+      "id": "p117",
+      "bucket": "행사TPO",
+      "query": "콘서트 갈 때 입을 티셔츠",
+      "expected": {
+        "reviewTags": ["행사·공연"]
+      },
+      "confidence": "high"
+    },
+    {
+      "id": "p118",
+      "bucket": "행사TPO",
+      "query": "야구장 직관 갈 때 입을 티",
+      "expected": {
+        "reviewTags": ["행사·공연"]
+      },
+      "note": "스포츠 직관 — 행사·공연 vs 빈 intent 검토",
+      "confidence": "low"
+    },
+    {
+      "id": "p119",
+      "bucket": "행사TPO",
+      "query": "동창회에 입고 갈 티셔츠",
+      "expected": {},
+      "note": "빈 intent 기대 — 환각 금지 확인용",
+      "confidence": "medium"
+    },
+    {
+      "id": "p120",
+      "bucket": "행사TPO",
+      "query": "마라톤 대회 나갈 때 입을 티",
+      "expected": {
+        "reviewTags": ["러닝", "흡습속건"]
+      },
+      "confidence": "medium"
+    },
+    {
+      "id": "p121",
+      "bucket": "주관·감성",
+      "query": "예쁜 티셔츠",
+      "expected": {},
+      "note": "주관어 단독 — 빈 intent 기대(스톱워드). 신호 없음이 정답",
+      "confidence": "medium"
+    },
+    {
+      "id": "p122",
+      "bucket": "주관·감성",
+      "query": "귀여운 티셔츠",
+      "expected": {
+        "reviewTags": ["디자인귀여움"]
+      },
+      "confidence": "medium"
+    },
+    {
+      "id": "p123",
+      "bucket": "주관·감성",
+      "query": "힙한 티셔츠",
+      "expected": {
+        "keywords": ["힙한"]
+      },
+      "note": "힙한→그래픽 재량 vs 빈 intent",
+      "confidence": "low"
+    },
+    {
+      "id": "p124",
+      "bucket": "주관·감성",
+      "query": "꾸안꾸 느낌 티셔츠",
+      "expected": {
+        "keywords": ["꾸안꾸"]
+      },
+      "note": "꾸안꾸→단색/데일리 재량",
+      "confidence": "low"
+    },
+    {
+      "id": "p125",
+      "bucket": "주관·감성",
+      "query": "미니멀한 티셔츠",
+      "expected": {
+        "patterns": ["단색"]
+      },
+      "confidence": "medium"
+    },
+    {
+      "id": "p126",
+      "bucket": "주관·감성",
+      "query": "빈티지 감성 티셔츠",
+      "expected": {
+        "keywords": ["빈티지"]
+      },
+      "note": "빈티지는 제목 흔한 특징어 — keywords 허용 검토",
+      "confidence": "medium"
+    },
+    {
+      "id": "p127",
+      "bucket": "주관·감성",
+      "query": "Y2K 스타일 티셔츠",
+      "expected": {
+        "keywords": ["Y2K"]
+      },
+      "confidence": "low"
+    },
+    {
+      "id": "p128",
+      "bucket": "주관·감성",
+      "query": "시크한 무드의 티",
+      "expected": {
+        "keywords": ["시크"]
+      },
+      "note": "시크→어두운 무채색 재량 vs 빈 intent",
+      "confidence": "low"
+    },
+    {
+      "id": "p129",
+      "bucket": "주관·감성",
+      "query": "청순한 느낌 흰티",
+      "expected": {
+        "colors": ["화이트"]
+      },
+      "note": "'청순한'은 무시, 흰티만",
+      "confidence": "medium"
+    },
+    {
+      "id": "p130",
+      "bucket": "주관·감성",
+      "query": "분위기 있는 티셔츠 추천",
+      "expected": {},
+      "note": "빈 intent 기대",
+      "confidence": "medium"
+    },
+    {
+      "id": "p131",
+      "bucket": "외부색",
+      "query": "노란 신발에 잘어울리는 티셔츠",
+      "expected": {},
+      "note": "옐로우는 신발 색 — colors 비움(외부 맥락 차단 핵심 케이스)",
+      "confidence": "high"
+    },
+    {
+      "id": "p132",
+      "bucket": "외부색",
+      "query": "빨간 모자랑 맞춰 입을 티",
+      "expected": {},
+      "note": "레드 유입 금지",
+      "confidence": "high"
+    },
+    {
+      "id": "p133",
+      "bucket": "외부색",
+      "query": "초록 가방에 어울리는 티셔츠",
+      "expected": {},
+      "note": "그린 유입 금지",
+      "confidence": "high"
+    },
+    {
+      "id": "p134",
+      "bucket": "외부색",
+      "query": "파란 청바지에 입을 흰 티셔츠",
+      "expected": {
+        "colors": ["화이트"]
+      },
+      "note": "블루는 바지 색 — 화이트만",
+      "confidence": "high"
+    },
+    {
+      "id": "p135",
+      "bucket": "외부색",
+      "query": "검정 슬랙스에 받쳐입을 티",
+      "expected": {
+        "reviewTags": []
+      },
+      "note": "블랙 유입 금지. 받쳐입다=코디(레이어드 아님) — 태그 비움 검토",
+      "confidence": "medium"
+    },
+    {
+      "id": "p136",
+      "bucket": "외부색",
+      "query": "베이지 치노팬츠랑 입을 티셔츠",
+      "expected": {},
+      "note": "베이지 유입 금지",
+      "confidence": "high"
+    },
+    {
+      "id": "p137",
+      "bucket": "외부색",
+      "query": "흰 운동화에 어울리는 티",
+      "expected": {},
+      "note": "화이트 유입 금지",
+      "confidence": "high"
+    },
+    {
+      "id": "p138",
+      "bucket": "외부색",
+      "query": "보라색 머리에 어울리는 티셔츠",
+      "expected": {},
+      "note": "퍼플 유입 금지(머리색)",
+      "confidence": "high"
+    },
+    {
+      "id": "p139",
+      "bucket": "외부색",
+      "query": "금목걸이랑 잘 어울리는 티",
+      "expected": {},
+      "note": "골드 유입 금지",
+      "confidence": "high"
+    },
+    {
+      "id": "p140",
+      "bucket": "외부색",
+      "query": "은테 안경 쓰는 사람한테 어울리는 티셔츠",
+      "expected": {},
+      "note": "실버 유입 금지",
+      "confidence": "high"
+    },
+    {
+      "id": "p141",
+      "bucket": "레이어링",
+      "query": "검은 외투 안에 입을 티셔츠",
+      "expected": {
+        "reviewTags": ["이너·레이어드"]
+      },
+      "note": "블랙은 외투 색 — colors 유입 금지 + 이너 태그",
+      "confidence": "medium"
+    },
+    {
+      "id": "p142",
+      "bucket": "레이어링",
+      "query": "셔츠 안에 받쳐입을 무지 티",
+      "expected": {
+        "patterns": ["단색"],
+        "reviewTags": ["이너·레이어드"]
+      },
+      "confidence": "medium"
+    },
+    {
+      "id": "p143",
+      "bucket": "레이어링",
+      "query": "가디건 속에 입을 얇은 티",
+      "expected": {
+        "reviewTags": ["이너·레이어드"],
+        "wearChars": {
+          "두께": ["얇음", "약간 얇음"]
+        }
+      },
+      "confidence": "medium"
+    },
+    {
+      "id": "p144",
+      "bucket": "레이어링",
+      "query": "겨울에 니트 안에 입을 이너 티셔츠",
+      "expected": {
+        "reviewTags": ["이너·레이어드", "겨울이너"]
+      },
+      "confidence": "medium"
+    },
+    {
+      "id": "p145",
+      "bucket": "레이어링",
+      "query": "자켓 안에 입을 깔끔한 화이트 티",
+      "expected": {
+        "colors": ["화이트"],
+        "patterns": ["단색"],
+        "reviewTags": ["이너·레이어드"]
+      },
+      "confidence": "medium"
+    },
+    {
+      "id": "p146",
+      "bucket": "레이어링",
+      "query": "후드 안에 겹쳐 입을 롱슬리브 말고 반팔",
+      "expected": {
+        "reviewTags": ["이너·레이어드"]
+      },
+      "note": "'롱슬리브 말고'는 카테고리 배제 — 파서 계약 밖, 무시 확인",
+      "confidence": "low"
+    },
+    {
+      "id": "p147",
+      "bucket": "무의미",
+      "query": "배고프다",
+      "expected": {},
+      "note": "완전 무관 발화 — 빈 intent(failed 허용)",
+      "confidence": "high"
+    },
+    {
+      "id": "p148",
+      "bucket": "무의미",
+      "query": "안녕하세요",
+      "expected": {},
+      "note": "인사 — 빈 intent",
+      "confidence": "high"
+    },
+    {
+      "id": "p149",
+      "bucket": "무의미",
+      "query": "티셔츠",
+      "expected": {},
+      "note": "카테고리 단독 — 빈 intent(전 상품 노출 금지 계약 확인)",
+      "confidence": "medium"
+    },
+    {
+      "id": "p150",
+      "bucket": "무의미",
+      "query": "ㅁㄴㅇㄹ 티셔츠",
+      "expected": {},
+      "note": "자판 난타+카테고리 — 빈 intent, 난타 문자열이 keywords로 새지 않는지",
+      "confidence": "medium"
+    },
+    {
+      "id": "p151",
+      "bucket": "색-유사어",
+      "query": "곤색 티셔츠",
+      "expected": {
+        "colors": ["네이비", "다크 네이비"]
+      },
+      "note": "곤색=감색(진남색)",
+      "confidence": "medium"
+    },
+    {
+      "id": "p152",
+      "bucket": "색-유사어",
+      "query": "남색 반팔",
+      "expected": {
+        "colors": ["네이비"]
+      },
+      "confidence": "high"
+    },
+    {
+      "id": "p153",
+      "bucket": "색-유사어",
+      "query": "하늘색 티셔츠",
+      "expected": {
+        "colors": ["스카이 블루"]
+      },
+      "confidence": "high"
+    },
+    {
+      "id": "p154",
+      "bucket": "색-유사어",
+      "query": "소라색 티",
+      "expected": {
+        "colors": ["스카이 블루"]
+      },
+      "confidence": "medium"
+    },
+    {
+      "id": "p155",
+      "bucket": "색-유사어",
+      "query": "살구색 티셔츠",
+      "expected": {
+        "colors": ["피치"]
+      },
+      "confidence": "medium"
+    },
+    {
+      "id": "p156",
+      "bucket": "색-유사어",
+      "query": "겨자색 반팔티",
+      "expected": {
+        "colors": ["머스타드"]
+      },
+      "confidence": "high"
+    },
+    {
+      "id": "p157",
+      "bucket": "색-유사어",
+      "query": "개나리색 티셔츠",
+      "expected": {
+        "colors": ["옐로우", "라이트 옐로우"]
+      },
+      "confidence": "medium"
+    },
+    {
+      "id": "p158",
+      "bucket": "색-유사어",
+      "query": "연두색 티",
+      "expected": {
+        "colors": ["라임", "라이트 그린"]
+      },
+      "confidence": "medium"
+    },
+    {
+      "id": "p159",
+      "bucket": "색-유사어",
+      "query": "초록 티셔츠",
+      "expected": {
+        "colors": ["그린", "라이트 그린", "다크 그린", "올리브 그린"]
+      },
+      "note": "계열 확장(올리브 그린·다크 그린) 포함 여부 재량",
+      "confidence": "medium"
+    },
+    {
+      "id": "p160",
+      "bucket": "색-유사어",
+      "query": "자주색 티셔츠",
+      "expected": {
+        "colors": ["버건디", "퍼플"]
+      },
+      "note": "자주=적자색 — 버건디/퍼플 경계",
+      "confidence": "low"
+    },
+    {
+      "id": "p161",
+      "bucket": "색-유사어",
+      "query": "보라 티",
+      "expected": {
+        "colors": ["퍼플"]
+      },
+      "confidence": "high"
+    },
+    {
+      "id": "p162",
+      "bucket": "색-유사어",
+      "query": "쥐색 티셔츠",
+      "expected": {
+        "colors": ["그레이", "다크 그레이"]
+      },
+      "confidence": "medium"
+    },
+    {
+      "id": "p163",
+      "bucket": "색-유사어",
+      "query": "잿빛 반팔",
+      "expected": {
+        "colors": ["그레이"]
+      },
+      "confidence": "medium"
+    },
+    {
+      "id": "p164",
+      "bucket": "색-유사어",
+      "query": "국방색 티셔츠",
+      "expected": {
+        "colors": ["카키", "올리브 그린"]
+      },
+      "confidence": "medium"
+    },
+    {
+      "id": "p165",
+      "bucket": "색-유사어",
+      "query": "올리브색 티",
+      "expected": {
+        "colors": ["올리브 그린"]
+      },
+      "confidence": "high"
+    },
+    {
+      "id": "p166",
+      "bucket": "색-유사어",
+      "query": "밤색 티셔츠",
+      "expected": {
+        "colors": ["브라운", "다크 브라운"]
+      },
+      "confidence": "medium"
+    },
+    {
+      "id": "p167",
+      "bucket": "색-유사어",
+      "query": "커피색 반팔",
+      "expected": {
+        "colors": ["브라운"]
+      },
+      "confidence": "medium"
+    },
+    {
+      "id": "p168",
+      "bucket": "색-유사어",
+      "query": "초코색 티셔츠",
+      "expected": {
+        "colors": ["다크 브라운"]
+      },
+      "confidence": "medium"
+    },
+    {
+      "id": "p169",
+      "bucket": "색-유사어",
+      "query": "벽돌색 티",
+      "expected": {
+        "colors": ["브릭"]
+      },
+      "confidence": "high"
+    },
+    {
+      "id": "p170",
+      "bucket": "색-유사어",
+      "query": "체리색 티셔츠",
+      "expected": {
+        "colors": ["레드", "딥레드"]
+      },
+      "confidence": "medium"
+    },
+    {
+      "id": "p171",
+      "bucket": "색-유사어",
+      "query": "다홍색 티",
+      "expected": {
+        "colors": ["레드", "오렌지"]
+      },
+      "note": "다홍=주황빛 빨강 — 경계색",
+      "confidence": "low"
+    },
+    {
+      "id": "p172",
+      "bucket": "색-유사어",
+      "query": "귤색 반팔",
+      "expected": {
+        "colors": ["오렌지"]
+      },
+      "confidence": "medium"
+    },
+    {
+      "id": "p173",
+      "bucket": "색-유사어",
+      "query": "상아색 티셔츠",
+      "expected": {
+        "colors": ["아이보리"]
+      },
+      "confidence": "high"
+    },
+    {
+      "id": "p174",
+      "bucket": "색-유사어",
+      "query": "우유색 티",
+      "expected": {
+        "colors": ["화이트", "아이보리"]
+      },
+      "confidence": "medium"
+    },
+    {
+      "id": "p175",
+      "bucket": "색-유사어",
+      "query": "진남색 티셔츠",
+      "expected": {
+        "colors": ["다크 네이비"]
+      },
+      "confidence": "medium"
+    },
+    {
+      "id": "p176",
+      "bucket": "색-외래어",
+      "query": "크림색 티셔츠",
+      "expected": {
+        "colors": ["아이보리"]
+      },
+      "confidence": "medium"
+    },
+    {
+      "id": "p177",
+      "bucket": "색-외래어",
+      "query": "오프화이트 티",
+      "expected": {
+        "colors": ["아이보리", "화이트"]
+      },
+      "confidence": "medium"
+    },
+    {
+      "id": "p178",
+      "bucket": "색-외래어",
+      "query": "에크루 컬러 티셔츠",
+      "expected": {
+        "colors": ["오트밀", "아이보리"]
+      },
+      "confidence": "low"
+    },
+    {
+      "id": "p179",
+      "bucket": "색-외래어",
+      "query": "코랄색 반팔",
+      "expected": {
+        "colors": ["피치", "핑크"]
+      },
+      "note": "코랄≈피치 — 오렌지 포함 여부 재량",
+      "confidence": "low"
+    },
+    {
+      "id": "p180",
+      "bucket": "색-외래어",
+      "query": "베이비핑크 티셔츠",
+      "expected": {
+        "colors": ["라이트 핑크", "페일 핑크"]
+      },
+      "confidence": "medium"
+    },
+    {
+      "id": "p181",
+      "bucket": "색-외래어",
+      "query": "진분홍 티",
+      "expected": {
+        "colors": ["다크핑크"]
+      },
+      "confidence": "medium"
+    },
+    {
+      "id": "p182",
+      "bucket": "색-외래어",
+      "query": "마젠타 티셔츠",
+      "expected": {
+        "colors": ["다크핑크", "핑크"]
+      },
+      "confidence": "low"
+    },
+    {
+      "id": "p183",
+      "bucket": "색-외래어",
+      "query": "청보라색 티",
+      "expected": {
+        "colors": ["퍼플"]
+      },
+      "note": "페리윙클 계열 — 라벤더 포함 여부 재량",
+      "confidence": "low"
+    },
+    {
+      "id": "p184",
+      "bucket": "색-외래어",
+      "query": "연보라 티셔츠",
+      "expected": {
+        "colors": ["라벤더"]
+      },
+      "confidence": "medium"
+    },
+    {
+      "id": "p185",
+      "bucket": "색-외래어",
+      "query": "터콰이즈 티",
+      "expected": {
+        "colors": ["민트", "스카이 블루"]
+      },
+      "confidence": "low"
+    },
+    {
+      "id": "p186",
+      "bucket": "색-외래어",
+      "query": "네온 그린 티셔츠",
+      "expected": {
+        "colors": ["라임"]
+      },
+      "note": "형광 계열은 라임이 유일한 근사",
+      "confidence": "medium"
+    },
+    {
+      "id": "p187",
+      "bucket": "색-외래어",
+      "query": "모카색 티",
+      "expected": {
+        "colors": ["브라운", "라이트 브라운"]
+      },
+      "confidence": "medium"
+    },
+    {
+      "id": "p188",
+      "bucket": "색-외래어",
+      "query": "샴페인골드 티셔츠",
+      "expected": {
+        "colors": ["골드", "베이지"]
+      },
+      "confidence": "low"
+    },
+    {
+      "id": "p189",
+      "bucket": "색-외래어",
+      "query": "건메탈 색 티",
+      "expected": {
+        "colors": ["다크 그레이", "실버"]
+      },
+      "confidence": "low"
+    },
+    {
+      "id": "p190",
+      "bucket": "색-외래어",
+      "query": "무채색 티셔츠",
+      "expected": {
+        "colors": ["블랙", "화이트", "그레이", "라이트 그레이", "다크 그레이"]
+      },
+      "note": "무채색=계열 전체 — 확장 범위 재량",
+      "confidence": "medium"
+    },
+    {
+      "id": "p191",
+      "bucket": "패턴-유사어",
+      "query": "줄무늬 티셔츠",
+      "expected": {
+        "patterns": ["스트라이프"]
+      },
+      "confidence": "high"
+    },
+    {
+      "id": "p192",
+      "bucket": "패턴-유사어",
+      "query": "땡땡이 티",
+      "expected": {
+        "patterns": ["도트"]
+      },
+      "confidence": "high"
+    },
+    {
+      "id": "p193",
+      "bucket": "패턴-유사어",
+      "query": "물방울무늬 티셔츠",
+      "expected": {
+        "patterns": ["도트"]
+      },
+      "confidence": "high"
+    },
+    {
+      "id": "p194",
+      "bucket": "패턴-유사어",
+      "query": "격자무늬 반팔",
+      "expected": {
+        "patterns": ["체크"]
+      },
+      "confidence": "high"
+    },
+    {
+      "id": "p195",
+      "bucket": "패턴-유사어",
+      "query": "깅엄체크 티셔츠",
+      "expected": {
+        "patterns": ["체크"]
+      },
+      "confidence": "high"
+    },
+    {
+      "id": "p196",
+      "bucket": "패턴-유사어",
+      "query": "위장무늬 티",
+      "expected": {
+        "patterns": ["카모플라쥬"]
+      },
+      "confidence": "high"
+    },
+    {
+      "id": "p197",
+      "bucket": "패턴-유사어",
+      "query": "밀리터리 무늬 티셔츠",
+      "expected": {
+        "patterns": ["카모플라쥬"]
+      },
+      "confidence": "medium"
+    },
+    {
+      "id": "p198",
+      "bucket": "패턴-유사어",
+      "query": "옴브레 티셔츠",
+      "expected": {
+        "patterns": ["그라데이션"]
+      },
+      "confidence": "medium"
+    },
+    {
+      "id": "p199",
+      "bucket": "패턴-유사어",
+      "query": "홀치기 염색 티",
+      "expected": {
+        "patterns": ["타이다이"]
+      },
+      "confidence": "medium"
+    },
+    {
+      "id": "p200",
+      "bucket": "패턴-유사어",
+      "query": "민무늬 티셔츠",
+      "expected": {
+        "patterns": ["단색"]
+      },
+      "confidence": "high"
+    },
+    {
+      "id": "p201",
+      "bucket": "패턴-유사어",
+      "query": "솔리드 컬러 티",
+      "expected": {
+        "patterns": ["단색"]
+      },
+      "confidence": "medium"
+    },
+    {
+      "id": "p202",
+      "bucket": "패턴-유사어",
+      "query": "그래픽티 추천",
+      "expected": {
+        "patterns": ["로고/그래픽", "프린트"]
+      },
+      "confidence": "medium"
+    },
+    {
+      "id": "p203",
+      "bucket": "소재-유사어",
+      "query": "코튼 티셔츠",
+      "expected": {
+        "materials": ["면"]
+      },
+      "confidence": "high"
+    },
+    {
+      "id": "p204",
+      "bucket": "소재-유사어",
+      "query": "오가닉 코튼 티",
+      "expected": {
+        "materials": ["면"]
+      },
+      "confidence": "medium"
+    },
+    {
+      "id": "p205",
+      "bucket": "소재-유사어",
+      "query": "레이온 티셔츠",
+      "expected": {
+        "materials": ["비스코스"]
+      },
+      "note": "레이온=비스코스 동의어",
+      "confidence": "medium"
+    },
+    {
+      "id": "p206",
+      "bucket": "소재-유사어",
+      "query": "스판 들어간 티",
+      "expected": {
+        "materials": ["스판덱스"],
+        "wearChars": {
+          "신축성": ["있음", "약간 있음"]
+        }
+      },
+      "confidence": "medium"
+    },
+    {
+      "id": "p207",
+      "bucket": "소재-유사어",
+      "query": "라이크라 소재 티셔츠",
+      "expected": {
+        "materials": ["스판덱스", "엘라스틴"]
+      },
+      "confidence": "low"
+    },
+    {
+      "id": "p208",
+      "bucket": "소재-유사어",
+      "query": "쿨맥스 티셔츠",
+      "expected": {
+        "materials": ["폴리에스테르"],
+        "reviewTags": ["흡습속건"]
+      },
+      "note": "쿨맥스=폴리 기능성 브랜드 원사",
+      "confidence": "low"
+    },
+    {
+      "id": "p209",
+      "bucket": "소재-유사어",
+      "query": "드라이핏 티",
+      "expected": {
+        "reviewTags": ["흡습속건"]
+      },
+      "note": "드라이핏=나이키 기능성 통칭 — 소재 지정 없이 흡습속건만",
+      "confidence": "medium"
+    },
+    {
+      "id": "p210",
+      "bucket": "소재-유사어",
+      "query": "린넨 셔츠 느낌 티",
+      "expected": {
+        "keywords": ["린넨"]
+      },
+      "note": "린넨은 소재 어휘에 없음 — 키워드 폴백",
+      "confidence": "medium"
+    },
+    {
+      "id": "p211",
+      "bucket": "소재-유사어",
+      "query": "마 소재 시원한 티셔츠",
+      "expected": {
+        "reviewTags": ["냉감"]
+      },
+      "note": "마(린넨)도 어휘 없음 — 시원함만",
+      "confidence": "low"
+    },
+    {
+      "id": "p212",
+      "bucket": "소재-유사어",
+      "query": "인견 티셔츠",
+      "expected": {
+        "materials": ["인견"]
+      },
+      "confidence": "high"
+    },
+    {
+      "id": "p213",
+      "bucket": "소재-유사어",
+      "query": "텐셀 소재 부드러운 티",
+      "expected": {
+        "materials": ["텐셀"],
+        "wearChars": {
+          "촉감": ["부드러움", "약간|부드러움"]
+        }
+      },
+      "confidence": "high"
+    },
+    {
+      "id": "p214",
+      "bucket": "소재-유사어",
+      "query": "저지 소재 티셔츠",
+      "expected": {
+        "keywords": ["저지"]
+      },
+      "note": "저지=편직 통칭 — 어휘 없음, 제목 키워드",
+      "confidence": "medium"
+    },
+    {
+      "id": "p215",
+      "bucket": "핏-유사어",
+      "query": "오버사이즈 티셔츠",
+      "expected": {
+        "fits": ["오버"]
+      },
+      "confidence": "high"
+    },
+    {
+      "id": "p216",
+      "bucket": "핏-유사어",
+      "query": "와이드핏 티",
+      "expected": {
+        "fits": ["오버", "루즈"]
+      },
+      "confidence": "medium"
+    },
+    {
+      "id": "p217",
+      "bucket": "핏-유사어",
+      "query": "세미오버 티셔츠",
+      "expected": {
+        "fits": ["오버"],
+        "reviewTags": ["세미오버핏"]
+      },
+      "confidence": "medium"
+    },
+    {
+      "id": "p218",
+      "bucket": "핏-유사어",
+      "query": "릴렉스드핏 반팔",
+      "expected": {
+        "fits": ["루즈"]
+      },
+      "confidence": "medium"
+    },
+    {
+      "id": "p219",
+      "bucket": "핏-유사어",
+      "query": "레귤러핏 티셔츠",
+      "expected": {
+        "fits": []
+      },
+      "note": "레귤러=표준 — FITS(루즈·슬림·오버)에 없음, 빈 값이 정답",
+      "confidence": "medium"
+    },
+    {
+      "id": "p220",
+      "bucket": "핏-유사어",
+      "query": "스키니한 티",
+      "expected": {
+        "fits": ["슬림"]
+      },
+      "confidence": "medium"
+    },
+    {
+      "id": "p221",
+      "bucket": "핏-유사어",
+      "query": "타이트한 반팔티",
+      "expected": {
+        "fits": ["슬림"],
+        "reviewTags": []
+      },
+      "note": "컴프레션 태그 포함 여부 재량",
+      "confidence": "medium"
+    },
+    {
+      "id": "p222",
+      "bucket": "핏-유사어",
+      "query": "크롭 기장 티셔츠",
+      "expected": {
+        "keywords": ["크롭"]
+      },
+      "confidence": "high"
+    },
+    {
+      "id": "p223",
+      "bucket": "핏-유사어",
+      "query": "엉덩이 덮는 긴 기장 티",
+      "expected": {
+        "reviewTags": ["엉덩이커버기장"]
+      },
+      "confidence": "high"
+    },
+    {
+      "id": "p224",
+      "bucket": "핏-유사어",
+      "query": "기장 짧은 숏 티셔츠",
+      "expected": {
+        "keywords": ["크롭"]
+      },
+      "confidence": "medium"
+    },
+    {
+      "id": "p225",
+      "bucket": "착용감-유사어",
+      "query": "하늘하늘한 티셔츠",
+      "expected": {
+        "wearChars": {
+          "두께": ["얇음", "약간 얇음"]
+        }
+      },
+      "confidence": "medium"
+    },
+    {
+      "id": "p226",
+      "bucket": "착용감-유사어",
+      "query": "까끌까끌하지 않은 티",
+      "expected": {
+        "wearChars": {
+          "촉감": ["부드러움", "약간|부드러움"]
+        }
+      },
+      "confidence": "medium"
+    },
+    {
+      "id": "p227",
+      "bucket": "착용감-유사어",
+      "query": "실키한 촉감 티셔츠",
+      "expected": {
+        "wearChars": {
+          "촉감": ["부드러움"]
+        }
+      },
+      "confidence": "medium"
+    },
+    {
+      "id": "p228",
+      "bucket": "착용감-유사어",
+      "query": "통기성 좋은 티셔츠",
+      "expected": {
+        "reviewTags": ["통풍"]
+      },
+      "confidence": "high"
+    },
+    {
+      "id": "p229",
+      "bucket": "착용감-유사어",
+      "query": "땀 흡수 잘되는 티",
+      "expected": {
+        "reviewTags": ["흡습속건"]
+      },
+      "confidence": "high"
+    },
+    {
+      "id": "p230",
+      "bucket": "착용감-유사어",
+      "query": "땀 나도 몸에 안 붙는 티셔츠",
+      "expected": {
+        "reviewTags": ["안달라붙음"]
+      },
+      "confidence": "high"
+    },
+    {
+      "id": "p231",
+      "bucket": "착용감-유사어",
+      "query": "금방 마르는 티",
+      "expected": {
+        "reviewTags": ["흡습속건"]
+      },
+      "confidence": "medium"
+    },
+    {
+      "id": "p232",
+      "bucket": "착용감-유사어",
+      "query": "안 늘어나는 탄탄한 티셔츠",
+      "expected": {
+        "reviewTags": ["탄탄함"]
+      },
+      "note": "'안 늘어나는'을 신축성 없음으로 볼지 내구성(탄탄함)으로 볼지 — 목안늘어남과 구분",
+      "confidence": "medium"
+    },
+    {
+      "id": "p233",
+      "bucket": "착용감-유사어",
+      "query": "바람 잘 통하는 시원한 반팔",
+      "expected": {
+        "reviewTags": ["통풍", "냉감"]
+      },
+      "confidence": "high"
+    },
+    {
+      "id": "p234",
+      "bucket": "착용감-유사어",
+      "query": "살에 감기지 않는 티셔츠",
+      "expected": {
+        "reviewTags": ["안달라붙음"]
+      },
+      "confidence": "medium"
+    },
+    {
+      "id": "p235",
+      "bucket": "착용감-유사어",
+      "query": "포근한 티셔츠",
+      "expected": {
+        "wearChars": {
+          "촉감": ["부드러움"],
+          "두께": ["약간|두꺼움", "두꺼움"]
+        }
+      },
+      "confidence": "low"
+    },
+    {
+      "id": "p236",
+      "bucket": "착용감-유사어",
+      "query": "까슬이 아니라 순한 촉감 티",
+      "expected": {
+        "wearChars": {
+          "촉감": ["부드러움", "약간|부드러움"]
+        }
+      },
+      "confidence": "medium"
+    },
+    {
+      "id": "p237",
+      "bucket": "착용감-유사어",
+      "query": "종이같이 가벼운 티셔츠",
+      "expected": {
+        "reviewTags": ["가벼움"]
+      },
+      "confidence": "medium"
+    },
+    {
+      "id": "p238",
+      "bucket": "착용감-유사어",
+      "query": "이불처럼 부드러운 티",
+      "expected": {
+        "wearChars": {
+          "촉감": ["부드러움"]
+        }
+      },
+      "confidence": "medium"
+    },
+    {
+      "id": "p239",
+      "bucket": "착용감-유사어",
+      "query": "살짝 도톰해서 비침 걱정 없는 티",
+      "expected": {
+        "wearChars": {
+          "두께": ["약간|두꺼움"],
+          "비침": ["없음", "거의 없음"]
+        }
+      },
+      "confidence": "high"
+    },
+    {
+      "id": "p240",
+      "bucket": "착용감-유사어",
+      "query": "한여름에도 안 더운 티셔츠",
+      "expected": {
+        "wearChars": {
+          "계절": ["여름"]
+        },
+        "reviewTags": ["냉감", "통풍"]
+      },
+      "note": "'한여름엔더움'은 부정 태그 — 유입 금지 확인",
+      "confidence": "medium"
+    },
+    {
+      "id": "p241",
+      "bucket": "무매핑",
+      "query": "홀로그램 티셔츠",
+      "expected": {
+        "keywords": ["홀로그램"]
+      },
+      "note": "홀로그램 색·패턴 어휘 없음 — 빈 intent 또는 keywords만. 색 환각 금지",
+      "confidence": "medium"
+    },
+    {
+      "id": "p242",
+      "bucket": "무매핑",
+      "query": "오로라색 티",
+      "expected": {},
+      "note": "오로라=다색 — 특정 색 나열 환각 금지, 빈 colors 기대",
+      "confidence": "medium"
+    },
+    {
+      "id": "p243",
+      "bucket": "무매핑",
+      "query": "카멜레온처럼 색 변하는 티셔츠",
+      "expected": {
+        "keywords": ["카멜레온"]
+      },
+      "note": "변색 소재 없음 — 카멜(색) 오매핑 함정 주의",
+      "confidence": "medium"
+    },
+    {
+      "id": "p244",
+      "bucket": "무매핑",
+      "query": "벨벳 티셔츠",
+      "expected": {
+        "keywords": ["벨벳"]
+      },
+      "note": "벨벳 소재 없음 — materials 빈 값(아크릴 등 오매핑 금지)",
+      "confidence": "medium"
+    },
+    {
+      "id": "p245",
+      "bucket": "무매핑",
+      "query": "실크 100% 티",
+      "expected": {
+        "keywords": ["실크"]
+      },
+      "note": "실크 없음 — 텐셀/모달 오매핑 여부 확인(금지)",
+      "confidence": "medium"
+    },
+    {
+      "id": "p246",
+      "bucket": "무매핑",
+      "query": "청재질 데님 티셔츠",
+      "expected": {
+        "keywords": ["데님"]
+      },
+      "note": "'데님'이 색 어휘에 있음(색 취급) — 소재로 오해하지 않는지. colors 데님 허용 여부 정책 확인",
+      "confidence": "low"
+    },
+    {
+      "id": "p247",
+      "bucket": "무매핑",
+      "query": "야광 티셔츠",
+      "expected": {
+        "keywords": ["야광"]
+      },
+      "note": "야광 없음 — 형광/라임 오매핑 금지",
+      "confidence": "medium"
+    },
+    {
+      "id": "p248",
+      "bucket": "무매핑",
+      "query": "패딩처럼 두꺼운 티",
+      "expected": {
+        "wearChars": {
+          "두께": ["두꺼움"]
+        }
+      },
+      "note": "패딩은 비유 — 두께만",
+      "confidence": "medium"
+    },
+    {
+      "id": "p249",
+      "bucket": "무매핑",
+      "query": "가죽 느낌 티셔츠",
+      "expected": {
+        "keywords": ["가죽"]
+      },
+      "note": "가죽 소재 없음 — 빈 값",
+      "confidence": "medium"
+    },
+    {
+      "id": "p250",
+      "bucket": "무매핑",
+      "query": "스팽글 반짝이 티셔츠",
+      "expected": {
+        "keywords": ["스팽글"]
+      },
+      "note": "스팽글 어휘 없음 — 골드/실버 색 환각 금지",
+      "confidence": "medium"
+    }
+  ]
+}

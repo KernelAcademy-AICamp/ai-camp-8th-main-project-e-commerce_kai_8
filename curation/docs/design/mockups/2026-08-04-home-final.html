@@ -1,0 +1,296 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>그래픽 티 발견 검색 — 홈 시안</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" />
+<style>
+  :root {
+    --bg: #0b0d10;
+    --text: #f5f5f4;
+    --muted: rgba(245, 245, 244, 0.55);
+    --hairline: rgba(255, 255, 255, 0.15);
+    --glass: rgba(15, 17, 21, 0.45);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: "Pretendard Variable", Pretendard, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100dvh;
+    overflow: hidden;
+  }
+
+  /* ---------- 배경 영상 (부메랑 루프) ---------- */
+  .bgvid {
+    position: fixed; inset: 0; z-index: 0;
+    width: 100%; height: 100%; object-fit: cover;
+    filter: saturate(1) brightness(1);
+  }
+
+  .veil {
+    position: fixed; inset: 0; z-index: 1; pointer-events: none;
+    background:
+      radial-gradient(64rem 38rem at 50% 54%, rgba(11, 13, 16, 0.55), rgba(11, 13, 16, 0.28) 62%, rgba(11, 13, 16, 0.1) 100%),
+      linear-gradient(180deg, rgba(11, 13, 16, 0.45), transparent 24%, transparent 70%, rgba(11, 13, 16, 0.55));
+  }
+
+  /* ---------- 네비 ---------- */
+  .nav {
+    position: relative; z-index: 2;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 1.75rem clamp(1.5rem, 4vw, 3rem);
+  }
+  .nav__brand {
+    text-decoration: none; color: var(--text);
+    font-size: 0.95rem; font-weight: 800; letter-spacing: -0.02em;
+  }
+  /* ---------- 히어로 ---------- */
+  .hero {
+    position: relative; z-index: 2;
+    min-height: calc(100dvh - 6rem);
+    display: flex; flex-direction: column; align-items: center;
+    justify-content: center; gap: 2.5rem;
+    padding: 0 1.5rem 5rem; text-align: center;
+  }
+
+  .hero__title {
+    font-size: clamp(2.2rem, 5vw, 3.6rem);
+    font-weight: 800;
+    letter-spacing: -0.035em;
+    line-height: 1.25;
+    text-shadow: 0 2px 30px rgba(0, 0, 0, 0.5);
+  }
+  .hero__title span { color: rgba(255, 255, 255, 0.85); }
+
+  /* ---------- 검색 필 (워터드롭 글래스) ---------- */
+  .search-area { display: flex; flex-direction: column; align-items: center; gap: 1.2rem; }
+  .search { width: min(36rem, 92vw); }
+  .search__pill {
+    position: relative;
+    display: flex; align-items: center;
+    height: 4.25rem; border-radius: 999px; padding: 0.5rem 0.5rem 0.5rem 1.7rem;
+    background: rgba(255, 255, 255, 0.045);
+    -webkit-backdrop-filter: blur(7px) saturate(1.25);
+    backdrop-filter: blur(7px) saturate(1.25);
+    border: 0;
+    box-shadow:
+      inset 0 1.5px 1px rgba(255, 255, 255, 0.6),
+      inset 0 -7px 12px -8px rgba(255, 255, 255, 0.45),
+      inset 16px 0 20px -14px rgba(255, 255, 255, 0.5),
+      inset -16px 0 20px -14px rgba(255, 255, 255, 0.5),
+      inset 30px 0 34px -20px rgba(0, 0, 0, 0.5),
+      inset -30px 0 34px -20px rgba(0, 0, 0, 0.5),
+      0 26px 64px rgba(0, 0, 0, 0.5);
+    transition: box-shadow 0.3s, background 0.3s;
+  }
+  /* 상단 곡면 스펙큘러 */
+  .search__pill::before {
+    content: ""; position: absolute; left: 12%; right: 12%; top: 5px; height: 38%;
+    border-radius: 999px;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.28), transparent);
+    filter: blur(2px);
+    pointer-events: none;
+  }
+  .search__pill:focus-within {
+    background: rgba(255, 255, 255, 0.07);
+    box-shadow:
+      inset 0 1.5px 1px rgba(255, 255, 255, 0.7),
+      inset 0 -7px 12px -8px rgba(255, 255, 255, 0.55),
+      inset 16px 0 20px -14px rgba(255, 255, 255, 0.6),
+      inset -16px 0 20px -14px rgba(255, 255, 255, 0.6),
+      inset 30px 0 34px -20px rgba(0, 0, 0, 0.5),
+      inset -30px 0 34px -20px rgba(0, 0, 0, 0.5),
+      0 30px 70px rgba(0, 0, 0, 0.55);
+  }
+  .search__input {
+    flex: 1; min-width: 0; border: 0; background: none; outline: none;
+    color: var(--text);
+    font: 500 1rem/1 "Pretendard Variable", Pretendard, sans-serif;
+    text-shadow: 0 1px 10px rgba(0, 0, 0, 0.5);
+  }
+  .search__input::placeholder { color: rgba(255, 255, 255, 0.88); }
+  .search__btn {
+    flex: none; width: 3.2rem; height: 3.2rem; border: 0; border-radius: 50%;
+    display: grid; place-items: center;
+    background: rgba(255, 255, 255, 0.12);
+    -webkit-backdrop-filter: blur(8px);
+    backdrop-filter: blur(8px);
+    box-shadow:
+      inset 0 1px 1px rgba(255, 255, 255, 0.65),
+      inset 0 -5px 10px -6px rgba(255, 255, 255, 0.4),
+      inset 10px 0 14px -10px rgba(255, 255, 255, 0.45),
+      inset -10px 0 14px -10px rgba(255, 255, 255, 0.45),
+      0 12px 30px rgba(0, 0, 0, 0.35);
+    color: #fff;
+    font: 700 0.92rem "Pretendard Variable", Pretendard, sans-serif;
+    cursor: pointer;
+    opacity: 0; transform: scale(0.25); pointer-events: none;
+    transition: opacity 0.22s, transform 0.25s cubic-bezier(0.5, 0, 0.7, 0.4), background 0.2s;
+  }
+  .search-area--open .search__btn {
+    pointer-events: auto;
+    animation: droplet 0.55s cubic-bezier(0.3, 1.65, 0.4, 1) forwards;
+  }
+  .search__btn:hover, .search__btn:focus-visible { background: rgba(255, 255, 255, 0.2); }
+  .search__btn:active { background: rgba(255, 255, 255, 0.26); }
+
+  /* ---------- 예시 칩 (포커스 시 물방울 팝) ---------- */
+  .chips {
+    display: flex; flex-wrap: wrap; justify-content: center; gap: 0.5rem;
+    min-height: 2.5rem;
+  }
+  .chip {
+    border-radius: 999px; padding: 0.58rem 1.2rem; cursor: pointer;
+    background: rgba(255, 255, 255, 0.05);
+    -webkit-backdrop-filter: blur(8px);
+    backdrop-filter: blur(8px);
+    border: 0;
+    box-shadow:
+      inset 0 1px 1px rgba(255, 255, 255, 0.5),
+      inset 8px 0 12px -8px rgba(255, 255, 255, 0.4),
+      inset -8px 0 12px -8px rgba(255, 255, 255, 0.4),
+      0 10px 26px rgba(0, 0, 0, 0.4);
+    color: rgba(245, 245, 244, 0.75);
+    font: 500 0.82rem "Pretendard Variable", Pretendard, sans-serif;
+    opacity: 0; transform: scale(0.25); pointer-events: none;
+    transition: opacity 0.22s, transform 0.25s cubic-bezier(0.5, 0, 0.7, 0.4), color 0.2s;
+  }
+  .search-area--open .chip {
+    pointer-events: auto;
+    animation: droplet 0.6s cubic-bezier(0.3, 1.65, 0.4, 1) forwards;
+    animation-delay: 0.07s;
+  }
+  .search-area--open .chip:nth-child(2) { animation-delay: 0.15s; }
+  .search-area--open .chip:nth-child(3) { animation-delay: 0.23s; }
+  .chip:hover, .chip:focus-visible { color: #fff; }
+  @keyframes droplet {
+    0%   { opacity: 0; transform: scale(0.2); filter: blur(8px); }
+    55%  { opacity: 1; transform: scale(1.1, 0.88); filter: blur(0); }
+    75%  { transform: scale(0.95, 1.06); }
+    100% { opacity: 1; transform: scale(1); filter: blur(0); }
+  }
+
+  /* ---------- 로드 시퀀스 ---------- */
+  .hero > * { opacity: 0; translate: 0 12px; animation: rise 0.7s cubic-bezier(0.2, 0.7, 0.2, 1) forwards; }
+  .hero > :nth-child(1) { animation-delay: 0.05s; }
+  .hero > :nth-child(2) { animation-delay: 0.18s; }
+  .hero > :nth-child(3) { animation-delay: 0.3s; }
+  @keyframes rise { to { opacity: 1; translate: 0 0; } }
+
+  @media (prefers-reduced-motion: reduce) {
+    .hero > * { animation: none; opacity: 1; translate: 0 0; }
+    .chip, .search__btn { transition: none; }
+    .search-area--open .chip, .search-area--open .search__btn { animation: none; opacity: 1; transform: none; filter: none; }
+  }
+
+  @media (max-width: 40rem) {
+    .search__pill { padding-left: 1.25rem; }
+    .chip { padding: 0.8rem 1.3rem; }
+  }
+</style>
+</head>
+<body>
+
+<video class="bgvid" src="assets/hero-loop.mp4" poster="assets/hero-poster.jpg" autoplay muted loop playsinline aria-hidden="true"></video>
+<div class="veil" aria-hidden="true"></div>
+
+<header class="nav">
+  <a class="nav__brand" href="#">티:파운드</a>
+</header>
+
+<main class="hero">
+  <h1 class="hero__title">입고 싶은 티셔츠,<br /><span>문장으로 검색하세요</span></h1>
+
+  <div class="search-area">
+    <form class="search" role="search" onsubmit="return false">
+      <div class="search__pill">
+        <input class="search__input" type="search" aria-label="티셔츠 검색"
+               placeholder="검정 바탕에 흰 레터링 백프린트" />
+        <button class="search__btn" type="submit" aria-label="검색">
+          <svg width="19" height="19" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <circle cx="10.5" cy="10.5" r="7" stroke="currentColor" stroke-width="1.8" />
+            <path d="M15.8 15.8 L21 21" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
+          </svg>
+        </button>
+      </div>
+    </form>
+
+    <div class="chips" aria-hidden="true">
+      <button class="chip" type="button" tabindex="-1">검정 바탕에 흰 레터링</button>
+      <button class="chip" type="button" tabindex="-1">네이비 저지, 가슴 로고</button>
+      <button class="chip" type="button" tabindex="-1">아이보리, 아치 스크립트</button>
+    </div>
+  </div>
+</main>
+
+<script>
+  // 접근성·성능: 모션 최소화 설정 또는 모바일·데이터 절약 모드면 포스터만 표시
+  {
+    const v = document.querySelector(".bgvid");
+    const noVideo =
+      matchMedia("(prefers-reduced-motion: reduce)").matches ||
+      matchMedia("(max-width: 40rem)").matches ||
+      navigator.connection?.saveData;
+    if (noVideo) {
+      v.autoplay = false;
+      v.removeAttribute("src"); // 포스터만 남기고 영상 다운로드 자체를 건너뜀
+      v.load();
+    }
+  }
+
+  // 플레이스홀더 타이핑 데모
+  const queries = [
+    "검정 바탕에 흰 레터링 백프린트",
+    "네이비 저지, 가슴에 로고",
+    "아이보리 티에 아치 스크립트",
+  ];
+  const input = document.querySelector(".search__input");
+  const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  if (!reduced) {
+    let qi = 0, ci = 0, erasing = false;
+    setInterval(() => {
+      if (document.activeElement === input) return;
+      const q = queries[qi];
+      if (!erasing) {
+        ci++;
+        if (ci >= q.length + 16) erasing = true;
+      } else {
+        ci--;
+        if (ci <= 0) { erasing = false; qi = (qi + 1) % queries.length; }
+      }
+      input.placeholder = q.slice(0, Math.min(ci, q.length));
+    }, 65);
+  }
+
+  document.querySelectorAll(".chip").forEach((chip) => {
+    chip.addEventListener("click", () => {
+      input.value = chip.textContent.trim();
+      input.focus();
+    });
+  });
+
+  // 검색창 포커스 시 추천 칩이 물방울처럼 맺힘
+  const area = document.querySelector(".search-area");
+  const chips = document.querySelector(".chips");
+  const setOpen = (open) => {
+    area.classList.toggle("search-area--open", open);
+    chips.setAttribute("aria-hidden", String(!open));
+    chips.querySelectorAll(".chip").forEach((c) => (c.tabIndex = open ? 0 : -1));
+    document.querySelector(".search__btn").tabIndex = open ? 0 : -1;
+  };
+  setOpen(false);
+  area.addEventListener("focusin", () => setOpen(true));
+  area.addEventListener("focusout", (e) => {
+    if (!area.contains(e.relatedTarget)) setOpen(false);
+  });
+
+  // 시안 확인용: #focus 해시로 열면 포커스 상태 재현
+  if (location.hash === "#focus") input.focus();
+</script>
+</body>
+</html>
