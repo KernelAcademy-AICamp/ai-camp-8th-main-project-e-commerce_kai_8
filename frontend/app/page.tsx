@@ -7,6 +7,9 @@ export default function Home() {
   return (
     <main>
       <header className="relative mx-auto flex max-w-md items-center justify-center px-4 py-3">
+        <Link href="/curation" className="absolute left-4 text-sm text-neutral-400">
+          큐레이션
+        </Link>
         <h1 className="text-lg font-semibold tracking-tight text-white">aTee</h1>
         <div className="absolute right-3 flex items-center">
           <Link
