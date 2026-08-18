@@ -54,9 +54,11 @@ describe("identityScopedKeys", () => {
     expect(identityScopedKeys(keys)).toEqual([]);
   });
 
-  it("고지 배너 확인 여부는 신원이 아니라 기기 것이므로 남긴다", () => {
-    expect(identityScopedKeys(["atee-consent-notice-seen-v2"])).toEqual([]);
-    expect(identityScopedKeys(["atee-consent-notice-seen"])).toEqual([]);
+  it("없어진 고지 배너의 옛 키는 지운다 — 남길 이유가 사라졌다", () => {
+    // 배너를 없앤 2026-08-19 이전 방문자의 저장소에 남아 있는 흔적이다.
+    expect(identityScopedKeys(["atee-consent-notice-seen-v2"])).toEqual([
+      "atee-consent-notice-seen-v2",
+    ]);
   });
 
   it("전환 표식 자체는 남긴다 — 지우면 다음 판정이 새 탭처럼 보인다", () => {

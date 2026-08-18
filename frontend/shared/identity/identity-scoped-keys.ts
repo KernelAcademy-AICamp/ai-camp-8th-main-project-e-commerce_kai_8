@@ -21,7 +21,8 @@ const KEEP_EXACT = new Set([
 
 /** 버전이 붙는 키들 */
 const KEEP_PREFIX = [
-  "atee-consent-notice-seen", // 고지 배너 확인 여부 — 신원이 아니라 기기 것
+  // "atee-consent-notice-seen"은 고지 배너와 함께 없어졌다(2026-08-19) —
+  // 옛 방문자의 잔여 키는 전환 때 함께 지워진다.
   "atee-identity", // 전환 표식 자체
 ];
 

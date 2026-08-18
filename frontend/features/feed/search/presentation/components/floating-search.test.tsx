@@ -13,7 +13,6 @@ const base = {
   hidden: false,
   collapsed: true,
   onExpand: vi.fn(),
-  lifted: false,
   keyboardInset: 0,
   onInputFocus: vi.fn(),
   onInputBlur: vi.fn(),
