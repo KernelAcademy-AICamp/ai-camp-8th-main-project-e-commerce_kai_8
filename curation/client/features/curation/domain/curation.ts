@@ -21,6 +21,5 @@ export interface Curation {
   /** 소개 문단 */ lede: string;
   /** 조건에 맞는 전체 상품 수 (상위 몇 개만 items에 담긴다) */ n: number;
   items: CurationItem[];
-  /** 작성일 YYYY.MM.DD */ date: string;
-  views: number;
+  /** 작성일 YYYY.MM.DD — DB created_at */ date: string;
 }

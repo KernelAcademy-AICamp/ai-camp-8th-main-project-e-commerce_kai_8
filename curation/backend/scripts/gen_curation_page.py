@@ -53,6 +53,10 @@ COLOR = {
 # 값이 콤마로 이어붙은 컬럼("루즈,오버|사이즈"). 배열처럼 다뤄야 한다.
 MULTI = {"fit", "sheer", "thickness", "touch", "elasticity", "wear_season"}
 ARRAY = {"tags", "sizes"}
+
+# 실측 치수 표(c_search_fit_measures)에서 조건으로 쓸 수 있는 컬럼.
+# 백분위(_pct)는 0~1, shoulder_band는 c_search_fit_bands의 5칸 이름이다.
+FIT_COLS = {"pop", "shoulder_band", "shoulder_pct", "length_pct", "chest_pct", "sleeve_pct"}
 CMP = {"lte": "<=", "gte": ">=", "eq": "="}
 SAFE_COL = re.compile(r"^[a-z_]+$")
 
@@ -102,6 +106,27 @@ def compile_rules(rules):
         elif key == "pos_kw":
             where.append(f"({HAS_AI} and {POS} ilike any(%s))")
             params.append([f"%{v}%" for v in spec])
+        elif key == "fit_m":
+            # 실측 치수는 c_goods에 없다. goods_no로 c_search_fit_measures를 붙인다. 예:
+            #   {"fit_m": {"pop": {"eq": "여성"}, "shoulder_band": {"any": ["정어깨"]},
+            #              "length_pct": {"lte": 0.35}}}
+            # ⚠️ 그 표는 일반 반소매(001001)만 담고, 치수가 있는 상품만 들어 있다.
+            # 이 조건을 걸면 스포츠 티(017016005)와 치수 미기재 상품은 통째로 빠진다.
+            sub = []
+            for col, ops in spec.items():
+                if col not in FIT_COLS:
+                    raise ValueError(f"치수 표에 없는 컬럼: {col}")
+                for op, want in ops.items():
+                    if op == "any":
+                        sub.append(f"m.{col} = any(%s)")
+                        params.append(list(want))
+                    elif op in CMP:
+                        sub.append(f"m.{col} {CMP[op]} %s")
+                        params.append(want)
+                    else:
+                        raise ValueError(f"모르는 연산자: {op}")
+            where.append("exists (select 1 from c_search_fit_measures m "
+                         "where m.goods_no = c_goods.goods_no and " + " and ".join(sub) + ")")
         elif key == "no_complaint":
             where.append(f"({HAS_AI} and ({NEG} = '' or {NEG} ilike '%%만족도가 높%%'))")
         elif key in ("ai_kw", "ai_kw_not"):
@@ -131,37 +156,6 @@ def compile_rules(rules):
                 else:
                     raise ValueError(f"모르는 연산자: {op}")
     return " and ".join(where) or "true", params
-
-
-# 큐레이션별 작성일·조회수. 조회 로그를 쌓는 데가 아직 없어서 조회수는 손으로 적은 목업값이다.
-# 로그가 생기면 이 표의 조회수 자리를 지우고 집계값을 읽는다.
-META = {
-    "ringer":         ("2026.06.05",  5080),
-    "stripe":         ("2026.06.05",  4410),
-    "baseball_raglan": ("2026.06.12", 4820),
-    "gorpcore":       ("2026.06.12",  5870),
-    "running":        ("2026.06.19",  3150),
-    "no_stretch":     ("2026.06.19",  6940),
-    "blokecore":      ("2026.06.26",  5640),
-    "true_to_size":   ("2026.06.26",  9120),
-    "tropical":       ("2026.07.03",  6210),
-    "white_opaque":   ("2026.07.03", 12400),
-    "campus_daily":   ("2026.07.10",  8930),
-    "date_neat":      ("2026.07.10",  7240),
-    "not_hot":        ("2026.07.10", 10330),
-    "quiet_detail":   ("2026.07.17",  2660),
-    "summer_thin":    ("2026.07.17", 11850),
-    "washed":         ("2026.07.24",  9760),
-    "oversized_thin": ("2026.07.24",  8070),
-    "flower":         ("2026.07.24",  3540),
-    "character":      ("2026.07.31",  6530),
-    "crop":           ("2026.07.31",  7610),
-    "coquette":       ("2026.08.04",  4760),
-    "new_graphic":    ("2026.08.07",  5290),
-    "no_complaint":   ("2026.08.07",  3880),
-    "dog_print":      ("2026.08.11",  2180),
-    "cat_print":      ("2026.08.11",  3470),
-}
 
 
 # ── 초기 적재값 ──────────────────────────────────────────────
@@ -364,25 +358,21 @@ def connect():
 
 
 def seed(cur):
-    missing = {c["key"] for c in SEED} - META.keys()
-    if missing:
-        sys.exit(f"META에 작성일·조회수가 없다: {sorted(missing)}")
-    cur.execute("alter table curations add column if not exists views int default 0")
     cur.execute("delete from curations")
     for i, c in enumerate(SEED, 1):          # ord = SEED 리스트 순서
-        at, views = META[c["key"]]
+        # created_at = 적재 시각. 예전엔 손으로 적은 날짜를 넣어 주간 연재처럼 보이게 했다.
         cur.execute(
-            "insert into curations (key,title,lede,rules,cond_labels,ord,created_at,views) "
-            "values (%s,%s,%s,%s,%s,%s,%s,%s)",
+            "insert into curations (key,title,lede,rules,cond_labels,ord,created_at) "
+            "values (%s,%s,%s,%s,%s,%s,now())",
             (c["key"], c["title"], c["lede"], json.dumps(c["rules"], ensure_ascii=False),
-             c["cond_labels"], i, at.replace(".", "-"), views))
+             c["cond_labels"], i))
     print(f"curations {len(SEED)}건 적재 완료")
 
 
 def load(cur):
-    cur.execute("select key,title,lede,rules,cond_labels,created_at,views "
+    cur.execute("select key,title,lede,rules,cond_labels,created_at "
                 "from curations where active order by ord")
-    rows = [dict(zip(("key", "title", "lede", "rules", "cond", "at", "views"), r))
+    rows = [dict(zip(("key", "title", "lede", "rules", "cond", "at"), r))
             for r in cur.fetchall()]
     if not rows:
         sys.exit("curations 테이블이 비었다. --seed 를 먼저 실행해라.")
@@ -430,7 +420,7 @@ def build(cur, curations):
                   "note": NOTES.get(str(r[0]), "")} for r in rows]
         out.append({**{k: c[k] for k in ("key", "title", "cond")},
                     "lede": c["lede"] or "", "n": n, "items": items,
-                    "date": c["at"].strftime("%Y.%m.%d"), "views": c["views"] or 0})
+                    "date": c["at"].strftime("%Y.%m.%d")})
     return out
 
 
@@ -578,7 +568,7 @@ function openDetail(c){
     <div class=dethd><h2>${c.title}</h2></div>
     <p class=lede>${c.lede}</p>
     <div class=cond>${c.cond.map(t=>`<span class=cd>${t}</span>`).join('')}</div>
-    <div class=detmeta>${c.date} · 조회 ${won(c.views)} · ${won(c.n)}건 중 평점순 ${c.items.length}건</div>
+    <div class=detmeta>${c.date} · ${won(c.n)}건 중 평점순 ${c.items.length}건</div>
     <div class=pgrid>${c.items.map(x=>`<a class=item href="${x.u}" target=_blank rel=noopener>
       ${img(x.img)}
       <div class=b>${x.b}</div><div class=t>${x.t}</div>
@@ -665,6 +655,21 @@ def demo():
     w, p = compile_rules({"neg_free": ["비침"]})
     assert "ai_summary is not null" in w and w.count("not (") == 1, w
     assert p == [["%비침%"]], p
+
+    # 치수 표 통로: goods_no로 상관 서브쿼리를 걸고, 파라미터 순서가 조건 순서와 맞아야 한다
+    w, p = compile_rules({"fit_m": {"pop": {"eq": "여성"},
+                                    "shoulder_band": {"any": ["좁은 어깨", "정어깨"]},
+                                    "length_pct": {"lte": 0.35}}})
+    assert w == ("exists (select 1 from c_search_fit_measures m "
+                 "where m.goods_no = c_goods.goods_no and m.pop = %s "
+                 "and m.shoulder_band = any(%s) and m.length_pct <= %s)"), w
+    assert p == ["여성", ["좁은 어깨", "정어깨"], 0.35], p
+
+    try:
+        compile_rules({"fit_m": {"shoulder_pct; drop table c_goods": {"eq": 1}}})
+        raise AssertionError("치수 컬럼 검증이 안 걸렸다")
+    except ValueError:
+        pass
 
     try:
         compile_rules({"price; drop table c_goods": {"eq": 1}})
