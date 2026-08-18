@@ -3,8 +3,6 @@ import Image from "next/image";
 
 import type { Curation } from "@/features/curation/domain/curation";
 
-const won = (n: number) => n.toLocaleString("ko-KR");
-
 export default function CurationList({ curations }: { curations: Curation[] }) {
   return (
     <ul>
@@ -26,24 +24,21 @@ export default function CurationList({ curations }: { curations: Curation[] }) {
             </div>
           )}
 
-          <div className="flex items-baseline justify-between gap-2 px-3.5">
+          <div className="px-3.5">
             <h2 className="text-xl leading-tight font-extrabold tracking-tight">
               {c.title}
             </h2>
-            <span className="shrink-0 font-mono text-[10px] text-neutral-500">
-              {won(c.n)}
-            </span>
           </div>
 
           <p className="px-3.5 pt-2 text-[12.5px] leading-relaxed text-neutral-700">
             {c.lede}
           </p>
 
-          <div className="flex flex-wrap gap-1 px-3.5 pt-3">
+          <div className="flex flex-wrap gap-1.5 px-3.5 pt-3">
             {c.cond.map((label) => (
               <span
                 key={label}
-                className="bg-lime-300 px-1.5 py-0.5 font-mono text-[8px] tracking-widest"
+                className="bg-neutral-200 px-2 py-0.5 font-mono text-[11px] tracking-wide text-neutral-600"
               >
                 {label}
               </span>

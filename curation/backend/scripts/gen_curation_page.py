@@ -494,7 +494,7 @@ def build(cur, curations):
 
 
 CSS = """
-:root{--ink:#0a0a0a;--paper:#fff;--line:#0a0a0a;--mute:#8c8c8c;--acid:#b4f03c;--blue:#1f43d8;
+:root{--ink:#0a0a0a;--paper:#fff;--line:#0a0a0a;--mute:#8c8c8c;--blue:#1f43d8;
       --sans:'Helvetica Neue','Apple SD Gothic Neo',sans-serif;
       --mono:ui-monospace,'SF Mono',Menlo,monospace}
 *{box-sizing:border-box}
@@ -521,39 +521,6 @@ body{margin:0;background:#c8c8c4;font-family:var(--sans);color:var(--ink);
 .body::-webkit-scrollbar{display:none}
 .screen{display:none}.screen.on{display:block}
 
-.tools{position:sticky;top:0;z-index:5;display:flex;background:var(--acid);
-       border-bottom:1px solid var(--line);font-family:var(--mono);font-size:9.5px;
-       letter-spacing:.09em;text-transform:uppercase}
-.tools .filter{padding:7px 10px;border-right:1px solid var(--line)}
-.tools .search{flex:1;padding:7px 10px;color:#4c6b0e}
-.view{display:flex;flex-shrink:0}
-.view button{font:inherit;letter-spacing:inherit;text-transform:inherit;background:none;
-             border:0;border-left:1px solid var(--line);padding:7px 9px;cursor:pointer;color:var(--ink)}
-.view button.on{background:var(--ink);color:var(--acid)}
-
-.mgrid{columns:2;column-gap:9px;padding:12px 10px 20px}
-.mcard{break-inside:avoid;margin-bottom:18px;cursor:pointer;display:block;width:100%;
-       background:none;border:0;padding:0;text-align:left;font-family:inherit;color:inherit}
-.mcard img{width:100%;object-fit:cover;background:#eee;display:block;aspect-ratio:1/1}
-.mcard:nth-child(5n+1) img{aspect-ratio:3/4}
-.mcard:nth-child(5n+2) img{aspect-ratio:1/1}
-.mcard:nth-child(5n+3) img{aspect-ratio:4/5}
-.mcard:nth-child(5n+4) img{aspect-ratio:5/7}
-.mcard:nth-child(5n+5) img{aspect-ratio:6/5}
-.mcard .t{font-size:14px;font-weight:700;letter-spacing:-.035em;line-height:1.22;padding-top:7px}
-.mcard .g{display:flex;flex-wrap:wrap;gap:4px;padding-top:6px;
-          font-family:var(--mono);font-size:10px;letter-spacing:.02em}
-.mcard .g span{background:var(--blue);color:#fff;padding:2px 6px}
-
-.list{border-top:1px solid var(--line)}
-.row{display:grid;grid-template-columns:1fr auto;align-items:center;gap:8px;width:100%;
-     padding:12px;border-bottom:1px solid var(--line);cursor:pointer;background:none;
-     border-left:0;border-right:0;border-top:0;font-family:inherit;color:inherit;text-align:left}
-.row .t{font-size:16px;font-weight:700;letter-spacing:-.04em;
-        min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.row .g{display:flex;gap:5px;flex-shrink:0;white-space:nowrap;
-        font-family:var(--mono);font-size:10.5px;letter-spacing:.02em;color:var(--blue)}
-
 .cur{border-bottom:1px solid var(--line);padding:16px 0 18px;cursor:pointer;width:100%;
      background:none;border-left:0;border-right:0;border-top:0;text-align:left;
      font-family:inherit;color:inherit;display:block}
@@ -562,11 +529,10 @@ body{margin:0;background:#c8c8c4;font-family:var(--sans);color:var(--ink);
 .strip img{flex:1;width:25%;aspect-ratio:1/1;object-fit:cover;background:#eee;display:block}
 .curhd{display:flex;align-items:baseline;justify-content:space-between;gap:10px;padding:0 14px}
 .curhd h2{font-size:21px;font-weight:800;letter-spacing:-.042em;line-height:1.2;margin:0}
-.cnt{font-family:var(--mono);font-size:10px;color:var(--mute);flex-shrink:0}
 .lede{font-size:12.5px;line-height:1.7;color:#4a4a4a;letter-spacing:-.012em;
       padding:9px 14px 0;margin:0}
-.cond{display:flex;flex-wrap:wrap;gap:3px;padding:11px 14px 0}
-.cd{background:var(--acid);font-family:var(--mono);font-size:8px;letter-spacing:.05em;padding:2px 5px}
+.cond{display:flex;flex-wrap:wrap;gap:4px;padding:11px 14px 0}
+.cd{background:#ececec;color:#4a4a4a;font-family:var(--mono);font-size:11px;letter-spacing:.02em;padding:3px 7px}
 
 .back{display:flex;align-items:center;gap:8px;width:100%;background:none;border:0;
       border-bottom:1px solid var(--line);padding:9px 14px;cursor:pointer;font-family:var(--mono);
@@ -610,17 +576,9 @@ const ERR = 'this.style.background="#eee";this.removeAttribute("src")';
 const img = u => `<img src="${u}" alt="" loading=lazy onerror='${ERR}'>`;
 
 const VIEWS = {
- grid: () => `<div class=mgrid>${DATA.map((c,i)=>`<button class=mcard data-i="${i}">
-    ${img(c.items[0]?.img||'')}
-    <div class=t>${c.title}</div>
-    <div class=g>${c.cond.map(t=>`<span>#${t}</span>`).join('')}</div></button>`).join('')}</div>`,
-
- list: () => `<div class=list>${DATA.map((c,i)=>`<button class=row data-i="${i}">
-    <div class=t>${c.title}</div><div class=g>${c.cond.slice(0,2).map(t=>`<span>#${t}</span>`).join('')}</div></button>`).join('')}</div>`,
-
  feed: () => DATA.map((c,i)=>`<button class=cur data-i="${i}">
     <div class=strip>${c.items.slice(0,4).map(x=>img(x.img)).join('')}</div>
-    <div class=curhd><h2>${c.title}</h2><span class=cnt>${won(c.n)}</span></div>
+    <div class=curhd><h2>${c.title}</h2></div>
     <p class=lede>${c.lede}</p>
     <div class=cond>${c.cond.map(t=>`<span class=cd>${t}</span>`).join('')}</div>
   </button>`).join('')
@@ -653,12 +611,7 @@ function show(id){
   $('.body').scrollTop = 0;
 }
 
-document.querySelectorAll('.vb').forEach(b=>b.onclick=()=>{
-  document.querySelectorAll('.vb').forEach(x=>x.classList.remove('on'));
-  b.classList.add('on');
-  render(b.dataset.v);
-});
-render('grid');
+render('feed');
 
 // 내리면 상단 접힘, 올리면 나옴 (top은 window.top과 겹쳐서 bar로)
 const scroller = $('.body'), bar = $('.top');
@@ -681,14 +634,6 @@ PAGE = """<!doctype html><html lang=ko><head><meta charset=utf-8>
   </div>
   <div class=body>
     <div class="screen on" id=curlist>
-      <div class=tools>
-        <div class=filter>&#8853; Filter</div><div class=search>Search&hellip;</div>
-        <div class=view>
-          <button class="vb on" data-v=grid>Grid</button>
-          <button class=vb data-v=list>List</button>
-          <button class=vb data-v=feed>Feed</button>
-        </div>
-      </div>
       <div id=list></div>
     </div>
     <div class=screen id=detail></div>
