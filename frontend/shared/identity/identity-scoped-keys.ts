@@ -14,6 +14,9 @@ const KEEP_EXACT = new Set([
   // 탈퇴 대기 표식. 탈퇴하면 세션이 사라지면서 신원 전환 정리가 곧바로 도는데,
   // 여기서 같이 지우면 "삭제가 서버에 닿았는지" 확인할 손잡이를 잃는다.
   "atee-pending-account-delete",
+  // 계정으로 옮길 찜 보관함. 정리 **직전에** 여기로 빼두므로, 같이 지우면
+  // 옮길 것이 사라진다 (shared/identity/wish-carry.ts).
+  "atee-wishlist-migrate",
 ]);
 
 /** 버전이 붙는 키들 */

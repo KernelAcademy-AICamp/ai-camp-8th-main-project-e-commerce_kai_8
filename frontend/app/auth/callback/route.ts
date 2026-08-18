@@ -13,16 +13,16 @@ import { readCallbackParams } from "@/features/auth/domain/auth-session";
 export async function GET(request: Request): Promise<Response> {
   const requestUrl = new URL(request.url);
   const params = readCallbackParams(requestUrl.searchParams);
-  const settings = new URL("/settings", requestUrl.origin);
+  const landing = new URL("/my", requestUrl.origin);
 
   // 동의 화면에서 취소 — 오류 문구 없이 조용히 돌아간다
   if (params.kind === "cancelled") {
-    return NextResponse.redirect(settings);
+    return NextResponse.redirect(landing);
   }
 
   if (params.kind === "failed") {
-    settings.searchParams.set("auth", "failed");
-    return NextResponse.redirect(settings);
+    landing.searchParams.set("auth", "failed");
+    return NextResponse.redirect(landing);
   }
 
   const exchanged = await exchangeCodeForSession(params.code);
@@ -31,9 +31,9 @@ export async function GET(request: Request): Promise<Response> {
     // **이미 성립한 세션을 실패 화면으로 덮지 않는다** (설계 §3 경계 조건).
     const user = await fetchVerifiedUserOnServer();
     if (user === null) {
-      settings.searchParams.set("auth", "failed");
+      landing.searchParams.set("auth", "failed");
     }
   }
 
-  return NextResponse.redirect(settings);
+  return NextResponse.redirect(landing);
 }

@@ -8,6 +8,7 @@ import {
   type Pane,
   usePaneSwipe,
 } from "@/features/shell/presentation/view-model/use-pane-swipe";
+import { PersonIcon } from "@/shared/icons";
 
 const TABS: { id: Pane; label: string }[] = [
   { id: "browse", label: "BROWSE" },
@@ -37,11 +38,11 @@ export function HomeShell({ forYou }: { forYou: ReactNode }) {
               ♡
             </Link>
             <Link
-              href="/settings"
-              aria-label="개인화 안내·설정"
-              className="flex h-9 w-9 items-center justify-center rounded-full text-lg text-neutral-400"
+              href="/my"
+              aria-label="마이페이지"
+              className="flex h-9 w-9 items-center justify-center rounded-full text-neutral-400"
             >
-              ⓘ
+              <PersonIcon />
             </Link>
           </div>
         </div>

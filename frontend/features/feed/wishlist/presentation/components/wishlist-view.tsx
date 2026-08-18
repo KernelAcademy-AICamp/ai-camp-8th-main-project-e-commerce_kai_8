@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useRef } from "react";
+import { useRouter } from "next/navigation";
+import { useEffect, useMemo, useRef } from "react";
 
 import { ProductDetail } from "@/features/feed/detail/presentation/components/product-detail";
 import { useDetailState } from "@/features/feed/detail/presentation/view-model/use-detail-state";
@@ -9,12 +10,19 @@ import { formatPrice } from "@/features/feed/domain/format-price";
 import { distributeToColumns } from "@/features/feed/domain/masonry";
 import { FeedGrid } from "@/features/feed/presentation/components/feed-grid";
 import type { FeedCardViewData } from "@/features/feed/presentation/view-model/use-feed-view-model";
+import { wishlistNoticeMessage } from "@/features/feed/wishlist/domain/wishlist-notice";
 import { useWishlist } from "@/features/feed/wishlist/presentation/view-model/use-wishlist";
 
 /** 찜 보관함 — 최신 찜 순 2열 그리드, 탭하면 상세로 (설계 §8 최소 목록 뷰) */
 export function WishlistView() {
-  const { entries } = useWishlist();
+  const router = useRouter();
+  const { entries, notice, access } = useWishlist();
+  const message = wishlistNoticeMessage(notice);
   const { stack, open, requestClose, finishClose } = useDetailState();
+
+  useEffect(() => {
+    if (access === "out") router.replace("/login");
+  }, [access, router]);
   // 보관함은 무한 스크롤이 없다 — FeedGrid 계약용 더미 센티널
   const sentinelRef = useRef<HTMLDivElement | null>(null);
 
@@ -45,14 +53,27 @@ export function WishlistView() {
         </h1>
       </header>
 
-      {entries.length === 0 ? (
+      {/* 로그인 판정이 끝나기 전에는 비어 보이는 화면을 그리지 않는다.
+          로그인하지 않았으면 로그인 화면으로 보낸다 — 왜 못 들어오는지는
+          그 화면이 설명한다. 같은 말을 두 화면에 나눠 담지 않는다. */}
+      {access !== "in" && <div className="py-24" aria-label="불러오는 중" />}
+
+      {message !== null && (
+        <p role="status" className="mx-1 mb-2 text-sm text-amber-400">
+          {message}
+        </p>
+      )}
+
+      {access === "in" && entries.length === 0 && (
         <div className="flex flex-col items-center gap-3 py-24 text-neutral-400">
           <p>아직 찜한 상품이 없어요.</p>
           <Link href="/" className="rounded-xl bg-neutral-800 px-4 py-2 text-white">
             피드 둘러보기
           </Link>
         </div>
-      ) : (
+      )}
+
+      {access === "in" && entries.length > 0 && (
         <FeedGrid
           columns={columns}
           sentinelRef={sentinelRef}

@@ -8,7 +8,13 @@ import type { NextConfig } from "next";
  * 세션 갱신 계층(proxy.ts)이 도는 경로와 같은 집합으로 맞춘다 — 한쪽만
  * 늘어나면 갱신은 되는데 캐시는 막히지 않는 구간이 생긴다.
  */
-const AUTH_PATHS = ["/settings", "/settings/:path*", "/auth/:path*"];
+const AUTH_PATHS = [
+  "/my",
+  "/my/:path*",
+  "/settings",
+  "/settings/:path*",
+  "/auth/:path*",
+];
 
 /**
  * 모든 응답에 붙이는 기본값.

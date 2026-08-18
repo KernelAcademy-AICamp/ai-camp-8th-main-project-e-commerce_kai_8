@@ -7,7 +7,7 @@
 import { createServerClient } from "@supabase/ssr";
 import { type NextRequest, NextResponse } from "next/server";
 
-import { readSupabaseConfig } from "@/features/auth/data/supabase-config";
+import { readSupabaseConfig } from "@/shared/supabase/config";
 
 export default async function proxy(request: NextRequest): Promise<NextResponse> {
   let response = NextResponse.next({ request });
@@ -37,5 +37,5 @@ export default async function proxy(request: NextRequest): Promise<NextResponse>
 }
 
 export const config = {
-  matcher: ["/settings/:path*", "/auth/:path*"],
+  matcher: ["/my/:path*", "/settings/:path*", "/auth/:path*"],
 };
