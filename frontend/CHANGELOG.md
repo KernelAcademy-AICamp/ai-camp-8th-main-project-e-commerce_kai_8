@@ -1,3 +1,9 @@
+## [0.1.5](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/compare/v0.1.4...v0.1.5) (2026-08-18)
+
+### Features
+
+* 골격 체형 큐레이션 3개를 실측 치수로 만든다 (체형 1·2·5단계) ([#36](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/issues/36)) ([140a2d6](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/commit/140a2d67a73cc6c42bc5abec636dba7f4c21a2bf))
+* 큐레이션 탭을 aTee에 붙인다 ([#39](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/issues/39)) ([e2854ef](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/commit/e2854ef98d0e30f6514fdd7155892472bc57b6d9))
 ## [0.1.4](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/compare/v0.1.3...v0.1.4) (2026-08-18)
 
 ### Bug Fixes
