@@ -1,5 +1,7 @@
 "use client";
 
+import { RefreshIcon } from "@/shared/icons";
+
 import {
   AXES_IN_ORDER,
   colorChip,
@@ -119,13 +121,27 @@ function TasteBody({ summary }: { summary: TasteSummary }) {
  * **회원에게만 보인다.** 취향 프로필이 계정에 있으므로 자연스럽다.
  */
 export function TasteCard() {
-  const state = useTasteSummary();
+  const { state, refreshing, refresh } = useTasteSummary();
 
   if (state.kind === "hidden") return null;
 
   return (
     <section className="mt-10 rounded-2xl border border-neutral-800 p-5">
-      <h2 className="text-base font-semibold text-white">내 취향</h2>
+      <div className="flex items-center justify-between">
+        <h2 className="text-base font-semibold text-white">내 취향</h2>
+        {/* 세션 취향은 30분 쉬어야 반영되므로, "지금까지 본 것까지"를 원하면 이 버튼 */}
+        <button
+          type="button"
+          aria-label="지금까지 본 것까지 반영해 새로고침"
+          onClick={refresh}
+          disabled={refreshing || state.kind === "loading"}
+          className={`-m-2 flex h-9 w-9 cursor-pointer items-center justify-center rounded-full text-neutral-400 disabled:opacity-50 ${
+            refreshing ? "animate-spin" : ""
+          }`}
+        >
+          <RefreshIcon size={17} />
+        </button>
+      </div>
 
       {state.kind === "loading" && (
         <div
