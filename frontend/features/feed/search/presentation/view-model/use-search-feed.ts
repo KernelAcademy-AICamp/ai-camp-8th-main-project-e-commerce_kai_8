@@ -7,6 +7,10 @@ import { formatPrice } from "@/features/feed/domain/format-price";
 import { distributeToColumns } from "@/features/feed/domain/masonry";
 import type { FeedCardViewData } from "@/features/feed/presentation/view-model/card-view-data";
 import {
+  applyExpansion,
+  fetchQueryPlan,
+} from "@/features/feed/search/data/interpret-api";
+import {
   fetchSearchPage,
   fetchSearchPageWithFallback,
   type SearchCursor,
@@ -15,6 +19,7 @@ import {
   logSearch,
   type SearchLogInput,
 } from "@/features/feed/search/data/search-log-api";
+import { emptyPlan, type QueryPlan } from "@/features/feed/search/domain/query-plan";
 import type { SearchSubmission } from "@/features/feed/search/presentation/view-model/use-search-state";
 
 const PAGE_SIZE = 30;
@@ -105,6 +110,9 @@ export function useSearchFeed({ query, submission, paused }: SearchFeedOptions) 
   const logIdBySeq = useRef(new Map<number, string>());
   // 자판 폴백으로 실제 검색에 쓰인 질의 — 이후 페이지가 같은 질의로 이어가야 한다
   const usedQueryRef = useRef<string | null>(null);
+  // LLM 해석 — **제출당 한 번**만 묻고 모든 페이지가 같은 값을 쓴다.
+  // 페이지마다 다시 물으면 느릴 뿐 아니라, 답이 흔들리면 2페이지부터 조건이 달라진다.
+  const planRef = useRef<QueryPlan>(emptyPlan());
   // 검색어 한 번당 기록 한 번 — 오류 후 retry로 첫 페이지를 다시 불러도
   // 중복 기록하지 않는다 (세대 번호로 판정)
   const loggedGenerationRef = useRef(-1);
@@ -142,6 +150,7 @@ export function useSearchFeed({ query, submission, paused }: SearchFeedOptions) 
     if (progressRef.current.generation !== generation) {
       // 새 세대의 첫 로드: 진행 상태를 통째로 교체
       usedQueryRef.current = null;
+      planRef.current = emptyPlan();
       progressRef.current = {
         generation,
         cursor: null,
@@ -188,9 +197,25 @@ export function useSearchFeed({ query, submission, paused }: SearchFeedOptions) 
     };
     // 이후 페이지는 첫 페이지에서 확정된 질의로 이어간다 — 매 페이지 폴백을
     // 다시 태우면 도중에 다른 질의로 갈아탈 수 있다.
+    // 첫 페이지에서만 해석한다. 실패하면 빈 해석이라 지금까지와 똑같이 동작한다.
     const request = isFirstPage
-      ? fetchSearchPageWithFallback(query, PAGE_SIZE)
-      : fetchSearchPage(usedQueryRef.current ?? query, progress.cursor, PAGE_SIZE);
+      ? fetchQueryPlan(query).then((plan) => {
+          planRef.current = plan;
+          // 확장어는 질의에 얹어 **텍스트 점수**로만 쓴다(하드 조건이 아니다).
+          // 질의에 들어가므로 `query_used`에도 들어가고, 그래야 다음 페이지가
+          // 같은 조건으로 이어진다.
+          return fetchSearchPageWithFallback(
+            applyExpansion(query, plan),
+            PAGE_SIZE,
+            plan,
+          );
+        })
+      : fetchSearchPage(
+          usedQueryRef.current ?? query,
+          progress.cursor,
+          PAGE_SIZE,
+          planRef.current,
+        );
     request
       .then(({ products, nextCursor, usedQuery }) => {
         if (generation !== generationRef.current) return; // 늦은 응답 폐기

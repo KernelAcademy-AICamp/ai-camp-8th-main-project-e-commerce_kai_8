@@ -144,6 +144,15 @@ create index c_search_docs_next_color_idx on c_search_docs_next using gin (color
 
 create index c_search_docs_next_price_idx on c_search_docs_next (price_final);
 
+-- 브랜드도 **하드 조건**이다(소프트 텍스트 조각 2단계). 색인이 없으면 브랜드
+-- 질의가 226,000행을 통째로 훑는다 — `데상트 민소매`의 실행계획이 Parallel Seq
+-- Scan이었고 2.2초였다(실측 2026-08-18). 색·가격에는 있는데 브랜드만 없었다.
+create index c_search_docs_next_brand_idx on c_search_docs_next (brand);
+
+-- 하드 조건만 만족하는 나머지를 `cat_rank, goods_no` 순으로 훑는다. 없으면
+-- `여름에 입을 시원한 반팔`이 12만 행을 정렬해 1.27초가 된다(실측 2026-08-18).
+create index c_search_docs_next_cat_goods_idx on c_search_docs_next (cat_rank, goods_no);
+
 analyze c_search_docs_next;
 
 -- anon 직접 조회 불허 — RPC(security definer)로만 읽는다 (c_goods와 같은 방침)
@@ -162,6 +171,8 @@ alter index c_search_docs_next_doc_idx     rename to c_search_docs_doc_idx;
 alter index c_search_docs_next_chosung_idx rename to c_search_docs_chosung_words_idx;
 alter index c_search_docs_next_color_idx   rename to c_search_docs_color_codes_idx;
 alter index c_search_docs_next_price_idx   rename to c_search_docs_price_final_idx;
+alter index c_search_docs_next_brand_idx   rename to c_search_docs_brand_idx;
+alter index c_search_docs_next_cat_goods_idx rename to c_search_docs_cat_goods_idx;
 -- 기본키 인덱스의 실제 이름은 생성 시점에 무엇이 점유돼 있었는지에 따라 달라진다
 -- (`_pkey`가 이미 쓰이면 `_pkey1`이 된다). 이름을 찾아서 바꾼다.
 do $rename$

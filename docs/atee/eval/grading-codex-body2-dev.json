@@ -1,0 +1,767 @@
+[
+ {
+  "itemId": "a-g4-05-1393297",
+  "grade": 1,
+  "needsImage": false,
+  "why": "코튼 반팔티지만 면 100%가 확인되지 않고 자수와 슬림 디자인이라 기본티 조건도 불완전하다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g4-05-1987796",
+  "grade": 2,
+  "needsImage": false,
+  "why": "순면 소재의 기본 라운드 반팔 티셔츠 세트다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g4-05-2555069",
+  "grade": 1,
+  "needsImage": false,
+  "why": "코튼 반팔이지만 면 100%가 확인되지 않고 와펜 장식이 있어 기본 조건에 일부만 부합한다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g4-05-2555099",
+  "grade": 1,
+  "needsImage": false,
+  "why": "코튼 반팔이지만 면 100%가 확인되지 않고 와펜 장식이 있어 기본 조건에 일부만 부합한다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g4-05-2768130",
+  "grade": 1,
+  "needsImage": false,
+  "why": "코튼 반팔은 맞지만 면 100%인지 확인되지 않고 반바지가 포함된 세트 상품이다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g4-05-2768233",
+  "grade": 1,
+  "needsImage": false,
+  "why": "코튼 반팔은 맞지만 면 100%인지 확인되지 않고 반바지가 포함된 세트 상품이다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g4-05-2768237",
+  "grade": 1,
+  "needsImage": false,
+  "why": "코튼 반팔은 맞지만 면 100%인지 확인되지 않고 반바지가 포함된 세트 상품이다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g4-05-3271516",
+  "grade": 2,
+  "needsImage": false,
+  "why": "100% 오가닉 코튼 소재의 무지 반팔 티셔츠다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g4-05-4239183",
+  "grade": 1,
+  "needsImage": false,
+  "why": "코튼 반팔이지만 면 100%가 확인되지 않고 레터링이 있어 기본 티셔츠 조건에 일부만 부합한다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g4-05-4239189",
+  "grade": 1,
+  "needsImage": false,
+  "why": "코튼 반팔이지만 면 100% 여부가 확인되지 않고 메탈릭 자수가 있어 기본형과 다소 어긋난다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g4-05-4239191",
+  "grade": 1,
+  "needsImage": false,
+  "why": "코튼 반팔이지만 면 100%가 확인되지 않고 포토 그래픽이라 기본 티셔츠 조건에도 덜 부합한다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g4-05-4272351",
+  "grade": 1,
+  "needsImage": false,
+  "why": "코튼 반팔티지만 면 100%가 확인되지 않고 레터링이 있어 기본 무지티와는 차이가 있다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g4-05-4570799",
+  "grade": 2,
+  "needsImage": false,
+  "why": "100% 코튼 소재의 기본 반팔 티셔츠다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g4-05-4570865",
+  "grade": 2,
+  "needsImage": false,
+  "why": "100% 코튼 소재의 반팔 티셔츠로 질의 조건을 충족한다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g4-05-4572085",
+  "grade": 2,
+  "needsImage": false,
+  "why": "100% 코튼이며 카테고리상 기본 반팔 티셔츠 제품군이다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g4-05-4572133",
+  "grade": 2,
+  "needsImage": false,
+  "why": "100% 코튼 소재의 반팔 티셔츠로 질의 조건을 충족한다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g5-01-182486",
+  "grade": 2,
+  "needsImage": false,
+  "why": "무지 티셔츠로 명시된 반팔 제품이어서 로고 없는 조건을 충족한다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g5-01-338305",
+  "grade": 2,
+  "needsImage": false,
+  "why": "무지 반팔로 명시됐고 로고 표기가 없다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g5-01-345889",
+  "grade": 2,
+  "needsImage": false,
+  "why": "무지 반팔로 명시된 제품이어서 로고 없는 조건을 충족한다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g5-01-357155",
+  "grade": 2,
+  "needsImage": false,
+  "why": "무지티로 명시된 반팔 제품이어서 로고 없는 조건을 충족한다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g5-01-357156",
+  "grade": 2,
+  "needsImage": false,
+  "why": "무지로 명시된 로고 없는 반팔 티셔츠다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g5-01-357157",
+  "grade": 2,
+  "needsImage": false,
+  "why": "무지 제품이며 카테고리상 반팔이고 로고 표기가 없다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g5-01-357160",
+  "grade": 2,
+  "needsImage": false,
+  "why": "무지티로 명시된 반팔 제품이어서 로고 없는 조건을 충족한다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g5-01-377630",
+  "grade": 2,
+  "needsImage": false,
+  "why": "무지티로 명시된 반팔 제품이어서 로고 없는 조건을 충족한다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g5-01-381336",
+  "grade": 2,
+  "needsImage": false,
+  "why": "무지로 명시됐으며 카테고리상 반팔 티셔츠다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g5-01-381337",
+  "grade": 2,
+  "needsImage": false,
+  "why": "무지 제품이고 카테고리상 반팔이며 로고 표기가 없다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g5-01-382476",
+  "grade": 2,
+  "needsImage": false,
+  "why": "제목에 무지가 명시된 로고 없는 반팔 티셔츠다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g5-01-534529",
+  "grade": 2,
+  "needsImage": false,
+  "why": "무지 나그랑 티셔츠이며 카테고리상 반팔이고 로고 표기가 없다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g5-01-538836",
+  "grade": 2,
+  "needsImage": false,
+  "why": "무지 반팔로 명시됐고 로고 표기가 없다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g5-01-559954",
+  "grade": 2,
+  "needsImage": false,
+  "why": "무지로 명시된 반팔 티셔츠이며 로고 표기가 없다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g5-01-577957",
+  "grade": 2,
+  "needsImage": false,
+  "why": "무지 반팔로 명시됐고 로고 표기가 없다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g5-03-1948878",
+  "grade": 2,
+  "needsImage": false,
+  "why": "여성용 레귤러핏 기본 반팔티로 너무 붙지 않는 조건을 충족한다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g5-03-1948892",
+  "grade": 2,
+  "needsImage": false,
+  "why": "여성용 레귤러핏 반팔티로 너무 붙지 않는다는 조건을 만족한다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g5-03-4216673",
+  "grade": 2,
+  "needsImage": false,
+  "why": "여성 반팔이며 레귤러핏이라 너무 붙지 않는 조건을 충족한다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g5-03-4217832",
+  "grade": 2,
+  "needsImage": false,
+  "why": "여성용 레귤러핏 반팔티로 너무 붙지 않는 조건을 충족한다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g5-03-4710763",
+  "grade": 2,
+  "needsImage": false,
+  "why": "여성용 레귤러핏 반팔로 너무 붙지 않는 조건을 만족한다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g5-03-4907134",
+  "grade": 2,
+  "needsImage": false,
+  "why": "여성용 레귤러핏 반팔로 너무 붙지 않는 조건을 만족한다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g5-03-4950182",
+  "grade": 2,
+  "needsImage": false,
+  "why": "여성용 모달 레귤러핏 반팔로 너무 붙는 핏이 아니다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g5-03-4950183",
+  "grade": 2,
+  "needsImage": false,
+  "why": "여성용 레귤러핏 반팔티로 지나치게 붙는 핏이 아니다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g5-03-4950184",
+  "grade": 2,
+  "needsImage": false,
+  "why": "여성용 레귤러핏 반팔 티셔츠라 너무 붙지 않는 조건을 충족한다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g5-03-4950185",
+  "grade": 2,
+  "needsImage": false,
+  "why": "여성용 레귤러핏 반팔 티셔츠라 너무 붙지 않는 조건을 충족한다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g5-03-4981339",
+  "grade": 2,
+  "needsImage": false,
+  "why": "여성용 레귤러핏 반팔로 너무 붙는 핏이 아니다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g5-03-4981340",
+  "grade": 2,
+  "needsImage": false,
+  "why": "골지 소재이지만 여성용 레귤러핏 반팔로 명시되어 너무 붙지 않는 조건을 충족한다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g5-03-4981341",
+  "grade": 2,
+  "needsImage": false,
+  "why": "여성용 레귤러핏 반팔로 너무 붙는 핏이 아니다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g5-03-4981342",
+  "grade": 2,
+  "needsImage": false,
+  "why": "골지 소재이지만 여성용 레귤러핏 반팔로 명시되어 너무 붙지 않는 조건을 충족한다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g5-03-5196957",
+  "grade": 1,
+  "needsImage": false,
+  "source": "불일치 재검토로 확정",
+  "why": "레귤러핏 반팔이라 너무 붙지 않는 조건은 맞지만 gender가 남성이다.",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g5-03-5198532",
+  "grade": 2,
+  "needsImage": false,
+  "why": "여성용 레귤러핏 면 반팔 티셔츠라 너무 붙지 않는 조건을 충족한다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g5-03-5198534",
+  "grade": 2,
+  "needsImage": false,
+  "why": "여성용 레귤러핏 반팔 면 티셔츠로 너무 붙지 않는 조건을 만족한다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s13-1865568",
+  "grade": 2,
+  "needsImage": false,
+  "why": "여성용 슬림 크롭 티셔츠로 웨이브 체형 권장 조건을 만족한다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s13-2411247",
+  "grade": 2,
+  "needsImage": false,
+  "why": "세미 크롭 슬림핏의 여성 티셔츠로 웨이브 체형 권장 조건에 부합한다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s13-2603220",
+  "grade": 2,
+  "needsImage": false,
+  "why": "여성용 슬림 크롭 티셔츠로 웨이브 체형 권장 조건을 만족한다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s13-2647822",
+  "grade": 2,
+  "needsImage": false,
+  "why": "여성용 슬림핏 크롭티로 웨이브 체형에 적합한 핏과 기장이다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s13-2647824",
+  "grade": 2,
+  "needsImage": false,
+  "why": "여성 슬림핏 크롭티로 웨이브 체형에 권장되는 슬림한 핏과 짧은 기장을 갖췄다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s13-3052651",
+  "grade": 2,
+  "needsImage": false,
+  "why": "여성용 슬림 크롭 크루넥으로 웨이브 체형에 적합하다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s13-3052652",
+  "grade": 2,
+  "needsImage": false,
+  "why": "여성용 슬림 크롭 크루넥 티셔츠로 웨이브 체형 권장 요소를 충족한다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s13-3052653",
+  "grade": 2,
+  "needsImage": false,
+  "why": "여성용 슬림 크롭 크루넥으로 웨이브 체형 권장 조건에 부합한다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s13-3052654",
+  "grade": 2,
+  "needsImage": false,
+  "why": "여성용 슬림 크롭 크루넥 반팔로 웨이브 체형 권장 조건에 부합한다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s13-3052655",
+  "grade": 2,
+  "needsImage": false,
+  "why": "여성용 슬림 크롭 크루넥 티셔츠로 웨이브 체형 권장 요소를 충족한다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s13-3052656",
+  "grade": 2,
+  "needsImage": false,
+  "why": "여성용 슬림 크롭 크루넥으로 웨이브 체형 권장 조건에 부합한다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s13-3052661",
+  "grade": 2,
+  "needsImage": false,
+  "why": "여성용 슬림 크롭 티셔츠로 웨이브 체형 권장 조건에 부합한다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s13-3052662",
+  "grade": 2,
+  "needsImage": false,
+  "why": "여성용 슬림 크롭 반팔로 웨이브 체형에 적합한 실루엣이다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s13-3052663",
+  "grade": 2,
+  "needsImage": false,
+  "why": "여성용 슬림 크롭 티셔츠로 웨이브 체형 권장 핏과 짧은 기장을 충족한다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s13-3064420",
+  "grade": 2,
+  "needsImage": false,
+  "why": "여성용 슬림핏 베이비 크롭 반팔로 웨이브 체형 권장 조건에 부합한다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s13-3111254",
+  "grade": 2,
+  "needsImage": false,
+  "why": "여성용 크롭 티셔츠 세트로 웨이브 체형에 권장되는 짧은 기장이다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s13-3112887",
+  "grade": 2,
+  "needsImage": false,
+  "why": "여성용 크롭 슬림핏 티셔츠로 웨이브 체형에 적합하다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s13-3161901",
+  "grade": 2,
+  "needsImage": false,
+  "why": "여성용 슬림 크롭 반팔로 웨이브 체형 권장 실루엣에 부합한다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s13-3211175",
+  "grade": 2,
+  "needsImage": false,
+  "why": "여성용 크롭 슬림핏 티셔츠로 웨이브 체형에 어울리는 핏과 기장이다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s13-3211176",
+  "grade": 2,
+  "needsImage": false,
+  "why": "여성용 크롭 슬림핏으로 웨이브 체형 권장 조건에 부합한다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s15-1763123",
+  "grade": 1,
+  "needsImage": true,
+  "why": "여성 반팔 티셔츠지만 모노그램 디자인이 여성스럽고 데이트용인지 이미지 확인이 필요하다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s15-1763132",
+  "grade": 1,
+  "needsImage": true,
+  "why": "여성용 반팔티지만 데이트에 어울리는 여성스러운 디자인인지는 이미지 확인이 필요하다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s15-1878178",
+  "grade": 1,
+  "needsImage": true,
+  "why": "여성용 베이지 반팔이라는 점만 확인되며 여성스러운 디자인인지는 알 수 없다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s15-1878340",
+  "grade": 1,
+  "needsImage": true,
+  "why": "여성 반팔 티셔츠지만 데이트용의 여성스러운 디자인인지는 텍스트만으로 확인할 수 없다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s15-1878367",
+  "grade": 1,
+  "needsImage": true,
+  "why": "여성용 반팔티라는 점만 확인되며 여성스러운 데이트용 디자인인지는 이미지가 필요하다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s15-1878381",
+  "grade": 1,
+  "needsImage": true,
+  "why": "여성용 반팔이라는 점만 확인되며 여성스러운 디자인인지는 알 수 없다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s15-1878414",
+  "grade": 2,
+  "needsImage": false,
+  "why": "여성용 프린트 티셔츠와 스커트 셋업으로 여성스러운 데이트 차림에 부합한다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s15-1878470",
+  "grade": 2,
+  "needsImage": false,
+  "source": "불일치 재검토로 확정",
+  "why": "여성용 티셔츠와 스커트 셋업으로 데이트용 여성스러운 구성이 확인된다.",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s15-1946875",
+  "grade": 1,
+  "needsImage": true,
+  "why": "여성용 레드 티셔츠지만 여성스러운 데이트 스타일인지는 이미지로 확인해야 한다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s15-1946938",
+  "grade": 1,
+  "needsImage": true,
+  "why": "여성용이지만 라글란 5부 티셔츠가 여성스러운 데이트 스타일인지는 이미지 확인이 필요하다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s15-1948801",
+  "grade": 1,
+  "needsImage": true,
+  "why": "여성용 티셔츠지만 일러스트와 민트색만으로 여성스러운 데이트 스타일인지 확정하기 어렵다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s15-1948878",
+  "grade": 1,
+  "needsImage": true,
+  "why": "여성용 일러스트 반팔티지만 여성스럽고 데이트에 어울리는지는 이미지 확인이 필요하다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s15-1948892",
+  "grade": 2,
+  "needsImage": false,
+  "source": "불일치 재검토로 확정",
+  "why": "여성용 페일 핑크 일러스트 반팔티로 데이트에 어울리는 여성스러운 요소가 확인된다.",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s15-1960677",
+  "grade": 1,
+  "needsImage": true,
+  "why": "여성용 크롭티지만 체커보드 그래픽이 여성스럽고 데이트에 적합한지는 이미지 확인이 필요하다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s15-4012869",
+  "grade": 1,
+  "needsImage": true,
+  "why": "여성 반팔이지만 그래픽이 여성스럽고 데이트에 어울리는지는 이미지 확인이 필요하다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s15-6163677",
+  "grade": 1,
+  "needsImage": true,
+  "why": "여성 티셔츠지만 데이트에 어울리는 여성스러운 외형인지는 텍스트로 확인되지 않는다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s15-6163681",
+  "grade": 1,
+  "needsImage": true,
+  "why": "여성용 티셔츠지만 여성스러운 데이트 스타일을 판단할 디자인 정보가 부족하다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ }
+]

@@ -1,3 +1,16 @@
+## [0.1.3](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/compare/v0.1.2...v0.1.3) (2026-08-18)
+
+### Features
+
+* 부정 조건과 LLM 질의 해석 (부정 조각 1~3단계) ([#28](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/issues/28)) ([9fe344a](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/commit/9fe344aa37bfde684ac6309599577428fd3e6560))
+* 브랜드 사전을 정본으로 만든다 (소프트 텍스트 1단계) ([#23](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/issues/23)) ([9dc8aaa](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/commit/9dc8aaaebb61c2b7f2ac5f4039b60b3a1765a945))
+* 실측 치수로 핏·체형 축을 만든다 (핏 조각 1~5단계) ([#29](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/issues/29)) ([6abe187](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/commit/6abe187e8fc6ee878e49ae61274897fc1fa94d2f))
+* 제목 단어를 하드 조건에서 점수로 내린다 (소프트 텍스트 2단계) ([#25](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/issues/25)) ([aa6b9d0](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/commit/aa6b9d04bc65cbb16fb8f5a17359e4c441149304))
+* 카테고리 말을 하드 조건으로 빼낸다 (소프트 텍스트 4단계) ([#26](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/issues/26)) ([679fbaf](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/commit/679fbaf15492a5a3e3b463135fc6e929f56f6731))
+
+### Bug Fixes
+
+* 릴리즈 봇이 만든 CHANGELOG로 develop 대상 PR이 전부 막히던 것 ([#24](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/issues/24)) ([43139ac](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/commit/43139ac65279dd03f5d542a77b6e38e359ccef71))
 ## [0.1.2](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/compare/v0.1.1...v0.1.2) (2026-08-17)
 
 ### Features

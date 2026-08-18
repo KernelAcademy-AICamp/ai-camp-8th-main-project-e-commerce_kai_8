@@ -311,14 +311,37 @@ def build() -> dict:
         # 가족의 대표 버킷 = 첫 구성원의 버킷 (파생은 원본과 같은 파티션이면 충분)
         by_bucket_families.setdefault(members[0]["bucket"], []).append(fam)
 
+    # ── 이미 나뉜 가족은 그 자리에 고정한다 ────────────────────────────────
+    #
+    # ⚠️ **이게 없으면 질의를 하나만 보태도 기존 배정이 통째로 흔들린다.** 분할은
+    # 버킷 안 해시 정렬 뒤 50/25/25인데, `total`이 바뀌면 경계가 밀려 **holdout이던
+    # 질의가 dev로 넘어온다.** holdout은 최종 판정용이라 한 번 보면 되돌릴 수 없다
+    # (meta의 lockNotice가 막으려는 것이 정확히 이것이다).
+    #
+    # 그래서 기존 query-set.json이 있으면 거기 적힌 배정을 그대로 쓰고, **새 가족만**
+    # 같은 규칙으로 나눈다. 파일이 없으면(최초 생성) 예전과 똑같이 동작한다.
+    pinned: dict[str, str] = {}
+    if OUT_PATH.exists():
+        prev = json.loads(OUT_PATH.read_text(encoding="utf-8"))
+        for e in prev.get("entries", []):
+            root, part = e.get("familyRoot"), e.get("partition")
+            if root and part:
+                pinned[root] = part
+
     partition_of: dict[str, str] = {}
     for bucket, fams in by_bucket_families.items():
-        # 해시 정렬로 결정적 셔플 후 50/25/25
-        ordered = sorted(fams, key=lambda f: hashlib.sha256(f.encode()).hexdigest())
-        total = len(ordered)
+        # 고정된 것은 건드리지 않고, 새 가족만 해시 정렬해 50/25/25로 나눈다.
+        for fam in fams:
+            if fam in pinned:
+                partition_of[fam] = pinned[fam]
+        fresh = sorted(
+            (f for f in fams if f not in pinned),
+            key=lambda f: hashlib.sha256(f.encode()).hexdigest(),
+        )
+        total = len(fresh)
         n_dev = round(total * 0.5)
         n_prog = round(total * 0.25)
-        for i, fam in enumerate(ordered):
+        for i, fam in enumerate(fresh):
             if i < n_dev:
                 partition_of[fam] = "dev"
             elif i < n_dev + n_prog:

@@ -146,10 +146,13 @@ describe("useSearchFeed", () => {
       .mockResolvedValue(page([]));
     const { result } = renderSearchFeed({ query: "나이키" });
     await waitFor(() => {
+      // ⚠️ 다음 페이지도 **같은 해석**을 실어 보내야 한다. 1페이지에서만 빼면
+      // 2페이지부터 위반이 다시 올라온다(부정 조각 3단계).
       expect(fetchSearchPageMock).toHaveBeenCalledWith(
         "나이키",
         { score: 4.5, goodsNo: 2 },
         30,
+        { exclude: [], exclude_colors: [], expand: [], fit: [] },
       );
       expect(goodsNos(result)).toEqual([1, 2, 3]);
     });

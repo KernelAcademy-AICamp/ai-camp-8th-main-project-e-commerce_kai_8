@@ -3,3 +3,9 @@ node_modules
 out
 build
 package-lock.json
+
+# 릴리즈 봇이 만드는 파일 — 사람이 쓰지 않는다.
+# standard-version이 불릿을 `*`로 쓰는데 Prettier는 `-`를 원해서, 릴리즈가 돌 때마다
+# format:check가 깨지고 **develop 대상 모든 PR이 막혔다**(v0.1.2에서 실제로 발생).
+# 고쳐 두면 다음 릴리즈가 되돌린다 — 검사 대상에서 빼는 것이 맞다.
+CHANGELOG.md

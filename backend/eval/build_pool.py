@@ -46,6 +46,9 @@ SYSTEM_CHANGELOG = {
         "2026-08-17 C-3: 가격 표현을 텍스트에서 빼내 가격 범위 필터로",
         "2026-08-17 C-3 리뷰 반영: `미만` 경계·숫자 상한·5단어 절단 순서·"
         "단어 단위 자판 복원·역할어 조사 허용",
+        "2026-08-18 소프트 텍스트: 브랜드·카테고리를 하드 조건으로 빼내고, 제목 "
+        "단어를 전 단어 AND에서 '하드 조건이 있으면 순위 신호'로 바꿈. G6 100%→40% "
+        "(waiver, 기준서 §1-1). AND 먼저 시도 후 부족할 때만 OR로 넓힘.",
         "2026-08-17 C-3 리뷰 2차: 프론트·하네스의 선행 5단어 절단 제거, "
         "자판 복원을 네 글자 이상으로 제한(xl→티 변질 차단), "
         "오타 교정이 5단어로 자르던 것 제거(6번째 이후 조건 삭제 차단)",
@@ -72,6 +75,23 @@ SYSTEMS = {
             " join c_goods g using (goods_no) order by r.ord"
         ),
         "args": lambda q, n: (q, n),
+    },
+    # LLM 해석(부정·의도)을 얹은 경로. `a`와 같은 RPC를 부르되 질의 해석 결과를
+    # 함께 넘긴다 — 해석은 라우트 핸들러가 주므로 이 시스템은 dev 서버가 떠 있어야 한다.
+    "a-llm": {
+        "name": "a-llm-query-plan",
+        "sql": (
+            "select r.goods_no, r.title, r.brand_name, r.price_final, r.gender, r.query_used,"
+            " (select string_agg(cg.name_ko, '/' order by cg.code) from c_color_groups cg"
+            "   where cg.code = any(g.color_codes)) as color_label,"
+            " g.category"
+            " from c_search_page_v2(%s, null, null, %s, %s::text[], %s::text[])"
+            " with ordinality as r("
+            "   goods_no, title, brand_name, price_final, gender, gallery, thumbnail,"
+            "   width, height, score, query_used, ord)"
+            " join c_goods g using (goods_no) order by r.ord"
+        ),
+        "args": None,   # build()가 해석을 붙여 만든다
     },
     "a": {
         "name": "a-c_search_page_v2-pgroonga-bigram",
@@ -175,7 +195,25 @@ def build(system: str) -> dict:  # noqa: C901
 
             for e in entries:
                 norm = normalize_query(e["query"])
-                cur.execute(spec["sql"], spec["args"](norm, TOP_N))
+                if spec["args"] is None:
+                    # LLM 해석 경로 — 라우트 핸들러에게 묻고 그 결과를 함께 넘긴다.
+                    # 확장어는 질의에 얹어 텍스트 점수로만 쓴다(하드 조건이 아니다).
+                    plan = _interpret(norm)
+                    # ⚠️ **프론트의 applyExpansion과 같아야 한다.** 질의에 이미 있는
+                    # 낱말은 빼고 붙인다. 중복을 붙이면 pgroonga_score가 그 낱말을
+                    # 두 번 세어 순위가 달라진다 — 하네스가 제품과 다른 질의를 던지면
+                    # 그 측정치는 제품 얘기가 아니다. 실제로 이 누락 때문에
+                    # `여성 크롭 스트라이프 반팔`이 `... 여성 크롭`으로 나갔다.
+                    have = set(norm.split())
+                    expand = [w for w in (plan.get("expand") or []) if w not in have]
+                    q = norm + ((" " + " ".join(expand)) if expand else "")
+                    cur.execute(
+                        spec["sql"],
+                        (q, TOP_N, plan.get("exclude") or None,
+                         plan.get("exclude_colors") or None),
+                    )
+                else:
+                    cur.execute(spec["sql"], spec["args"](norm, TOP_N))
                 rows = cur.fetchall()
                 # 폴백(자판·오타)은 서버 안에서 일어난다. v1·v2 모두 query_used로
                 # 알려주므로 그대로 받는다 — 여기서 다시 계산하면 평가와 서버가
@@ -263,6 +301,30 @@ def summarize(doc: dict) -> None:
     for q in zero:
         if q["bucket"] != "G6":
             print(f"  [{q['bucket']}] {q['query']}")
+
+
+def _interpret(query: str) -> dict:
+    """질의 해석을 라우트 핸들러에게 묻는다 (`a-llm` 전용).
+
+    ⚠️ **dev 서버가 떠 있어야 한다.** 키를 서버에만 두기로 했으므로 하네스가 LLM을
+    직접 부르지 않는다 — 그러면 평가와 실제 경로가 갈린다(예전에 파이썬 사본을
+    두었다가 실제로 갈렸다).
+    """
+    import json as _json
+    import urllib.request as _url
+
+    req = _url.Request(
+        "http://localhost:3000/api/search/interpret",
+        data=_json.dumps({"query": query}).encode(),
+        headers={"Content-Type": "application/json"},
+    )
+    try:
+        with _url.urlopen(req, timeout=30) as res:
+            return _json.load(res)
+    except Exception as exc:  # noqa: BLE001 — 해석 실패는 빈 해석과 같다
+        raise SystemExit(
+            f"질의 해석 실패: {exc}\n  dev 서버가 떠 있어야 한다 (cd frontend && npm run dev)"
+        ) from exc
 
 
 def main() -> int:

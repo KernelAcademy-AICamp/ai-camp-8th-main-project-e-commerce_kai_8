@@ -135,14 +135,19 @@ def test_other_categories_are_never_corrected_into_tshirts(cur, query, blocked_b
 
 
 def test_g6_query_that_broke_stays_at_zero(cur):
-    """평가 세트의 실제 G6 질의(a-g6-08). 교정이 뚫으면 여기서 잡힌다.
+    """뜻 없는 문자열은 여전히 0건이어야 한다.
 
-    다른 품목 이름이 0건이라고 단정하지는 않는다 — `백팩 프린트 티셔츠`처럼
-    제목에 그 말이 실제로 든 티셔츠가 있고, 그건 옳은 결과다. 교정이 만들어낸
-    결과와 원문이 직접 맞은 결과는 다르다.
+    ⚠️ **G6의 판정선이 내려갔다. 알고 내렸다.** 텍스트를 하드 AND에서 점수로
+    내리면서 `샌들 슬리퍼`·`강아지 사료`처럼 **우리가 안 파는 물건을 정확히
+    지목한 질의**는 결과를 갖게 된다(사람이 정함, 2026-08-17 — 앱 컨셉상
+    그게 자연스럽다). 지표는 지우지 않고 waiver로 남긴다.
+
+    여기서 지키는 것은 그보다 아래 선이다 — **뜻이 없는 입력**은 여전히 0건이다.
+    이것까지 뚫리면 그건 새로운 회귀다.
     """
-    cur.execute("select count(*) from c_search_page_v2(%s, null, null, 20)", ("샌들 슬리퍼",))
-    assert cur.fetchone()[0] == 0, "샌들 슬리퍼: 0건이 정답이다 (기준서 G6)"
+    for q in ("asdfasdf", "12345", "흐으으으음"):
+        cur.execute("select count(*) from c_search_page_v2(%s, null, null, 20)", (q,))
+        assert cur.fetchone()[0] == 0, f"{q}: 뜻 없는 입력은 0건이어야 한다"
 
 
 # 검색 경로 전체. 폴백은 **원문이 0건일 때만** 걸린다.
@@ -607,3 +612,320 @@ def test_search_docs_price_matches_the_catalog(cur):
         "c_search_docs.price_final이 카탈로그와 다르다 — "
         "20260817200000을 다시 돌려야 한다(backend/README.md 갱신 계약)"
     )
+
+
+# ── 브랜드 사전 (소프트 텍스트 조각 1단계) ─────────────────────────────────
+#
+# 다음 단계에서 제목 단어를 하드 AND에서 점수로 내린다. 브랜드를 먼저 빼내지 않으면
+# `커버낫 반팔`이 `반팔`만 맞은 5만 건과 섞인다.
+
+
+def test_brand_dictionary_is_built_from_the_catalog_not_the_typo_vocab(cur):
+    """정본은 `c_search_docs.brand`다. `c_search_vocab`은 오타 교정용이라 정본이 아니다.
+
+    vocab에는 브랜드가 아닌 항목이 241개 섞여 있고 실제 브랜드 4,347개 중 3,989개만
+    담는다. 하드 필터의 근거로 쓰면 안 된다(교차 리뷰 2차 ②).
+    """
+    cur.execute(
+        "select count(*) from c_search_brand_terms t"
+        " where not exists (select 1 from c_search_docs d where d.brand = t.brand)"
+    )
+    assert cur.fetchone()[0] == 0, "사전의 brand는 모두 실제 카탈로그 브랜드여야 한다"
+
+
+@pytest.mark.parametrize(
+    "word,reason",
+    [
+        # 그 브랜드 상품은 9개인데 그 말이 든 문서가 7,305개다. 색으로 남겨야 한다
+        ("네이비", "색이지 브랜드가 아니다"),
+        # 티셔츠를 말할 때 쓰는 일상어이자 우연히 브랜드명이기도 한 말들
+        ("무지", "무지 티셔츠의 무지다"),
+        ("레이스", "소재·디테일을 말하는 말이다"),
+        ("시그니처", "상품명에 흔히 붙는 말이다"),
+        ("오리지널", "상품명에 흔히 붙는 말이다"),
+    ],
+)
+def test_words_that_are_also_everyday_words_are_not_brands(cur, word, reason):
+    cur.execute("select count(*) from c_search_brand_terms where term = %s", (word,))
+    assert cur.fetchone()[0] == 0, reason
+
+
+@pytest.mark.parametrize(
+    "word",
+    # 비율 임계값(0.5)을 썼다면 카고브로스·컬럼비아·반스가, 0.7이면 무신사 스탠다드가
+    # 탈락했다. 절대 기준으로 바꾼 뒤 전부 살아남는지 고정한다.
+    ["커버낫", "데상트", "컬럼비아", "반스", "카고브로스", "무신사 스탠다드", "나이키", "트립션"],
+)
+def test_real_brands_survive(cur, word):
+    cur.execute("select brand from c_search_brand_terms where term = lower(%s)", (word,))
+    row = cur.fetchone()
+    assert row is not None and row[0] == word
+
+
+@pytest.mark.parametrize(
+    "query,brand,rest",
+    [
+        # 긴 구문을 먼저 본다 — 단어별로 보면 `무신사`가 먼저 걸려 `스탠다드`가 남는다
+        ("무신사 스탠다드 반팔", "무신사 스탠다드", ["반팔"]),
+        # 공백을 뗀 형태도 받는다
+        ("무신사스탠다드 반팔", "무신사 스탠다드", ["반팔"]),
+        ("커버낫 반팔", "커버낫", ["반팔"]),
+        ("데상트 민소매", "데상트", ["민소매"]),
+        # 브랜드만 말한 질의는 나머지가 없다
+        ("트립션", "트립션", None),
+        # 색으로 남겨야 하는 말은 브랜드로 걸리지 않는다
+        ("네이비 반팔", None, ["네이비", "반팔"]),
+        # 서로 다른 브랜드가 둘이면 손대지 않는다 — 합집합은 사용자가 말한 것이 아니다
+        ("커버낫 나이키 반팔", None, ["커버낫", "나이키", "반팔"]),
+        # 사전에 없는 말은 아무것도 하지 않는다
+        ("여름 반팔티", None, ["여름", "반팔티"]),
+    ],
+)
+def test_brand_is_split_out_of_the_text_query(cur, query, brand, rest):
+    cur.execute("select brand, rest from c_search_brand_parse(c_search_split(%s))", (query,))
+    got_brand, got_rest = cur.fetchone()
+    assert got_brand == brand
+    assert got_rest == rest
+
+
+@pytest.mark.parametrize(
+    "query,brand",
+    [("데상트 민소매", "데상트"), ("커버낫 후드", "커버낫"), ("트립션 반팔", "트립션")],
+)
+def test_brand_plus_attribute_no_longer_returns_zero(cur, query, brand):
+    """이 조각의 이유. 세 질의 모두 0건이었다 — 데상트에 민소매가 74개 있는데
+    제목에 `민소매`가 든 것이 0개라서다.
+
+    1단계에서는 파서만 만들고 이 테스트가 **여전히 0건임을 고정**했다.
+    2단계에서 후보 자격을 바꿔 실제로 풀렸다.
+    """
+    cur.execute("select brand from c_search_brand_parse(c_search_split(%s))", (query,))
+    assert cur.fetchone()[0] == brand
+    cur.execute(
+        "select count(*), count(*) filter (where g.brand_name = %s)"
+        " from c_search_page_v2(%s, null, null, 20) r join c_goods g using (goods_no)",
+        (brand, query),
+    )
+    total, same = cur.fetchone()
+    assert total == 20, "하드 조건만으로도 후보 자격이 된다"
+    assert same == total, "브랜드는 하드 조건이라 상위가 전부 그 브랜드여야 한다"
+
+
+# ── 카테고리 말을 하드 조건으로 (소프트 텍스트 4단계) ──────────────────────
+#
+# `반팔`·`민소매`는 제목 단어가 아니라 카탈로그의 정본 값이다. 제목만 보면
+# 민소매는 실제의 2.9%만 찾는다.
+
+
+@pytest.mark.parametrize(
+    "query,category",
+    [("민소매", "001011"), ("반팔", "001001"), ("긴팔", "001010"),
+     ("피케", "001003"), ("후드", "001004"),
+     ("데상트 민소매", "001011"), ("검정 민소매", "001011"), ("커버낫 후드", "001004")],
+)
+def test_category_word_becomes_a_hard_condition(cur, query, category):
+    cur.execute(
+        "select count(*), count(*) filter (where g.category = %s)"
+        " from c_search_page_v2(%s, null, null, 20) r join c_goods g using (goods_no)",
+        (category, query),
+    )
+    total, same = cur.fetchone()
+    assert total == 20
+    assert same == total, f"{query}: 상위 20이 전부 {category}여야 한다"
+
+
+def test_title_word_that_contradicts_the_category_does_not_surface(cur):
+    """제목에 `반팔`이 있지만 반팔 티셔츠가 아닌 상품이 3,216개 있다.
+
+    카테고리를 정본으로 쓰면 이것들이 `반팔` 상위에 오지 않는다.
+    """
+    cur.execute(
+        "select count(*) from c_search_page_v2('반팔', null, null, 20) r"
+        " join c_goods g using (goods_no) where g.category <> '001001'"
+    )
+    assert cur.fetchone()[0] == 0
+
+
+@pytest.mark.parametrize("query", ["피케 반팔", "후드 민소매"])
+def test_two_different_categories_are_left_alone(cur, query):
+    """하드 조건은 AND라서 둘을 걸면 공집합이 된다. 색·브랜드와 같은 규칙 —
+    합집합으로 묶으면 사용자가 말한 것과 달라지므로 **모르면 손대지 않는다.**
+    """
+    cur.execute("select ranks from c_search_category_parse(c_search_split(%s))", (query,))
+    assert cur.fetchone()[0] is None
+    cur.execute("select count(*) from c_search_page_v2(%s, null, null, 20)", (query,))
+    assert cur.fetchone()[0] > 0, "카테고리를 포기해도 텍스트로 답이 나와야 한다"
+
+
+def test_category_rank_mapping_is_one_to_one(cur):
+    """검색은 `codes`가 아니라 `ranks`(cat_rank)로 건다 — c_search_docs에 category
+    열이 없기 때문이다. 대응이 1:1이 아니게 되면 `피케` 질의가 모르는 카테고리까지
+    끌어온다(c_category_rank가 미지의 값을 1로 떨어뜨린다).
+    """
+    cur.execute(
+        "select count(*) from ("
+        "  select c_category_rank(category) r from"
+        "    (select distinct category from c_goods where category is not null) g"
+        "  group by 1 having count(*) > 1) x"
+    )
+    assert cur.fetchone()[0] == 0, "카테고리↔cat_rank 대응이 깨졌다"
+
+
+# ── 부정 조건 — 아는 위반만 제외한다 (부정 조각 1단계) ──────────────────────
+#
+# 소프트 텍스트 전환으로 G5의 0건율은 100% → 0%가 됐는데 P@20은 10.6%였다.
+# `로고 없는 무지 반팔티`를 검색하면 상위 20개가 **전부 로고 상품**이었다.
+
+
+@pytest.mark.parametrize(
+    "query,exclude,violates",
+    [
+        ("로고 없는 무지 반팔티", ["로고"], "d.doc &@ '로고'"),
+        ("프린트 없는 검정 반팔", ["프린트", "프린팅"], "d.doc &@ '프린트' or d.doc &@ '프린팅'"),
+        ("브이넥 말고 라운드넥 반팔", ["브이넥"], "d.doc &@ '브이넥'"),
+        ("비침 없는 흰 반팔티", ["비침"], "g.sheer ~ '있음|보통'"),
+        ("너무 붙지 않는 여성 반팔티", ["슬림핏"], "g.fit ~ '슬림|스키니|타이트'"),
+    ],
+)
+def test_known_violations_are_excluded(cur, query, exclude, violates):
+    cur.execute(
+        f"select count(*), count(*) filter (where {violates})"
+        " from c_search_page_v2(%s, null, null, 20, %s::text[]) r"
+        " join c_search_docs d using (goods_no) join c_goods g using (goods_no)",
+        (query, exclude),
+    )
+    total, bad = cur.fetchone()
+    assert total == 20, "제외해도 페이지는 채워져야 한다"
+    assert bad == 0, f"{query}: 아는 위반이 상위 20에 남으면 안 된다"
+
+
+def test_unknown_values_are_kept(cur):
+    """**아는 위반만** 제외한다. 값이 없는 상품은 남긴다.
+
+    원단 속성 커버리지는 28%다. 양성 필터(`sheer in ('없음')`)로 걸면 값이 없는
+    72%가 통째로 사라진다 — C단계가 "필터로 쓰지 않는다"고 정한 이유다.
+    부정은 방향이 반대라 그 문제가 없고, 그 사실을 여기서 고정한다.
+    """
+    cur.execute(
+        "select count(*), count(*) filter (where g.sheer is null or g.sheer = '')"
+        " from c_search_page_v2('비침 없는 흰 반팔티', null, null, 20, array['비침']) r"
+        " join c_goods g using (goods_no)"
+    )
+    total, unknown = cur.fetchone()
+    assert total == 20
+    assert unknown > 0, "값이 없는 상품이 남아 있어야 한다 (아는 위반만 뺀다)"
+
+
+def test_excluding_nothing_changes_nothing(cur):
+    """부정을 주지 않으면 지금과 결과가 같아야 한다."""
+    for q in ("검정 반팔", "커버낫 후드", "주황색이 들어간 티"):
+        cur.execute("select array_agg(goods_no order by goods_no) from c_search_page_v2(%s,null,null,20)", (q,))
+        a = cur.fetchone()[0]
+        cur.execute(
+            "select array_agg(goods_no order by goods_no) from c_search_page_v2(%s,null,null,20,null::text[])",
+            (q,),
+        )
+        assert cur.fetchone()[0] == a, f"{q}: 부정 없이 부르면 결과가 같아야 한다"
+
+
+def test_negation_terms_are_a_closed_set(cur):
+    """LLM은 이 표의 term만 고를 수 있다. 종류(하드/소프트)는 표가 정한다(설계 130행).
+
+    표에 없는 값을 넘기면 아무것도 제외하지 않는다 — 조용히 무시하는 것이 맞다.
+    새 축을 만들려면 표를 먼저 고쳐야 한다.
+    """
+    cur.execute("select count(*) from c_search_page_v2('반팔', null, null, 20)")
+    base = cur.fetchone()[0]
+    cur.execute(
+        "select count(*) from c_search_page_v2('반팔', null, null, 20, array['지어낸축'])"
+    )
+    assert cur.fetchone()[0] == base
+
+
+def test_negation_flags_cover_only_known_violators(cur):
+    """플래그 표에는 **위반하는 상품만** 있다. 나머지는 행이 없다."""
+    cur.execute("select count(*) from c_search_negation_flags")
+    flagged = cur.fetchone()[0]
+    cur.execute("select count(*) from c_search_docs")
+    total = cur.fetchone()[0]
+    assert 0 < flagged < total, "전부이거나 비어 있으면 계산이 틀린 것이다"
+    cur.execute("select count(*) from c_search_negation_flags where flags = '{}'")
+    assert cur.fetchone()[0] == 0, "빈 플래그 행은 있으면 안 된다"
+
+
+# ── 질의 해석 캐시 (부정 조각 2단계) ────────────────────────────────────────
+#
+# LLM 호출은 느리고(1~2초) 돈이 든다. 설계 S-02는 "문장형 질의에만 호출하고
+# 결과를 캐시한다"로 정했다.
+
+_PLAN_Q = "테스트 캐시 질의 로고 없는"
+
+
+@pytest.fixture
+def plan_cache(cur):
+    """검증용 행을 넣고 끝나면 지운다 — 공용 DB라 남기지 않는다."""
+    yield
+    cur.execute("delete from c_search_query_plan where query_norm like '테스트 캐시%%'")
+
+
+def test_plan_cache_round_trips(cur, plan_cache):
+    cur.execute(
+        "select c_search_plan_put(%s, 1, 'test-model', %s::jsonb)",
+        (_PLAN_Q, '{"exclude":["로고"],"expand":["무지"]}'),
+    )
+    assert cur.fetchone()[0] is True
+    cur.execute("select c_search_plan_get(%s, 1, 'test-model')", (_PLAN_Q,))
+    assert cur.fetchone()[0] == {"exclude": ["로고"], "expand": ["무지"]}
+
+
+@pytest.mark.parametrize("ver,model", [(2, "test-model"), (1, "other-model")])
+def test_prompt_version_and_model_are_part_of_the_key(cur, plan_cache, ver, model):
+    """프롬프트를 고치거나 모델을 바꾸면 옛 해석은 **다른 규칙으로 만들어진 것**이다.
+
+    버전이 키에 없으면 "왜 옛날 답이 나오지"를 나중에 알 수 없다.
+    """
+    cur.execute(
+        "select c_search_plan_put(%s, 1, 'test-model', %s::jsonb)",
+        (_PLAN_Q, '{"exclude":["로고"]}'),
+    )
+    cur.execute("select c_search_plan_get(%s, %s, %s)", (_PLAN_Q, ver, model))
+    assert cur.fetchone()[0] is None, "버전·모델이 다르면 캐시가 없어야 한다"
+
+
+@pytest.mark.parametrize(
+    "plan,why",
+    [
+        ('{"exclude":["지어낸축"]}', "부정 항목의 닫힌 집합을 벗어났다"),
+        ('{"exclude_colors":["999"]}', "없는 색 코드다"),
+        ('{"expand":["1","2","3","4","5","6","7","8","9"]}', "확장어 개수 상한을 넘었다"),
+        ('{"exclude":"로고"}', "배열이 아니다"),
+    ],
+)
+def test_plan_cache_rejects_values_outside_the_closed_set(cur, plan_cache, plan, why):
+    """설계 130행 — LLM은 표가 정한 값만 고른다. 벗어나면 **통째로** 거절한다.
+
+    일부만 살리면 "무엇이 적용됐는지"를 나중에 알 수 없다.
+    """
+    cur.execute("select c_search_plan_put(%s, 1, 'test-model', %s::jsonb)", (_PLAN_Q, plan))
+    assert cur.fetchone()[0] is False, why
+
+
+def test_plan_cache_write_is_not_open_to_anon(cur):
+    """⚠️ 이 표는 **다른 사용자의 검색 결과를 바꾼다.**
+
+    검색 로그는 오염돼도 계측만 더러워지지만, 여기는 누구나 `반팔`의 해석을
+    "로고 제외"로 덮어쓰면 그게 결과 조작이다. 값 검증으로는 막을 수 없다 —
+    검증은 형식이 맞나를 보지 그 질의의 옳은 해석인가를 보지 못한다.
+    """
+    cur.execute(
+        "select has_function_privilege('anon', oid, 'execute') from pg_proc"
+        " where proname = 'c_search_plan_put'"
+    )
+    assert cur.fetchone()[0] is False, "쓰기가 anon에 열려 있으면 안 된다"
+    cur.execute(
+        "select has_function_privilege('anon', oid, 'execute') from pg_proc"
+        " where proname = 'c_search_plan_get'"
+    )
+    assert cur.fetchone()[0] is True, "읽기는 열려 있어야 캐시가 쓸모가 있다"
+    cur.execute("select has_table_privilege('anon', 'c_search_query_plan', 'select')")
+    assert cur.fetchone()[0] is False, "표 직접 조회는 막혀 있어야 한다"
