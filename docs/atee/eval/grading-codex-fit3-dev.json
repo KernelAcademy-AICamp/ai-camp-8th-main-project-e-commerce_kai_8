@@ -1,0 +1,1613 @@
+[
+ {
+  "itemId": "a-g4-05-1393297",
+  "grade": 1,
+  "needsImage": false,
+  "why": "코튼 반팔이지만 면 100%가 확인되지 않고 자수 장식이 있다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g4-05-1987796",
+  "grade": 2,
+  "needsImage": false,
+  "why": "순면 소재의 기본 라운드 반팔 티셔츠다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g4-05-2555069",
+  "grade": 1,
+  "needsImage": false,
+  "why": "코튼 반팔이지만 면 100%가 확인되지 않고 와펜이 있어 완전한 기본형과는 차이가 있다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g4-05-2555099",
+  "grade": 1,
+  "needsImage": false,
+  "why": "코튼 반팔이지만 면 100%는 확인되지 않고 와펜이 있어 완전한 기본 디자인도 아니다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g4-05-2768130",
+  "grade": 1,
+  "needsImage": false,
+  "why": "헤비코튼 반팔은 확인되지만 면 100%라는 명시는 없고 반바지가 포함된 세트다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g4-05-2768233",
+  "grade": 1,
+  "needsImage": false,
+  "why": "코튼 반팔은 포함하지만 면 100%라는 표시가 없고 반바지와 묶인 세트다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g4-05-2768237",
+  "grade": 1,
+  "needsImage": false,
+  "why": "코튼 반팔이 포함된 세트지만 면 100%가 명시되지 않았다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g4-05-3271516",
+  "grade": 2,
+  "needsImage": false,
+  "why": "100% 오가닉 코튼 무지 반팔로 모든 조건을 만족한다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g4-05-4239183",
+  "grade": 1,
+  "needsImage": false,
+  "why": "반팔 코튼 티셔츠지만 면 100%가 확인되지 않고 레터링이 있어 기본 무지형과도 차이가 있다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g4-05-4239189",
+  "grade": 1,
+  "needsImage": false,
+  "why": "코튼 반팔이지만 면 100%가 명시되지 않았고 메탈릭 자수가 있어 기본 디자인과도 차이가 있다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g4-05-4239191",
+  "grade": 1,
+  "needsImage": false,
+  "why": "코튼 반팔이지만 면 100%가 확인되지 않고 포토 그래픽이 있어 기본형과 거리가 있다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g4-05-4272351",
+  "grade": 1,
+  "needsImage": false,
+  "why": "반팔 코튼 티셔츠지만 면 100%와 기본 무지 여부가 확인되지 않는다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g4-05-4570799",
+  "grade": 2,
+  "needsImage": false,
+  "why": "100% 코튼 소재의 기본형 반팔 티셔츠다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g4-05-4570865",
+  "grade": 2,
+  "needsImage": false,
+  "why": "100% 코튼으로 명시된 기본형 반팔 티셔츠다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g4-05-4572085",
+  "grade": 2,
+  "needsImage": false,
+  "source": "불일치 재검토로 확정",
+  "why": "100% 코튼 소재의 반팔 티셔츠로 질의 조건을 충족한다.",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g4-05-4572133",
+  "grade": 1,
+  "needsImage": true,
+  "why": "면 100%와 반팔은 확인되지만 기본 디자인인지는 텍스트로 확인되지 않는다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g5-01-182486",
+  "grade": 2,
+  "needsImage": false,
+  "why": "무지 제품이고 카테고리상 반팔이라 로고 없는 무지 반팔 조건을 만족한다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g5-01-338305",
+  "grade": 2,
+  "needsImage": false,
+  "why": "무지 반팔 티셔츠로 로고 없는 조건에 부합한다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g5-01-345889",
+  "grade": 2,
+  "needsImage": false,
+  "why": "무지로 명시된 반팔 티셔츠여서 로고 없는 조건을 만족한다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g5-01-357155",
+  "grade": 2,
+  "needsImage": false,
+  "why": "무지 반팔 티셔츠로 로고 없는 조건을 만족한다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g5-01-357156",
+  "grade": 2,
+  "needsImage": false,
+  "why": "무지 반팔 티셔츠로 로고 없는 기본 디자인임이 명시되어 있다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g5-01-357157",
+  "grade": 2,
+  "needsImage": false,
+  "why": "무지로 명시된 반팔 티셔츠여서 로고 없는 조건을 만족한다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g5-01-357160",
+  "grade": 2,
+  "needsImage": false,
+  "why": "무지 반팔 티셔츠 세트로 로고 없는 조건을 만족한다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g5-01-377630",
+  "grade": 2,
+  "needsImage": false,
+  "why": "무지 반팔 티셔츠 세트로 로고 없는 조건을 충족한다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g5-01-381336",
+  "grade": 2,
+  "needsImage": false,
+  "why": "무지 제품이고 카테고리상 반팔이라 로고 없는 무지 반팔 조건을 만족한다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g5-01-381337",
+  "grade": 2,
+  "needsImage": false,
+  "why": "무지 반팔 티셔츠로 로고 없는 조건을 만족한다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g5-01-382476",
+  "grade": 2,
+  "needsImage": false,
+  "why": "무지 반팔 티셔츠로 로고 없는 조건을 만족한다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g5-01-534529",
+  "grade": 2,
+  "needsImage": false,
+  "why": "무지 나그랑 티셔츠이며 카테고리상 반팔로 로고 없는 조건을 만족한다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g5-01-538836",
+  "grade": 2,
+  "needsImage": false,
+  "why": "무지 반팔로 로고 없는 조건을 충족한다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g5-01-559954",
+  "grade": 2,
+  "needsImage": false,
+  "why": "무지로 명시된 로고 없는 반팔 티셔츠다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g5-01-577957",
+  "grade": 2,
+  "needsImage": false,
+  "why": "배색은 있으나 무지 반팔로 명시되어 로고 없는 조건을 만족한다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g5-03-1948878",
+  "grade": 2,
+  "needsImage": false,
+  "why": "여성용 레귤러핏 반팔로 너무 붙지 않는 조건을 만족한다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g5-03-1948892",
+  "grade": 2,
+  "needsImage": false,
+  "why": "여성용 레귤러핏 반팔로 지나치게 붙는 제품이 아니다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g5-03-4216673",
+  "grade": 2,
+  "needsImage": false,
+  "why": "여성용 레귤러핏 반팔로 지나치게 붙지 않는 조건을 만족한다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g5-03-4217832",
+  "grade": 2,
+  "needsImage": false,
+  "why": "여성용 레귤러핏 반팔로 너무 붙지 않는 조건을 만족한다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g5-03-4710763",
+  "grade": 2,
+  "needsImage": false,
+  "why": "여성용 레귤러핏 반팔로 몸에 너무 붙지 않는 조건을 만족한다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g5-03-4907134",
+  "grade": 2,
+  "needsImage": false,
+  "why": "여성용 레귤러핏 반팔로 지나치게 붙지 않는 조건을 만족한다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g5-03-4950182",
+  "grade": 2,
+  "needsImage": false,
+  "why": "여성용 모달 레귤러핏 반팔로 너무 붙지 않는다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g5-03-4950183",
+  "grade": 2,
+  "needsImage": false,
+  "why": "여성용 레귤러핏 반팔로 너무 붙지 않는 조건을 만족한다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g5-03-4950184",
+  "grade": 2,
+  "needsImage": false,
+  "why": "여성용 모달 레귤러핏 반팔로 과하게 붙지 않는다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g5-03-4950185",
+  "grade": 2,
+  "needsImage": false,
+  "why": "여성용 레귤러핏 반팔로 너무 붙지 않는 조건을 충족한다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g5-03-4981339",
+  "grade": 2,
+  "needsImage": false,
+  "why": "여성용 레귤러핏 반팔로 너무 붙지 않는 조건을 만족한다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g5-03-4981340",
+  "grade": 2,
+  "needsImage": false,
+  "why": "여성용 레귤러핏 반팔로 몸에 너무 붙지 않는 조건을 만족한다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g5-03-4981341",
+  "grade": 2,
+  "needsImage": false,
+  "why": "여성용 레귤러핏 반팔로 너무 붙지 않는 조건을 만족한다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g5-03-4981342",
+  "grade": 2,
+  "needsImage": false,
+  "why": "여성용 레귤러핏 반팔로 몸에 너무 붙지 않는 조건을 만족한다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g5-03-5196957",
+  "grade": 1,
+  "needsImage": false,
+  "why": "레귤러핏 여성 반팔이라는 제목은 맞지만 성별 정보가 남성으로 표시돼 있다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g5-03-5198532",
+  "grade": 2,
+  "needsImage": false,
+  "why": "여성용 레귤러핏 반팔로 너무 달라붙지 않는 조건에 부합한다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g5-03-5198534",
+  "grade": 2,
+  "needsImage": false,
+  "why": "여성용 레귤러핏 면 반팔로 지나치게 붙는 제품이 아니다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g5-09-3092636",
+  "grade": 2,
+  "needsImage": false,
+  "why": "단색 무지 기본 반팔로 화려하지 않은 디자인이다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g5-09-3092637",
+  "grade": 2,
+  "needsImage": false,
+  "why": "무지 기본 반팔 티셔츠로 화려하지 않다는 조건을 만족한다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g5-09-3092639",
+  "grade": 2,
+  "needsImage": false,
+  "why": "스카이 블루의 무지 기본 반팔로 화려하지 않은 기본 티셔츠에 해당한다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g5-09-3092640",
+  "grade": 2,
+  "needsImage": false,
+  "why": "무지 기본 반팔로 화려하지 않은 조건을 만족한다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g5-09-3092642",
+  "grade": 2,
+  "needsImage": false,
+  "why": "라이트 핑크의 무지 기본 반팔로 화려하지 않은 기본 티셔츠에 해당한다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g5-09-3092643",
+  "grade": 2,
+  "needsImage": false,
+  "why": "단색 무지 기본 반팔로 화려하지 않은 조건을 만족한다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g5-09-4259445",
+  "grade": 2,
+  "needsImage": false,
+  "why": "두 제품 모두 기본 무지 반팔로 화려하지 않은 티셔츠 조건을 만족한다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g5-09-5209739",
+  "grade": 2,
+  "needsImage": false,
+  "why": "기본 무지 반팔로 화려하지 않은 조건을 충족한다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g5-09-5216386",
+  "grade": 2,
+  "needsImage": false,
+  "why": "기본 무지 반팔로 화려하지 않은 조건을 충족한다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g5-09-5221586",
+  "grade": 2,
+  "needsImage": false,
+  "why": "공용 기본 무지 반팔로 화려하지 않은 기본 티셔츠 조건을 만족한다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g5-09-5498298",
+  "grade": 2,
+  "needsImage": false,
+  "why": "기본 무지 긴팔 티셔츠로 화려하지 않은 조건을 만족한다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g5-09-5498383",
+  "grade": 2,
+  "needsImage": false,
+  "why": "기본 무지 긴팔 티셔츠로 화려하지 않은 조건에 부합한다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g5-09-5498581",
+  "grade": 2,
+  "needsImage": false,
+  "why": "무지 기본 긴팔이며 긴팔도 티셔츠 제품군이므로 화려하지 않은 기본 티셔츠에 해당한다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s11-3932032",
+  "grade": 2,
+  "needsImage": false,
+  "source": "불일치 재검토로 확정",
+  "why": "쿨링·냉감 티셔츠로 흠뻑쇼 같은 여름 야외 공연에 적합하다.",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s11-5045731",
+  "grade": 2,
+  "needsImage": false,
+  "why": "아이스필 냉감 티셔츠로 더운 야외 물놀이 공연에 적합하다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s11-5229175",
+  "grade": 2,
+  "needsImage": false,
+  "source": "불일치 재검토로 확정",
+  "why": "쿨링·냉감 기능을 명시한 반팔 티셔츠로 흠뻑쇼 착용에 적합하다.",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s11-5287395",
+  "grade": 2,
+  "needsImage": false,
+  "why": "쿨링·냉감 아이스 반팔로 흠뻑쇼에서 입기 적합하다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s11-5287429",
+  "grade": 2,
+  "needsImage": false,
+  "why": "쿨링·냉감 기능의 여름 반팔로 물에 젖는 야외 공연에 적합하다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s11-5287454",
+  "grade": 2,
+  "needsImage": false,
+  "why": "쿨링·냉감 기능성 반팔로 물에 젖는 여름 공연에 적합하다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s11-5302498",
+  "grade": 2,
+  "needsImage": false,
+  "why": "냉감 스포츠 반팔이며 색상 선택지에 네이비가 있어 흠뻑쇼 상황에 적합하다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s11-5302581",
+  "grade": 2,
+  "needsImage": false,
+  "why": "쿨링·냉감 스포츠 반팔로 흠뻑쇼에서 입기 적합하다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s11-5302582",
+  "grade": 2,
+  "needsImage": false,
+  "why": "쿨링·냉감 스포츠 반팔로 물놀이형 여름 공연에 적합하다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s11-5342036",
+  "grade": 2,
+  "needsImage": false,
+  "why": "쿨링·냉감 기능의 여름 반팔로 물놀이형 공연에 적합하다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s11-5342147",
+  "grade": 2,
+  "needsImage": false,
+  "why": "쿨링·냉감 기능성 반팔로 더운 야외 물 공연에 적합하다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s11-5342176",
+  "grade": 2,
+  "needsImage": false,
+  "why": "쿨링·냉감 기능의 여름 반팔로 흠뻑쇼 착용에 적합하다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s11-5342187",
+  "grade": 2,
+  "needsImage": false,
+  "why": "쿨링·냉감 아이스 반팔로 흠뻑쇼 같은 여름 야외 공연에 적합하다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s11-5354071",
+  "grade": 2,
+  "needsImage": false,
+  "why": "쿨링·냉감 스포츠 반팔로 여름 야외 물놀이 공연에 적합하다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s11-6331931",
+  "grade": 2,
+  "needsImage": false,
+  "why": "냉감·쿨링 소재의 반팔로 흠뻑쇼에서 입기 적합하다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s11-6331946",
+  "grade": 2,
+  "needsImage": false,
+  "why": "냉감·쿨링 소재의 반팔 티셔츠로 흠뻑쇼에서 입기 적합하다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s11-6332011",
+  "grade": 2,
+  "needsImage": false,
+  "why": "냉감·쿨링 소재의 반팔 티셔츠로 흠뻑쇼에 적합하다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s11-6332028",
+  "grade": 2,
+  "needsImage": false,
+  "source": "불일치 재검토로 확정",
+  "why": "냉감·쿨링 소재의 레귤러 티셔츠로 더운 야외 물놀이 공연에 적합하다.",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s11-6677461",
+  "grade": 2,
+  "needsImage": false,
+  "why": "쿨링·냉감 반팔 티셔츠로 흠뻑쇼 같은 여름 야외 공연에 적합하다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s11-6677527",
+  "grade": 2,
+  "needsImage": false,
+  "why": "쿨링·냉감 반팔로 흠뻑쇼 같은 여름 야외 공연에 적합하다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s13-1865568",
+  "grade": 2,
+  "needsImage": false,
+  "why": "여성용 슬림 크롭 반팔로 웨이브 체형에 적합한 실루엣이다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s13-2411247",
+  "grade": 2,
+  "needsImage": false,
+  "why": "여성용 세미 크롭 슬림핏으로 웨이브 체형 권장 특성에 부합한다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s13-2603220",
+  "grade": 2,
+  "needsImage": false,
+  "why": "여성용 슬림 크롭 반팔로 웨이브 체형 권장 실루엣에 부합한다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s13-2647822",
+  "grade": 2,
+  "needsImage": false,
+  "why": "여성용 슬림핏 크롭 반팔로 웨이브 체형 권장 실루엣에 부합한다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s13-2647824",
+  "grade": 2,
+  "needsImage": false,
+  "why": "여성용 슬림핏 크롭 반팔로 웨이브 체형 권장 조건에 부합한다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s13-3052651",
+  "grade": 2,
+  "needsImage": false,
+  "why": "여성용 슬림 크롭 크루넥으로 웨이브 체형 권장 특성에 부합한다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s13-3052652",
+  "grade": 2,
+  "needsImage": false,
+  "why": "여성용 슬림 크롭 크루넥 반팔로 웨이브 체형 권장 조건에 부합한다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s13-3052653",
+  "grade": 2,
+  "needsImage": false,
+  "why": "여성용 슬림 크롭 크루넥 반팔로 웨이브 체형에 적합하다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s13-3052654",
+  "grade": 2,
+  "needsImage": false,
+  "why": "여성용 슬림 크롭 크루넥 반팔로 웨이브 체형 권장 조건에 부합한다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s13-3052655",
+  "grade": 2,
+  "needsImage": false,
+  "why": "여성용 슬림 크롭 크루넥 반팔로 웨이브 체형 권장 특성에 부합한다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s13-3052656",
+  "grade": 2,
+  "needsImage": false,
+  "why": "여성용 슬림 크롭 크루넥 반팔로 웨이브 체형에 적합하다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s13-3052661",
+  "grade": 2,
+  "needsImage": false,
+  "why": "여성용 슬림 크롭 반팔로 웨이브 체형 권장 실루엣에 부합한다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s13-3052662",
+  "grade": 2,
+  "needsImage": false,
+  "why": "여성용 슬림 크롭 반팔로 웨이브 체형 권장 실루엣에 부합한다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s13-3052663",
+  "grade": 2,
+  "needsImage": false,
+  "why": "여성용 슬림 크롭 반팔로 웨이브 체형에 적합하다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s13-3064420",
+  "grade": 2,
+  "needsImage": false,
+  "why": "여성용 슬림핏 베이비 크롭 반팔로 웨이브 체형 권장 특성에 부합한다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s13-3111254",
+  "grade": 2,
+  "needsImage": false,
+  "why": "여성용 크롭 티셔츠 세트로 웨이브 체형에 권장되는 짧은 기장을 만족한다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s13-3112887",
+  "grade": 2,
+  "needsImage": false,
+  "why": "여성용 크롭 슬림핏으로 웨이브 체형 권장 특성에 부합한다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s13-3161901",
+  "grade": 2,
+  "needsImage": false,
+  "why": "여성용 슬림 크롭 반팔로 웨이브 체형 권장 핏과 기장에 부합한다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s13-3211175",
+  "grade": 2,
+  "needsImage": false,
+  "why": "여성용 크롭 슬림핏 티셔츠로 웨이브 체형 권장 특성에 부합한다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s13-3211176",
+  "grade": 2,
+  "needsImage": false,
+  "why": "여성용 크롭 슬림핏 티셔츠로 웨이브 체형 권장 특성에 부합한다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s16-2537649",
+  "grade": 1,
+  "needsImage": true,
+  "why": "쿨링 반팔이라 여름에는 적합하지만 팔뚝 커버 소매인지 확인되지 않는다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s16-2560410",
+  "grade": 2,
+  "needsImage": false,
+  "why": "여름용 오버사이즈 반팔이라 팔뚝을 여유 있게 커버할 수 있다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s16-2578762",
+  "grade": 2,
+  "needsImage": false,
+  "why": "여름용 하프 티셔츠로 팔뚝을 덮는 조건에 부합한다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s16-2578776",
+  "grade": 2,
+  "needsImage": false,
+  "why": "여름용 하프 티셔츠로 팔뚝을 덮는 소매 특성이 명시되어 있다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s16-2578786",
+  "grade": 2,
+  "needsImage": false,
+  "why": "여름용 하프 티셔츠로 팔뚝 커버에 적합하다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s16-3064150",
+  "grade": 1,
+  "needsImage": true,
+  "why": "여름 반팔이지만 팔뚝 커버가 가능한 소매 형태인지는 확인되지 않는다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s16-3117912",
+  "grade": 1,
+  "needsImage": true,
+  "source": "불일치 재검토로 확정",
+  "why": "여성 반팔 티셔츠지만 Y존 커버는 팔뚝살 커버와 다른 의미이며 소매의 커버력은 확인이 필요하다.",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s16-3214647",
+  "grade": 1,
+  "needsImage": true,
+  "why": "여름 반팔 세트지만 팔뚝을 충분히 가리는 소매인지 확인되지 않는다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s16-324416",
+  "grade": 1,
+  "needsImage": true,
+  "why": "반팔 티셔츠지만 팔뚝 커버용 소매 형태와 여름용 소재는 확인되지 않는다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s16-3276151",
+  "grade": 1,
+  "needsImage": true,
+  "source": "불일치 재검토로 확정",
+  "why": "반팔 커버업 제품이지만 팔뚝살을 가리는 소매 형태와 여름 적합성은 확인이 필요하다.",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s16-3276152",
+  "grade": 1,
+  "needsImage": true,
+  "why": "커버업 반팔이지만 팔뚝을 가리는 디자인인지는 이미지 확인이 필요하다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s16-485143",
+  "grade": 1,
+  "needsImage": true,
+  "why": "반팔 티셔츠지만 롱은 총장을 뜻하며 팔뚝을 가리는 소매인지 불명확하다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s16-5205296",
+  "grade": 2,
+  "needsImage": false,
+  "why": "여성용 쿨링 커버업 오버핏 반팔로 팔뚝살 커버와 여름 조건을 모두 만족한다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s16-6245397",
+  "grade": 1,
+  "needsImage": true,
+  "why": "반팔 티셔츠지만 여름 기능과 팔뚝을 가리는 소매 형태가 확인되지 않는다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s16-6245401",
+  "grade": 1,
+  "needsImage": true,
+  "why": "여름 반팔 티셔츠지만 팔뚝을 가릴 만한 소매 길이나 핏은 확인되지 않는다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s16-6333455",
+  "grade": 1,
+  "needsImage": true,
+  "why": "여름용 쿨링 반팔이지만 팔뚝을 충분히 가리는 소매인지 확인되지 않는다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s16-6468087",
+  "grade": 1,
+  "needsImage": true,
+  "why": "시어서커 쿨링 반팔이지만 팔뚝을 충분히 덮는지는 확인되지 않는다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s16-6917141",
+  "grade": 2,
+  "needsImage": false,
+  "why": "여름용 체형 커버 티셔츠이며 퍼프 소매가 팔뚝을 가리는 데 적합하다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s30-1411746",
+  "grade": 1,
+  "needsImage": true,
+  "why": "남성 반팔이지만 언밸런스 디자인이 좁은 어깨를 보완하는지는 확인되지 않는다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s30-1470537",
+  "grade": 2,
+  "needsImage": false,
+  "why": "남성 오버핏 반팔로 좁은 어깨선을 감추고 상체 볼륨을 보완할 수 있다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s30-1480505",
+  "grade": 2,
+  "needsImage": false,
+  "why": "남성 반팔이며 오버핏이 좁은 어깨를 보완하기에 적합하다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s30-1480559",
+  "grade": 2,
+  "needsImage": false,
+  "why": "남성용 오버핏 반팔로 상체에 볼륨을 더해 좁은 어깨를 보완할 수 있다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s30-3127539",
+  "grade": 1,
+  "needsImage": true,
+  "why": "남성 반팔이지만 좁은 어깨를 보완하는 디자인인지는 확인되지 않는다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s30-3127546",
+  "grade": 1,
+  "needsImage": true,
+  "why": "남성 반팔이지만 좁은 어깨를 보완하는 구조인지 텍스트로 확인되지 않는다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s30-3127547",
+  "grade": 1,
+  "needsImage": true,
+  "why": "남성 반팔이지만 좁은 어깨를 보완하는 구조인지는 확인되지 않는다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s30-3258376",
+  "grade": 1,
+  "needsImage": true,
+  "why": "남성 반팔이지만 좁은 어깨를 보완할 디자인인지 확인되지 않는다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s30-3258379",
+  "grade": 1,
+  "needsImage": true,
+  "why": "남성 반팔이지만 좁은 어깨를 보완할 핏이나 어깨 디자인은 확인되지 않는다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s30-3323562",
+  "grade": 2,
+  "needsImage": false,
+  "why": "남성 반팔이며 어깨 장식과 라그랑 디자인이 어깨를 강조해 좁은 어깨 보완에 적합하다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s30-4056041",
+  "grade": 1,
+  "needsImage": true,
+  "source": "불일치 재검토로 확정",
+  "why": "남성 반팔이며 어깨 배색이 있으나 좁은 어깨를 보완하는 디자인인지는 이미지로 확인해야 한다.",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s30-4056042",
+  "grade": 1,
+  "needsImage": true,
+  "why": "남성 반팔이고 어깨 배색이 있으나 좁은 어깨를 넓어 보이게 하는지는 확실하지 않다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s30-4142742",
+  "grade": 2,
+  "needsImage": false,
+  "why": "어깨가 3cm 넓어 보이도록 설계된 남성 오버핏 반팔이다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s30-4142772",
+  "grade": 2,
+  "needsImage": false,
+  "why": "남성 반팔이며 어깨를 3cm 넓혀 보이게 하는 오버핏으로 질의에 정확히 부합한다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s30-4184554",
+  "grade": 1,
+  "needsImage": false,
+  "why": "오버핏 반팔이며 제목상 남녀용이지만 성별 정보가 여성으로 표시돼 있다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s30-4380989",
+  "grade": 2,
+  "needsImage": false,
+  "why": "어깨가 3cm 넓어 보이도록 만든 남성 오버핏 반팔이다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s30-5164102",
+  "grade": 2,
+  "needsImage": false,
+  "why": "남성 반팔이며 어깨 메쉬 배색과 라그랑 디자인이 어깨를 강조해 좁은 어깨 보완에 적합하다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s30-5164103",
+  "grade": 2,
+  "needsImage": false,
+  "why": "남성 반팔이며 어깨 메쉬 배색과 라그랑 디자인이 어깨를 강조해 좁은 어깨 보완에 적합하다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s30-5242979",
+  "grade": 2,
+  "needsImage": false,
+  "why": "어깨가 넓어 보이는 남성 머슬핏 반팔임이 명시돼 있다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s30-743514",
+  "grade": 2,
+  "needsImage": false,
+  "why": "남성용 어깨 라인 배색 디자인이 좁은 어깨를 시각적으로 보완할 수 있다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s31-2537649",
+  "grade": 1,
+  "needsImage": true,
+  "why": "쿨링 반팔이라 여름용이지만 팔뚝을 가리는 소매 형태는 확인되지 않는다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s31-2560410",
+  "grade": 2,
+  "needsImage": false,
+  "why": "여름용 오버사이즈 반팔로 넉넉한 소매가 팔뚝을 가리기에 적합하다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s31-2578762",
+  "grade": 2,
+  "needsImage": false,
+  "why": "여름용 하프 티셔츠로 팔뚝을 덮는 소매 특성이 명시되어 있다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s31-2578776",
+  "grade": 2,
+  "needsImage": false,
+  "why": "여름용 하프 티셔츠로 소매가 팔뚝을 덮는 조건에 부합한다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s31-2578786",
+  "grade": 2,
+  "needsImage": false,
+  "source": "불일치 재검토로 확정",
+  "why": "여름용 하프 티셔츠로 팔뚝을 덮는 소매 조건에 부합한다.",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s31-3064150",
+  "grade": 1,
+  "needsImage": true,
+  "why": "여름 반팔이지만 팔뚝을 가리는 소매 길이나 여유는 확인되지 않는다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s31-3214647",
+  "grade": 1,
+  "needsImage": true,
+  "why": "반팔 티셔츠 세트지만 팔뚝 커버 여부와 여름용 특성이 확인되지 않는다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s31-3227012",
+  "grade": 2,
+  "needsImage": false,
+  "why": "여름용 긴팔 티셔츠라 팔뚝을 확실히 가릴 수 있다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s31-3276155",
+  "grade": 1,
+  "needsImage": true,
+  "why": "공용 반팔 세트지만 팔뚝 커버 실루엣과 여름 기능은 확인되지 않는다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s31-4030335",
+  "grade": 1,
+  "needsImage": true,
+  "why": "여름용 쿨링 반팔이지만 팔뚝을 덮는 소매 형태인지는 확인되지 않는다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s31-4030336",
+  "grade": 1,
+  "needsImage": true,
+  "why": "여름용 쿨링 반팔이지만 팔뚝 커버가 가능한 소매인지 확인되지 않는다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s31-4050410",
+  "grade": 1,
+  "needsImage": true,
+  "why": "여성 여름용 쿨링 반팔이지만 팔뚝을 덮는 소매인지 확인되지 않는다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s31-4050412",
+  "grade": 1,
+  "needsImage": true,
+  "why": "여름 여성 반팔이지만 슬림형이라 팔뚝 커버 효과는 확인이 필요하다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s31-4787484",
+  "grade": 2,
+  "needsImage": false,
+  "why": "여름용 쿨링 긴팔 티셔츠라 팔뚝을 확실히 가린다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s31-4900391",
+  "grade": 1,
+  "needsImage": true,
+  "why": "여름용 반팔이지만 소매 길이와 핏이 팔뚝을 가리는지는 확인되지 않는다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s31-4917409",
+  "grade": 1,
+  "needsImage": true,
+  "why": "여름용 티셔츠지만 소매가 팔뚝을 충분히 가리는지는 확인되지 않는다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s31-5206959",
+  "grade": 1,
+  "needsImage": true,
+  "why": "여름 냉감 반팔이지만 소매가 팔뚝살을 가리는지는 확인되지 않는다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s31-5206980",
+  "grade": 1,
+  "needsImage": true,
+  "why": "여성 여름용 쿨링 반팔이지만 팔뚝 커버 정도는 확인되지 않는다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s31-6333455",
+  "grade": 1,
+  "needsImage": true,
+  "why": "여름용 반팔이지만 팔뚝을 가릴 소매 길이와 여유는 확인되지 않는다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s31-6468087",
+  "grade": 1,
+  "needsImage": true,
+  "why": "여름용 쿨링 반팔이지만 팔뚝 커버가 가능한 소매 길이와 폭은 확인되지 않는다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s34-2883287",
+  "grade": 0,
+  "needsImage": false,
+  "why": "골지 소재는 복부 윤곽을 강조할 수 있어 배를 감추는 용도와 어긋난다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s34-2883353",
+  "grade": 2,
+  "needsImage": false,
+  "why": "오버핏 반팔이라 복부 윤곽을 가리는 데 적합하다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s34-2883355",
+  "grade": 1,
+  "needsImage": false,
+  "source": "불일치 재검토로 확정",
+  "why": "반팔은 맞지만 슬림핏이라 배를 가리는 조건에는 적합하지 않다.",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s34-2883358",
+  "grade": 1,
+  "needsImage": false,
+  "source": "불일치 재검토로 확정",
+  "why": "검은색 반팔이지만 슬림핏이라 복부를 가리는 효과는 제한적이다.",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s34-2883360",
+  "grade": 0,
+  "needsImage": false,
+  "why": "슬림핏 반팔이라 배가 드러나지 않게 하는 조건과 어긋난다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s34-2883361",
+  "grade": 0,
+  "needsImage": false,
+  "why": "슬림핏은 복부 윤곽을 드러낼 수 있어 배를 감추려는 조건과 어긋난다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s34-2883367",
+  "grade": 1,
+  "needsImage": true,
+  "source": "불일치 재검토로 확정",
+  "why": "검은색 레귤러핏 반팔이지만 실제 복부 커버 실루엣은 이미지 확인이 필요하다.",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s34-2883368",
+  "grade": 1,
+  "needsImage": true,
+  "source": "불일치 재검토로 확정",
+  "why": "어두운 네이비 레귤러핏 반팔이지만 복부가 덜 드러나는 실루엣인지는 확인이 필요하다.",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s34-2883388",
+  "grade": 1,
+  "needsImage": false,
+  "source": "불일치 재검토로 확정",
+  "why": "반팔과 검은색은 부합하지만 크롭 기장이라 복부 커버 조건에는 어긋난다.",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s34-2883390",
+  "grade": 0,
+  "needsImage": false,
+  "why": "크롭 기장이라 배를 가려 보이게 한다는 조건과 어긋난다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s34-2883393",
+  "grade": 1,
+  "needsImage": false,
+  "source": "불일치 재검토로 확정",
+  "why": "반팔은 맞지만 크롭 기장이라 배가 안 나와 보이는 조건과 어긋난다.",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s34-2883495",
+  "grade": 1,
+  "needsImage": true,
+  "why": "반팔이지만 배를 커버하는 실루엣인지는 텍스트로 확인되지 않는다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s34-2883496",
+  "grade": 1,
+  "needsImage": true,
+  "why": "반팔 티셔츠지만 복부를 덜 드러내는 핏인지 확인되지 않는다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s34-2883504",
+  "grade": 1,
+  "needsImage": true,
+  "why": "반팔 티셔츠이나 배를 커버하는 핏인지 텍스트만으로 알 수 없다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s34-2883505",
+  "grade": 1,
+  "needsImage": true,
+  "source": "불일치 재검토로 확정",
+  "why": "반팔은 맞지만 하이넥이라는 정보만으로 복부 커버 여부를 판단할 수 없다.",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s34-2883723",
+  "grade": 1,
+  "needsImage": true,
+  "why": "여성 반팔이지만 베이직 핏이 복부를 가리는 형태인지는 확인되지 않는다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s34-4314507",
+  "grade": 1,
+  "needsImage": true,
+  "why": "반팔 티셔츠이나 배가 덜 드러나는 핏인지는 확인되지 않는다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s34-4949556",
+  "grade": 1,
+  "needsImage": true,
+  "why": "반팔 티셔츠지만 배를 가려 보이게 하는 핏인지 텍스트로 확인되지 않는다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s34-4949558",
+  "grade": 1,
+  "needsImage": true,
+  "why": "반팔 티셔츠이지만 배가 안 나와 보이는 핏인지 확인되지 않는다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s34-5167372",
+  "grade": 1,
+  "needsImage": true,
+  "source": "불일치 재검토로 확정",
+  "why": "반팔 티셔츠는 맞지만 복부를 가려 주는 핏이나 기장은 확인되지 않는다.",
+  "rubric": "v3.4",
+  "grader": "codex"
+ }
+]

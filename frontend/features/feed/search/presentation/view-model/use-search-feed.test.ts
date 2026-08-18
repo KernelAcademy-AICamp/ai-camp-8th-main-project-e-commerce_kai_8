@@ -152,7 +152,7 @@ describe("useSearchFeed", () => {
         "나이키",
         { score: 4.5, goodsNo: 2 },
         30,
-        { exclude: [], exclude_colors: [], expand: [] },
+        { exclude: [], exclude_colors: [], expand: [], fit: [] },
       );
       expect(goodsNos(result)).toEqual([1, 2, 3]);
     });

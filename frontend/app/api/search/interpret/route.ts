@@ -104,6 +104,40 @@ async function askLlm(query: string, model: string): Promise<QueryPlan | null> {
   return parsePlan(text);
 }
 
+/**
+ * 규칙 이름 → 아는 위반 사전. **DB가 정본이다**(`c_search_fit_rules`).
+ *
+ * 코드에 배열을 복사해 두면 DB를 고칠 때 여기가 안 따라오고, 어긋나면 캐시 쓰기가
+ * 통째로 거절돼 "왜 해석이 안 먹지"가 된다. 프로세스 안에 한 번만 담아 두므로
+ * 질의마다 왕복하지 않는다.
+ *
+ * ⚠️ 못 읽으면 **핏 규칙만 적용되지 않는다.** 검색은 그대로 돈다(설계 S-02).
+ */
+let fitRulesMemo: Record<string, string[]> | null = null;
+
+async function fitRules(keys: SupabaseKeys): Promise<Record<string, string[]>> {
+  if (fitRulesMemo !== null) return fitRulesMemo;
+  const raw = await rpc(keys, "c_search_fit_rules_get", {}, false);
+  if (raw === null || typeof raw !== "object") return {};
+  const out: Record<string, string[]> = {};
+  for (const [rule, list] of Object.entries(raw as Record<string, unknown>)) {
+    if (Array.isArray(list))
+      out[rule] = list.filter((x): x is string => typeof x === "string");
+  }
+  fitRulesMemo = out;
+  return out;
+}
+
+/** 핏 규칙을 `exclude`로 옮긴다. 규칙 이름 자체는 검색이 모른다. */
+function applyFitRules(plan: QueryPlan, rules: Record<string, string[]>): QueryPlan {
+  if (plan.fit.length === 0) return plan;
+  const merged = new Set(plan.exclude);
+  for (const rule of plan.fit) {
+    for (const term of rules[rule] ?? []) merged.add(term);
+  }
+  return { ...plan, exclude: [...merged] };
+}
+
 export async function POST(request: Request): Promise<NextResponse> {
   let query: string;
   try {
@@ -145,6 +179,16 @@ export async function POST(request: Request): Promise<NextResponse> {
     plan = null;
   }
   if (plan === null) return NextResponse.json(emptyPlan());
+
+  // 규칙 이름을 아는 위반으로 옮긴다. 이 결과가 캐시에도 들어가므로 다음 호출은
+  // 사전을 다시 볼 필요가 없다.
+  if (keys) {
+    try {
+      plan = applyFitRules(plan, await fitRules(keys));
+    } catch {
+      // 사전을 못 읽으면 핏 규칙만 빠진다 — 검색은 그대로 돈다
+    }
+  }
 
   // ③ 캐시에 넣는다. **서비스 키가 있어야 한다** — 없으면 매번 LLM을 부르게 되고,
   //    그건 느리고 비쌀 뿐 틀리지는 않는다. 그래서 실패해도 응답은 그대로 준다.
