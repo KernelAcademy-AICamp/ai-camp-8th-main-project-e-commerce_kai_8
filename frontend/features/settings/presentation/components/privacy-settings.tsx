@@ -17,12 +17,14 @@ export function PrivacySettings() {
 
       <section className="space-y-4 text-[15px] leading-relaxed">
         <p>
-          aTee는 회원가입 없이 취향에 맞는 피드를 만들기 위해, 이 브라우저에 무작위로
-          만든 <b className="text-white">익명 ID</b>를 저장합니다.
+          <b className="text-white">로그인하지 않으면 탐색 행동을 기록하지 않습니다.</b>{" "}
+          카드가 화면에 보임, 상세 열기, 찜, 판매처 이동 — 아무것도 남기지 않고, 피드도
+          개인화하지 않습니다.
         </p>
         <p>
-          탐색 중의 행동 — 카드가 화면에 보임, 상세 열기, 찜, 판매처 이동 — 이 익명 ID와
-          함께 기록됩니다. 기록은 피드 개인화와 추천 품질 평가에만 사용합니다.
+          로그인하면 그 행동이 기록되어 <b className="text-white">취향 피드</b>와 추천
+          품질 평가에 쓰입니다. 기록은 계정이 아니라 이 브라우저의{" "}
+          <b className="text-white">익명 ID</b>에 붙습니다.
         </p>
         <p>
           <b className="text-white">검색어</b>는 검색 품질을 개선하고 평가하기 위해
