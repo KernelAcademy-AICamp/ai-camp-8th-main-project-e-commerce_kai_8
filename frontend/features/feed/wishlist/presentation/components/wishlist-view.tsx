@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useRef } from "react";
+import { useRouter } from "next/navigation";
+import { useEffect, useMemo, useRef } from "react";
 
 import { ProductDetail } from "@/features/feed/detail/presentation/components/product-detail";
 import { useDetailState } from "@/features/feed/detail/presentation/view-model/use-detail-state";
@@ -14,9 +15,14 @@ import { useWishlist } from "@/features/feed/wishlist/presentation/view-model/us
 
 /** 찜 보관함 — 최신 찜 순 2열 그리드, 탭하면 상세로 (설계 §8 최소 목록 뷰) */
 export function WishlistView() {
+  const router = useRouter();
   const { entries, notice, access } = useWishlist();
   const message = wishlistNoticeMessage(notice);
   const { stack, open, requestClose, finishClose } = useDetailState();
+
+  useEffect(() => {
+    if (access === "out") router.replace("/login");
+  }, [access, router]);
   // 보관함은 무한 스크롤이 없다 — FeedGrid 계약용 더미 센티널
   const sentinelRef = useRef<HTMLDivElement | null>(null);
 
@@ -47,26 +53,10 @@ export function WishlistView() {
         </h1>
       </header>
 
-      {/* 판정 전에는 비어 보이는 화면을 먼저 그리지 않는다 — 로그인한 사람에게
-          "로그인하세요"가 잠깐 스치면 안 된다 */}
-      {access === "unknown" && <div className="py-24" aria-label="불러오는 중" />}
-
-      {access === "out" && (
-        <div className="flex flex-col items-center gap-3 px-6 py-24 text-center text-neutral-400">
-          <p className="text-[15px] text-neutral-200">
-            찜은 로그인해야 담을 수 있어요.
-          </p>
-          <p className="text-sm">
-            이 기기에 찜해둔 것이 있다면 로그인할 때 계정으로 올라옵니다.
-          </p>
-          <Link
-            href="/settings"
-            className="mt-2 rounded-xl bg-neutral-800 px-5 py-3 font-medium text-white"
-          >
-            로그인하러 가기
-          </Link>
-        </div>
-      )}
+      {/* 로그인 판정이 끝나기 전에는 비어 보이는 화면을 그리지 않는다.
+          로그인하지 않았으면 로그인 화면으로 보낸다 — 왜 못 들어오는지는
+          그 화면이 설명한다. 같은 말을 두 화면에 나눠 담지 않는다. */}
+      {access !== "in" && <div className="py-24" aria-label="불러오는 중" />}
 
       {message !== null && (
         <p role="status" className="mx-1 mb-2 text-sm text-amber-400">

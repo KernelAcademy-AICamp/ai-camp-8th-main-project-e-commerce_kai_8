@@ -1,5 +1,7 @@
 "use client";
 
+import Link from "next/link";
+
 import type { AuthNotice } from "@/features/auth/domain/auth-session";
 import { useAccountDeletion } from "@/features/auth/presentation/view-model/use-account-deletion";
 import { useAuthSession } from "@/features/auth/presentation/view-model/use-auth-session";
@@ -15,7 +17,7 @@ import { useDeletionFollowUp } from "@/features/auth/presentation/view-model/use
  * - 탈퇴는 **지울 계정을 보여주고 한 번 더 묻는다.** 되돌릴 수 없기 때문이다.
  */
 export function AccountSection({ notice }: { notice: AuthNotice | null }) {
-  const { state, busy, failed, signIn, signOut } = useAuthSession();
+  const { state, busy, failed, signOut } = useAuthSession();
   const user = state.kind === "signedIn" ? state.user : null;
   const deletion = useAccountDeletion(user);
   const followUp = useDeletionFollowUp(state);
@@ -36,14 +38,14 @@ export function AccountSection({ notice }: { notice: AuthNotice | null }) {
 
       {state.kind === "signedOut" && (
         <div className="space-y-3">
-          <button
-            type="button"
-            onClick={signIn}
-            disabled={busy}
-            className="w-full cursor-pointer rounded-xl bg-neutral-800 py-3 font-medium text-white disabled:opacity-60"
+          {/* 구글 버튼은 앱에 한 곳만 둔다 — 상표 규칙을 지켜야 하는 요소가
+              여러 군데 흩어지면 한쪽만 어긋나기 쉽다 */}
+          <Link
+            href="/login"
+            className="block w-full rounded-xl bg-neutral-800 py-3 text-center font-medium text-white"
           >
-            구글로 계속하기
-          </button>
+            로그인
+          </Link>
           <p className="text-sm text-neutral-400">
             로그인하면 찜한 상품이 계정에 저장돼 다른 기기에서도 보입니다. 이 기기에
             찜해둔 것이 있다면 로그인할 때 함께 올라옵니다.

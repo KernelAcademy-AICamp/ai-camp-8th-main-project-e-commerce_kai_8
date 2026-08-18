@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useEffect, useMemo } from "react";
 
 import { buildSlides } from "@/features/feed/detail/domain/detail-slides";
@@ -81,7 +81,8 @@ export function ProductDetail({
     similarFirst: true,
     paused: !active,
   });
-  const { wished, toggle, notice } = useWishlist();
+  const router = useRouter();
+  const { wished, toggle, notice, access } = useWishlist();
   const isWishedNow = wished(product.goodsNo);
   const wishlistMessage = wishlistNoticeMessage(notice);
   useBodyScrollLock();
@@ -182,6 +183,12 @@ export function ProductDetail({
                     isWishedNow ? "text-red-500" : "text-white"
                   }`}
                   onClick={() => {
+                    // 로그인하지 않았으면 안내 없이 곧바로 로그인 화면으로 —
+                    // 하트는 동작이므로 설명을 한 단계 끼우지 않는다
+                    if (access === "out") {
+                      router.push("/login");
+                      return;
+                    }
                     toggle(product);
                   }}
                 >
@@ -205,17 +212,9 @@ export function ProductDetail({
 
             {/* 하트가 되돌아간 이유를 알린다 — 조용히 어긋난 채로 두지 않는다 */}
             {wishlistMessage !== null && (
-              <div role="status" className="mt-2 text-sm text-amber-400">
-                <p>{wishlistMessage}</p>
-                {notice === "login" && (
-                  <Link
-                    href="/settings"
-                    className="mt-2 inline-block rounded-lg bg-neutral-800 px-4 py-2 font-medium text-white"
-                  >
-                    로그인하러 가기
-                  </Link>
-                )}
-              </div>
+              <p role="status" className="mt-2 text-sm text-amber-400">
+                {wishlistMessage}
+              </p>
             )}
           </div>
 

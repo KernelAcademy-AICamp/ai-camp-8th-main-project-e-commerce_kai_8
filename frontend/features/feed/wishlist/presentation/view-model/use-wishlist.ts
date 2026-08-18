@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState, useSyncExternalStore } from "react";
+import { useCallback, useEffect, useSyncExternalStore } from "react";
 
 import type { Product } from "@/features/feed/domain/product";
 import {
@@ -56,10 +56,6 @@ export function useWishlist() {
     NO_NOTICE,
   );
 
-  // 로그인 유도는 그 사람의 클릭에 바로 붙는 안내라 화면마다 따로 둔다 —
-  // 계정 알림처럼 화면 밖(전송 관리자)에서 생기지 않는다.
-  const [gateNotice, setGateNotice] = useState<WishlistNotice>(null);
-
   useEffect(() => {
     if (signedIn === "in") {
       // 비회원으로 찜해둔 것을 먼저 올리고 목록을 읽는다 (설계 §4)
@@ -71,17 +67,13 @@ export function useWishlist() {
   }, [signedIn]);
 
   const entries = signedIn === "in" ? account : NO_ENTRIES;
-  const notice = signedIn === "in" ? accountNotice : gateNotice;
+  const notice = signedIn === "in" ? accountNotice : null;
 
   const toggle = useCallback(
     (product: Product): boolean => {
-      // 판정 전에는 아무것도 하지 않는다 — 로그인했는데 유도를 띄우면 안 된다
-      if (signedIn === "unknown") return false;
-
-      if (signedIn === "out") {
-        setGateNotice("login");
-        return false;
-      }
+      // 로그인하지 않았거나 판정 전이면 담지 않는다. 로그인으로 보내는 것은
+      // 화면의 몫이다 — 하트를 누르면 곧바로 로그인 화면으로 간다.
+      if (signedIn !== "in") return false;
 
       setAccountNotice(null);
       // 구독한 값이 아니라 스냅샷을 읽는다 — 오래된 클로저를 잡지 않는다
