@@ -47,7 +47,7 @@ export function PrivacySettings() {
           아래 버튼을 누르면 이 기기의 익명 ID·취향 프로필과 서버에 기록된 행동
           기록·검색 기록이 모두 삭제되고 처음 상태로 돌아갑니다.{" "}
           <b className="text-white">계정과 계정에 담긴 찜은 남습니다</b> — 그것까지
-          지우려면 위 계정 영역의 계정 삭제를 쓰세요.
+          지우려면 로그인한 상태에서 계정 삭제를 쓰세요.
         </p>
         <p className="text-sm text-neutral-400">
           더 자세한 내용은{" "}
