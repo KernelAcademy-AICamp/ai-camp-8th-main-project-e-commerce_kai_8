@@ -4,8 +4,8 @@ import { useCallback, useEffect, useSyncExternalStore } from "react";
 
 import type { Product } from "@/features/feed/domain/product";
 import {
-  reloadAccountWishes,
   requestAccountWish,
+  syncAccountWishesOnSignIn,
 } from "@/features/feed/wishlist/data/account-wish-actions";
 import {
   clearAccountWishes,
@@ -67,7 +67,8 @@ export function useWishlist() {
 
   useEffect(() => {
     if (signedIn === "in") {
-      void reloadAccountWishes();
+      // 비회원으로 찜해둔 것을 먼저 올리고 목록을 읽는다 (설계 §4)
+      void syncAccountWishesOnSignIn();
     } else if (signedIn === "out") {
       // 로그아웃하면 남겨두지 않는다 — 앞사람 찜이 다음 사람에게 보이면 안 된다
       clearAccountWishes();

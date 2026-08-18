@@ -3,7 +3,9 @@
 
 import type { WishlistEntry } from "@/features/feed/wishlist/domain/wishlist";
 
-const STORAGE_KEY = "atee-wishlist";
+/** 신원 전환 쪽(shared/identity/wish-carry.ts)이 같은 값을 쓴다 — 테스트가 대조한다 */
+export const WISHLIST_STORAGE_KEY = "atee-wishlist";
+const STORAGE_KEY = WISHLIST_STORAGE_KEY;
 const EMPTY: WishlistEntry[] = [];
 
 let cache: WishlistEntry[] | null = null;

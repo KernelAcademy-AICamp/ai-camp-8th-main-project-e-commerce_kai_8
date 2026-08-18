@@ -7,6 +7,7 @@ import {
   setAccountNotice,
   setAccountWishes,
 } from "@/features/feed/wishlist/data/account-wishlist-store";
+import { uploadCarriedWishes } from "@/features/feed/wishlist/data/upload-carried-wishes";
 import { createWishSync } from "@/features/feed/wishlist/data/wish-sync";
 import {
   addAccountWish,
@@ -46,4 +47,20 @@ const sync = createWishSync(
 /** 이 상품을 wanted 상태로 만들고 싶다고 알린다. 순서는 sync가 맡는다. */
 export function requestAccountWish(goodsNo: number, wanted: boolean): void {
   sync.request(goodsNo, wanted);
+}
+
+/**
+ * 로그인 상태가 되면 부른다.
+ *
+ * **올리기가 먼저다.** 목록을 먼저 읽으면 방금 옮긴 것이 빠진 목록을 보게 된다.
+ * 올리기가 실패해도 목록은 읽는다 — 이미 계정에 있는 찜은 보여야 한다.
+ */
+export async function syncAccountWishesOnSignIn(): Promise<void> {
+  try {
+    const result = await uploadCarriedWishes(addAccountWish, localStorage);
+    if (result.capped) setAccountNotice("full");
+  } catch {
+    // 옮기기에 실패해도 보관함은 남는다. 다음 접속에 다시 시도한다.
+  }
+  await reloadAccountWishes();
 }
