@@ -3,6 +3,7 @@ import "./globals.css";
 import type { Metadata, Viewport } from "next";
 
 import { IdentityGuard } from "@/features/auth/presentation/components/identity-guard";
+import { AccountProfileGuard } from "@/shared/profile/account-profile-guard";
 
 export const metadata: Metadata = {
   title: "aTee",
@@ -19,6 +20,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="ko">
       <body>
         <IdentityGuard />
+        <AccountProfileGuard />
         {children}
       </body>
     </html>

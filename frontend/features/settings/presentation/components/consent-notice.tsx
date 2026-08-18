@@ -21,7 +21,7 @@ export function ConsentNotice() {
         <p>
           aTee는 취향에 맞는 피드를 위해 익명 ID로 탐색 행동(노출·탭·찜 등)을 기록해요.
           검색어도 검색 품질 개선을 위해 기록되고 90일 뒤 지워져요. 로그인은 선택이고,
-          하면 이메일 주소와 찜한 상품을 계정에 저장해요. 언제든 지울 수 있어요.
+          하면 이메일 주소와 찜한 상품, 취향을 계정에 저장해요. 언제든 지울 수 있어요.
         </p>
         <div className="mt-3 flex items-center justify-end gap-4">
           <Link

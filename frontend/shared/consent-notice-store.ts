@@ -7,12 +7,13 @@ import { useSyncExternalStore } from "react";
 // 키에 버전을 붙인다 — 수집 범위가 늘면 키를 올려 이미 확인한 사용자에게도
 // 배너를 한 번 다시 보여준다 (O-32: 검색어 수집으로 v1 → v2,
 // 2026-08-18 구글 로그인·계정 저장 추가로 v2 → v3,
-// 2026-08-19 찜이 계정에 저장되면서 v3 → v4).
+// 2026-08-19 찜이 계정에 저장되면서 v3 → v4,
+// 2026-08-19 취향 프로필이 계정에 보관되면서 v4 → v5).
 // 이전 키들은 그대로 두고 새 키로 판정한다.
 //
 // ⚠️ 찜을 로그인 필수로 막는 3단계에서는 **다시 올리지 않는다.** 수집 범위가
 //    더 늘지 않고, 짧은 사이에 두 번 띄우면 배너를 읽지 않게 된다.
-const STORAGE_KEY = "atee-consent-notice-seen-v4";
+const STORAGE_KEY = "atee-consent-notice-seen-v5";
 
 const listeners = new Set<() => void>();
 

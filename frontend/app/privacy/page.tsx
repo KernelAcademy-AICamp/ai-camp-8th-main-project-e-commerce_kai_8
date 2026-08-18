@@ -67,7 +67,7 @@ export default function PrivacyPolicyPage() {
           </li>
           <li>
             <b className="text-white">취향 프로필</b> — 좋아하는 스타일 요약입니다.
-            서버로 보내지 않고 이 기기에만 둡니다.
+            로그인하지 않으면 이 기기에만 둡니다.
           </li>
         </ul>
 
@@ -80,7 +80,8 @@ export default function PrivacyPolicyPage() {
           </li>
           <li>
             저장되는 것: 계정 식별자와 이메일, 가입·마지막 로그인 시각, 연결된 구글
-            신원, 로그인 세션과 갱신 토큰.
+            신원, 로그인 세션과 갱신 토큰, 그리고{" "}
+            <b className="text-white">취향 프로필</b>.
           </li>
           <li>이 기기에는 로그인 세션 쿠키와 현재 신원 표시자가 남습니다.</li>
           <li>
@@ -109,7 +110,7 @@ export default function PrivacyPolicyPage() {
         <ul className="list-disc space-y-2 pl-5">
           <li>검색어 기록 — 90일 뒤 자동 삭제</li>
           <li>탐색 행동·익명 ID — 지울 때까지</li>
-          <li>계정 — 탈퇴할 때까지</li>
+          <li>계정 · 취향 프로필 — 탈퇴할 때까지</li>
           <li>찜 목록 — 탈퇴하거나 찜을 풀 때까지</li>
         </ul>
       </section>
@@ -119,12 +120,13 @@ export default function PrivacyPolicyPage() {
         <p>
           <b className="text-white">개인화 데이터 모두 지우기</b> — 이 기기의 익명
           ID·취향 프로필과 서버에 기록된 탐색 행동·검색어가 지워지고 새 익명 ID로 처음
-          상태가 됩니다. <b className="text-white">계정과 계정에 담긴 찜은 남습니다.</b>
+          상태가 됩니다.{" "}
+          <b className="text-white">계정과 계정에 담긴 찜·취향은 남습니다.</b>
         </p>
         <p>
           <b className="text-white">계정 삭제</b> — 계정과 연결된 구글 신원, 로그인
-          세션, <b className="text-white">계정에 담긴 찜</b>이 지워지고, 이어서 이
-          기기의 탐색 행동·검색어 기록도 함께 지워집니다.
+          세션, <b className="text-white">계정에 담긴 찜과 취향 프로필</b>이 지워지고,
+          이어서 이 기기의 탐색 행동·검색어 기록도 함께 지워집니다.
         </p>
         <p>
           서버 삭제가 실패하면 이 기기가 그 사실을 적어 두고 다음 접속에서 다시
