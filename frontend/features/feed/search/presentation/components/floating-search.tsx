@@ -15,8 +15,6 @@ interface FloatingSearchProps {
   collapsed: boolean;
   /** 축소 버튼을 탭했을 때 — 재확장 요청 */
   onExpand: () => void;
-  /** 하단 고지 배너가 보이는 동안 그 위로 물러난다 (설계 §3) */
-  lifted: boolean;
   /** 소프트 키보드가 화면 아래를 가린 높이(px) — 그만큼 위로 띄운다 */
   keyboardInset: number;
   /** 입력에 포커스가 잡혔다 = 키보드가 올라온다 */
@@ -56,7 +54,6 @@ export function FloatingSearch({
   hidden,
   collapsed,
   onExpand,
-  lifted,
   keyboardInset,
   onInputFocus,
   onInputBlur,
@@ -82,11 +79,9 @@ export function FloatingSearch({
       style={{
         bottom: keyboardOpen
           ? // 키보드는 홈 인디케이터 영역까지 덮는다 — safe-area를 더하면 이중
-            // 계산이라 그만큼 붕 뜬다. 고지 배너(lifted)도 키보드 뒤라 무시한다.
+            // 계산이라 그만큼 붕 뜬다.
             `calc(${String(keyboardInset)}px + 0.5rem)`
-          : lifted
-            ? "calc(9rem + env(safe-area-inset-bottom))"
-            : "calc(1rem + env(safe-area-inset-bottom))",
+          : "calc(1rem + env(safe-area-inset-bottom))",
       }}
     >
       <div

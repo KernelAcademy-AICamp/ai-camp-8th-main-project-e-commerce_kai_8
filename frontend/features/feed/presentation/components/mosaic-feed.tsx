@@ -14,7 +14,6 @@ import { useSearchCollapse } from "@/features/feed/search/presentation/view-mode
 import { useSearchFeed } from "@/features/feed/search/presentation/view-model/use-search-feed";
 import { useSearchScroll } from "@/features/feed/search/presentation/view-model/use-search-scroll";
 import { useSearchState } from "@/features/feed/search/presentation/view-model/use-search-state";
-import { useConsentNoticeVisible } from "@/shared/consent-notice-store";
 import { useRetryPendingForget } from "@/shared/signals/use-retry-pending-forget";
 
 // active=false 면 다른 칸을 보고 있다는 뜻 — 화면은 그대로 두고(스크롤 위치·검색
@@ -68,7 +67,6 @@ export function MosaicFeed({ active = true }: { active?: boolean }) {
     useSearchCollapse(suppressUntilRef);
   // 키보드가 하단 고정 검색창을 가리지 않게 그 높이만큼 띄운다
   const keyboardInset = useKeyboardInset();
-  const bannerVisible = useConsentNoticeVisible();
   // 지난번 서버 삭제가 실패했다면 조용히 다시 시도한다 (방침 O-32 삭제 계약)
   useRetryPendingForget();
 
@@ -116,7 +114,6 @@ export function MosaicFeed({ active = true }: { active?: boolean }) {
         hidden={detailOpen || !active}
         collapsed={collapsed}
         onExpand={expand}
-        lifted={bannerVisible}
         keyboardInset={keyboardInset}
         onInputFocus={onInputFocus}
         onInputBlur={onInputBlur}
