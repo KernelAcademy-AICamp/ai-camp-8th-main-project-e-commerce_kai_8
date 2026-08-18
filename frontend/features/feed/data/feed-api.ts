@@ -1,5 +1,5 @@
 import type { Product } from "@/features/feed/domain/product";
-import { rpcPost } from "@/shared/supabase-rpc";
+import { restSelect, rpcPost } from "@/shared/supabase-rpc";
 
 // Supabase RPC c_feed_page 응답 행 (snake_case)
 export interface FeedProductDto {
@@ -48,4 +48,15 @@ export async function fetchFeedPage(
     p_size: size,
   });
   return dtos.map(mapFeedDto);
+}
+
+/**
+ * goods_no 하나로 상품을 가져온다 — 피드 밖(큐레이션 등)에서 상세를 열 때 쓴다.
+ * 뷰 조건(썸네일 크기 측정 실패 등)에 걸리면 행이 없어 null.
+ */
+export async function fetchProduct(goodsNo: number): Promise<Product | null> {
+  const dtos = await restSelect<FeedProductDto[]>(
+    `c_feed_products?goods_no=eq.${String(goodsNo)}&limit=1`,
+  );
+  return dtos.length > 0 ? mapFeedDto(dtos[0]) : null;
 }
