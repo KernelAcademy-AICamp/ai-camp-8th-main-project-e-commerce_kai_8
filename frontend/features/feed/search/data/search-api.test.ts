@@ -67,6 +67,10 @@ describe("fetchSearchPage", () => {
         p_after_score: 1.5,
         p_after: 456,
         p_size: 30,
+        // 해석을 안 주면 null이다 — 서버가 `is null`로 조건 자체를 건너뛴다.
+        // 빈 배열을 보내면 "아무것도 제외하지 않는 조건"이 생겨 계획이 달라진다.
+        p_exclude: null,
+        p_exclude_colors: null,
       },
       { timeoutMs: 10_000 },
     );

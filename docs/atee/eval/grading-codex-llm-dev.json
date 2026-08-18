@@ -1,0 +1,2120 @@
+[
+ {
+  "itemId": "a-g4-03-3932032",
+  "grade": 2,
+  "needsImage": false,
+  "source": "독립 2회 일치",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g4-03-5045731",
+  "grade": 2,
+  "needsImage": false,
+  "source": "독립 2회 일치",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g4-03-5229175",
+  "grade": 2,
+  "needsImage": false,
+  "source": "독립 2회 일치",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g4-03-5287395",
+  "grade": 2,
+  "needsImage": false,
+  "source": "독립 2회 일치",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g4-03-5287429",
+  "grade": 2,
+  "needsImage": false,
+  "source": "독립 2회 일치",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g4-03-5287454",
+  "grade": 2,
+  "needsImage": false,
+  "source": "독립 2회 일치",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g4-03-5302498",
+  "grade": 2,
+  "needsImage": false,
+  "source": "독립 2회 일치",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g4-03-5302581",
+  "grade": 2,
+  "needsImage": false,
+  "source": "독립 2회 일치",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g4-03-5302582",
+  "grade": 2,
+  "needsImage": false,
+  "source": "독립 2회 일치",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g4-03-5342036",
+  "grade": 2,
+  "needsImage": false,
+  "source": "독립 2회 일치",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g4-03-5342147",
+  "grade": 2,
+  "needsImage": false,
+  "source": "독립 2회 일치",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g4-03-5342176",
+  "grade": 2,
+  "needsImage": false,
+  "source": "독립 2회 일치",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g4-03-5342187",
+  "grade": 2,
+  "needsImage": false,
+  "source": "독립 2회 일치",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g4-03-5354071",
+  "grade": 2,
+  "needsImage": false,
+  "source": "독립 2회 일치",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g4-03-6331931",
+  "grade": 2,
+  "needsImage": false,
+  "source": "독립 2회 일치",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g4-03-6331946",
+  "grade": 2,
+  "needsImage": false,
+  "source": "독립 2회 일치",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g4-03-6332011",
+  "grade": 2,
+  "needsImage": false,
+  "source": "독립 2회 일치",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g4-03-6332028",
+  "grade": 2,
+  "needsImage": false,
+  "source": "독립 2회 일치",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g4-03-6677461",
+  "grade": 2,
+  "needsImage": false,
+  "source": "독립 2회 일치",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g4-03-6677527",
+  "grade": 2,
+  "needsImage": false,
+  "source": "독립 2회 일치",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g4-05-1479314",
+  "grade": 1,
+  "needsImage": false,
+  "source": "불일치 재검토로 확정",
+  "why": "기본 티셔츠는 확인되지만 반팔과 면 100% 조건은 확인되지 않는다.",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g4-05-1565458",
+  "grade": 1,
+  "needsImage": false,
+  "source": "불일치 재검토로 확정",
+  "why": "기본 반팔티는 확인되지만 면 100%인지는 확인되지 않는다.",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g4-05-1565459",
+  "grade": 1,
+  "needsImage": false,
+  "source": "불일치 재검토로 확정",
+  "why": "기본 반팔티는 확인되지만 면 100%인지는 확인되지 않는다.",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g4-05-1565466",
+  "grade": 1,
+  "needsImage": false,
+  "source": "불일치 재검토로 확정",
+  "why": "기본 반팔티는 확인되지만 면 100%인지는 확인되지 않는다.",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g4-05-1565467",
+  "grade": 1,
+  "needsImage": false,
+  "source": "불일치 재검토로 확정",
+  "why": "기본 반팔티는 확인되지만 면 100%인지는 확인되지 않는다.",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g4-05-1565468",
+  "grade": 1,
+  "needsImage": false,
+  "source": "불일치 재검토로 확정",
+  "why": "기본 반팔티는 확인되지만 면 100%인지는 확인되지 않는다.",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g4-05-1565469",
+  "grade": 1,
+  "needsImage": false,
+  "source": "불일치 재검토로 확정",
+  "why": "기본 반팔티는 확인되지만 면 100%인지는 확인되지 않는다.",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g4-05-1565470",
+  "grade": 1,
+  "needsImage": false,
+  "source": "불일치 재검토로 확정",
+  "why": "기본 반팔티는 확인되지만 면 100%인지는 확인되지 않는다.",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g4-05-1565472",
+  "grade": 1,
+  "needsImage": false,
+  "source": "불일치 재검토로 확정",
+  "why": "기본 반팔티는 확인되지만 면 100%인지는 확인되지 않는다.",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g4-05-1565473",
+  "grade": 1,
+  "needsImage": false,
+  "source": "불일치 재검토로 확정",
+  "why": "기본 반팔티는 확인되지만 스판 제품으로 면 100% 조건이 확인되지 않는다.",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g4-05-1565477",
+  "grade": 1,
+  "needsImage": false,
+  "source": "불일치 재검토로 확정",
+  "why": "기본 반팔티는 확인되지만 스판 제품으로 면 100% 조건이 확인되지 않는다.",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g4-05-1565481",
+  "grade": 1,
+  "needsImage": false,
+  "source": "독립 2회 일치",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g4-05-1565483",
+  "grade": 1,
+  "needsImage": false,
+  "source": "불일치 재검토로 확정",
+  "why": "기본 반팔티는 확인되지만 스판 메쉬 제품으로 면 100% 조건이 확인되지 않는다.",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g4-05-823998",
+  "grade": 1,
+  "needsImage": false,
+  "source": "불일치 재검토로 확정",
+  "why": "기본 반팔티는 확인되지만 면 100%인지는 확인되지 않는다.",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g5-01-3064141",
+  "grade": 2,
+  "needsImage": false,
+  "source": "독립 2회 일치",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g5-01-3092628",
+  "grade": 2,
+  "needsImage": false,
+  "source": "독립 2회 일치",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g5-01-3092630",
+  "grade": 2,
+  "needsImage": false,
+  "source": "독립 2회 일치",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g5-01-3092631",
+  "grade": 2,
+  "needsImage": false,
+  "source": "독립 2회 일치",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g5-01-3092633",
+  "grade": 2,
+  "needsImage": false,
+  "source": "독립 2회 일치",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g5-01-3092634",
+  "grade": 2,
+  "needsImage": false,
+  "source": "독립 2회 일치",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g5-01-3092636",
+  "grade": 2,
+  "needsImage": false,
+  "source": "독립 2회 일치",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g5-01-3092637",
+  "grade": 2,
+  "needsImage": false,
+  "source": "독립 2회 일치",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g5-01-3092639",
+  "grade": 2,
+  "needsImage": false,
+  "source": "독립 2회 일치",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g5-01-3092640",
+  "grade": 2,
+  "needsImage": false,
+  "source": "독립 2회 일치",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g5-01-3092642",
+  "grade": 2,
+  "needsImage": false,
+  "source": "독립 2회 일치",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g5-01-3092643",
+  "grade": 2,
+  "needsImage": false,
+  "source": "독립 2회 일치",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g5-01-3092644",
+  "grade": 2,
+  "needsImage": false,
+  "source": "독립 2회 일치",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g5-01-3092646",
+  "grade": 2,
+  "needsImage": false,
+  "source": "독립 2회 일치",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g5-01-4259445",
+  "grade": 2,
+  "needsImage": false,
+  "source": "독립 2회 일치",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g5-01-5209739",
+  "grade": 2,
+  "needsImage": false,
+  "source": "독립 2회 일치",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g5-01-5216386",
+  "grade": 2,
+  "needsImage": false,
+  "source": "독립 2회 일치",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g5-01-5221586",
+  "grade": 2,
+  "needsImage": false,
+  "source": "독립 2회 일치",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g5-01-5256839",
+  "grade": 1,
+  "needsImage": false,
+  "source": "독립 2회 일치",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g5-01-823998",
+  "grade": 2,
+  "needsImage": false,
+  "source": "독립 2회 일치",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g5-02-11213",
+  "grade": 1,
+  "needsImage": true,
+  "source": "독립 2회 일치",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g5-02-116531",
+  "grade": 1,
+  "needsImage": true,
+  "source": "불일치 재검토로 확정",
+  "why": "검정 반팔은 확인되지만 프린트가 없는지는 텍스트로 판별할 수 없다.",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g5-02-171902",
+  "grade": 0,
+  "needsImage": false,
+  "source": "독립 2회 일치",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g5-02-173762",
+  "grade": 0,
+  "needsImage": false,
+  "source": "독립 2회 일치",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g5-02-180295",
+  "grade": 1,
+  "needsImage": true,
+  "source": "불일치 재검토로 확정",
+  "why": "검정 반팔은 확인되지만 프린트가 없는지는 텍스트로 판별할 수 없다.",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g5-02-180296",
+  "grade": 1,
+  "needsImage": true,
+  "source": "불일치 재검토로 확정",
+  "why": "검정 반팔은 확인되지만 프린트가 없는지는 텍스트로 판별할 수 없다.",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g5-02-180298",
+  "grade": 1,
+  "needsImage": true,
+  "source": "불일치 재검토로 확정",
+  "why": "검정 반팔은 확인되지만 프린트가 없는지는 텍스트로 판별할 수 없다.",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g5-02-182486",
+  "grade": 2,
+  "needsImage": false,
+  "source": "독립 2회 일치",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g5-02-189076",
+  "grade": 1,
+  "needsImage": true,
+  "source": "불일치 재검토로 확정",
+  "why": "검정 반팔은 확인되지만 프린트가 없는지는 텍스트로 판별할 수 없다.",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g5-02-189077",
+  "grade": 1,
+  "needsImage": true,
+  "source": "불일치 재검토로 확정",
+  "why": "검정 반팔은 확인되지만 프린트가 없는지는 텍스트로 판별할 수 없다.",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g5-02-189078",
+  "grade": 1,
+  "needsImage": true,
+  "source": "독립 2회 일치",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g5-02-189079",
+  "grade": 1,
+  "needsImage": true,
+  "source": "불일치 재검토로 확정",
+  "why": "검정 반팔은 확인되지만 프린트가 없는지는 텍스트로 판별할 수 없다.",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g5-02-25765",
+  "grade": 1,
+  "needsImage": true,
+  "source": "불일치 재검토로 확정",
+  "why": "검정 반팔은 확인되지만 프린트가 없는지는 텍스트로 판별할 수 없다.",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g5-02-6177166",
+  "grade": 0,
+  "needsImage": false,
+  "source": "독립 2회 일치",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g5-02-6220006",
+  "grade": 0,
+  "needsImage": false,
+  "source": "독립 2회 일치",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g5-02-64634",
+  "grade": 1,
+  "needsImage": true,
+  "source": "독립 2회 일치",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g5-02-65081",
+  "grade": 1,
+  "needsImage": true,
+  "source": "독립 2회 일치",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g5-02-86048",
+  "grade": 1,
+  "needsImage": true,
+  "source": "독립 2회 일치",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g5-02-87862",
+  "grade": 0,
+  "needsImage": false,
+  "source": "독립 2회 일치",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g5-02-89789",
+  "grade": 1,
+  "needsImage": true,
+  "source": "독립 2회 일치",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g5-03-3273182",
+  "grade": 2,
+  "needsImage": false,
+  "source": "독립 2회 일치",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g5-03-3273184",
+  "grade": 2,
+  "needsImage": false,
+  "source": "독립 2회 일치",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g5-03-3306615",
+  "grade": 1,
+  "needsImage": false,
+  "source": "독립 2회 일치",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g5-03-3973544",
+  "grade": 2,
+  "needsImage": false,
+  "source": "독립 2회 일치",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g5-03-4048948",
+  "grade": 2,
+  "needsImage": false,
+  "source": "독립 2회 일치",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g5-03-4071777",
+  "grade": 2,
+  "needsImage": false,
+  "source": "독립 2회 일치",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g5-03-4071779",
+  "grade": 2,
+  "needsImage": false,
+  "source": "독립 2회 일치",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g5-03-4122996",
+  "grade": 1,
+  "needsImage": false,
+  "source": "독립 2회 일치",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g5-03-4167567",
+  "grade": 2,
+  "needsImage": false,
+  "source": "독립 2회 일치",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g5-03-4170693",
+  "grade": 2,
+  "needsImage": false,
+  "source": "독립 2회 일치",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g5-03-4188865",
+  "grade": 1,
+  "needsImage": false,
+  "source": "독립 2회 일치",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g5-03-4234637",
+  "grade": 2,
+  "needsImage": false,
+  "source": "독립 2회 일치",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g5-03-4249189",
+  "grade": 2,
+  "needsImage": false,
+  "source": "독립 2회 일치",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g5-03-4249196",
+  "grade": 2,
+  "needsImage": false,
+  "source": "독립 2회 일치",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g5-03-4249210",
+  "grade": 2,
+  "needsImage": false,
+  "source": "독립 2회 일치",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g5-03-4249213",
+  "grade": 2,
+  "needsImage": false,
+  "source": "독립 2회 일치",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g5-03-4252804",
+  "grade": 2,
+  "needsImage": false,
+  "source": "독립 2회 일치",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g5-03-4463620",
+  "grade": 2,
+  "needsImage": false,
+  "source": "독립 2회 일치",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g5-03-4846553",
+  "grade": 2,
+  "needsImage": false,
+  "source": "불일치 재검토로 확정",
+  "why": "여성용 오버핏 반팔이며 정본 카테고리도 반팔 티셔츠라 명시 조건을 모두 만족한다.",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g5-05-2353415",
+  "grade": 2,
+  "needsImage": false,
+  "source": "독립 2회 일치",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g5-05-2571792",
+  "grade": 2,
+  "needsImage": false,
+  "source": "독립 2회 일치",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g5-05-2571795",
+  "grade": 2,
+  "needsImage": false,
+  "source": "독립 2회 일치",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g5-05-2613822",
+  "grade": 2,
+  "needsImage": false,
+  "source": "독립 2회 일치",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g5-05-2637576",
+  "grade": 2,
+  "needsImage": false,
+  "source": "독립 2회 일치",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g5-05-2708908",
+  "grade": 2,
+  "needsImage": false,
+  "source": "독립 2회 일치",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g5-05-3002284",
+  "grade": 2,
+  "needsImage": false,
+  "source": "독립 2회 일치",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g5-05-3158788",
+  "grade": 2,
+  "needsImage": false,
+  "source": "독립 2회 일치",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g5-05-3188634",
+  "grade": 2,
+  "needsImage": false,
+  "source": "독립 2회 일치",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g5-05-3188651",
+  "grade": 2,
+  "needsImage": false,
+  "source": "독립 2회 일치",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g5-05-3194525",
+  "grade": 2,
+  "needsImage": false,
+  "source": "독립 2회 일치",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g5-05-3230894",
+  "grade": 2,
+  "needsImage": false,
+  "source": "독립 2회 일치",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g5-05-3232729",
+  "grade": 2,
+  "needsImage": false,
+  "source": "독립 2회 일치",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g5-05-3232733",
+  "grade": 2,
+  "needsImage": false,
+  "source": "독립 2회 일치",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g5-05-3232749",
+  "grade": 2,
+  "needsImage": false,
+  "source": "독립 2회 일치",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g5-09-3092633",
+  "grade": 2,
+  "needsImage": false,
+  "source": "독립 2회 일치",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g5-09-3092634",
+  "grade": 2,
+  "needsImage": false,
+  "source": "독립 2회 일치",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "g01-2606152",
+  "grade": 1,
+  "needsImage": true,
+  "source": "불일치 재검토로 확정",
+  "why": "민소매 티셔츠 범위에는 들지만 105 사이즈 제공 여부와 노란 신발과의 조화는 확인되지 않는다.",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "g01-2789441",
+  "grade": 1,
+  "needsImage": false,
+  "source": "독립 2회 일치",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "g01-3844670",
+  "grade": 1,
+  "needsImage": false,
+  "source": "독립 2회 일치",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "g01-5073382",
+  "grade": 1,
+  "needsImage": true,
+  "source": "불일치 재검토로 확정",
+  "why": "반팔 티셔츠는 확인되지만 105 사이즈 제공 여부와 노란 신발과의 조화는 확인되지 않는다.",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "g01-532010",
+  "grade": 1,
+  "needsImage": false,
+  "source": "독립 2회 일치",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "g01-534994",
+  "grade": 1,
+  "needsImage": true,
+  "source": "불일치 재검토로 확정",
+  "why": "티셔츠는 확인되지만 105 사이즈 제공 여부와 노란 신발과의 조화는 확인되지 않는다.",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "g01-559111",
+  "grade": 1,
+  "needsImage": false,
+  "source": "독립 2회 일치",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "g01-565905",
+  "grade": 1,
+  "needsImage": false,
+  "source": "독립 2회 일치",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "g01-565931",
+  "grade": 1,
+  "needsImage": true,
+  "source": "불일치 재검토로 확정",
+  "why": "티셔츠는 확인되지만 105 사이즈 제공 여부와 노란 신발과의 조화는 확인되지 않는다.",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "g01-567853",
+  "grade": 1,
+  "needsImage": false,
+  "source": "독립 2회 일치",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "g01-587120",
+  "grade": 1,
+  "needsImage": true,
+  "source": "불일치 재검토로 확정",
+  "why": "티셔츠는 확인되지만 105 사이즈 제공 여부와 노란 신발과의 조화는 확인되지 않는다.",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "g01-761253",
+  "grade": 1,
+  "needsImage": false,
+  "source": "독립 2회 일치",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "g01-761259",
+  "grade": 1,
+  "needsImage": false,
+  "source": "독립 2회 일치",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "g01-764507",
+  "grade": 1,
+  "needsImage": true,
+  "source": "불일치 재검토로 확정",
+  "why": "티셔츠는 확인되지만 105 사이즈 제공 여부와 노란 신발과의 조화는 확인되지 않는다.",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "g01-764511",
+  "grade": 1,
+  "needsImage": false,
+  "source": "독립 2회 일치",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "g01-764985",
+  "grade": 1,
+  "needsImage": true,
+  "source": "불일치 재검토로 확정",
+  "why": "티셔츠는 확인되지만 105 사이즈 제공 여부와 노란 신발과의 조화는 확인되지 않는다.",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "g01-764990",
+  "grade": 1,
+  "needsImage": true,
+  "source": "불일치 재검토로 확정",
+  "why": "티셔츠는 확인되지만 105 사이즈 제공 여부와 노란 신발과의 조화는 확인되지 않는다.",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "g01-770990",
+  "grade": 1,
+  "needsImage": true,
+  "source": "불일치 재검토로 확정",
+  "why": "반팔 제품은 확인되지만 105 사이즈 제공 여부와 노란 신발과의 조화는 확인되지 않는다.",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "g01-777443",
+  "grade": 1,
+  "needsImage": true,
+  "source": "불일치 재검토로 확정",
+  "why": "티셔츠는 확인되지만 105 사이즈 제공 여부와 노란 신발과의 조화는 확인되지 않는다.",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "g01-87860",
+  "grade": 1,
+  "needsImage": false,
+  "source": "독립 2회 일치",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "g05-2606152",
+  "grade": 1,
+  "needsImage": false,
+  "source": "독립 2회 일치",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "g05-2789441",
+  "grade": 0,
+  "needsImage": false,
+  "source": "독립 2회 일치",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "g05-3844670",
+  "grade": 1,
+  "needsImage": false,
+  "source": "독립 2회 일치",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "g05-5073382",
+  "grade": 1,
+  "needsImage": true,
+  "source": "불일치 재검토로 확정",
+  "why": "남성 반팔 티셔츠는 확인되지만 105 사이즈 제공 여부와 노란 신발과의 조화는 확인되지 않는다.",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "g05-532010",
+  "grade": 1,
+  "needsImage": false,
+  "source": "독립 2회 일치",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "g05-534994",
+  "grade": 0,
+  "needsImage": false,
+  "source": "독립 2회 일치",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "g05-559111",
+  "grade": 1,
+  "needsImage": false,
+  "source": "독립 2회 일치",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "g05-565905",
+  "grade": 1,
+  "needsImage": true,
+  "source": "불일치 재검토로 확정",
+  "why": "남성 티셔츠는 확인되지만 105 사이즈 제공 여부와 노란 신발과의 조화는 확인되지 않는다.",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "g05-565931",
+  "grade": 1,
+  "needsImage": false,
+  "source": "독립 2회 일치",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "g05-567853",
+  "grade": 1,
+  "needsImage": true,
+  "source": "불일치 재검토로 확정",
+  "why": "남성 반팔 티셔츠는 확인되지만 105 사이즈 제공 여부와 노란 신발과의 조화는 확인되지 않는다.",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "g05-587120",
+  "grade": 1,
+  "needsImage": false,
+  "source": "독립 2회 일치",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "g05-761253",
+  "grade": 1,
+  "needsImage": false,
+  "source": "독립 2회 일치",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "g05-761259",
+  "grade": 1,
+  "needsImage": true,
+  "source": "불일치 재검토로 확정",
+  "why": "남성 티셔츠는 확인되지만 105 사이즈 제공 여부와 노란 신발과의 조화는 확인되지 않는다.",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "g05-764507",
+  "grade": 1,
+  "needsImage": false,
+  "source": "독립 2회 일치",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "g05-764511",
+  "grade": 1,
+  "needsImage": true,
+  "source": "불일치 재검토로 확정",
+  "why": "남성 티셔츠는 확인되지만 105 사이즈 제공 여부와 노란 신발과의 조화는 확인되지 않는다.",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "g05-764985",
+  "grade": 1,
+  "needsImage": true,
+  "source": "불일치 재검토로 확정",
+  "why": "남성 티셔츠는 확인되지만 105 사이즈 제공 여부와 노란 신발과의 조화는 확인되지 않는다.",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "g05-764990",
+  "grade": 1,
+  "needsImage": false,
+  "source": "독립 2회 일치",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "g05-770990",
+  "grade": 1,
+  "needsImage": true,
+  "source": "불일치 재검토로 확정",
+  "why": "남성 반팔 제품은 확인되지만 105 사이즈 제공 여부와 노란 신발과의 조화는 확인되지 않는다.",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "g05-777443",
+  "grade": 1,
+  "needsImage": false,
+  "source": "독립 2회 일치",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "g05-87860",
+  "grade": 1,
+  "needsImage": true,
+  "source": "불일치 재검토로 확정",
+  "why": "남성 티셔츠는 확인되지만 105 사이즈 제공 여부와 노란 신발과의 조화는 확인되지 않는다.",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s07-4842901",
+  "grade": 0,
+  "needsImage": false,
+  "source": "독립 2회 일치",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s07-4843139",
+  "grade": 0,
+  "needsImage": false,
+  "source": "독립 2회 일치",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s07-4843308",
+  "grade": 0,
+  "needsImage": false,
+  "source": "독립 2회 일치",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s07-4843326",
+  "grade": 0,
+  "needsImage": false,
+  "source": "독립 2회 일치",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s07-4843363",
+  "grade": 0,
+  "needsImage": false,
+  "source": "독립 2회 일치",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s07-4843488",
+  "grade": 0,
+  "needsImage": false,
+  "source": "독립 2회 일치",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s07-4843571",
+  "grade": 0,
+  "needsImage": false,
+  "source": "독립 2회 일치",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s07-4843586",
+  "grade": 0,
+  "needsImage": false,
+  "source": "독립 2회 일치",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s07-4843628",
+  "grade": 0,
+  "needsImage": false,
+  "source": "독립 2회 일치",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s07-4843647",
+  "grade": 0,
+  "needsImage": false,
+  "source": "독립 2회 일치",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s07-4843661",
+  "grade": 0,
+  "needsImage": false,
+  "source": "독립 2회 일치",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s07-4843684",
+  "grade": 0,
+  "needsImage": false,
+  "source": "독립 2회 일치",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s07-4843752",
+  "grade": 0,
+  "needsImage": false,
+  "source": "독립 2회 일치",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s07-4843837",
+  "grade": 0,
+  "needsImage": false,
+  "source": "독립 2회 일치",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s07-4843855",
+  "grade": 0,
+  "needsImage": false,
+  "source": "독립 2회 일치",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s07-4843864",
+  "grade": 0,
+  "needsImage": false,
+  "source": "독립 2회 일치",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s07-4843903",
+  "grade": 0,
+  "needsImage": false,
+  "source": "독립 2회 일치",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s07-4843906",
+  "grade": 0,
+  "needsImage": false,
+  "source": "독립 2회 일치",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s07-6318218",
+  "grade": 1,
+  "needsImage": true,
+  "source": "독립 2회 일치",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s07-6318222",
+  "grade": 1,
+  "needsImage": true,
+  "source": "독립 2회 일치",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s08-3511798",
+  "grade": 1,
+  "needsImage": true,
+  "source": "불일치 재검토로 확정",
+  "why": "티셔츠지만 비키니 위에 입을 만큼 얇은지 텍스트로 확인할 수 없다.",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s08-3511824",
+  "grade": 1,
+  "needsImage": true,
+  "source": "불일치 재검토로 확정",
+  "why": "티셔츠지만 비키니 위에 입을 만큼 얇은지 텍스트로 확인할 수 없다.",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s08-4144548",
+  "grade": 1,
+  "needsImage": true,
+  "source": "독립 2회 일치",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s08-5038922",
+  "grade": 2,
+  "needsImage": false,
+  "source": "독립 2회 일치",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s08-5210096",
+  "grade": 0,
+  "needsImage": false,
+  "source": "독립 2회 일치",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s08-6523984",
+  "grade": 1,
+  "needsImage": true,
+  "source": "독립 2회 일치",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s08-6524151",
+  "grade": 1,
+  "needsImage": true,
+  "source": "불일치 재검토로 확정",
+  "why": "비키니 관련 상의이지만 비키니 위에 입는 얇은 티셔츠인지는 이미지로 확인해야 한다.",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s08-6524245",
+  "grade": 1,
+  "needsImage": true,
+  "source": "불일치 재검토로 확정",
+  "why": "비키니 관련 상의이지만 비키니 위에 입는 얇은 티셔츠인지는 이미지로 확인해야 한다.",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s08-6524283",
+  "grade": 1,
+  "needsImage": true,
+  "source": "독립 2회 일치",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s08-6605335",
+  "grade": 1,
+  "needsImage": true,
+  "source": "독립 2회 일치",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s08-6605342",
+  "grade": 1,
+  "needsImage": true,
+  "source": "독립 2회 일치",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s08-6605346",
+  "grade": 1,
+  "needsImage": true,
+  "source": "독립 2회 일치",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s08-6605351",
+  "grade": 1,
+  "needsImage": true,
+  "source": "독립 2회 일치",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s08-6655389",
+  "grade": 2,
+  "needsImage": false,
+  "source": "독립 2회 일치",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s08-6655416",
+  "grade": 2,
+  "needsImage": false,
+  "source": "독립 2회 일치",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s08-6655418",
+  "grade": 2,
+  "needsImage": false,
+  "source": "독립 2회 일치",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s08-6655565",
+  "grade": 2,
+  "needsImage": false,
+  "source": "독립 2회 일치",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s08-6706271",
+  "grade": 2,
+  "needsImage": false,
+  "source": "독립 2회 일치",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s08-6706272",
+  "grade": 2,
+  "needsImage": false,
+  "source": "독립 2회 일치",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s08-6768513",
+  "grade": 1,
+  "needsImage": true,
+  "source": "불일치 재검토로 확정",
+  "why": "스윔 탑으로 해변 용도에는 가깝지만 비키니 위에 입는 얇은 티셔츠인지는 확인되지 않는다.",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s09-6725985",
+  "grade": 1,
+  "needsImage": true,
+  "source": "독립 2회 일치",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s11-1410892",
+  "grade": 2,
+  "needsImage": false,
+  "source": "독립 2회 일치",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s11-1410926",
+  "grade": 2,
+  "needsImage": false,
+  "source": "독립 2회 일치",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s11-1410945",
+  "grade": 2,
+  "needsImage": false,
+  "source": "독립 2회 일치",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s11-4840623",
+  "grade": 2,
+  "needsImage": false,
+  "source": "독립 2회 일치",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s11-4840624",
+  "grade": 2,
+  "needsImage": false,
+  "source": "독립 2회 일치",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s11-4840625",
+  "grade": 2,
+  "needsImage": false,
+  "source": "독립 2회 일치",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s11-4840626",
+  "grade": 2,
+  "needsImage": false,
+  "source": "독립 2회 일치",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s11-4844152",
+  "grade": 2,
+  "needsImage": false,
+  "source": "독립 2회 일치",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s11-5086389",
+  "grade": 2,
+  "needsImage": false,
+  "source": "독립 2회 일치",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s11-5156748",
+  "grade": 2,
+  "needsImage": false,
+  "source": "독립 2회 일치",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s11-5207049",
+  "grade": 1,
+  "needsImage": true,
+  "source": "독립 2회 일치",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s11-5328081",
+  "grade": 2,
+  "needsImage": false,
+  "source": "독립 2회 일치",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s11-5921848",
+  "grade": 2,
+  "needsImage": false,
+  "source": "독립 2회 일치",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s11-6092591",
+  "grade": 2,
+  "needsImage": false,
+  "source": "독립 2회 일치",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s11-6092605",
+  "grade": 2,
+  "needsImage": false,
+  "source": "독립 2회 일치",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s11-6092632",
+  "grade": 2,
+  "needsImage": false,
+  "source": "독립 2회 일치",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s11-6132206",
+  "grade": 2,
+  "needsImage": false,
+  "source": "독립 2회 일치",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s11-6132372",
+  "grade": 2,
+  "needsImage": false,
+  "source": "독립 2회 일치",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s11-6132522",
+  "grade": 2,
+  "needsImage": false,
+  "source": "독립 2회 일치",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s11-6697888",
+  "grade": 2,
+  "needsImage": false,
+  "source": "독립 2회 일치",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s15-1970658",
+  "grade": 1,
+  "needsImage": true,
+  "source": "불일치 재검토로 확정",
+  "why": "반팔 티셔츠지만 데이트용으로 여성스러워 보이는지는 이미지가 필요하다.",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s15-3214029",
+  "grade": 1,
+  "needsImage": true,
+  "source": "독립 2회 일치",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s15-3214647",
+  "grade": 1,
+  "needsImage": true,
+  "source": "불일치 재검토로 확정",
+  "why": "반팔 티셔츠지만 데이트용으로 여성스러워 보이는지는 이미지가 필요하다.",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s15-3276155",
+  "grade": 1,
+  "needsImage": true,
+  "source": "독립 2회 일치",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s15-3377861",
+  "grade": 1,
+  "needsImage": true,
+  "source": "불일치 재검토로 확정",
+  "why": "반팔 티셔츠지만 데이트용으로 여성스러워 보이는지는 이미지가 필요하다.",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s15-4046482",
+  "grade": 1,
+  "needsImage": true,
+  "source": "불일치 재검토로 확정",
+  "why": "반팔 티셔츠지만 데이트용으로 여성스러워 보이는지는 이미지가 필요하다.",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s15-4046501",
+  "grade": 1,
+  "needsImage": true,
+  "source": "독립 2회 일치",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s15-4259445",
+  "grade": 1,
+  "needsImage": true,
+  "source": "불일치 재검토로 확정",
+  "why": "반팔 티셔츠지만 데이트용으로 여성스러워 보이는지는 이미지가 필요하다.",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s15-4882562",
+  "grade": 1,
+  "needsImage": true,
+  "source": "불일치 재검토로 확정",
+  "why": "여성용 티셔츠는 확인되지만 데이트용으로 여성스러워 보이는지는 이미지가 필요하다.",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s15-4954388",
+  "grade": 1,
+  "needsImage": true,
+  "source": "불일치 재검토로 확정",
+  "why": "여성용 반팔 티셔츠는 확인되지만 데이트용으로 여성스러워 보이는지는 이미지가 필요하다.",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s15-4963596",
+  "grade": 2,
+  "needsImage": false,
+  "source": "독립 2회 일치",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s15-5055242",
+  "grade": 0,
+  "needsImage": false,
+  "source": "독립 2회 일치",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s15-5073443",
+  "grade": 1,
+  "needsImage": true,
+  "source": "독립 2회 일치",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s15-5079932",
+  "grade": 1,
+  "needsImage": true,
+  "source": "독립 2회 일치",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s15-5155029",
+  "grade": 1,
+  "needsImage": true,
+  "source": "독립 2회 일치",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s15-5210387",
+  "grade": 1,
+  "needsImage": true,
+  "source": "불일치 재검토로 확정",
+  "why": "티셔츠는 맞지만 데이트용으로 여성스러워 보이는지는 이미지가 필요하다.",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s15-5210389",
+  "grade": 1,
+  "needsImage": true,
+  "source": "불일치 재검토로 확정",
+  "why": "티셔츠는 맞지만 데이트용으로 여성스러워 보이는지는 이미지가 필요하다.",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s15-5210390",
+  "grade": 0,
+  "needsImage": false,
+  "source": "독립 2회 일치",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s15-5973697",
+  "grade": 1,
+  "needsImage": true,
+  "source": "불일치 재검토로 확정",
+  "why": "반팔 티셔츠지만 데이트용으로 여성스러워 보이는지는 이미지가 필요하다.",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s15-5975885",
+  "grade": 1,
+  "needsImage": true,
+  "source": "불일치 재검토로 확정",
+  "why": "반팔 티셔츠지만 데이트용으로 여성스러워 보이는지는 이미지가 필요하다.",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s16-4251884",
+  "grade": 1,
+  "needsImage": true,
+  "source": "독립 2회 일치",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s16-4251887",
+  "grade": 1,
+  "needsImage": true,
+  "source": "독립 2회 일치",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s16-4251888",
+  "grade": 1,
+  "needsImage": true,
+  "source": "독립 2회 일치",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s16-4251891",
+  "grade": 1,
+  "needsImage": true,
+  "source": "독립 2회 일치",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s16-4251895",
+  "grade": 1,
+  "needsImage": true,
+  "source": "독립 2회 일치",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s16-5055242",
+  "grade": 1,
+  "needsImage": true,
+  "source": "불일치 재검토로 확정",
+  "why": "여름용 반팔티는 확인되지만 팔뚝살을 가리는 형태인지는 확인할 수 없다.",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s16-5096227",
+  "grade": 2,
+  "needsImage": false,
+  "source": "독립 2회 일치",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s16-5096228",
+  "grade": 1,
+  "needsImage": true,
+  "source": "불일치 재검토로 확정",
+  "why": "오버핏 반팔 티셔츠지만 실제로 팔뚝살을 가리는지는 이미지가 필요하다.",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s16-5096230",
+  "grade": 1,
+  "needsImage": true,
+  "source": "불일치 재검토로 확정",
+  "why": "반팔 티셔츠지만 팔뚝살을 가리는 소매 형태인지는 이미지가 필요하다.",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s16-5096231",
+  "grade": 1,
+  "needsImage": true,
+  "source": "불일치 재검토로 확정",
+  "why": "반팔 티셔츠지만 팔뚝살을 가리는 소매 형태인지는 이미지가 필요하다.",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s16-5292805",
+  "grade": 1,
+  "needsImage": true,
+  "source": "독립 2회 일치",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s16-5292842",
+  "grade": 1,
+  "needsImage": true,
+  "source": "독립 2회 일치",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s16-5305337",
+  "grade": 1,
+  "needsImage": true,
+  "source": "불일치 재검토로 확정",
+  "why": "티셔츠지만 팔뚝살을 가리는 소매 형태와 여름 적합성을 모두 확인할 수 없다.",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s16-5305340",
+  "grade": 1,
+  "needsImage": true,
+  "source": "독립 2회 일치",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s16-5305342",
+  "grade": 1,
+  "needsImage": true,
+  "source": "독립 2회 일치",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s16-5305344",
+  "grade": 1,
+  "needsImage": true,
+  "source": "독립 2회 일치",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s16-5305345",
+  "grade": 1,
+  "needsImage": true,
+  "source": "독립 2회 일치",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s16-6245389",
+  "grade": 1,
+  "needsImage": true,
+  "source": "불일치 재검토로 확정",
+  "why": "여름에 가까운 메쉬 티셔츠지만 팔뚝살을 가리는 소매 형태인지는 이미지가 필요하다.",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s16-6245391",
+  "grade": 1,
+  "needsImage": true,
+  "source": "독립 2회 일치",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s16-6245394",
+  "grade": 1,
+  "needsImage": true,
+  "source": "독립 2회 일치",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s18-4188865",
+  "grade": 1,
+  "needsImage": false,
+  "source": "독립 2회 일치",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s18-4878145",
+  "grade": 1,
+  "needsImage": false,
+  "source": "독립 2회 일치",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s27-2800538",
+  "grade": 0,
+  "needsImage": false,
+  "source": "독립 2회 일치",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s27-3056160",
+  "grade": 1,
+  "needsImage": true,
+  "source": "독립 2회 일치",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s27-3064141",
+  "grade": 1,
+  "needsImage": true,
+  "source": "독립 2회 일치",
+  "rubric": "v3.3",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s27-3127539",
+  "grade": 1,
+  "needsImage": true,
+  "source": "독립 2회 일치",
+  "rubric": "v3.3",
+  "grader": "codex"
+ }
+]

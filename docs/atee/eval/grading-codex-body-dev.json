@@ -1,0 +1,542 @@
+[
+ {
+  "itemId": "a-g4-04-1960677",
+  "grade": 1,
+  "needsImage": false,
+  "why": "여성용 크롭 반팔은 맞지만 스트라이프가 아닌 체커보드 그래픽이다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g4-04-1960700",
+  "grade": 1,
+  "needsImage": false,
+  "why": "여성용 크롭 반팔은 맞지만 스트라이프가 아닌 체커보드 그래픽이다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g4-04-1960728",
+  "grade": 1,
+  "needsImage": false,
+  "why": "여성용 크롭 반팔은 맞지만 스트라이프가 아니라 체커보드 그래픽이다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g4-05-1393297",
+  "grade": 1,
+  "needsImage": false,
+  "why": "코튼 반팔 티셔츠이지만 면 100%가 확인되지 않고 자수·헤비·슬림 사양이라 기본 반팔 조건과 일부 어긋난다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g4-05-6096133",
+  "grade": 1,
+  "needsImage": false,
+  "why": "코튼 기본핏 반팔이지만 면 100%인지는 상품 정보로 확인되지 않는다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g4-05-6096134",
+  "grade": 1,
+  "needsImage": false,
+  "why": "코튼 기본핏 반팔이지만 면 100%인지는 확인되지 않는다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g4-05-6256241",
+  "grade": 1,
+  "needsImage": false,
+  "why": "코튼 기본핏 반팔이지만 면 100%가 확인되지 않고 그래픽 제품이다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g4-05-6358574",
+  "grade": 1,
+  "needsImage": false,
+  "why": "코튼 기본핏 반팔이지만 면 100% 여부는 확인되지 않는다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g5-01-182486",
+  "grade": 2,
+  "needsImage": false,
+  "why": "무지 티셔츠로 명시되었고 카테고리상 반팔이며 로고가 있다는 정보가 없다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g5-01-338305",
+  "grade": 2,
+  "needsImage": false,
+  "why": "무지 반팔 티셔츠로 명시되어 있고 로고 정보가 없다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g5-01-345889",
+  "grade": 2,
+  "needsImage": false,
+  "why": "무지 반팔 2팩으로 명시되어 있고 로고 정보가 없다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g5-01-357155",
+  "grade": 2,
+  "needsImage": false,
+  "why": "무지로 명시된 반팔 티셔츠이며 로고가 있다는 정보가 없다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g5-01-357156",
+  "grade": 2,
+  "needsImage": false,
+  "why": "무지로 명시된 반팔 티셔츠이며 로고가 있다는 정보가 없다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g5-01-357157",
+  "grade": 2,
+  "needsImage": false,
+  "why": "무지 제품이며 카테고리상 반팔이고 로고가 있다는 정보가 없다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g5-01-357160",
+  "grade": 2,
+  "needsImage": false,
+  "why": "무지 티셔츠 세트이며 카테고리상 반팔이고 로고가 있다는 정보가 없다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g5-01-377630",
+  "grade": 2,
+  "needsImage": false,
+  "why": "무지 반팔 티셔츠 세트이며 로고가 있다는 정보가 없다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g5-01-381336",
+  "grade": 2,
+  "needsImage": false,
+  "why": "무지 제품이며 카테고리상 반팔이고 로고가 있다는 정보가 없다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g5-01-381337",
+  "grade": 2,
+  "needsImage": false,
+  "why": "무지 제품이며 카테고리상 반팔이고 로고가 있다는 정보가 없다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g5-01-382476",
+  "grade": 2,
+  "needsImage": false,
+  "why": "무지 제품이며 카테고리상 반팔이고 로고가 있다는 정보가 없다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g5-01-534529",
+  "grade": 2,
+  "needsImage": false,
+  "why": "무지 나그랑 반팔 티셔츠로 명시되어 있고 로고 정보가 없다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g5-01-538836",
+  "grade": 2,
+  "needsImage": false,
+  "why": "무지 반팔티로 명시되었고 로고가 있다는 정보가 없다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g5-01-559954",
+  "grade": 2,
+  "needsImage": false,
+  "why": "무지 반팔티로 명시되었고 로고가 있다는 정보가 없다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "a-g5-01-577957",
+  "grade": 2,
+  "needsImage": false,
+  "why": "배색 디자인이지만 제목에 무지 반팔티로 명시되어 있고 로고가 있다는 정보가 없다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s13-1865568",
+  "grade": 2,
+  "needsImage": false,
+  "why": "여성용 슬림 크롭 티셔츠로 웨이브 체형에 적합하다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s13-2411247",
+  "grade": 2,
+  "needsImage": false,
+  "why": "여성용 세미 크롭 슬림핏 티셔츠로 웨이브 체형 권장 조건에 부합한다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s13-2603220",
+  "grade": 2,
+  "needsImage": false,
+  "why": "여성용 슬림 크롭 티셔츠로 웨이브 체형 권장 조건에 부합한다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s13-2647822",
+  "grade": 2,
+  "needsImage": false,
+  "why": "여성용 슬림핏 크롭 티셔츠로 웨이브 체형에 적합하다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s13-2647824",
+  "grade": 2,
+  "needsImage": false,
+  "why": "여성용 슬림핏 크롭 티셔츠로 웨이브 체형 권장 조건에 부합한다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s13-3052651",
+  "grade": 2,
+  "needsImage": false,
+  "why": "여성용 슬림 크롭 크루넥 티셔츠로 웨이브 체형 권장 조건에 부합한다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s13-3052652",
+  "grade": 2,
+  "needsImage": false,
+  "why": "여성용 슬림 크롭 크루넥 티셔츠로 웨이브 체형 권장 조건에 부합한다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s13-3052653",
+  "grade": 2,
+  "needsImage": false,
+  "why": "여성용 슬림 크롭 크루넥 티셔츠로 웨이브 체형 권장 조건에 부합한다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s13-3052654",
+  "grade": 2,
+  "needsImage": false,
+  "why": "여성용 슬림 크롭 크루넥 티셔츠로 웨이브 체형 권장 조건에 부합한다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s13-3052655",
+  "grade": 2,
+  "needsImage": false,
+  "why": "여성용 슬림핏·크롭·크루넥 티셔츠로 웨이브 체형 권장 조건에 부합한다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s13-3052656",
+  "grade": 2,
+  "needsImage": false,
+  "why": "여성용 슬림핏·크롭·크루넥 티셔츠로 웨이브 체형 권장 조건에 부합한다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s13-3052661",
+  "grade": 2,
+  "needsImage": false,
+  "why": "여성용 슬림 크롭 티셔츠로 웨이브 체형 권장 조건에 부합한다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s13-3052662",
+  "grade": 2,
+  "needsImage": false,
+  "why": "여성용 슬림 크롭 티셔츠로 웨이브 체형에 적합한 핏과 기장을 갖췄다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s13-3052663",
+  "grade": 2,
+  "needsImage": false,
+  "why": "여성용 슬림 크롭 티셔츠로 웨이브 체형에 적합한 핏과 기장을 갖췄다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s13-3064420",
+  "grade": 2,
+  "needsImage": false,
+  "why": "여성용 슬림핏 베이비 크롭 반팔로 웨이브 체형 권장 조건에 부합한다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s13-3111254",
+  "grade": 2,
+  "needsImage": false,
+  "why": "여성용 크롭 티셔츠 세트로 짧은 기장이 웨이브 체형 권장 조건에 부합한다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s13-3112887",
+  "grade": 2,
+  "needsImage": false,
+  "why": "여성용 크롭 슬림핏 티셔츠로 웨이브 체형 권장 조건에 부합한다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s13-3161901",
+  "grade": 2,
+  "needsImage": false,
+  "why": "여성용 슬림 크롭 반팔 티셔츠로 웨이브 체형 권장 조건에 부합한다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s13-3211175",
+  "grade": 2,
+  "needsImage": false,
+  "why": "여성용 크롭 슬림핏 반팔 티셔츠로 웨이브 체형에 적합하다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s13-3211176",
+  "grade": 2,
+  "needsImage": false,
+  "why": "여성용 크롭 슬림핏 반팔 티셔츠로 웨이브 체형 권장 조건에 부합한다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s15-1763123",
+  "grade": 1,
+  "needsImage": true,
+  "why": "여성용 반팔 티셔츠지만 모노그램 로고를 포함한 디자인이 여성스러운 데이트룩인지 이미지 확인이 필요하다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s15-1763132",
+  "grade": 1,
+  "needsImage": false,
+  "why": "여성용 반팔이지만 블랙 레귤러핏 로고 기본티라 여성스러운 데이트룩 조건은 확실하지 않다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s15-1878178",
+  "grade": 1,
+  "needsImage": true,
+  "why": "여성용 베이지 반팔임은 확인되지만 여성스러운 디자인인지는 제목만으로 알 수 없다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s15-1878340",
+  "grade": 1,
+  "needsImage": true,
+  "why": "여성용 반팔임은 확인되지만 여성스러운 디자인인지는 제목만으로 알 수 없다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s15-1878367",
+  "grade": 1,
+  "needsImage": true,
+  "why": "여성용 반팔 티셔츠지만 여성스러운 데이트룩에 적합한 디자인인지는 이미지 확인이 필요하다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s15-1878381",
+  "grade": 1,
+  "needsImage": true,
+  "why": "여성용 반팔 티셔츠지만 데이트용으로 여성스러워 보이는 디자인인지는 이미지 확인이 필요하다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s15-1878414",
+  "grade": 2,
+  "needsImage": false,
+  "source": "불일치 재검토로 확정",
+  "why": "여성용 프린트 티셔츠와 스커트 셋업으로 데이트용 여성스러운 연출에 부합한다.",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s15-1878470",
+  "grade": 2,
+  "needsImage": false,
+  "why": "여성용 티셔츠와 스커트 셋업으로 여성스러운 데이트 코디에 적합하다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s15-1946875",
+  "grade": 1,
+  "needsImage": true,
+  "why": "여성용 반팔 티셔츠지만 라글란 배색 디자인이 여성스러운 데이트룩인지 이미지 확인이 필요하다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s15-1946938",
+  "grade": 1,
+  "needsImage": false,
+  "why": "여성용 반팔 티셔츠지만 라글란 5부 배색 디자인은 여성스러운 데이트룩 조건을 일부만 만족한다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s15-1948801",
+  "grade": 1,
+  "needsImage": true,
+  "source": "불일치 재검토로 확정",
+  "why": "여성용 반팔 티셔츠이지만 기본 일러스트 디자인이 여성스러워 보이는지는 텍스트만으로 확인할 수 없다.",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s15-1948878",
+  "grade": 1,
+  "needsImage": true,
+  "why": "여성용 기본 반팔이지만 일러스트를 포함한 전체 디자인이 여성스러운 데이트룩인지 이미지 확인이 필요하다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s15-1948892",
+  "grade": 2,
+  "needsImage": false,
+  "why": "여성용 페일 핑크 반팔 티셔츠로 부드럽고 여성스러운 데이트룩에 어울린다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s15-1960677",
+  "grade": 1,
+  "needsImage": false,
+  "why": "여성용 크롭 티셔츠이지만 체커보드 그래픽과 루즈핏은 여성스러운 데이트룩에 부분적으로만 부합한다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s15-4012869",
+  "grade": 1,
+  "needsImage": true,
+  "why": "여성용 반팔 티셔츠지만 그래픽 디자인이 여성스러운 데이트룩에 적합한지는 이미지 확인이 필요하다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s15-6163677",
+  "grade": 1,
+  "needsImage": true,
+  "why": "여성용 티셔츠이지만 여성스러운 데이트룩에 적합한 디자인인지는 이미지 확인이 필요하다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ },
+ {
+  "itemId": "s15-6163681",
+  "grade": 1,
+  "needsImage": true,
+  "why": "여성용 티셔츠이지만 여성스러운 데이트룩에 적합한 디자인인지는 이미지 확인이 필요하다.",
+  "source": "독립 2회 일치",
+  "rubric": "v3.4",
+  "grader": "codex"
+ }
+]
