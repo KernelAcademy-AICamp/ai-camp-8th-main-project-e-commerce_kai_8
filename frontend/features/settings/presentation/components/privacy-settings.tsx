@@ -1,5 +1,7 @@
 "use client";
 
+import Link from "next/link";
+
 import { usePrivacySettings } from "@/features/settings/presentation/view-model/use-privacy-settings";
 
 /**
@@ -29,13 +31,29 @@ export function PrivacySettings() {
           프로필 계산에는 쓰이지 않습니다.
         </p>
         <p>
-          이름·연락처·계정 같은 개인정보를 묻거나 따로 저장하지는 않습니다. 다만
-          검색창은 무엇이든 입력할 수 있으므로, 개인적인 내용은 적지 않는 편이 좋습니다.
-          취향 프로필(좋아하는 스타일 요약)은 서버가 아니라 이 기기에만 저장됩니다.
+          <b className="text-white">로그인은 선택</b>입니다. 로그인하면 구글 로그인의
+          기본 범위인 <b className="text-white">이메일 주소와 구글이 발급한 식별자</b>만
+          받아 계정으로 저장합니다. 프로필 사진·연락처·성별 같은 것은 요청하지 않습니다.
+          서버에는 계정과 익명 ID를 잇는 기록을 만들지 않습니다 — 다만 이 기기에는 둘이
+          함께 남으므로, 기기를 들여다보면 이을 수 있습니다.
+        </p>
+        <p>
+          이름·연락처를 따로 묻지는 않습니다. 다만 검색창은 무엇이든 입력할 수 있으므로,
+          개인적인 내용은 적지 않는 편이 좋습니다. 취향 프로필(좋아하는 스타일 요약)은
+          서버가 아니라 이 기기에만 저장됩니다.
         </p>
         <p>
           아래 버튼을 누르면 이 기기의 익명 ID·취향 프로필과 서버에 기록된 행동
-          기록·검색 기록이 모두 삭제되고 처음 상태로 돌아갑니다.
+          기록·검색 기록이 모두 삭제되고 처음 상태로 돌아갑니다.{" "}
+          <b className="text-white">계정은 남습니다</b> — 계정까지 지우려면 위 계정
+          영역의 계정 삭제를 쓰세요.
+        </p>
+        <p className="text-sm text-neutral-400">
+          더 자세한 내용은{" "}
+          <Link href="/privacy" className="text-neutral-300 underline">
+            개인정보 처리방침
+          </Link>
+          에 있습니다.
         </p>
       </section>
 

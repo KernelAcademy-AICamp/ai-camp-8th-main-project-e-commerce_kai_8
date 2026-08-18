@@ -7,11 +7,10 @@
 //
 // 그래서 실패한 기기 ID를 따로 적어 두고 다음 접속에 재시도한다.
 
+import { nextPendingForgetList } from "@/shared/signals/pending-forget-list";
 import { rpcPost } from "@/shared/supabase-rpc";
 
 const STORAGE_KEY = "atee-pending-forget";
-/** 큐 상한 — 반복 실패로 무한히 쌓이지 않게 한다 */
-const MAX_PENDING = 20;
 
 function read(): string[] {
   try {
@@ -27,8 +26,10 @@ function read(): string[] {
 
 function write(ids: string[]): void {
   try {
+    // 상한을 두지 않는다 — 잘라내면 그 기기의 서버 기록을 영원히 못 지운다.
+    // 이유는 pending-forget-list.ts 참고 (설계 §4-1).
     if (ids.length === 0) localStorage.removeItem(STORAGE_KEY);
-    else localStorage.setItem(STORAGE_KEY, JSON.stringify(ids.slice(-MAX_PENDING)));
+    else localStorage.setItem(STORAGE_KEY, JSON.stringify(ids));
   } catch {
     // 저장 불가 환경이면 이번 세션에서만 재시도할 수 있다 — 그 이상은 방법이 없다
   }
@@ -36,9 +37,7 @@ function write(ids: string[]): void {
 
 /** 서버 삭제에 실패한 기기 ID를 적어 둔다 (중복은 넣지 않는다) */
 export function rememberPendingForget(deviceId: string): void {
-  const ids = read();
-  if (ids.includes(deviceId)) return;
-  write([...ids, deviceId]);
+  write(nextPendingForgetList(read(), deviceId));
 }
 
 /** 아직 서버에서 지우지 못한 기기 ID가 있는가 — 설정 화면 안내에 쓴다 */
