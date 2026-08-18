@@ -17,6 +17,12 @@ interface FloatingSearchProps {
   onExpand: () => void;
   /** 하단 고지 배너가 보이는 동안 그 위로 물러난다 (설계 §3) */
   lifted: boolean;
+  /** 소프트 키보드가 화면 아래를 가린 높이(px) — 그만큼 위로 띄운다 */
+  keyboardInset: number;
+  /** 입력에 포커스가 잡혔다 = 키보드가 올라온다 */
+  onInputFocus: () => void;
+  /** 입력의 포커스가 풀렸다 = 키보드가 내려간다 */
+  onInputBlur: () => void;
 }
 
 function SearchIcon() {
@@ -51,8 +57,12 @@ export function FloatingSearch({
   collapsed,
   onExpand,
   lifted,
+  keyboardInset,
+  onInputFocus,
+  onInputBlur,
 }: FloatingSearchProps) {
   const inputRef = useRef<HTMLInputElement | null>(null);
+  const keyboardOpen = keyboardInset > 0;
 
   return (
     <form
@@ -63,13 +73,20 @@ export function FloatingSearch({
         onSubmit();
         inputRef.current?.blur(); // 제출하면 키보드를 닫는다 (설계 §3)
       }}
-      className={`fixed inset-x-0 z-30 mx-auto flex w-full max-w-md justify-center px-4 transition-[opacity,bottom] duration-200 ${
-        hidden ? "pointer-events-none opacity-0" : "opacity-100"
-      }`}
+      className={`fixed inset-x-0 z-30 mx-auto flex w-full max-w-md justify-center px-4 duration-200 ${
+        // ⚠️ **키보드가 떠 있는 동안 bottom은 전환하지 않는다.** 키보드가
+        // 올라오는 내내 뷰포트 크기가 연속으로 바뀌는데, 매 변화마다 200ms
+        // 전환이 새로 걸리면 검색창이 키보드를 한참 뒤따라 올라온다.
+        keyboardOpen ? "transition-opacity" : "transition-[opacity,bottom]"
+      } ${hidden ? "pointer-events-none opacity-0" : "opacity-100"}`}
       style={{
-        bottom: lifted
-          ? "calc(9rem + env(safe-area-inset-bottom))"
-          : "calc(1rem + env(safe-area-inset-bottom))",
+        bottom: keyboardOpen
+          ? // 키보드는 홈 인디케이터 영역까지 덮는다 — safe-area를 더하면 이중
+            // 계산이라 그만큼 붕 뜬다. 고지 배너(lifted)도 키보드 뒤라 무시한다.
+            `calc(${String(keyboardInset)}px + 0.5rem)`
+          : lifted
+            ? "calc(9rem + env(safe-area-inset-bottom))"
+            : "calc(1rem + env(safe-area-inset-bottom))",
       }}
     >
       <div
@@ -116,10 +133,16 @@ export function FloatingSearch({
           onChange={(event) => {
             onInputChange(event.target.value);
           }}
+          onFocus={onInputFocus}
+          onBlur={onInputBlur}
           placeholder="티셔츠 검색"
           aria-label="티셔츠 검색"
           tabIndex={collapsed ? -1 : undefined}
-          className={`min-w-0 bg-transparent text-sm text-neutral-100 outline-none transition-opacity duration-200 placeholder:text-neutral-500 [&::-webkit-search-cancel-button]:hidden ${
+          // ⚠️ **글자 크기는 16px(`text-base`) 아래로 내리지 않는다.** iOS Safari는
+          // 16px 미만 입력에 포커스하면 화면을 자동으로 확대하고 **포커스가 풀려도
+          // 되돌리지 않는다.** `text-sm`(14px)이던 시절 실측: 탭 직후 scale 1.000 →
+          // 1.142, offsetLeft 0 → 41이라 검색창 왼쪽이 화면 밖으로 잘렸다.
+          className={`min-w-0 bg-transparent text-base text-neutral-100 outline-none transition-opacity duration-200 placeholder:text-neutral-500 [&::-webkit-search-cancel-button]:hidden ${
             collapsed ? "w-0 opacity-0" : "w-full opacity-100"
           }`}
         />

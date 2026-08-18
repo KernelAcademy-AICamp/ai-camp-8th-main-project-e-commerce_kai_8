@@ -9,6 +9,7 @@ import { FeedSkeleton } from "@/features/feed/presentation/components/feed-skele
 import { useFeedViewModel } from "@/features/feed/presentation/view-model/use-feed-view-model";
 import { FloatingSearch } from "@/features/feed/search/presentation/components/floating-search";
 import { SearchResults } from "@/features/feed/search/presentation/components/search-results";
+import { useKeyboardInset } from "@/features/feed/search/presentation/view-model/use-keyboard-inset";
 import { useSearchCollapse } from "@/features/feed/search/presentation/view-model/use-search-collapse";
 import { useSearchFeed } from "@/features/feed/search/presentation/view-model/use-search-feed";
 import { useSearchScroll } from "@/features/feed/search/presentation/view-model/use-search-scroll";
@@ -65,7 +66,10 @@ export function MosaicFeed() {
     if (showReplacement) searchFeed.markReplacementShown();
   }, [showReplacement, searchFeed]);
   const { saveFeedScroll, suppressUntilRef } = useSearchScroll(search.submittedQuery);
-  const { collapsed, expand } = useSearchCollapse(suppressUntilRef);
+  const { collapsed, expand, onInputFocus, onInputBlur } =
+    useSearchCollapse(suppressUntilRef);
+  // 키보드가 하단 고정 검색창을 가리지 않게 그 높이만큼 띄운다
+  const keyboardInset = useKeyboardInset();
   const bannerVisible = useConsentNoticeVisible();
   // 지난번 서버 삭제가 실패했다면 조용히 다시 시도한다 (방침 O-32 삭제 계약)
   useRetryPendingForget();
@@ -117,6 +121,9 @@ export function MosaicFeed() {
         collapsed={collapsed}
         onExpand={expand}
         lifted={bannerVisible}
+        keyboardInset={keyboardInset}
+        onInputFocus={onInputFocus}
+        onInputBlur={onInputBlur}
       />
 
       {liveLayers.map((entry, i) => {
