@@ -9,3 +9,6 @@ package-lock.json
 # format:check가 깨지고 **develop 대상 모든 PR이 막혔다**(v0.1.2에서 실제로 발생).
 # 고쳐 두면 다음 릴리즈가 되돌린다 — 검사 대상에서 빼는 것이 맞다.
 CHANGELOG.md
+
+# 큐레이션 생성 스크립트(curation/backend/scripts/gen_curation_page.py)가 자동 생성 — 포맷 검사 제외
+features/curation/data/curations.json

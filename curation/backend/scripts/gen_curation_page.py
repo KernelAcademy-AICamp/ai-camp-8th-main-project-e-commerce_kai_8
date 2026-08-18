@@ -19,9 +19,11 @@ from pathlib import Path
 import psycopg
 
 OUT = Path(__file__).parent / "큐레이션화면.html"
-# 화면(client)이 읽는 같은 데이터. 목업 HTML과 한 번에 같이 쓴다 — 둘이 어긋나면 안 된다.
-JSON_OUT = (Path(__file__).resolve().parents[2]
-            / "client/features/curation/data/curations.json")
+# 화면이 읽는 같은 데이터. 목업 HTML과 한 번에 같이 쓴다 — 셋이 어긋나면 안 된다.
+# 큐레이션 탭은 aTee(frontend)에도 붙어 있어서 두 앱에 같은 바이트를 쓴다.
+_REPO = Path(__file__).resolve().parents[3]
+JSON_OUTS = [_REPO / "curation/client/features/curation/data/curations.json",
+             _REPO / "frontend/features/curation/data/curations.json"]
 ENV = Path(__file__).resolve().parents[1] / ".env.local"
 TOP_N = 9   # ponytail: 상위 9개만 노출. 상품마다 NOTES를 손으로 쓰는 비용이 크다.
 
@@ -33,6 +35,12 @@ MIN_BUY = 100      # 구매 100개 미만은 검증 안 된 것으로 본다 (12
 MIN_REVIEW = 30    # 리뷰 30개 미만의 평점 100점은 표본이 작아서 못 믿는다
 ORDER = "review_score desc nulls last, goods_no desc"
 MAX_APPEAR = 2    # 한 상품이 나갈 수 있는 큐레이션 수. 앞선 큐레이션이 우선권을 갖는다
+
+# 화면의 "N건"을 **하한 통과분**으로 세는 게시물 (사람 결정 2026-08-18).
+# 기본은 하한 전 숫자인데, 반팔 카탈로그의 8할이 구매 0건이라 체형 게시물은
+# "9개 보여주면서 8,830건"이 된다. 실제로 뽑을 수 있는 풀을 적는다.
+# ⚠️ 여기 없는 게시물과 기준이 다르다. 나란히 비교하면 안 된다.
+N_GATED = {"body_straight", "body_wave_w", "body_natural"}
 
 # 반소매 티셔츠 = 일반(001001) + 스포츠(017016005). 긴팔·후드·나시는 뺀다.
 BASE_SCOPE = "base_cat in ('001001','017016005')"
@@ -53,6 +61,10 @@ COLOR = {
 # 값이 콤마로 이어붙은 컬럼("루즈,오버|사이즈"). 배열처럼 다뤄야 한다.
 MULTI = {"fit", "sheer", "thickness", "touch", "elasticity", "wear_season"}
 ARRAY = {"tags", "sizes"}
+
+# 실측 치수 표(c_search_fit_measures)에서 조건으로 쓸 수 있는 컬럼.
+# 백분위(_pct)는 0~1, shoulder_band는 c_search_fit_bands의 5칸 이름이다.
+FIT_COLS = {"pop", "shoulder_band", "shoulder_pct", "length_pct", "chest_pct", "sleeve_pct"}
 CMP = {"lte": "<=", "gte": ">=", "eq": "="}
 SAFE_COL = re.compile(r"^[a-z_]+$")
 
@@ -67,7 +79,7 @@ POS = "coalesce(ai_summary->'sentimentSummary'->>'positive','')"
 #   {"kw": ["래글런","링거"]}                        제목이나 태그에 키워드
 #   {"color": ["화이트"], "sheer": {"any":["없음"]}}  색 + 비침
 #   {"price_final": {"lte": 30000}}
-# 연산자: kw / not_kw / color / color_only / any / all / in / lte / gte / eq
+# 연산자: kw / not_kw / color / color_only / any / all / not_any / in / lte / gte / eq
 def compile_rules(rules):
     """규칙 스펙을 (SQL 조각, 파라미터)로. 컬럼명은 화이트리스트로만 통과시킨다."""
     where, params = [], []
@@ -102,6 +114,27 @@ def compile_rules(rules):
         elif key == "pos_kw":
             where.append(f"({HAS_AI} and {POS} ilike any(%s))")
             params.append([f"%{v}%" for v in spec])
+        elif key == "fit_m":
+            # 실측 치수는 c_goods에 없다. goods_no로 c_search_fit_measures를 붙인다. 예:
+            #   {"fit_m": {"pop": {"eq": "여성"}, "shoulder_band": {"any": ["정어깨"]},
+            #              "length_pct": {"lte": 0.35}}}
+            # ⚠️ 그 표는 일반 반소매(001001)만 담고, 치수가 있는 상품만 들어 있다.
+            # 이 조건을 걸면 스포츠 티(017016005)와 치수 미기재 상품은 통째로 빠진다.
+            sub = []
+            for col, ops in spec.items():
+                if col not in FIT_COLS:
+                    raise ValueError(f"치수 표에 없는 컬럼: {col}")
+                for op, want in ops.items():
+                    if op == "any":
+                        sub.append(f"m.{col} = any(%s)")
+                        params.append(list(want))
+                    elif op in CMP:
+                        sub.append(f"m.{col} {CMP[op]} %s")
+                        params.append(want)
+                    else:
+                        raise ValueError(f"모르는 연산자: {op}")
+            where.append("exists (select 1 from c_search_fit_measures m "
+                         "where m.goods_no = c_goods.goods_no and " + " and ".join(sub) + ")")
         elif key == "no_complaint":
             where.append(f"({HAS_AI} and ({NEG} = '' or {NEG} ilike '%%만족도가 높%%'))")
         elif key in ("ai_kw", "ai_kw_not"):
@@ -122,6 +155,14 @@ def compile_rules(rules):
                 elif op == "all":
                     where.append(f"{col} @> %s")
                     params.append(list(want))
+                elif op == "not_any":
+                    # 이 값들이 **아닌** 것. ⚠️ 값이 없는 상품(설문 미기재)은 통과시킨다 —
+                    # not (NULL && ...) 은 NULL이라 그냥 쓰면 미기재가 조용히 전부 탈락한다.
+                    # 반소매에서 thickness·fit·touch는 36%만 채워져 있어 낙차가 크다.
+                    where.append(f"coalesce(not ({col} && %s), true)"
+                                 if key in MULTI | ARRAY else
+                                 f"coalesce({key} <> all(%s), true)")
+                    params.append(list(want))
                 elif op == "in":
                     where.append(f"{key} = any(%s)")
                     params.append(list(want))
@@ -131,37 +172,6 @@ def compile_rules(rules):
                 else:
                     raise ValueError(f"모르는 연산자: {op}")
     return " and ".join(where) or "true", params
-
-
-# 큐레이션별 작성일·조회수. 조회 로그를 쌓는 데가 아직 없어서 조회수는 손으로 적은 목업값이다.
-# 로그가 생기면 이 표의 조회수 자리를 지우고 집계값을 읽는다.
-META = {
-    "ringer":         ("2026.06.05",  5080),
-    "stripe":         ("2026.06.05",  4410),
-    "baseball_raglan": ("2026.06.12", 4820),
-    "gorpcore":       ("2026.06.12",  5870),
-    "running":        ("2026.06.19",  3150),
-    "no_stretch":     ("2026.06.19",  6940),
-    "blokecore":      ("2026.06.26",  5640),
-    "true_to_size":   ("2026.06.26",  9120),
-    "tropical":       ("2026.07.03",  6210),
-    "white_opaque":   ("2026.07.03", 12400),
-    "campus_daily":   ("2026.07.10",  8930),
-    "date_neat":      ("2026.07.10",  7240),
-    "not_hot":        ("2026.07.10", 10330),
-    "quiet_detail":   ("2026.07.17",  2660),
-    "summer_thin":    ("2026.07.17", 11850),
-    "washed":         ("2026.07.24",  9760),
-    "oversized_thin": ("2026.07.24",  8070),
-    "flower":         ("2026.07.24",  3540),
-    "character":      ("2026.07.31",  6530),
-    "crop":           ("2026.07.31",  7610),
-    "coquette":       ("2026.08.04",  4760),
-    "new_graphic":    ("2026.08.07",  5290),
-    "no_complaint":   ("2026.08.07",  3880),
-    "dog_print":      ("2026.08.11",  2180),
-    "cat_print":      ("2026.08.11",  3470),
-}
 
 
 # ── 초기 적재값 ──────────────────────────────────────────────
@@ -343,6 +353,57 @@ SEED = [
      "lede": "고프코어. 등산이나 캠핑용으로 나온 옷을 시내에서 그냥 입는 흐름이다.",
      "rules": {"kw": ["고프", "아웃도어", "트레킹", "캠핑"]},
      "cond_labels": ["고프코어", "아웃도어"]},
+    # ── 골격 체형 (계획: docs/plans/2026-08-18-curation-body-type.md) ──────────
+    # 조건은 검색의 골격 체형 매핑표(query-plan.ts "골격 체형" 절)에서 옮긴 것이다.
+    # 어깨·가슴·기장은 전부 **실측 백분위**다 — 설문 fit·thickness는 반소매의 36%만
+    # 채워져 있어 하드 조건으로 못 쓴다. 실측이 같은 구분을 재현한다
+    # (라벨별 실측 평균: 슬림 .23 / 레귤러 .47 / 루즈 .77 / 오버 .84, 2026-08-18).
+    # ⚠️ fit_m은 일반 반소매(001001)만 담은 표라 스포츠 티(017016005)는 통째로 빠진다.
+    # ⚠️ pop='여성'은 성별 필터가 아니라 백분위 모집단인데, 그 모집단이 gender='여성'
+    #    상품만 담고 있어 결과적으로 여성 상품만 남는다(실측 확인: 후보 풀 1,939건 전부 여성).
+
+    {"key": "body_straight",
+     "title": "스트레이트 체형이 가장 잘 입는 기본 티셔츠",
+     "lede": "어깨선이 실제 어깨에서 끊기고 몸통이 일자로 떨어지는 것. 상체에 두께가 있는 체형이라 "
+             "잘 만든 기본 티가 제일 잘 맞는다. 아주 얇은 원단과 큰 오버핏은 둘 다 뺐다.",
+     "rules": {"fit_m": {"pop": {"eq": "여성"},
+                         "shoulder_band": {"any": ["정어깨"]},
+                         "length_pct": {"gte": 0.25, "lte": 0.80},
+                         "chest_pct": {"gte": 0.30, "lte": 0.65}},
+               "thickness": {"not_any": ["얇음", "약간 얇음"]},
+               # kw(제목+태그)로 걸면 셔츠가 딸려온다 — 태그 `코튼셔츠`에 "코튼"이 맞아
+               # `Double button shirts top`이 티셔츠 큐레이션에 들어왔다(2026-08-18).
+               # 태그로 빼려 했으나 `셔츠` 태그를 단 상품 대부분이 실제로는 티셔츠라
+               # 멀쩡한 것을 같이 버린다. 제목만 보는 kw_title을 쓴다(후보 94 → 30건).
+               "kw_title": ["무지", "베이직", "에센셜", "솔리드", "코튼",
+                            "cotton", "basic", "essential"],
+               # 실측 기장 백분위는 여성 모집단 기준이라 크롭도 중간대에 들어온다
+               # (`세미 크롭 슬림 반팔티`가 기장 0.40으로 통과했다, 2026-08-18).
+               # 스트레이트는 몸통이 일자로 떨어지는 기본형이라 제목 쪽을 믿고 뺀다.
+               "not_kw": ["크롭", "크랍", "슬림", "머슬"]},
+     "cond_labels": ["정어깨", "코튼 기본형", "얇지 않음"]},
+
+    {"key": "body_wave_w",
+     "title": "웨이브 체형 여성에게 맞는 짧고 슬림한 반팔",
+     "lede": "상체가 얇고 무게중심이 아래인 체형. 상체를 작고 정돈되게 보이게 하는 짧은 기장과 "
+             "몸에 붙는 실루엣이 맞는다. ⚠️ 남성 웨이브는 조건이 정반대라(어깨를 넓혀야 한다) "
+             "이 게시물은 여성 기준이다.",
+     "rules": {"fit_m": {"pop": {"eq": "여성"},
+                         "shoulder_band": {"any": ["좁은 어깨", "정어깨"]},
+                         "length_pct": {"lte": 0.35},
+                         "chest_pct": {"lte": 0.40}}},
+     "cond_labels": ["여성 기준", "좁은 어깨·정어깨", "짧은 기장"]},
+
+    {"key": "body_natural",
+     "title": "내추럴 체형에 균형이 맞는 오버·루즈 반팔",
+     "lede": "뼈대와 관절의 존재감이 있어 옷에도 볼륨이 있어야 균형이 맞는 체형. 몸에 붙는 얇은 반팔은 "
+             "골격을 더 도드라지게 한다. 극단적 드롭숄더는 어깨 위치가 사라져 오히려 좁아 보여 뺐다.",
+     "rules": {"fit_m": {"pop": {"eq": "여성"},
+                         "shoulder_band": {"any": ["어깨 확장", "가벼운 드롭"]},
+                         "chest_pct": {"gte": 0.60},
+                         "length_pct": {"gte": 0.50}},
+               "thickness": {"not_any": ["얇음", "약간 얇음"]}},
+     "cond_labels": ["어깨 확장·드롭", "볼륨 실루엣", "얇지 않음"]},
 ]
 
 # ── 손으로 쓰는 상품 한마디 (goods_no: 글) ────────────────────
@@ -364,25 +425,21 @@ def connect():
 
 
 def seed(cur):
-    missing = {c["key"] for c in SEED} - META.keys()
-    if missing:
-        sys.exit(f"META에 작성일·조회수가 없다: {sorted(missing)}")
-    cur.execute("alter table curations add column if not exists views int default 0")
     cur.execute("delete from curations")
     for i, c in enumerate(SEED, 1):          # ord = SEED 리스트 순서
-        at, views = META[c["key"]]
+        # created_at = 적재 시각. 예전엔 손으로 적은 날짜를 넣어 주간 연재처럼 보이게 했다.
         cur.execute(
-            "insert into curations (key,title,lede,rules,cond_labels,ord,created_at,views) "
-            "values (%s,%s,%s,%s,%s,%s,%s,%s)",
+            "insert into curations (key,title,lede,rules,cond_labels,ord,created_at) "
+            "values (%s,%s,%s,%s,%s,%s,now())",
             (c["key"], c["title"], c["lede"], json.dumps(c["rules"], ensure_ascii=False),
-             c["cond_labels"], i, at.replace(".", "-"), views))
+             c["cond_labels"], i))
     print(f"curations {len(SEED)}건 적재 완료")
 
 
 def load(cur):
-    cur.execute("select key,title,lede,rules,cond_labels,created_at,views "
+    cur.execute("select key,title,lede,rules,cond_labels,created_at "
                 "from curations where active order by ord")
-    rows = [dict(zip(("key", "title", "lede", "rules", "cond", "at", "views"), r))
+    rows = [dict(zip(("key", "title", "lede", "rules", "cond", "at"), r))
             for r in cur.fetchall()]
     if not rows:
         sys.exit("curations 테이블이 비었다. --seed 를 먼저 실행해라.")
@@ -417,7 +474,9 @@ def build(cur, curations):
     out, appear = [], {}   # appear: 상품이 지금까지 몇 개 큐레이션에 들어갔나
     for c in curations:
         where, params = compile_rules(c["rules"])
-        cur.execute(f"select count(*) from c_goods where {BASE_SCOPE} and {where}", params)
+        gate = (f" and purchase_total >= {MIN_BUY} and review_count >= {MIN_REVIEW}"
+                if c["key"] in N_GATED else "")
+        cur.execute(f"select count(*) from c_goods where {BASE_SCOPE} and {where}{gate}", params)
         n = cur.fetchone()[0]
         cur.execute(f"""select {CARD_COLS} from c_goods where {BASE_SCOPE} and {where}
                         and purchase_total >= {MIN_BUY} and review_count >= {MIN_REVIEW}
@@ -430,12 +489,12 @@ def build(cur, curations):
                   "note": NOTES.get(str(r[0]), "")} for r in rows]
         out.append({**{k: c[k] for k in ("key", "title", "cond")},
                     "lede": c["lede"] or "", "n": n, "items": items,
-                    "date": c["at"].strftime("%Y.%m.%d"), "views": c["views"] or 0})
+                    "date": c["at"].strftime("%Y.%m.%d")})
     return out
 
 
 CSS = """
-:root{--ink:#0a0a0a;--paper:#fff;--line:#0a0a0a;--mute:#8c8c8c;--acid:#b4f03c;--blue:#1f43d8;
+:root{--ink:#0a0a0a;--paper:#fff;--line:#0a0a0a;--mute:#8c8c8c;--blue:#1f43d8;
       --sans:'Helvetica Neue','Apple SD Gothic Neo',sans-serif;
       --mono:ui-monospace,'SF Mono',Menlo,monospace}
 *{box-sizing:border-box}
@@ -462,39 +521,6 @@ body{margin:0;background:#c8c8c4;font-family:var(--sans);color:var(--ink);
 .body::-webkit-scrollbar{display:none}
 .screen{display:none}.screen.on{display:block}
 
-.tools{position:sticky;top:0;z-index:5;display:flex;background:var(--acid);
-       border-bottom:1px solid var(--line);font-family:var(--mono);font-size:9.5px;
-       letter-spacing:.09em;text-transform:uppercase}
-.tools .filter{padding:7px 10px;border-right:1px solid var(--line)}
-.tools .search{flex:1;padding:7px 10px;color:#4c6b0e}
-.view{display:flex;flex-shrink:0}
-.view button{font:inherit;letter-spacing:inherit;text-transform:inherit;background:none;
-             border:0;border-left:1px solid var(--line);padding:7px 9px;cursor:pointer;color:var(--ink)}
-.view button.on{background:var(--ink);color:var(--acid)}
-
-.mgrid{columns:2;column-gap:9px;padding:12px 10px 20px}
-.mcard{break-inside:avoid;margin-bottom:18px;cursor:pointer;display:block;width:100%;
-       background:none;border:0;padding:0;text-align:left;font-family:inherit;color:inherit}
-.mcard img{width:100%;object-fit:cover;background:#eee;display:block;aspect-ratio:1/1}
-.mcard:nth-child(5n+1) img{aspect-ratio:3/4}
-.mcard:nth-child(5n+2) img{aspect-ratio:1/1}
-.mcard:nth-child(5n+3) img{aspect-ratio:4/5}
-.mcard:nth-child(5n+4) img{aspect-ratio:5/7}
-.mcard:nth-child(5n+5) img{aspect-ratio:6/5}
-.mcard .t{font-size:14px;font-weight:700;letter-spacing:-.035em;line-height:1.22;padding-top:7px}
-.mcard .g{display:flex;flex-wrap:wrap;gap:4px;padding-top:6px;
-          font-family:var(--mono);font-size:10px;letter-spacing:.02em}
-.mcard .g span{background:var(--blue);color:#fff;padding:2px 6px}
-
-.list{border-top:1px solid var(--line)}
-.row{display:grid;grid-template-columns:1fr auto;align-items:center;gap:8px;width:100%;
-     padding:12px;border-bottom:1px solid var(--line);cursor:pointer;background:none;
-     border-left:0;border-right:0;border-top:0;font-family:inherit;color:inherit;text-align:left}
-.row .t{font-size:16px;font-weight:700;letter-spacing:-.04em;
-        min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.row .g{display:flex;gap:5px;flex-shrink:0;white-space:nowrap;
-        font-family:var(--mono);font-size:10.5px;letter-spacing:.02em;color:var(--blue)}
-
 .cur{border-bottom:1px solid var(--line);padding:16px 0 18px;cursor:pointer;width:100%;
      background:none;border-left:0;border-right:0;border-top:0;text-align:left;
      font-family:inherit;color:inherit;display:block}
@@ -503,11 +529,10 @@ body{margin:0;background:#c8c8c4;font-family:var(--sans);color:var(--ink);
 .strip img{flex:1;width:25%;aspect-ratio:1/1;object-fit:cover;background:#eee;display:block}
 .curhd{display:flex;align-items:baseline;justify-content:space-between;gap:10px;padding:0 14px}
 .curhd h2{font-size:21px;font-weight:800;letter-spacing:-.042em;line-height:1.2;margin:0}
-.cnt{font-family:var(--mono);font-size:10px;color:var(--mute);flex-shrink:0}
 .lede{font-size:12.5px;line-height:1.7;color:#4a4a4a;letter-spacing:-.012em;
       padding:9px 14px 0;margin:0}
-.cond{display:flex;flex-wrap:wrap;gap:3px;padding:11px 14px 0}
-.cd{background:var(--acid);font-family:var(--mono);font-size:8px;letter-spacing:.05em;padding:2px 5px}
+.cond{display:flex;flex-wrap:wrap;gap:4px;padding:11px 14px 0}
+.cd{background:#ececec;color:#4a4a4a;font-family:var(--mono);font-size:11px;letter-spacing:.02em;padding:3px 7px}
 
 .back{display:flex;align-items:center;gap:8px;width:100%;background:none;border:0;
       border-bottom:1px solid var(--line);padding:9px 14px;cursor:pointer;font-family:var(--mono);
@@ -551,17 +576,9 @@ const ERR = 'this.style.background="#eee";this.removeAttribute("src")';
 const img = u => `<img src="${u}" alt="" loading=lazy onerror='${ERR}'>`;
 
 const VIEWS = {
- grid: () => `<div class=mgrid>${DATA.map((c,i)=>`<button class=mcard data-i="${i}">
-    ${img(c.items[0]?.img||'')}
-    <div class=t>${c.title}</div>
-    <div class=g>${c.cond.map(t=>`<span>#${t}</span>`).join('')}</div></button>`).join('')}</div>`,
-
- list: () => `<div class=list>${DATA.map((c,i)=>`<button class=row data-i="${i}">
-    <div class=t>${c.title}</div><div class=g>${c.cond.slice(0,2).map(t=>`<span>#${t}</span>`).join('')}</div></button>`).join('')}</div>`,
-
  feed: () => DATA.map((c,i)=>`<button class=cur data-i="${i}">
     <div class=strip>${c.items.slice(0,4).map(x=>img(x.img)).join('')}</div>
-    <div class=curhd><h2>${c.title}</h2><span class=cnt>${won(c.n)}</span></div>
+    <div class=curhd><h2>${c.title}</h2></div>
     <p class=lede>${c.lede}</p>
     <div class=cond>${c.cond.map(t=>`<span class=cd>${t}</span>`).join('')}</div>
   </button>`).join('')
@@ -578,7 +595,7 @@ function openDetail(c){
     <div class=dethd><h2>${c.title}</h2></div>
     <p class=lede>${c.lede}</p>
     <div class=cond>${c.cond.map(t=>`<span class=cd>${t}</span>`).join('')}</div>
-    <div class=detmeta>${c.date} · 조회 ${won(c.views)} · ${won(c.n)}건 중 평점순 ${c.items.length}건</div>
+    <div class=detmeta>${c.date} · ${won(c.n)}건 중 평점순 ${c.items.length}건</div>
     <div class=pgrid>${c.items.map(x=>`<a class=item href="${x.u}" target=_blank rel=noopener>
       ${img(x.img)}
       <div class=b>${x.b}</div><div class=t>${x.t}</div>
@@ -594,12 +611,7 @@ function show(id){
   $('.body').scrollTop = 0;
 }
 
-document.querySelectorAll('.vb').forEach(b=>b.onclick=()=>{
-  document.querySelectorAll('.vb').forEach(x=>x.classList.remove('on'));
-  b.classList.add('on');
-  render(b.dataset.v);
-});
-render('grid');
+render('feed');
 
 // 내리면 상단 접힘, 올리면 나옴 (top은 window.top과 겹쳐서 bar로)
 const scroller = $('.body'), bar = $('.top');
@@ -622,14 +634,6 @@ PAGE = """<!doctype html><html lang=ko><head><meta charset=utf-8>
   </div>
   <div class=body>
     <div class="screen on" id=curlist>
-      <div class=tools>
-        <div class=filter>&#8853; Filter</div><div class=search>Search&hellip;</div>
-        <div class=view>
-          <button class="vb on" data-v=grid>Grid</button>
-          <button class=vb data-v=list>List</button>
-          <button class=vb data-v=feed>Feed</button>
-        </div>
-      </div>
       <div id=list></div>
     </div>
     <div class=screen id=detail></div>
@@ -661,10 +665,30 @@ def demo():
     w, _ = compile_rules({"season_year": {"eq": "2026"}, "kw": ["그래픽"]})
     assert " and " in w, w
 
+    # 설문 미기재(NULL)가 not_any에서 조용히 탈락하면 안 된다
+    w, p = compile_rules({"thickness": {"not_any": ["얇음"]}})
+    assert w.startswith("coalesce(not (") and w.endswith(", true)"), w
+    assert p == [["얇음"]], p
+
     # 요약이 없는 상품이 "불만 없음"으로 새어 나오면 안 된다
     w, p = compile_rules({"neg_free": ["비침"]})
     assert "ai_summary is not null" in w and w.count("not (") == 1, w
     assert p == [["%비침%"]], p
+
+    # 치수 표 통로: goods_no로 상관 서브쿼리를 걸고, 파라미터 순서가 조건 순서와 맞아야 한다
+    w, p = compile_rules({"fit_m": {"pop": {"eq": "여성"},
+                                    "shoulder_band": {"any": ["좁은 어깨", "정어깨"]},
+                                    "length_pct": {"lte": 0.35}}})
+    assert w == ("exists (select 1 from c_search_fit_measures m "
+                 "where m.goods_no = c_goods.goods_no and m.pop = %s "
+                 "and m.shoulder_band = any(%s) and m.length_pct <= %s)"), w
+    assert p == ["여성", ["좁은 어깨", "정어깨"], 0.35], p
+
+    try:
+        compile_rules({"fit_m": {"shoulder_pct; drop table c_goods": {"eq": 1}}})
+        raise AssertionError("치수 컬럼 검증이 안 걸렸다")
+    except ValueError:
+        pass
 
     try:
         compile_rules({"price; drop table c_goods": {"eq": 1}})
@@ -683,11 +707,14 @@ def main():
         data = build(cur, load(cur))
     js = JS.replace("__DATA__", json.dumps(data, ensure_ascii=False, separators=(",", ":")))
     OUT.write_text(PAGE % (CSS, js), encoding="utf-8")
-    JSON_OUT.write_text(json.dumps(data, ensure_ascii=False, indent=1) + "\n",
-                        encoding="utf-8")
+    payload = json.dumps(data, ensure_ascii=False, indent=1) + "\n"
+    for out in JSON_OUTS:
+        # 두 앱 중 한쪽만 체크아웃된 상태에서도 돌아야 한다.
+        out.parent.mkdir(parents=True, exist_ok=True)
+        out.write_text(payload, encoding="utf-8")
     for c in data:
         print(f"{c['n']:>7,}건  {c['title']}")
-    print(f"→ {OUT}\n→ {JSON_OUT}")
+    print("\n".join(f"→ {p}" for p in [OUT, *JSON_OUTS]))
 
 
 if __name__ == "__main__":

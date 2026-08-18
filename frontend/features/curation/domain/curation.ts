@@ -1,4 +1,4 @@
-// 큐레이션 화면 데이터 모양. backend/scripts/gen_curation_page.py 가 뽑아 쓴 JSON과 1:1이다.
+// 큐레이션 화면 데이터 모양. curation/backend/scripts/gen_curation_page.py 가 뽑아 쓴 JSON과 1:1이다.
 // 키가 짧은 건 목업 HTML에 그대로 인라인되던 데이터라서다 — 매핑 계층은 두지 않는다.
 
 export interface CurationItem {
