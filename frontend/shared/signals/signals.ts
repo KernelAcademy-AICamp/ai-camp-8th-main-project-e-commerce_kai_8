@@ -11,6 +11,7 @@ import {
   recordProfileImpression,
 } from "@/shared/profile/profile-store";
 import { rememberPendingForget } from "@/shared/signals/pending-forget";
+import { isSignedInNow } from "@/shared/supabase/session-state";
 import { rpcPost } from "@/shared/supabase-rpc";
 
 import { getDeviceId } from "./device-id";
@@ -174,9 +175,15 @@ export interface ImpressionInput {
   surface?: Surface;
 }
 
-/** 카드가 뷰포트에 실제로 보였을 때 1회. 반환값 = 노출 ID (행동 귀속 키) */
+/**
+ * 카드가 뷰포트에 실제로 보였을 때 1회. 반환값 = 노출 ID (행동 귀속 키)
+ *
+ * **로그인하지 않았으면 아무것도 기록하지 않는다** (2026-08-19 결정 O-37).
+ * 판정 전에도 기록하지 않는다 — 확실해지기 전에 남기는 쪽보다 몇 건 놓치는
+ * 쪽이 "비회원은 기록하지 않는다"는 약속에 맞다.
+ */
 export function logImpression(input: ImpressionInput): string | null {
-  if (!isBrowser()) return null;
+  if (!isBrowser() || !isSignedInNow()) return null;
   const sessionId = touchSession();
   const event: SignalEvent = {
     ...baseEvent("impression", sessionId, Date.now(), input.policy ?? "random"),
@@ -203,13 +210,16 @@ export type ActionType = Exclude<
   "impression" | "session_start" | "session_end"
 >;
 
-/** 탭·찜·스타일 탐색·판매처 이동 — 해당 상품의 최근 노출에 귀속된다 */
+/**
+ * 탭·찜·스타일 탐색·판매처 이동 — 해당 상품의 최근 노출에 귀속된다.
+ * 로그인하지 않았으면 기록하지 않는다 (O-37).
+ */
 export function logAction(
   type: ActionType,
   goodsNo: number,
   options?: { policy?: FeedPolicy },
 ): void {
-  if (!isBrowser()) return;
+  if (!isBrowser() || !isSignedInNow()) return;
   const sessionId = touchSession();
   enqueue({
     ...baseEvent(type, sessionId, Date.now(), options?.policy ?? "random"),
@@ -225,7 +235,8 @@ export function logAction(
  * SSR에서는 null (콜드스타트 = 무작위 피드).
  */
 export function getFeedProfileSummary(): ProfileSummary | null {
-  if (!isBrowser()) return null;
+  // 비회원은 취향을 쌓지 않으므로 실어 보낼 것도 없다 → 무작위 피드 (O-37)
+  if (!isBrowser() || !isSignedInNow()) return null;
   const sessionId = touchSession();
   return getProfileSummary(sessionId, Date.now());
 }

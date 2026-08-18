@@ -4,7 +4,8 @@ import Link from "next/link";
 
 import type { AuthNotice } from "@/features/auth/domain/auth-session";
 import { useAuthSession } from "@/features/auth/presentation/view-model/use-auth-session";
-import { GearIcon } from "@/shared/icons";
+import { useScreenClose } from "@/features/auth/presentation/view-model/use-screen-close";
+import { BackIcon, GearIcon } from "@/shared/icons";
 
 /**
  * 마이페이지 — 계정만 다룬다.
@@ -16,16 +17,31 @@ import { GearIcon } from "@/shared/icons";
  * 수단이 있다. 막으면 방침이 약속한 "설정의 초기화 버튼 한 번으로 지워진다"가
  * 깨진다.
  *
- * 카드를 두지 않는다 — 지금 가진 것은 계정뿐이고, 없는 기능을 카드로 약속하지
- * 않는다.
+ * 계정 아래에 붙는 카드는 **children으로 받는다.** 여기서 직접 import하면
+ * feature끼리 얽힌다(frontend/AGENTS.md) — 조립은 라우트가 한다.
  */
-export function MyPage({ notice }: { notice: AuthNotice | null }) {
+export function MyPage({
+  notice,
+  children,
+}: {
+  notice: AuthNotice | null;
+  children?: React.ReactNode;
+}) {
   const { state, busy, failed, signOut } = useAuthSession();
+  const close = useScreenClose("/my");
   const showFailure = failed || notice === "failed";
 
   return (
     <main className="mx-auto max-w-md px-6 pb-10 text-neutral-200">
-      <header className="-mx-2 flex items-center justify-end py-2">
+      <header className="-mx-2 flex items-center justify-between py-2">
+        <button
+          type="button"
+          aria-label="뒤로"
+          onClick={close}
+          className="flex h-10 w-10 cursor-pointer items-center justify-center rounded-full text-neutral-400"
+        >
+          <BackIcon />
+        </button>
         <Link
           href="/settings"
           aria-label="설정"
@@ -89,6 +105,8 @@ export function MyPage({ notice }: { notice: AuthNotice | null }) {
           로그인에 실패했습니다. 다시 시도해 주세요.
         </p>
       )}
+
+      {children}
     </main>
   );
 }

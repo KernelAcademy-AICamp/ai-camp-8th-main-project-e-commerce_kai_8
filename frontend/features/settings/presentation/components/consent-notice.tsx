@@ -19,9 +19,9 @@ export function ConsentNotice() {
     <div className="fixed inset-x-0 bottom-0 z-40 mx-auto max-w-md p-3">
       <div className="rounded-2xl bg-neutral-800/95 p-4 text-sm text-neutral-200 shadow-lg backdrop-blur">
         <p>
-          aTee는 취향에 맞는 피드를 위해 익명 ID로 탐색 행동(노출·탭·찜 등)을 기록해요.
-          검색어도 검색 품질 개선을 위해 기록되고 90일 뒤 지워져요. 로그인은 선택이고,
-          하면 이메일 주소와 찜한 상품을 계정에 저장해요. 언제든 지울 수 있어요.
+          로그인하지 않으면 탐색 행동을 기록하지 않아요. 검색어는 검색 품질 개선을 위해
+          기록되고 90일 뒤 지워져요. 로그인하면 탐색 행동으로 취향 피드를 만들고, 이메일
+          주소와 찜·취향을 계정에 저장해요. 언제든 지울 수 있어요.
         </p>
         <div className="mt-3 flex items-center justify-end gap-4">
           <Link

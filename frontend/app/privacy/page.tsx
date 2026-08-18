@@ -39,10 +39,9 @@ export default function PrivacyPolicyPage() {
       <section className="space-y-4 text-[15px] leading-relaxed">
         <h2 className="text-base font-semibold text-white">한 줄 요약</h2>
         <p>
-          aTee는 취향에 맞는 티셔츠 피드를 만들기 위해 이 브라우저의{" "}
-          <b className="text-white">익명 ID</b>와 탐색 행동을 기록합니다. 로그인은
-          선택이며, 하면 이메일 주소와 찜한 상품을 계정에 저장합니다. 둘 다 언제든 지울
-          수 있습니다.
+          <b className="text-white">로그인하지 않으면 탐색 행동을 기록하지 않습니다.</b>{" "}
+          로그인하면 그 행동으로 취향 피드를 만들고, 이메일 주소와 찜·취향을 계정에
+          저장합니다. 언제든 지울 수 있습니다.
         </p>
       </section>
 
@@ -56,9 +55,9 @@ export default function PrivacyPolicyPage() {
             저장하는 식별자입니다. 이름·연락처와 연결되지 않습니다.
           </li>
           <li>
-            <b className="text-white">탐색 행동</b> — 카드가 화면에 보임, 상세 열기, 찜,
-            판매처 이동. 익명 ID와 함께 기록되며 피드 개인화와 추천 품질 평가에만
-            씁니다.
+            <b className="text-white">탐색 행동은 기록하지 않습니다.</b> 카드가 화면에
+            보임, 상세 열기, 찜, 판매처 이동 — 로그인하지 않으면 아무것도 남기지
+            않습니다. 피드도 개인화하지 않습니다.
           </li>
           <li>
             <b className="text-white">검색어</b> — 입력한 내용 그대로 기록되며{" "}
@@ -66,8 +65,8 @@ export default function PrivacyPolicyPage() {
             개선하고 평가하기 위한 것이며, 추천 프로필 계산에는 쓰지 않습니다.
           </li>
           <li>
-            <b className="text-white">취향 프로필</b> — 좋아하는 스타일 요약입니다.
-            서버로 보내지 않고 이 기기에만 둡니다.
+            <b className="text-white">취향 프로필도 만들지 않습니다.</b> 로그인해야
+            쌓입니다.
           </li>
         </ul>
 
@@ -80,9 +79,15 @@ export default function PrivacyPolicyPage() {
           </li>
           <li>
             저장되는 것: 계정 식별자와 이메일, 가입·마지막 로그인 시각, 연결된 구글
-            신원, 로그인 세션과 갱신 토큰.
+            신원, 로그인 세션과 갱신 토큰, 그리고{" "}
+            <b className="text-white">취향 프로필</b>.
           </li>
           <li>이 기기에는 로그인 세션 쿠키와 현재 신원 표시자가 남습니다.</li>
+          <li>
+            <b className="text-white">탐색 행동</b> — 카드가 화면에 보임, 상세 열기, 찜,
+            판매처 이동. 취향 피드와 추천 품질 평가에 씁니다. 계정이 아니라 이
+            브라우저의 익명 ID에 붙습니다.
+          </li>
           <li>
             <b className="text-white">찜 목록</b> — 로그인하면 찜이 계정에 저장됩니다.{" "}
             <b className="text-white">상품 번호와 담은 시각만</b> 담고 상품 정보는
@@ -109,7 +114,7 @@ export default function PrivacyPolicyPage() {
         <ul className="list-disc space-y-2 pl-5">
           <li>검색어 기록 — 90일 뒤 자동 삭제</li>
           <li>탐색 행동·익명 ID — 지울 때까지</li>
-          <li>계정 — 탈퇴할 때까지</li>
+          <li>계정 · 취향 프로필 — 탈퇴할 때까지</li>
           <li>찜 목록 — 탈퇴하거나 찜을 풀 때까지</li>
         </ul>
       </section>
@@ -119,12 +124,13 @@ export default function PrivacyPolicyPage() {
         <p>
           <b className="text-white">개인화 데이터 모두 지우기</b> — 이 기기의 익명
           ID·취향 프로필과 서버에 기록된 탐색 행동·검색어가 지워지고 새 익명 ID로 처음
-          상태가 됩니다. <b className="text-white">계정과 계정에 담긴 찜은 남습니다.</b>
+          상태가 됩니다.{" "}
+          <b className="text-white">계정과 계정에 담긴 찜·취향은 남습니다.</b>
         </p>
         <p>
           <b className="text-white">계정 삭제</b> — 계정과 연결된 구글 신원, 로그인
-          세션, <b className="text-white">계정에 담긴 찜</b>이 지워지고, 이어서 이
-          기기의 탐색 행동·검색어 기록도 함께 지워집니다.
+          세션, <b className="text-white">계정에 담긴 찜과 취향 프로필</b>이 지워지고,
+          이어서 이 기기의 탐색 행동·검색어 기록도 함께 지워집니다.
         </p>
         <p>
           서버 삭제가 실패하면 이 기기가 그 사실을 적어 두고 다음 접속에서 다시
