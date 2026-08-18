@@ -1,7 +1,5 @@
 "use client";
 
-import Link from "next/link";
-
 import { usePrivacySettings } from "@/features/settings/presentation/view-model/use-privacy-settings";
 
 /**
@@ -12,17 +10,8 @@ export function PrivacySettings() {
   const { status, requestClear, cancelClear, confirmClear } = usePrivacySettings();
 
   return (
-    <div className="mx-auto max-w-md px-4 py-6 text-neutral-200">
-      <header className="mb-6 flex items-center gap-3">
-        <Link
-          href="/"
-          aria-label="피드로 돌아가기"
-          className="flex h-10 w-10 items-center justify-center rounded-full text-xl text-white"
-        >
-          ←
-        </Link>
-        <h1 className="text-lg font-semibold text-white">개인화 안내</h1>
-      </header>
+    <div>
+      <h2 className="mb-3 text-base font-semibold text-white">개인화 안내</h2>
 
       <section className="space-y-4 text-[15px] leading-relaxed">
         <p>
