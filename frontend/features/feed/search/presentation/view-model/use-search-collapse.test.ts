@@ -65,6 +65,56 @@ describe("useSearchCollapse", () => {
     expect(result.current.collapsed).toBe(false);
   });
 
+  /*
+   * 회귀: 폰에서 검색창을 탭하면 키보드가 올라오는데, 브라우저가 입력을 보이게
+   * 하려고 페이지를 스크롤한다. 그 스크롤이 "아래로 내렸다"로 읽혀 **타이핑을
+   * 시작하기도 전에 검색창이 원형 아이콘으로 접혔다.** 기존 억제 장치는
+   * expand()(축소 버튼 탭)에만 걸려서 이 경로를 막지 못했다.
+   */
+  it("입력에 포커스가 있는 동안은 스크롤로 접히지 않는다", () => {
+    const suppressUntilRef = { current: 0 };
+    const { result } = renderHook(() => useSearchCollapse(suppressUntilRef));
+    act(() => {
+      result.current.onInputFocus();
+    });
+
+    scrollTo(200);
+    scrollTo(400);
+
+    expect(result.current.collapsed).toBe(false);
+  });
+
+  it("포커스를 잡으면 접혀 있던 검색창이 펼쳐진다", () => {
+    const suppressUntilRef = { current: 0 };
+    const { result } = renderHook(() => useSearchCollapse(suppressUntilRef));
+    scrollTo(400);
+    expect(result.current.collapsed).toBe(true);
+
+    act(() => {
+      result.current.onInputFocus();
+    });
+
+    expect(result.current.collapsed).toBe(false);
+  });
+
+  it("포커스가 풀린 뒤에는 다시 스크롤로 접힌다", () => {
+    const suppressUntilRef = { current: 0 };
+    const { result } = renderHook(() => useSearchCollapse(suppressUntilRef));
+    act(() => {
+      result.current.onInputFocus();
+    });
+    scrollTo(400);
+    expect(result.current.collapsed).toBe(false);
+
+    act(() => {
+      result.current.onInputBlur();
+    });
+    scrollTo(600);
+    scrollTo(800);
+
+    expect(result.current.collapsed).toBe(true);
+  });
+
   it("expand()는 축소 상태를 강제로 푼다", () => {
     const suppressUntilRef = { current: 0 };
     const { result } = renderHook(() => useSearchCollapse(suppressUntilRef));

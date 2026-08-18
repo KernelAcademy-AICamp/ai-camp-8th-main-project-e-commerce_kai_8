@@ -25,6 +25,9 @@ export function useSearchCollapse(suppressUntilRef: RefObject<number>) {
   const [collapsed, setCollapsed] = useState(false);
   // 손으로 펼친 시각 + 억제 구간. 렌더와 무관한 진행 상태라 ref로 둔다.
   const expandedUntilRef = useRef(0);
+  // 입력에 포커스가 있는가 = 키보드가 떠 있는가. 스크롤 핸들러가 최신 값을 봐야
+  // 하고 렌더에는 쓰이지 않아 ref로 둔다.
+  const focusedRef = useRef(false);
 
   useEffect(() => {
     let lastY = window.scrollY;
@@ -38,6 +41,13 @@ export function useSearchCollapse(suppressUntilRef: RefObject<number>) {
       if (y <= ALWAYS_EXPANDED_BELOW_Y) {
         accumulated = 0;
         setCollapsed(false);
+        return;
+      }
+      // 키보드가 떠 있는 동안은 접지 않는다 — 타이핑 중인 글자가 사라진다.
+      // 시간 억제(expandedUntilRef)로는 못 막는다. 키보드는 몇 초든 떠 있고,
+      // 그동안 사용자가 결과를 스크롤하며 볼 수 있기 때문이다.
+      if (focusedRef.current) {
+        accumulated = 0;
         return;
       }
       if (performance.now() < expandedUntilRef.current) {
@@ -66,5 +76,22 @@ export function useSearchCollapse(suppressUntilRef: RefObject<number>) {
     setCollapsed(false);
   }, []);
 
-  return { collapsed, expand };
+  /**
+   * 입력에 포커스가 잡혔을 때 = 키보드가 올라올 때.
+   *
+   * 브라우저는 포커스된 입력을 화면에 넣으려고 페이지를 스크롤한다. 그 스크롤이
+   * "아래로 내렸다"로 읽혀 **타이핑을 시작하기도 전에 검색창이 아이콘으로
+   * 접혔다.** 포커스 자체가 원인 신호이므로 여기서 잠근다.
+   */
+  const onInputFocus = useCallback(() => {
+    focusedRef.current = true;
+    setCollapsed(false);
+  }, []);
+
+  /** 포커스가 풀렸을 때 = 키보드가 내려갈 때 — 스크롤 판정을 다시 연다 */
+  const onInputBlur = useCallback(() => {
+    focusedRef.current = false;
+  }, []);
+
+  return { collapsed, expand, onInputFocus, onInputBlur };
 }
