@@ -43,6 +43,19 @@ export async function fetchVerifiedUser(): Promise<AuthUser | null> {
 }
 
 /**
+ * 저장된 세션의 사용자 식별자 (네트워크 호출 없음).
+ *
+ * 권한 판정에는 쓰지 않는다 — 그건 fetchVerifiedUser의 몫이다.
+ * 신원 전환 감지는 "이 브라우저의 신원이 바뀌었는가"라는 로컬 질문이므로
+ * 빠른 로컬 조회가 맞다. 여기서 네트워크를 타면 전환 처리가 늦어져
+ * 앞 신원의 화면이 더 오래 남는다.
+ */
+export async function fetchLocalUserId(): Promise<string | null> {
+  const { data } = await getBrowserSupabase().auth.getSession();
+  return data.session?.user.id ?? null;
+}
+
+/**
  * 로그인 상태 변화를 구독한다.
  * Supabase 클라이언트가 같은 브라우저의 다른 탭 변화도 전달한다.
  */
