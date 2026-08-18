@@ -62,6 +62,35 @@ function writeLongTerm(next: LongTermProfile): void {
   } catch {
     // 저장 불가 환경 — 프로필 없이 동작 (콜드스타트와 동일)
   }
+  changeListener?.();
+}
+
+/**
+ * 장기 프로필이 바뀔 때 부를 곳.
+ *
+ * 계정 보관(2026-08-19)이 이걸 듣고 "더러워졌다"를 표시한다. 저장소가 계정
+ * 동기화를 직접 import하면 순환이 생기므로 반대로 등록받는다.
+ */
+let changeListener: (() => void) | null = null;
+
+export function setLongTermChangeListener(listener: (() => void) | null): void {
+  changeListener = listener;
+}
+
+/**
+ * 서버에서 읽어온 프로필을 기기에 놓는다.
+ *
+ * 방금 내려받은 것을 다시 올리지 않도록 **변경 알림을 내지 않는다.**
+ * 병합은 그대로 거친다 — 다른 탭이 그 사이 쌓은 것을 덮지 않기 위해서다.
+ */
+export function installLongTermFromServer(profile: LongTermProfile): void {
+  const listener = changeListener;
+  changeListener = null;
+  try {
+    writeLongTerm(profile);
+  } finally {
+    changeListener = listener;
+  }
 }
 
 function parseSession(raw: string | null): SessionProfile | null {

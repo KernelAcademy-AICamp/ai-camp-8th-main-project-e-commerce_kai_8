@@ -3,8 +3,9 @@
 
 import type { User } from "@supabase/supabase-js";
 
+import { getBrowserSupabase } from "@/shared/supabase/browser-client";
+
 import { type AuthUser, googleProviderId } from "../domain/auth-session";
-import { getBrowserSupabase } from "./browser-client";
 
 function toAuthUser(user: User): AuthUser {
   return {

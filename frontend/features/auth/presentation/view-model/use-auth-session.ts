@@ -5,7 +5,6 @@ import { useCallback, useEffect, useState } from "react";
 import {
   fetchVerifiedUser,
   signOutThisDevice,
-  startGoogleSignIn,
   subscribeAuthChange,
 } from "@/features/auth/data/auth-repository";
 import type { AuthState } from "@/features/auth/domain/auth-session";
@@ -16,7 +15,6 @@ export interface AuthSessionViewModel {
   busy: boolean;
   /** 이번 화면에서 발생한 실패. 콜백에서 온 표시는 별도로 화면에 전달된다. */
   failed: boolean;
-  signIn: () => void;
   signOut: () => void;
 }
 
@@ -50,17 +48,6 @@ export function useAuthSession(): AuthSessionViewModel {
     };
   }, []);
 
-  const signIn = useCallback(() => {
-    setBusy(true);
-    setFailed(false);
-    // 허용 목록에 등록된 주소와 정확히 같아야 한다 (설계 §3 리다이렉트 허용 목록)
-    const callbackUrl = `${window.location.origin}/auth/callback`;
-    void startGoogleSignIn(callbackUrl).catch(() => {
-      setBusy(false);
-      setFailed(true);
-    });
-  }, []);
-
   const signOut = useCallback(() => {
     setBusy(true);
     setFailed(false);
@@ -73,5 +60,5 @@ export function useAuthSession(): AuthSessionViewModel {
       });
   }, []);
 
-  return { state, busy, failed, signIn, signOut };
+  return { state, busy, failed, signOut };
 }

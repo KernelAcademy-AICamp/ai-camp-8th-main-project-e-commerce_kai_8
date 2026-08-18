@@ -14,11 +14,15 @@ const KEEP_EXACT = new Set([
   // 탈퇴 대기 표식. 탈퇴하면 세션이 사라지면서 신원 전환 정리가 곧바로 도는데,
   // 여기서 같이 지우면 "삭제가 서버에 닿았는지" 확인할 손잡이를 잃는다.
   "atee-pending-account-delete",
+  // 계정으로 옮길 찜 보관함. 정리 **직전에** 여기로 빼두므로, 같이 지우면
+  // 옮길 것이 사라진다 (shared/identity/wish-carry.ts).
+  "atee-wishlist-migrate",
 ]);
 
 /** 버전이 붙는 키들 */
 const KEEP_PREFIX = [
-  "atee-consent-notice-seen", // 고지 배너 확인 여부 — 신원이 아니라 기기 것
+  // "atee-consent-notice-seen"은 고지 배너와 함께 없어졌다(2026-08-19) —
+  // 옛 방문자의 잔여 키는 전환 때 함께 지워진다.
   "atee-identity", // 전환 표식 자체
 ];
 
