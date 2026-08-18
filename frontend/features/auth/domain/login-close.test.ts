@@ -1,8 +1,18 @@
 import { describe, expect, it } from "vitest";
 
-import { loginCloseTarget } from "./login-close";
+import { closeTarget, loginCloseTarget } from "./login-close";
 
 const ORIGIN = "https://atee.example";
+
+describe("closeTarget", () => {
+  it("자기 화면 경로를 받아 어느 화면에서든 쓸 수 있다", () => {
+    // 마이페이지의 뒤로가기 — 새로고침으로 참조 주소가 자기 자신이면 피드로
+    expect(closeTarget(`${ORIGIN}/my`, ORIGIN, "/my")).toBe("feed");
+    expect(closeTarget(`${ORIGIN}/wishlist`, ORIGIN, "/my")).toBe("back");
+    expect(closeTarget("", ORIGIN, "/my")).toBe("feed");
+    expect(closeTarget("https://google.com/", ORIGIN, "/my")).toBe("feed");
+  });
+});
 
 describe("loginCloseTarget", () => {
   it("이 앱에서 왔으면 뒤로 간다", () => {

@@ -333,6 +333,46 @@ def test_망가진_앵커_항목은_무시한다(db):
     assert s["matched_count"] == 2
 
 
+def test_정수가_아니거나_거대한_번호도_카드를_죽이지_못한다(db):
+    """저장 함수는 항목 내용을 검사하지 않으므로 이런 값이 실제로 들어올 수 있다.
+
+    깨진 항목 하나가 오류를 던져 요약 전체를 실패시키면 안 된다 — 멀쩡한
+    앵커는 그대로 센다.
+    """
+    user = make_user(db, "hostile@example.com")
+    payload = json.dumps(
+        [
+            {"goodsNo": 10, "weight": 1},
+            {"goodsNo": 1.5, "weight": 1},  # 정수가 아니다 — ::bigint가 못 삭인다
+            {"goodsNo": 1e300, "weight": 1},  # bigint 범위 밖
+            {"goodsNo": -(2**70), "weight": 1},  # 음수로 범위 밖
+        ]
+    )
+    call_as(db, "authenticated", user, "select c_taste_put(%s, %s::jsonb)", (1, payload))
+    s = summarize(db, user)  # 오류 없이 돌아와야 한다
+    assert s["matched_count"] == 1
+
+
+def test_가중치가_전부_0이면_축을_내보내지_않는다(db):
+    """0으로 나누지 않고, 잰 것이 없는 축은 키를 뺀다."""
+    user = make_user(db, "zeroweight@example.com")
+    store(db, user, [{"goodsNo": 10, "weight": 0}, {"goodsNo": 20, "weight": 0}])
+    s = summarize(db, user)
+    assert s["matched_count"] == 2
+    assert s["axes"] == {}
+
+
+def test_카탈로그_최솟값보다_싼_앵커는_가격_축_0이_된다(db):
+    """백분위 표를 만든 뒤 더 싼 상품이 들어와도 조용히 빠지지 않는다."""
+    user = make_user(db, "cheap@example.com")
+    with db.cursor() as cur:
+        cur.execute("insert into c_goods values (900, '초저가', 1, array['2'])")
+    store(db, user, [{"goodsNo": 900}])
+    a = axis(summarize(db, user), "price")
+    assert a is not None
+    assert a["value"] == 0
+
+
 # ── 축: 색감 (무채 0 ↔ 원색 1) ───────────────────────────────────────────────
 
 

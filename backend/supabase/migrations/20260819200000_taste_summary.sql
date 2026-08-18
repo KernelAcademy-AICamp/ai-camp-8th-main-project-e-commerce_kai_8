@@ -83,15 +83,20 @@ begin
   end if;
 
   with picked as (
-    -- 클라이언트가 보낸 값을 그대로 믿지 않는다. 번호가 숫자가 아닌 항목은 버리고,
-    -- 가중치는 음수를 0으로 눌러 뒤집힌 기여를 막는다.
+    -- 클라이언트가 보낸 값을 그대로 믿지 않는다. 저장 함수(c_taste_put)는 항목
+    -- 내용까지 검사하지 않으므로 여기 별의별 값이 올 수 있는데, **깨진 항목
+    -- 하나가 오류를 던져 요약 전체를 죽이면 안 된다.** ::bigint 직캐스트는
+    -- 소수(1.5)와 범위 밖(1e300)에서 예외를 내므로, 정수이고 범위 안인 것만
+    -- 남긴 뒤 캐스트한다. 가중치는 음수를 0으로 눌러 뒤집힌 기여를 막는다.
     select
-      (e->>'goodsNo')::bigint as goods_no,
+      ((e->>'goodsNo')::numeric)::bigint as goods_no,
       greatest(
         case when jsonb_typeof(e->'weight') = 'number'
              then (e->>'weight')::numeric else 1 end, 0) as w
     from jsonb_array_elements(v_anchors) e
     where jsonb_typeof(e->'goodsNo') = 'number'
+      and (e->>'goodsNo')::numeric = trunc((e->>'goodsNo')::numeric)
+      and (e->>'goodsNo')::numeric between -9223372036854775808 and 9223372036854775807
   ),
   joined as (
     select
@@ -126,8 +131,12 @@ begin
            when j.group_name is not null then 0.5 end as color_score,
       -- 썸네일 분류: 0 무지 · 1 그래픽 · 2 레터링
       case j.graphic when 0 then 0 when 2 then 0.5 when 1 then 1 end as graphic_score,
-      (select max(pp.pct) from public.c_taste_price_pcts pp
-        where pp.price_at <= j.price_final)::numeric / 100 as price_score
+      -- 백분위 표를 만든 뒤 카탈로그에 더 싼 상품이 들어올 수 있다. 표 최솟값보다
+      -- 싸면 조용히 빠지는 게 아니라 최하위(0)다.
+      case when j.price_final > 0 then
+        coalesce((select max(pp.pct) from public.c_taste_price_pcts pp
+                   where pp.price_at <= j.price_final), 0)::numeric / 100
+      end as price_score
     from joined j
   ),
   stats as (

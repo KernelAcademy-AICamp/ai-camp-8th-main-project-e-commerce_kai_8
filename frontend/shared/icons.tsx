@@ -32,6 +32,25 @@ export function PersonIcon({ size = 20 }: IconProps) {
   );
 }
 
+/** 왼쪽 화살표 — 뒤로가기 */
+export function BackIcon({ size = 20 }: IconProps) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      width={size}
+      height={size}
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.8"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      <path d="M15 5l-7 7 7 7" />
+    </svg>
+  );
+}
+
 /** 톱니 — 설정 */
 export function GearIcon({ size = 20 }: IconProps) {
   return (

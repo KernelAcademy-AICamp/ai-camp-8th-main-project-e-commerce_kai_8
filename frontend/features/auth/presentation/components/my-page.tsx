@@ -4,7 +4,8 @@ import Link from "next/link";
 
 import type { AuthNotice } from "@/features/auth/domain/auth-session";
 import { useAuthSession } from "@/features/auth/presentation/view-model/use-auth-session";
-import { GearIcon } from "@/shared/icons";
+import { useScreenClose } from "@/features/auth/presentation/view-model/use-screen-close";
+import { BackIcon, GearIcon } from "@/shared/icons";
 
 /**
  * 마이페이지 — 계정만 다룬다.
@@ -27,11 +28,20 @@ export function MyPage({
   children?: React.ReactNode;
 }) {
   const { state, busy, failed, signOut } = useAuthSession();
+  const close = useScreenClose("/my");
   const showFailure = failed || notice === "failed";
 
   return (
     <main className="mx-auto max-w-md px-6 pb-10 text-neutral-200">
-      <header className="-mx-2 flex items-center justify-end py-2">
+      <header className="-mx-2 flex items-center justify-between py-2">
+        <button
+          type="button"
+          aria-label="뒤로"
+          onClick={close}
+          className="flex h-10 w-10 cursor-pointer items-center justify-center rounded-full text-neutral-400"
+        >
+          <BackIcon />
+        </button>
         <Link
           href="/settings"
           aria-label="설정"

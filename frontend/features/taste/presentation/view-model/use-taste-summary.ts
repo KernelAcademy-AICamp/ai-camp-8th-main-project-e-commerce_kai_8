@@ -45,6 +45,9 @@ export function useTasteSummary(): TasteCardState {
     );
     return () => {
       alive = false;
+      // 로그인 상태를 떠나면 받아둔 요약을 버린다. 실경로에선 계정 전환이 항상
+      // 전체 내비게이션을 거치지만, 남의 취향을 메모리에 들고 있을 이유가 없다.
+      setLoaded({ kind: "loading" });
     };
   }, [signedIn]);
 
