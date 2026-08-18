@@ -1,3 +1,9 @@
+## [0.1.6](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/compare/v0.1.5...v0.1.6) (2026-08-18)
+
+### Features
+
+* 구글 로그인·로그아웃·계정 삭제 (조각 1) ([#40](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/issues/40)) ([4e769d1](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/commit/4e769d14e36a2bc0d066a21eca31f9ddf645e71c))
+* 큐레이션 카드를 누르면 고른 상품 9개를 펼친다 ([#41](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/issues/41)) ([e0c1743](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/commit/e0c174384426b5c5c500a259e13327a9b104e30c))
 ## [0.1.5](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/compare/v0.1.4...v0.1.5) (2026-08-18)
 
 ### Features

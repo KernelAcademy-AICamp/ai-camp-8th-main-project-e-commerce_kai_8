@@ -2,7 +2,7 @@
 
 import { useEffect } from "react";
 
-import { ProductDetail } from "@/features/feed/detail/presentation/components/product-detail";
+import { DetailLayers } from "@/features/feed/detail/presentation/components/detail-layers";
 import { useDetailState } from "@/features/feed/detail/presentation/view-model/use-detail-state";
 import { FeedGrid } from "@/features/feed/presentation/components/feed-grid";
 import { FeedSkeleton } from "@/features/feed/presentation/components/feed-skeleton";
@@ -17,11 +17,9 @@ import { useSearchState } from "@/features/feed/search/presentation/view-model/u
 import { useConsentNoticeVisible } from "@/shared/consent-notice-store";
 import { useRetryPendingForget } from "@/shared/signals/use-retry-pending-forget";
 
-// 산 채로 유지하는 상세 레이어 수 — 뒤로가기 시 재마운트(번쩍임) 없이 즉시
-// 드러난다. 이보다 깊은 체인은 메모리를 위해 언마운트한다(복귀 시에만 재로딩).
-const LIVE_DETAIL_LAYERS = 3;
-
-export function MosaicFeed() {
+// active=false 면 다른 칸을 보고 있다는 뜻 — 화면은 그대로 두고(스크롤 위치·검색
+// 상태 보존) 떠 있는 검색창만 감춘다.
+export function MosaicFeed({ active = true }: { active?: boolean }) {
   const { stack, open, requestClose, finishClose } = useDetailState();
   const detailOpen = stack.length > 0;
 
@@ -74,8 +72,6 @@ export function MosaicFeed() {
   // 지난번 서버 삭제가 실패했다면 조용히 다시 시도한다 (방침 O-32 삭제 계약)
   useRetryPendingForget();
 
-  const liveLayers = stack.slice(-LIVE_DETAIL_LAYERS);
-
   return (
     <div className="mx-auto max-w-md px-2 pt-2 pb-24">
       {search.submittedQuery != null ? (
@@ -117,7 +113,7 @@ export function MosaicFeed() {
         }}
         onClear={search.clear}
         searching={searching}
-        hidden={detailOpen}
+        hidden={detailOpen || !active}
         collapsed={collapsed}
         onExpand={expand}
         lifted={bannerVisible}
@@ -126,20 +122,12 @@ export function MosaicFeed() {
         onInputBlur={onInputBlur}
       />
 
-      {liveLayers.map((entry, i) => {
-        // 스택 안 위치는 push/pop이 끝에서만 일어나 안정적 — key로 쓴다
-        const stackIndex = stack.length - liveLayers.length + i;
-        return (
-          <ProductDetail
-            key={`detail-${String(stackIndex)}-${String(entry.product.goodsNo)}`}
-            entry={entry}
-            active={i === liveLayers.length - 1}
-            onRequestClose={requestClose}
-            onClosed={finishClose}
-            onSelectProduct={open}
-          />
-        );
-      })}
+      <DetailLayers
+        stack={stack}
+        onRequestClose={requestClose}
+        onClosed={finishClose}
+        onSelectProduct={open}
+      />
     </div>
   );
 }
