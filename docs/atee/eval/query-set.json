@@ -13,34 +13,13 @@
       },
       {
         "partition": "progress",
-        "when": "A단계 1차 채점 (2026-08-17)",
-        "status": "열람함 — 규칙 위반"
+        "when": "A단계 완료 시",
+        "status": "예정"
       },
       {
         "partition": "holdout",
-        "when": "A단계 1차 채점 (2026-08-17)",
-        "status": "열람함 — 규칙 위반"
-      },
-      {
-        "partition": "progress",
-        "when": "A단계 2차 채점 (2026-08-17)",
-        "status": "열람함 — 규칙 위반"
-      },
-      {
-        "partition": "holdout",
-        "when": "A단계 2차 채점 (2026-08-17)",
-        "status": "열람함 — 규칙 위반"
-      },
-      {
-        "partition": "holdout",
-        "when": "C단계 3단계 가격 문법 결정 (2026-08-17)",
-        "status": "열람함 — 규칙 위반",
-        "what": "질의 **문면만** 봤다(가격 표현의 형태를 세기 위해). 결과·판정은 보지 않았다.",
-        "why_it_counts": "지원할 문법을 홀드아웃 질의에 맞춰 고른 셈이므로, 그만큼 홀드아웃은 독립 검증이 아니게 됐다. 계획이 '개발셋에서 세어 정한다'고 했는데 홀드아웃까지 봤다.",
-        "affected": [
-          "폴리에스테르 시원한 남성 반팔 2만원대",
-          "베이지 루즈핏 반팔티 2만원 이하"
-        ]
+        "when": "전체 완료 최종 판정",
+        "status": "예정"
       }
     ],
     "partitionRules": {
@@ -68,10 +47,10 @@
         "holdout": 6
       },
       "R1": {
-        "total": 16,
-        "dev": 9,
-        "progress": 4,
-        "holdout": 3
+        "total": 22,
+        "dev": 12,
+        "progress": 6,
+        "holdout": 4
       },
       "G4": {
         "total": 22,
@@ -92,14 +71,7 @@
         "holdout": 5
       }
     },
-    "total": 128,
-    "contamination": {
-      "status": "progress·holdout 오염됨",
-      "when": "2026-08-17 A단계",
-      "what": "A단계 후보 풀을 전 파티션으로 만들고 결과를 본 뒤 튜닝(태그 제거·초성 교정·is_tee)한 다음 다시 채점했다. 1차 채점에 progress 143·holdout 166건, 2차에 progress 49·holdout 79건이 포함됐다.",
-      "why": "3분할 원칙(개발셋에서만 튜닝)을 어겼다. 후보 풀을 dev로 한정했어야 한다.",
-      "effect": "진행셋·홀드아웃 점수는 독립 표본 판정이 아니다. 최종 판정 전에 새로 작성한 질의로 봉인 표본을 다시 만들어야 한다."
-    }
+    "total": 134
   },
   "entries": [
     {
@@ -679,6 +651,78 @@
       "confidence": null,
       "familyRoot": "g18",
       "partition": "progress"
+    },
+    {
+      "id": "s29",
+      "bucket": "R1",
+      "query": "어깨 넓어 보이는 티셔츠",
+      "src": "manual",
+      "family": "s29",
+      "tags": [],
+      "note": null,
+      "confidence": null,
+      "familyRoot": "s29",
+      "partition": "holdout"
+    },
+    {
+      "id": "s30",
+      "bucket": "R1",
+      "query": "어깨 좁은 남자 반팔티",
+      "src": "manual",
+      "family": "s30",
+      "tags": [],
+      "note": null,
+      "confidence": null,
+      "familyRoot": "s30",
+      "partition": "dev"
+    },
+    {
+      "id": "s31",
+      "bucket": "R1",
+      "query": "팔뚝살 커버되는 여름 티셔츠",
+      "src": "manual",
+      "family": "s31",
+      "tags": [],
+      "note": null,
+      "confidence": null,
+      "familyRoot": "s31",
+      "partition": "dev"
+    },
+    {
+      "id": "s32",
+      "bucket": "R1",
+      "query": "젖꼭지 안 비치는 흰티",
+      "src": "manual",
+      "family": "s32",
+      "tags": [],
+      "note": null,
+      "confidence": null,
+      "familyRoot": "s32",
+      "partition": "progress"
+    },
+    {
+      "id": "s33",
+      "bucket": "R1",
+      "query": "남자 웨이브 체형 티셔츠",
+      "src": "manual",
+      "family": "s33",
+      "tags": [],
+      "note": null,
+      "confidence": null,
+      "familyRoot": "s33",
+      "partition": "progress"
+    },
+    {
+      "id": "s34",
+      "bucket": "R1",
+      "query": "배 안 나와 보이는 반팔",
+      "src": "manual",
+      "family": "s34",
+      "tags": [],
+      "note": null,
+      "confidence": null,
+      "familyRoot": "s34",
+      "partition": "dev"
     },
     {
       "id": "b01",

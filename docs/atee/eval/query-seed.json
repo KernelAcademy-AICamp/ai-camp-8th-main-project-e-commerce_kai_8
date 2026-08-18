@@ -484,6 +484,54 @@
       "bucket": "G2",
       "events": 1,
       "query": "여성 슬림핏 반팔티"
+    },
+    {
+      "id": "s29",
+      "src": "manual",
+      "bucket": "R1",
+      "query": "어깨 넓어 보이는 티셔츠",
+      "withAi": "어깨확장 핏(극단드롭 제외)",
+      "withoutAi": "어깨"
+    },
+    {
+      "id": "s30",
+      "src": "manual",
+      "bucket": "R1",
+      "query": "어깨 좁은 남자 반팔티",
+      "withAi": "어깨확장 핏",
+      "withoutAi": "어깨, 남성"
+    },
+    {
+      "id": "s31",
+      "src": "manual",
+      "bucket": "R1",
+      "query": "팔뚝살 커버되는 여름 티셔츠",
+      "withAi": "긴 소매+조이지 않는 소매끝",
+      "withoutAi": "여름, 반팔"
+    },
+    {
+      "id": "s32",
+      "src": "manual",
+      "bucket": "R1",
+      "query": "젖꼭지 안 비치는 흰티",
+      "withAi": "비침 없음 + 흰색",
+      "withoutAi": "흰색"
+    },
+    {
+      "id": "s33",
+      "src": "manual",
+      "bucket": "R1",
+      "query": "남자 웨이브 체형 티셔츠",
+      "withAi": "남성 웨이브 = 어깨 살짝 넓게",
+      "withoutAi": "남성"
+    },
+    {
+      "id": "s34",
+      "src": "manual",
+      "bucket": "R1",
+      "query": "배 안 나와 보이는 반팔",
+      "withAi": "몸통 여유 (밑단 축 없음 — 반쪽)",
+      "withoutAi": "반팔"
     }
   ],
   "todo": {

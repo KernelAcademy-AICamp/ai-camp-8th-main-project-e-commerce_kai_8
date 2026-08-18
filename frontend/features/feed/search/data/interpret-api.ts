@@ -30,6 +30,8 @@ export async function fetchQueryPlan(query: string): Promise<QueryPlan> {
       exclude: body.exclude ?? [],
       exclude_colors: body.exclude_colors ?? [],
       expand: body.expand ?? [],
+      // 서버가 이미 `exclude`로 옮겨 놓았다. 여기서 다시 쓰지 않고 받아만 둔다.
+      fit: body.fit ?? [],
     };
   } catch {
     // 해석이 검색을 막아서는 안 된다
