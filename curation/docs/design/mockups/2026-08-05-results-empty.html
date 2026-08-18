@@ -1,0 +1,210 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>그래픽 티 발견 검색 — 빈 결과 시안</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" />
+<style>
+  :root {
+    --bg: #0b0d10;
+    --text: #f5f5f4;
+    --muted: rgba(245, 245, 244, 0.55);
+    --hairline: rgba(255, 255, 255, 0.14);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: "Pretendard Variable", Pretendard, sans-serif;
+    background:
+      radial-gradient(50rem 34rem at 12% -6%, rgba(53, 110, 255, 0.45), transparent 62%),
+      radial-gradient(44rem 30rem at 105% 22%, rgba(148, 70, 245, 0.38), transparent 62%),
+      radial-gradient(40rem 28rem at 88% 108%, rgba(255, 110, 45, 0.32), transparent 62%),
+      radial-gradient(36rem 26rem at -4% 90%, rgba(40, 200, 145, 0.26), transparent 62%),
+      #0d0f13;
+    background-attachment: fixed;
+    color: var(--text);
+    min-height: 100dvh;
+  }
+
+  /* ---------- 헤더 (결과 화면과 동일) ---------- */
+  .top {
+    position: sticky; top: 0; z-index: 10;
+    display: flex; align-items: center; gap: 2rem;
+    padding: 2.75rem clamp(1.5rem, 4vw, 3rem) 1.2rem;
+  }
+  .top::before {
+    content: ""; position: absolute; z-index: -1;
+    inset: 0 0 -2.5rem;
+    background: linear-gradient(180deg, rgba(11, 13, 16, 0.85), rgba(11, 13, 16, 0.35) 62%, transparent);
+    -webkit-backdrop-filter: blur(18px);
+    backdrop-filter: blur(18px);
+    -webkit-mask-image: linear-gradient(180deg, #000 55%, transparent);
+    mask-image: linear-gradient(180deg, #000 55%, transparent);
+    pointer-events: none;
+  }
+  .top__brand {
+    text-decoration: none; color: var(--text);
+    font-size: 0.95rem; font-weight: 800; letter-spacing: -0.02em;
+    white-space: nowrap;
+  }
+  .search { flex: 1; max-width: 44rem; }
+  .search__pill {
+    position: relative;
+    display: flex; align-items: center;
+    height: 3.9rem; border-radius: 999px; padding: 0.45rem 0.45rem 0.45rem 1.6rem;
+    background: rgba(255, 255, 255, 0.05);
+    -webkit-backdrop-filter: blur(7px) saturate(1.25);
+    backdrop-filter: blur(7px) saturate(1.25);
+    box-shadow:
+      inset 0 1.5px 1px rgba(255, 255, 255, 0.55),
+      inset 0 -6px 10px -7px rgba(255, 255, 255, 0.4),
+      inset 13px 0 16px -11px rgba(255, 255, 255, 0.45),
+      inset -13px 0 16px -11px rgba(255, 255, 255, 0.45),
+      inset 24px 0 28px -16px rgba(0, 0, 0, 0.5),
+      inset -24px 0 28px -16px rgba(0, 0, 0, 0.5),
+      0 14px 40px rgba(0, 0, 0, 0.45);
+  }
+  .search__input {
+    flex: 1; min-width: 0; border: 0; background: none; outline: none;
+    color: var(--text);
+    font: 500 1rem/1 "Pretendard Variable", Pretendard, sans-serif;
+  }
+  .search__btn {
+    flex: none; width: 3rem; height: 3rem; border: 0; border-radius: 50%;
+    display: grid; place-items: center;
+    background: rgba(255, 255, 255, 0.12);
+    box-shadow:
+      inset 0 1px 1px rgba(255, 255, 255, 0.6),
+      inset 8px 0 12px -8px rgba(255, 255, 255, 0.4),
+      inset -8px 0 12px -8px rgba(255, 255, 255, 0.4);
+    color: #fff; cursor: pointer;
+  }
+  .search__btn:hover { background: rgba(255, 255, 255, 0.2); }
+
+  /* ---------- 파싱된 조건 토큰 ---------- */
+  .parsed {
+    display: flex; align-items: center; flex-wrap: wrap; gap: 0.55rem;
+    padding: 0.9rem clamp(1.5rem, 4vw, 3rem) 0.4rem;
+  }
+  .token {
+    display: inline-flex; align-items: center; gap: 0.5rem;
+    border-radius: 999px; padding: 0.5rem 1.05rem;
+    background: rgba(255, 255, 255, 0.05);
+    -webkit-backdrop-filter: blur(8px);
+    backdrop-filter: blur(8px);
+    box-shadow:
+      inset 0 1px 1px rgba(255, 255, 255, 0.5),
+      inset 8px 0 12px -8px rgba(255, 255, 255, 0.35),
+      inset -8px 0 12px -8px rgba(255, 255, 255, 0.35),
+      0 10px 26px rgba(0, 0, 0, 0.35);
+    font-size: 0.82rem; font-weight: 600;
+    opacity: 0; transform: scale(0.25);
+    animation: droplet 0.6s cubic-bezier(0.3, 1.65, 0.4, 1) forwards;
+  }
+  .token:nth-child(2) { animation-delay: 0.09s; }
+  .token:nth-child(3) { animation-delay: 0.18s; }
+  .token i { font-style: normal; font-weight: 500; font-size: 0.78rem; color: var(--muted); }
+  .token .swatch {
+    width: 0.85rem; height: 0.85rem; border-radius: 50%;
+    box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.45), 0 0 0 1px rgba(255, 255, 255, 0.18);
+  }
+  .parsed__count {
+    margin-left: 0.4rem;
+    font-size: 0.8rem; color: var(--muted);
+    opacity: 0; animation: fade 0.6s 0.4s forwards;
+  }
+  @keyframes droplet {
+    0%   { opacity: 0; transform: scale(0.2); filter: blur(8px); }
+    55%  { opacity: 1; transform: scale(1.1, 0.88); filter: blur(0); }
+    75%  { transform: scale(0.95, 1.06); }
+    100% { opacity: 1; transform: scale(1); filter: blur(0); }
+  }
+  @keyframes fade { to { opacity: 1; } }
+
+  /* ---------- 빈 결과 상태 ---------- */
+  .empty {
+    min-height: 60dvh;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 2rem; padding: 2rem 1.5rem 5rem; text-align: center;
+  }
+  .empty > * { opacity: 0; translate: 0 14px; animation: rise 0.6s cubic-bezier(0.2, 0.7, 0.2, 1) forwards; }
+  .empty > :nth-child(1) { animation-delay: 0.25s; }
+  .empty > :nth-child(2) { animation-delay: 0.35s; }
+  @keyframes rise { to { opacity: 1; translate: 0 0; } }
+
+  .empty__title { font-size: 1.3rem; font-weight: 700; letter-spacing: -0.02em; }
+  .empty__title small {
+    display: block; margin-top: 0.55rem;
+    font-size: 0.92rem; font-weight: 400; color: var(--muted);
+  }
+
+  /* 조건 완화 제안 — 물방울 칩 */
+  .relax { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.6rem; max-width: 44rem; }
+  .relax a {
+    display: inline-flex; align-items: center; gap: 0.6rem;
+    text-decoration: none; color: var(--text);
+    border-radius: 999px; padding: 0.85rem 1.4rem;
+    background: rgba(255, 255, 255, 0.06);
+    -webkit-backdrop-filter: blur(8px);
+    backdrop-filter: blur(8px);
+    box-shadow:
+      inset 0 1px 1px rgba(255, 255, 255, 0.5),
+      inset 8px 0 12px -8px rgba(255, 255, 255, 0.35),
+      inset -8px 0 12px -8px rgba(255, 255, 255, 0.35),
+      0 12px 30px rgba(0, 0, 0, 0.4);
+    font-size: 0.9rem; font-weight: 600;
+    opacity: 0; transform: scale(0.25);
+    animation: droplet 0.6s cubic-bezier(0.3, 1.65, 0.4, 1) forwards;
+    animation-delay: calc(var(--i) * 0.09s + 0.55s);
+    transition: background 0.2s, transform 0.15s;
+  }
+  .relax a:hover, .relax a:focus-visible { background: rgba(255, 255, 255, 0.13); }
+  .relax a b { color: #9db8ff; font-weight: 700; }
+  .relax a .count { font-size: 0.8rem; color: var(--muted); font-weight: 500; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .token, .parsed__count, .empty > *, .relax a { animation: none; opacity: 1; transform: none; translate: 0 0; }
+  }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <a class="top__brand" href="2026-08-04-home-final.html">티:파운드</a>
+  <form class="search" role="search" onsubmit="return false">
+    <div class="search__pill">
+      <input class="search__input" type="search" aria-label="티셔츠 검색"
+             value="검정 바탕에 보라 레터링 백프린트" />
+      <button class="search__btn" type="submit" aria-label="검색">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <circle cx="10.5" cy="10.5" r="7" stroke="currentColor" stroke-width="1.8" />
+          <path d="M15.8 15.8 L21 21" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
+        </svg>
+      </button>
+    </div>
+  </form>
+</header>
+
+<section class="parsed" aria-label="해석된 검색 조건">
+  <span class="token"><span class="swatch" style="background:#17181c"></span><i>바탕색</i>블랙</span>
+  <span class="token"><span class="swatch" style="background:#7c4dd4"></span><i>프린트</i>보라 레터링</span>
+  <span class="token"><i>위치</i>백프린트</span>
+  <span class="parsed__count">0개</span>
+</section>
+
+<main class="empty">
+  <h1 class="empty__title">
+    이 조합의 티는 아직 없어요
+    <small>조건을 하나만 풀면 바로 찾을 수 있어요</small>
+  </h1>
+
+  <div class="relax">
+    <a href="2026-08-05-results.html" style="--i:0">보라 → <b>화이트</b> 프린트로 <span class="count">12개</span></a>
+    <a href="2026-08-05-results.html" style="--i:1"><b>위치</b> 조건 빼기 <span class="count">34개</span></a>
+    <a href="2026-08-05-results.html" style="--i:2"><b>블랙 그래픽 티</b> 전체 <span class="count">534개</span></a>
+  </div>
+</main>
+</body>
+</html>
