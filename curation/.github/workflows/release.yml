@@ -1,0 +1,76 @@
+name: Release
+
+# 수동 릴리즈: Actions 탭에서 "Run workflow"로 실행.
+# develop의 Conventional Commits로 버전 산정 → CHANGELOG·태그·GitHub Release
+# → develop를 main으로 승격(merge) → Vercel 프로덕션 배포 → (deployment_status로) Slack 알림.
+on:
+  workflow_dispatch:
+    inputs:
+      release_type:
+        description: "버전 증가 방식 (auto = 커밋으로 자동 판단)"
+        type: choice
+        options: [auto, patch, minor, major]
+        default: auto
+
+permissions:
+  contents: write
+
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: develop
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Configure git identity
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+      - name: Compute next version
+        id: ver
+        run: |
+          cd client
+          CURRENT=$(node -p "require('./package.json').version")
+          TYPE="${{ inputs.release_type }}"
+          if [ "$TYPE" = "auto" ]; then
+            TYPE=$(npx -y conventional-recommended-bump -p conventionalcommits 2>/dev/null || echo patch)
+          fi
+          NEXT=$(npx -y semver -i "$TYPE" "$CURRENT")
+          echo "current=$CURRENT" >> "$GITHUB_OUTPUT"
+          echo "type=$TYPE" >> "$GITHUB_OUTPUT"
+          echo "next=$NEXT" >> "$GITHUB_OUTPUT"
+          echo "tag=v$NEXT" >> "$GITHUB_OUTPUT"
+          echo "릴리즈: $CURRENT -> $NEXT ($TYPE)"
+      - name: Bump version + update changelog
+        run: |
+          cd client
+          npm pkg set version="${{ steps.ver.outputs.next }}"
+          npx -y conventional-changelog-cli -p conventionalcommits -i CHANGELOG.md -s
+      - name: Commit, tag, push to develop
+        run: |
+          git add client/package.json client/CHANGELOG.md
+          git commit -m "chore(release): ${{ steps.ver.outputs.tag }}"
+          git tag -a "${{ steps.ver.outputs.tag }}" -m "release ${{ steps.ver.outputs.tag }}"
+          git push origin develop
+          git push origin "${{ steps.ver.outputs.tag }}"
+      - name: Create GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "${{ steps.ver.outputs.tag }}" \
+            --title "${{ steps.ver.outputs.tag }}" \
+            --notes "변경점: client/CHANGELOG.md 참고"
+      - name: Promote develop to main (merge → 프로덕션 배포)
+        run: |
+          git fetch origin main
+          git checkout main
+          git merge --no-ff develop -m "chore: release 승격 ${{ steps.ver.outputs.tag }}"
+          git push origin main

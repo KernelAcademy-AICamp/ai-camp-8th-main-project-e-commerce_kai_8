@@ -1,0 +1,29 @@
+name: Notify Slack on Production Deploy
+
+on:
+  deployment_status
+
+jobs:
+  notify:
+    if: >-
+      ${{ github.event.deployment_status.state == 'success' &&
+          startsWith(github.event.deployment_status.environment, 'Production') }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - id: ver
+        run: echo "tag=$(git describe --tags --abbrev=0 2>/dev/null || echo 'unreleased')" >> "$GITHUB_OUTPUT"
+      - name: Post to Slack
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          TAG: ${{ steps.ver.outputs.tag }}
+          URL: ${{ github.event.deployment_status.environment_url }}
+          SHA: ${{ github.event.deployment.sha }}
+        run: |
+          SHORT=${SHA:0:7}
+          MSG="🚀 프로덕션 배포 완료 — *${TAG}*\n<${URL}|사이트 열기>  (커밋 \`${SHORT}\`)"
+          curl -sS -X POST -H 'Content-type: application/json' \
+            --data "$(jq -n --arg t "$MSG" '{text:$t}')" \
+            "$SLACK_WEBHOOK_URL"

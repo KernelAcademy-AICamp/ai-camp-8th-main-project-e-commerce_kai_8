@@ -1,0 +1,871 @@
+{
+  "meta": {
+    "purpose": "P3 hard-safe 기준 3(의도별 누락률) 골든셋 — 쿼리별 기대 해석 + 정답 상품 집합. 하드필터 적용 후에도 must_include 상품이 후보에 남아야 한다.",
+    "createdAt": "2026-08-01",
+    "plan": "docs/superpowers/plans/2026-08-01-p3-t0-meta-coverage-goldenset.md",
+    "snapshot": {
+      "file": "docs/p3-t0/search-goods-snapshot-20260801.json",
+      "sha256": "b2d6c9de2d8e41bfd024a6f50f59addba26468b061dd0da954aa24d8928ada67",
+      "note": "정답 상품(goodsNo)은 이 스냅샷 기준. 재측정 시 스냅샷 차이를 명시할 것."
+    },
+    "extraction": {
+      "source": "GA4 search_performed 이벤트 customEvent:query (property 547257934)",
+      "period": "2026-01-01 ~ 2026-08-01 (서비스 전 기간)",
+      "totalEvents": 36,
+      "distinctQueries": 20,
+      "usable": 19,
+      "dedup": "GA4 차원 집계로 중복 제거, '(not set)' 1건 제외",
+      "pii": "전 쿼리 육안 확인 — 이름·연락처 등 식별 정보 없음(원문 그대로 수록)",
+      "gap": "정렬 단독·강제 표현·일반 의류어 단독·브랜드 결합 유형 부재 → synthetic 보강(사람 확정 2026-08-01)"
+    },
+    "answerTypes": {
+      "must_include": "하드필터 적용 후 answerGoods가 후보에 반드시 남아야 함(누락률 분자 판정 대상)",
+      "sort": "정답은 상품 집합이 아니라 정렬 순서 — expected.sort 검증",
+      "browse": "전체 상품·인기순 기대(입구 분기) — 상품 집합 없음",
+      "none": "정직한 0건(또는 failed)이 정답",
+      "interpretation_only": "카탈로그에 충족 상품이 없거나 축이 부재 — 기대 해석(오추출 없음)만 검증"
+    },
+    "categories": [
+      "color",
+      "fit_material_pattern",
+      "gender_size",
+      "sort",
+      "locked",
+      "complex",
+      "price_brand",
+      "wear",
+      "browse",
+      "exclude"
+    ],
+    "labeling": {
+      "process": "기대 해석 독립 2회 검토(작성→스냅샷 대조 재검토) + 정답 상품 스냅샷 기계 대조",
+      "disagreements": [
+        {
+          "id": "q008",
+          "diff": "아이보리 기대인데 정답 후보(3330173)는 화이트 메타 — 아이보리 블라우스는 카탈로그 0건",
+          "resolution": "must_include → interpretation_only 전환(색 하드 적용 시 0건이 정당)"
+        }
+      ],
+      "frozen": false,
+      "freezeNote": "3a 사전 구현 착수 전 frozen: true로 동결. 이후 변경은 meta.changes에 사유 기록."
+    },
+    "gaps": {
+      "metadata:<axis>": "제목·실물은 정답인데 해당 축 facet 메타가 틀리거나 빈 상품 — 하드필터가 지우는 것이 현행 예상 동작. 누락률에서 별도 귀속(카탈로그 보강 루프 대상)",
+      "synonym:title": "한↔영 동의어(무지개↔레인보우 등)로 제목 매칭 불가 — 사전/동의어 백로그 대상",
+      "extractor:stopword": "토큰이 현행 스톱워드라 제목 레인에 도달 불가(크롭 등) — 3b 스톱워드 재검토 대상"
+    }
+  },
+  "entries": [
+    {
+      "id": "q001",
+      "query": "내가 105 입는데 노란색 신발에 어울리는 티셔츠 추천해줘",
+      "source": "real_query",
+      "entryType": "typed",
+      "events": 4,
+      "categories": ["gender_size"],
+      "expected": {
+        "sizeStd": [105],
+        "colors": [],
+        "note": "함정: '노란색'은 신발 색 — 옷 색 하드필터 금지"
+      },
+      "answerType": "must_include",
+      "answerGoods": [
+        {
+          "goodsNo": 1495784,
+          "basis": "105 보유·비옐로우(블랙 무지)"
+        },
+        {
+          "goodsNo": 1565466,
+          "basis": "105 보유·비옐로우(네이비)"
+        },
+        {
+          "goodsNo": 2447764,
+          "basis": "105 보유·비옐로우(다크 네이비)"
+        }
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "q002",
+      "query": "크롭티",
+      "source": "real_query",
+      "entryType": "direct",
+      "events": 3,
+      "categories": ["fit_material_pattern"],
+      "expected": {
+        "titleTokens": ["크롭"],
+        "note": "핏 vocab(오버·슬림·루즈)에 크롭 부재 + '크롭'은 현행 제목 토큰 추출기의 스톱워드 — 현행 계약으로 도달 불가(전 정답 gap). 3b에서 미달 축 소프트 전환 시 스톱워드 재검토 필요"
+      },
+      "answerType": "must_include",
+      "answerGoods": [
+        {
+          "goodsNo": 1321500,
+          "basis": "제목 crop(Edge crop half tee) (영문 crop — 한글 '크롭' LIKE 불일치)",
+          "gap": "synonym:title"
+        },
+        {
+          "goodsNo": 4235469,
+          "basis": "제목 '크롭'",
+          "gap": "extractor:stopword"
+        },
+        {
+          "goodsNo": 2141539,
+          "basis": "제목 '크롭'",
+          "gap": "extractor:stopword"
+        },
+        {
+          "goodsNo": 5607650,
+          "basis": "제목 '크롭'",
+          "gap": "extractor:stopword"
+        }
+      ],
+      "confidence": "low",
+      "confidenceNote": "크롭 처리 계약(핏 미달 축·스톱워드) 미확정"
+    },
+    {
+      "id": "q003",
+      "query": "파란색 줄무늬 티",
+      "source": "real_query",
+      "entryType": "typed",
+      "events": 3,
+      "categories": ["color", "fit_material_pattern"],
+      "expected": {
+        "colors": ["블루", "다크 블루", "스카이 블루", "네이비"],
+        "patterns": ["스트라이프"]
+      },
+      "answerType": "must_include",
+      "answerGoods": [
+        {
+          "goodsNo": 2558605,
+          "basis": "네이비·스트라이프(메타 완전)"
+        },
+        {
+          "goodsNo": 4943978,
+          "basis": "네이비·스트라이프(메타 완전)"
+        },
+        {
+          "goodsNo": 5272252,
+          "basis": "스카이 블루·스트라이프(메타 완전)"
+        },
+        {
+          "goodsNo": 4862620,
+          "basis": "제목 '스트라이프'+Navy인데 patterns 메타가 로고/그래픽 — 패턴 하드필터가 지우는 메타 누락 정답",
+          "gap": "metadata:patterns"
+        },
+        {
+          "goodsNo": 6308705,
+          "basis": "제목 '스트라이프'+네이비인데 patterns 메타가 로고/그래픽 — 메타 누락 정답",
+          "gap": "metadata:patterns"
+        }
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "q004",
+      "query": "간지나는티 제일 인기있고 소매에 프린팅이 있으면 좋겠고 음 또 노란색이 없으면 좋겠다 그리고 좀 땀이 흡수가 잘되면 좋을듯",
+      "source": "real_query",
+      "entryType": "direct",
+      "events": 2,
+      "categories": ["sort", "exclude", "wear", "complex"],
+      "expected": {
+        "sort": "review_count",
+        "exclude": {
+          "colors": ["옐로우"]
+        },
+        "note": "소매 프린트 위치·땀 흡수는 소프트(카탈로그 축 부재). '제일 인기'=인기순 정렬 의도"
+      },
+      "answerType": "sort",
+      "confidence": "low",
+      "confidenceNote": "'제일 인기'=인기순 정렬 의도 해석"
+    },
+    {
+      "id": "q005",
+      "query": "내가 105 입는데 노란색 신발에 어울리는 티셔츠 추천해줘 나 남자야",
+      "source": "real_query",
+      "entryType": "direct",
+      "events": 2,
+      "categories": ["gender_size"],
+      "expected": {
+        "sizeStd": [105],
+        "gender": "남성",
+        "colors": [],
+        "note": "q001 + 성별 명시"
+      },
+      "answerType": "must_include",
+      "answerGoods": [
+        {
+          "goodsNo": 1565466,
+          "basis": "남성·105·비옐로우"
+        },
+        {
+          "goodsNo": 2028349,
+          "basis": "남성·105·비옐로우"
+        },
+        {
+          "goodsNo": 1495784,
+          "basis": "남성·105·비옐로우"
+        }
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "q006",
+      "query": "놀러갈때 입기 편한 반팔티인데 내가 추위를 많이타서 그나마 두꺼운게 좋을것같고 프린팅은 없으면 좋겠어 또 너무 브랜드가 노출 안되면 좋겠엉",
+      "source": "real_query",
+      "entryType": "direct",
+      "events": 2,
+      "categories": ["exclude", "wear", "fit_material_pattern"],
+      "expected": {
+        "patterns": ["단색"],
+        "note": "'프린팅 없이·브랜드 노출 없이'=무지 선호. 두께는 소프트(축 부재)"
+      },
+      "answerType": "must_include",
+      "answerGoods": [
+        {
+          "goodsNo": 4973184,
+          "basis": "헤비코튼 무지(단색)"
+        },
+        {
+          "goodsNo": 4973305,
+          "basis": "헤비코튼 무지(단색)"
+        },
+        {
+          "goodsNo": 4844733,
+          "basis": "특양면 헤비 무지(단색)"
+        }
+      ],
+      "confidence": "low",
+      "confidenceNote": "'프린팅 없으면'→단색 하드 해석"
+    },
+    {
+      "id": "q007",
+      "query": "레이어드해서 입기 좋은 반팔티를 찾고있는데 아래기장이 좀 길면 좋겠어",
+      "source": "real_query",
+      "entryType": "direct",
+      "events": 2,
+      "categories": ["wear"],
+      "expected": {
+        "note": "기장 축 부재 — 하드 조건 없음. 레이어드·기장은 소프트. 오추출(색·핏 환각) 없어야 함"
+      },
+      "answerType": "interpretation_only",
+      "confidence": "high"
+    },
+    {
+      "id": "q008",
+      "query": "린넨 소재의 블라우스 아이보리",
+      "source": "real_query",
+      "entryType": "typed",
+      "events": 2,
+      "categories": ["color", "fit_material_pattern"],
+      "expected": {
+        "colors": ["아이보리"],
+        "materials": [],
+        "titleTokens": ["블라우스"],
+        "note": "린넨은 소재 메타 0건·vocab 부재(침묵해야 함). 아이보리 블라우스도 카탈로그 0건 — 색 하드 적용 시 0건이 정당(화이트 상품을 아이보리로 근사 반환하지 않는다). codex 검수로 must_include에서 전환(라벨 오류 정정)"
+      },
+      "answerType": "interpretation_only",
+      "confidence": "high"
+    },
+    {
+      "id": "q009",
+      "query": "셔링이 있는 블라우스",
+      "source": "real_query",
+      "entryType": "direct",
+      "events": 2,
+      "categories": ["wear"],
+      "expected": {
+        "titleTokens": ["셔링", "블라우스"],
+        "note": "셔링은 디테일 표현 — 제목 토큰 레인"
+      },
+      "answerType": "must_include",
+      "answerGoods": [
+        {
+          "goodsNo": 3114554,
+          "basis": "제목 '셔링'"
+        },
+        {
+          "goodsNo": 4886712,
+          "basis": "제목 '셔링'"
+        },
+        {
+          "goodsNo": 4886713,
+          "basis": "제목 '셔링'"
+        }
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "q010",
+      "query": "폴리에스테르 시원한 남성 반팔 2만원대",
+      "source": "real_query",
+      "entryType": "example_chip",
+      "events": 3,
+      "categories": [
+        "fit_material_pattern",
+        "gender_size",
+        "price_brand",
+        "wear",
+        "complex"
+      ],
+      "expected": {
+        "materials": ["폴리에스테르"],
+        "gender": "남성",
+        "priceMin": 20000,
+        "priceMax": 29999
+      },
+      "answerType": "must_include",
+      "answerGoods": [
+        {
+          "goodsNo": 2028349,
+          "basis": "폴리에스테르·남성·25,900원"
+        },
+        {
+          "goodsNo": 2447764,
+          "basis": "폴리에스테르·남성·23,850원"
+        },
+        {
+          "goodsNo": 1565466,
+          "basis": "폴리에스테르(면 혼방)·남성·21,500원"
+        }
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "q011",
+      "query": "흐으으으음",
+      "source": "real_query",
+      "entryType": "direct",
+      "events": 2,
+      "categories": [],
+      "expected": {
+        "note": "무의미 쿼리 — 신호 없음. 전체 노출로 강등하지 않는다"
+      },
+      "answerType": "none",
+      "confidence": "high"
+    },
+    {
+      "id": "q012",
+      "query": "2만원 이하에 가성비있는 반팔티를찾고있는뒈 바람이 슝슝통하고 그림도 간지있고 기장은 좀 그나마 길었으면 조켔ㅇㅇ",
+      "source": "real_query",
+      "entryType": "direct",
+      "events": 1,
+      "categories": ["price_brand", "wear", "complex"],
+      "expected": {
+        "priceMax": 20000,
+        "note": "설계 §1 요동 실측 쿼리(회귀 케이스) — 하드는 가격뿐, 통풍·그림·기장은 소프트. 263↔16↔2건 요동 재발 금지"
+      },
+      "answerType": "must_include",
+      "answerGoods": [
+        {
+          "goodsNo": 5079891,
+          "basis": "12,900원·그래픽·쿨 소재"
+        },
+        {
+          "goodsNo": 5079918,
+          "basis": "15,000원·그래픽·쿨링"
+        },
+        {
+          "goodsNo": 1565481,
+          "basis": "16,250원·그래픽·메쉬"
+        },
+        {
+          "goodsNo": 1565483,
+          "basis": "16,250원·그래픽·메쉬"
+        }
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "q013",
+      "query": "나는 등판에 개발자관련 글씨가 쓰여있고 통풍이 잘되는 회색 반팔티를 찾고있는데 오버핏이면 더 좋을것같고 목은 라운드넥이면 더 좋을것같아",
+      "source": "real_query",
+      "entryType": "typed",
+      "events": 1,
+      "categories": ["color", "wear", "complex"],
+      "expected": {
+        "colors": ["그레이", "다크 그레이", "라이트 그레이"],
+        "note": "개발자 테마 상품 0건(스냅샷 확인) — 색 하드+그 외 소프트로 근접 결과. 테마 불충족을 이유로 0건 강등 금지"
+      },
+      "answerType": "interpretation_only",
+      "confidence": "high"
+    },
+    {
+      "id": "q014",
+      "query": "등판에 노란 레터링 있는 시원한 오버핏 흰티",
+      "source": "real_query",
+      "entryType": "example_chip",
+      "events": 1,
+      "categories": ["color", "fit_material_pattern", "complex"],
+      "expected": {
+        "colors": ["화이트"],
+        "fits": ["오버"],
+        "titleTokens": ["레터링"],
+        "note": "D17 코어 쿼리. 프린트색(노란)·위치(등판)는 스냅샷으로 검증 불가 — 바탕색·핏·레터링만 판정"
+      },
+      "answerType": "must_include",
+      "answerGoods": [
+        {
+          "goodsNo": 5063390,
+          "basis": "화이트·오버·레터링(메타 완전)"
+        },
+        {
+          "goodsNo": 3156109,
+          "basis": "화이트·레터링인데 fits 메타 빈 값 — 핏 하드필터가 지우는 메타 누락 정답",
+          "gap": "metadata:fits"
+        }
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "q015",
+      "query": "무지개 티셔츠",
+      "source": "real_query",
+      "entryType": "direct",
+      "events": 1,
+      "categories": ["color"],
+      "expected": {
+        "colors": [],
+        "titleTokens": ["무지개"],
+        "note": "함정: 무지개=다색 그래픽 테마 — 색 하드필터 금지(레인보우 상품은 바탕색이 제각각). 제목은 전부 '레인보우'(영↔한 동의어 공백 — 전 정답 gap)"
+      },
+      "answerType": "must_include",
+      "answerGoods": [
+        {
+          "goodsNo": 3213278,
+          "basis": "레인보우 그래픽(화이트 바탕)",
+          "gap": "synonym:title"
+        },
+        {
+          "goodsNo": 3213283,
+          "basis": "레인보우 그래픽(블랙 바탕)",
+          "gap": "synonym:title"
+        },
+        {
+          "goodsNo": 3776611,
+          "basis": "레인보우 그래픽(스카이 블루 바탕)",
+          "gap": "synonym:title"
+        },
+        {
+          "goodsNo": 4119775,
+          "basis": "레인보우 테니스볼 그래픽",
+          "gap": "synonym:title"
+        }
+      ],
+      "confidence": "low",
+      "confidenceNote": "정답 전부 동의어 갭(무지개↔레인보우) — 현행 계약으로 도달 불가"
+    },
+    {
+      "id": "q016",
+      "query": "블랙 오버핏 반팔티 3만원 이하",
+      "source": "real_query",
+      "entryType": "example_chip",
+      "events": 1,
+      "categories": ["color", "fit_material_pattern", "price_brand"],
+      "expected": {
+        "colors": ["블랙"],
+        "fits": ["오버"],
+        "priceMax": 30000
+      },
+      "answerType": "must_include",
+      "answerGoods": [
+        {
+          "goodsNo": 1565470,
+          "basis": "블랙·오버·21,500원"
+        },
+        {
+          "goodsNo": 2082058,
+          "basis": "블랙·오버·24,800원"
+        },
+        {
+          "goodsNo": 3064895,
+          "basis": "블랙·오버·15,930원"
+        },
+        {
+          "goodsNo": 3202861,
+          "basis": "블랙·오버·26,900원"
+        }
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "q017",
+      "query": "사람그림이 있는 7부정도의 머슬핏 반팔티",
+      "source": "real_query",
+      "entryType": "direct",
+      "events": 1,
+      "categories": ["fit_material_pattern", "wear"],
+      "expected": {
+        "note": "사람 그림 상품 0건·머슬핏 vocab 부재·7부는 기장 — 하드 조건 없음. 오버/슬림 오추출 금지"
+      },
+      "answerType": "interpretation_only",
+      "confidence": "high"
+    },
+    {
+      "id": "q018",
+      "query": "여성 슬림핏 반팔티",
+      "source": "real_query",
+      "entryType": "example_chip",
+      "events": 1,
+      "categories": ["gender_size", "fit_material_pattern"],
+      "expected": {
+        "gender": "여성",
+        "fits": ["슬림"]
+      },
+      "answerType": "must_include",
+      "answerGoods": [
+        {
+          "goodsNo": 1321500,
+          "basis": "여성·슬림"
+        },
+        {
+          "goodsNo": 1911666,
+          "basis": "여성·슬림"
+        },
+        {
+          "goodsNo": 5758882,
+          "basis": "여성·슬림"
+        }
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "q019",
+      "query": "티셔츠",
+      "source": "synthetic",
+      "entryType": null,
+      "categories": ["browse"],
+      "expected": {
+        "note": "일반 의류어 단독 — browse 입구 분기(전체·인기순). failed 금지"
+      },
+      "answerType": "browse",
+      "confidence": "high"
+    },
+    {
+      "id": "q020",
+      "query": "반팔티",
+      "source": "synthetic",
+      "entryType": null,
+      "categories": ["browse"],
+      "expected": {
+        "note": "browse 입구 분기"
+      },
+      "answerType": "browse",
+      "confidence": "high"
+    },
+    {
+      "id": "q021",
+      "query": "반팔",
+      "source": "synthetic",
+      "entryType": null,
+      "categories": ["browse"],
+      "expected": {
+        "note": "browse 입구 분기"
+      },
+      "answerType": "browse",
+      "confidence": "high"
+    },
+    {
+      "id": "q022",
+      "query": "반팔티 인기순으로 보여줘",
+      "source": "synthetic",
+      "entryType": null,
+      "categories": ["sort"],
+      "expected": {
+        "sort": "review_count"
+      },
+      "answerType": "sort",
+      "confidence": "high"
+    },
+    {
+      "id": "q023",
+      "query": "3만원 이하 반팔티 싼 순으로",
+      "source": "synthetic",
+      "entryType": null,
+      "categories": ["sort", "price_brand"],
+      "expected": {
+        "sort": "price_asc",
+        "priceMax": 30000
+      },
+      "answerType": "sort",
+      "confidence": "high"
+    },
+    {
+      "id": "q024",
+      "query": "무조건 검정색만",
+      "source": "synthetic",
+      "entryType": null,
+      "categories": ["color", "locked"],
+      "expected": {
+        "colors": ["블랙"],
+        "locked": ["colors"],
+        "note": "강제 표현 — 완화 사슬에서 색 완화 금지"
+      },
+      "answerType": "must_include",
+      "answerGoods": [
+        {
+          "goodsNo": 1565470,
+          "basis": "블랙"
+        },
+        {
+          "goodsNo": 2028349,
+          "basis": "블랙"
+        },
+        {
+          "goodsNo": 1495784,
+          "basis": "블랙"
+        }
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "q025",
+      "query": "검정 빼고 오버핏 반팔티",
+      "source": "synthetic",
+      "entryType": null,
+      "categories": ["color", "exclude", "fit_material_pattern"],
+      "expected": {
+        "fits": ["오버"],
+        "exclude": {
+          "colors": ["블랙"]
+        },
+        "note": "값·부정 범위 모두 원문 근거(span) 있는 결정적 배제 — 하드 NOT 허용 케이스"
+      },
+      "answerType": "must_include",
+      "answerGoods": [
+        {
+          "goodsNo": 1565466,
+          "basis": "오버·네이비(비블랙)"
+        },
+        {
+          "goodsNo": 1565467,
+          "basis": "오버·라이트 그레이(비블랙)"
+        },
+        {
+          "goodsNo": 6308705,
+          "basis": "오버·네이비(비블랙)"
+        }
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "q026",
+      "query": "오버핏만 반팔티",
+      "source": "synthetic",
+      "entryType": null,
+      "categories": ["locked", "fit_material_pattern"],
+      "expected": {
+        "fits": ["오버"],
+        "locked": ["fits"]
+      },
+      "answerType": "must_include",
+      "answerGoods": [
+        {
+          "goodsNo": 1565470,
+          "basis": "오버"
+        },
+        {
+          "goodsNo": 2082058,
+          "basis": "오버"
+        },
+        {
+          "goodsNo": 5607651,
+          "basis": "오버"
+        }
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "q027",
+      "query": "데비웨어 크롭티",
+      "source": "synthetic",
+      "entryType": null,
+      "categories": ["price_brand"],
+      "expected": {
+        "brand": "데비웨어",
+        "titleTokens": ["크롭"]
+      },
+      "answerType": "must_include",
+      "answerGoods": [
+        {
+          "goodsNo": 1321500,
+          "basis": "데비웨어·제목 crop"
+        },
+        {
+          "goodsNo": 1321504,
+          "basis": "데비웨어·제목 crop"
+        },
+        {
+          "goodsNo": 1102064,
+          "basis": "데비웨어·제목 '홀릭크롭'"
+        }
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "q028",
+      "query": "코닥 무지개 티셔츠",
+      "source": "synthetic",
+      "entryType": null,
+      "categories": ["price_brand"],
+      "expected": {
+        "brand": "코닥",
+        "colors": [],
+        "titleTokens": ["무지개"],
+        "note": "브랜드+그래픽 테마 결합 — 색 하드필터 금지 유지"
+      },
+      "answerType": "must_include",
+      "answerGoods": [
+        {
+          "goodsNo": 3213278,
+          "basis": "코닥 레인보우"
+        },
+        {
+          "goodsNo": 3213283,
+          "basis": "코닥 레인보우"
+        },
+        {
+          "goodsNo": 3776611,
+          "basis": "코닥 레인보우"
+        }
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "q029",
+      "query": "무신사 스탠다드 스포츠 블랙 반팔",
+      "source": "synthetic",
+      "entryType": null,
+      "categories": ["price_brand", "color"],
+      "expected": {
+        "brand": "무신사 스탠다드 스포츠",
+        "colors": ["블랙"]
+      },
+      "answerType": "must_include",
+      "answerGoods": [
+        {
+          "goodsNo": 2028349,
+          "basis": "무신사 스탠다드 스포츠·블랙"
+        },
+        {
+          "goodsNo": 3397155,
+          "basis": "무신사 스탠다드 스포츠·블랙"
+        },
+        {
+          "goodsNo": 6807608,
+          "basis": "무신사 스탠다드 스포츠·블랙"
+        }
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "q030",
+      "query": "다크 네이비 반팔티",
+      "source": "synthetic",
+      "entryType": null,
+      "categories": ["color"],
+      "expected": {
+        "colors": ["다크 네이비"],
+        "note": "최장 구문 우선 — '다크'+'네이비' 분해 금지"
+      },
+      "answerType": "must_include",
+      "answerGoods": [
+        {
+          "goodsNo": 2447764,
+          "basis": "다크 네이비"
+        },
+        {
+          "goodsNo": 2082064,
+          "basis": "다크 네이비 포함"
+        },
+        {
+          "goodsNo": 3214547,
+          "basis": "다크 네이비"
+        }
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "q031",
+      "query": "회색 반팔 105",
+      "source": "synthetic",
+      "entryType": null,
+      "categories": ["color", "gender_size"],
+      "expected": {
+        "colors": ["그레이", "다크 그레이", "라이트 그레이"],
+        "sizeStd": [105]
+      },
+      "answerType": "must_include",
+      "answerGoods": [
+        {
+          "goodsNo": 1565458,
+          "basis": "라이트 그레이·105"
+        },
+        {
+          "goodsNo": 1565459,
+          "basis": "다크 그레이·105"
+        },
+        {
+          "goodsNo": 1565463,
+          "basis": "라이트 그레이·105"
+        }
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "q032",
+      "query": "스노우피크 여성 반팔 5만원 이하",
+      "source": "synthetic",
+      "entryType": null,
+      "categories": ["price_brand", "gender_size"],
+      "expected": {
+        "brand": "스노우피크 어패럴",
+        "gender": "여성",
+        "priceMax": 50000
+      },
+      "answerType": "must_include",
+      "answerGoods": [
+        {
+          "goodsNo": 4803017,
+          "basis": "스노우피크·여성·47,200원"
+        },
+        {
+          "goodsNo": 4862625,
+          "basis": "스노우피크·여성·41,300원"
+        },
+        {
+          "goodsNo": 4902314,
+          "basis": "스노우피크·여성·47,200원"
+        }
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "q033",
+      "query": "반드시 폴리에스테르 소재만",
+      "source": "synthetic",
+      "entryType": null,
+      "categories": ["locked", "fit_material_pattern"],
+      "expected": {
+        "materials": ["폴리에스테르"],
+        "locked": ["materials"],
+        "note": "혼방 포함(overlaps 시맨틱스) — 100% 함량 의미 아님"
+      },
+      "answerType": "must_include",
+      "answerGoods": [
+        {
+          "goodsNo": 2028349,
+          "basis": "폴리에스테르 단독"
+        },
+        {
+          "goodsNo": 2447764,
+          "basis": "폴리에스테르 혼방"
+        },
+        {
+          "goodsNo": 1565466,
+          "basis": "폴리에스테르 혼방"
+        }
+      ],
+      "confidence": "high"
+    }
+  ]
+}

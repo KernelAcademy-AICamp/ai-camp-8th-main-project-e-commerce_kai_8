@@ -1,0 +1,99 @@
+{
+ "measuredAt": "2026-08-01T11:59:19+00:00",
+ "gitHead": "44a315c78cd55de1c711ed83ca1670c592694907",
+ "flagDeclared": "측정 프로세스는 flag를 설정하지 않음(서버 환경이 실효값)",
+ "base": "http://localhost:3000",
+ "scope": "API-route E2E(/api/search 응답 기준) — 클라이언트 9초 예산과 별개",
+ "rescoredFrom": "../docs/p3-t0/baseline-20260801",
+ "runsRequested": 3,
+ "runsValid": 3,
+ "goldens": {
+  "query_sha256": "02a362c2b424f78fe18aca6d9d6bc94e64f17312fb8756e821f7dc3095bc6f95",
+  "color_sha256": "9862f5ae50298adeab2efdda0c6acba84878b026fd6fa0b0a55db1b5a30a3a70"
+ },
+ "metricNote": "e2eOutputMiss는 최종 출력 기준(하드필터·절단 혼합) — 기준3 축별 누락률과 직접 비교 금지",
+ "e2eOutputMiss": {
+  "clean": {
+   "denominator": 60,
+   "missed": {
+    "mean": 41,
+    "min": 39,
+    "max": 43
+   }
+  },
+  "metadata": {
+   "denominator": 3,
+   "missed": {
+    "mean": 2,
+    "min": 2,
+    "max": 2
+   }
+  },
+  "synonym": {
+   "denominator": 5,
+   "missed": {
+    "mean": 5,
+    "min": 5,
+    "max": 5
+   }
+  },
+  "stopword": {
+   "denominator": 3,
+   "missed": {
+    "mean": 3,
+    "min": 3,
+    "max": 3
+   }
+  }
+ },
+ "trapColorLeaks": {
+  "mean": 3.3333333333333335,
+  "min": 3,
+  "max": 4
+ },
+ "sortCorrect": {
+  "mean": 2,
+  "min": 2,
+  "max": 2,
+  "total": 3
+ },
+ "color": {
+  "precisionOnAttempt": {
+   "mean": 0.36931201811130127,
+   "min": 0.35877865961199296,
+   "max": 0.3777073732718894
+  },
+  "coverage": {
+   "mean": 0.837037037037037,
+   "min": 0.6888888888888889,
+   "max": 1.0
+  },
+  "recall": {
+   "mean": 0.4851851851851852,
+   "min": 0.43703703703703706,
+   "max": 0.5648148148148149
+  },
+  "silentAccuracy": {
+   "mean": 0.0,
+   "min": 0.0,
+   "max": 0.0
+  }
+ },
+ "colorCounts": {
+  "attempted": {
+   "mean": 37.666666666666664,
+   "min": 31,
+   "max": 45
+  },
+  "expected": {
+   "mean": 45,
+   "min": 45,
+   "max": 45
+  },
+  "silent": {
+   "mean": 5,
+   "min": 5,
+   "max": 5
+  }
+ }
+}
