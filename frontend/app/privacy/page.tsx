@@ -15,7 +15,7 @@ export const metadata: Metadata = {
   description: "aTee가 무엇을 수집하고, 얼마나 보관하고, 어떻게 지우는지.",
 };
 
-const UPDATED_AT = "2026년 8월 18일";
+const UPDATED_AT = "2026년 8월 19일";
 
 /** 구글 OAuth 심사가 처리방침에 연락 수단을 요구한다 (2026-08-18 제품 책임자 결정). */
 const CONTACT_EMAIL = "likefry98@gmail.com";
@@ -41,8 +41,8 @@ export default function PrivacyPolicyPage() {
         <p>
           aTee는 취향에 맞는 티셔츠 피드를 만들기 위해 이 브라우저의{" "}
           <b className="text-white">익명 ID</b>와 탐색 행동을 기록합니다. 로그인은
-          선택이며, 하면 이메일 주소를 계정으로 저장합니다. 둘 다 언제든 지울 수
-          있습니다.
+          선택이며, 하면 이메일 주소와 찜한 상품을 계정에 저장합니다. 둘 다 언제든 지울
+          수 있습니다.
         </p>
       </section>
 
@@ -83,6 +83,11 @@ export default function PrivacyPolicyPage() {
             신원, 로그인 세션과 갱신 토큰.
           </li>
           <li>이 기기에는 로그인 세션 쿠키와 현재 신원 표시자가 남습니다.</li>
+          <li>
+            <b className="text-white">찜 목록</b> — 로그인하면 찜이 계정에 저장됩니다.{" "}
+            <b className="text-white">상품 번호와 담은 시각만</b> 담고 상품 정보는
+            복사하지 않습니다. 로그인하지 않으면 이 기기에만 남습니다.
+          </li>
         </ul>
       </section>
 
@@ -105,6 +110,7 @@ export default function PrivacyPolicyPage() {
           <li>검색어 기록 — 90일 뒤 자동 삭제</li>
           <li>탐색 행동·익명 ID — 지울 때까지</li>
           <li>계정 — 탈퇴할 때까지</li>
+          <li>찜 목록 — 탈퇴하거나 찜을 풀 때까지</li>
         </ul>
       </section>
 
@@ -113,11 +119,12 @@ export default function PrivacyPolicyPage() {
         <p>
           <b className="text-white">개인화 데이터 모두 지우기</b> — 이 기기의 익명
           ID·취향 프로필과 서버에 기록된 탐색 행동·검색어가 지워지고 새 익명 ID로 처음
-          상태가 됩니다. 계정은 남습니다.
+          상태가 됩니다. <b className="text-white">계정과 계정에 담긴 찜은 남습니다.</b>
         </p>
         <p>
           <b className="text-white">계정 삭제</b> — 계정과 연결된 구글 신원, 로그인
-          세션이 지워지고, 이어서 이 기기의 탐색 행동·검색어 기록도 함께 지워집니다.
+          세션, <b className="text-white">계정에 담긴 찜</b>이 지워지고, 이어서 이
+          기기의 탐색 행동·검색어 기록도 함께 지워집니다.
         </p>
         <p>
           서버 삭제가 실패하면 이 기기가 그 사실을 적어 두고 다음 접속에서 다시

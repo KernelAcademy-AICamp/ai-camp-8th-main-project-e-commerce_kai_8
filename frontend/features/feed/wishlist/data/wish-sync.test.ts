@@ -153,6 +153,33 @@ describe("createWishSync", () => {
     expect(server.calls).toHaveLength(2);
   });
 
+  it("서버에서 읽은 상태를 알려주면 그것을 되돌리는 요청이 나간다", async () => {
+    // 이걸 안 하면 서버에 이미 담긴 찜을 풀 때 "이미 그 상태"로 보고 건너뛴다.
+    // 화면만 줄고 서버는 그대로인 버그를 실제로 냈다.
+    const server = deferredPush();
+    const sync = createWishSync(server.push, onRevert);
+
+    sync.setConfirmed(10, true);
+    sync.request(10, false);
+    await Promise.resolve();
+
+    expect(server.calls).toEqual([{ goodsNo: 10, wanted: false }]);
+  });
+
+  it("보내는 중에는 서버에서 읽은 상태로 덮어쓰지 않는다", async () => {
+    const server = deferredPush();
+    const sync = createWishSync(server.push, onRevert);
+
+    sync.request(10, true);
+    await Promise.resolve();
+    // 보내는 사이에 목록을 다시 읽어 "아직 찜 아님"이 도착했다
+    sync.setConfirmed(10, false);
+    await server.finishLast();
+
+    // 방금 보낸 것이 성공했으므로 확정은 true다. 덮어썼다면 또 보냈을 것이다.
+    expect(server.calls).toHaveLength(1);
+  });
+
   it("확정 상태와 같은 요청은 보내지 않는다", async () => {
     const server = deferredPush();
     const sync = createWishSync(server.push, onRevert);

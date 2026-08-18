@@ -21,6 +21,13 @@ export type OnRevert = (goodsNo: number, confirmed: boolean, cause: unknown) => 
 export interface WishSync {
   /** 이 상품을 wanted 상태로 만들고 싶다고 알린다 */
   request: (goodsNo: number, wanted: boolean) => void;
+  /**
+   * 서버에서 읽은 현재 상태를 알려준다.
+   *
+   * **이걸 하지 않으면** 서버에 이미 담긴 찜을 풀 때 "이미 그 상태"로 보고
+   * 요청을 건너뛴다 — 화면만 줄고 서버는 그대로가 된다.
+   */
+  setConfirmed: (goodsNo: number, state: boolean) => void;
 }
 
 export function createWishSync(push: PushWish, onRevert: OnRevert): WishSync {
@@ -63,6 +70,11 @@ export function createWishSync(push: PushWish, onRevert: OnRevert): WishSync {
     request(goodsNo, wanted) {
       desired.set(goodsNo, wanted);
       drain(goodsNo);
+    },
+    setConfirmed(goodsNo, state) {
+      // 보내는 중이면 건드리지 않는다. 그 요청의 결과가 더 최신이다.
+      if (sending.has(goodsNo)) return;
+      confirmed.set(goodsNo, state);
     },
   };
 }

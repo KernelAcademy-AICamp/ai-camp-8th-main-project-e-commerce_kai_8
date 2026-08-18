@@ -21,6 +21,7 @@ import {
   SIMILAR_PAGE_SIZE,
   useFeedViewModel,
 } from "@/features/feed/presentation/view-model/use-feed-view-model";
+import { wishlistNoticeMessage } from "@/features/feed/wishlist/domain/wishlist-notice";
 import { useWishlist } from "@/features/feed/wishlist/presentation/view-model/use-wishlist";
 import { logAction } from "@/shared/signals/signals";
 
@@ -79,8 +80,9 @@ export function ProductDetail({
     similarFirst: true,
     paused: !active,
   });
-  const { wished, toggle } = useWishlist();
+  const { wished, toggle, notice } = useWishlist();
   const isWishedNow = wished(product.goodsNo);
+  const wishlistMessage = wishlistNoticeMessage(notice);
   useBodyScrollLock();
 
   return (
@@ -199,6 +201,13 @@ export function ProductDetail({
                 </a>
               </div>
             </div>
+
+            {/* 하트가 되돌아간 이유를 알린다 — 조용히 어긋난 채로 두지 않는다 */}
+            {wishlistMessage !== null && (
+              <p role="status" className="mt-2 text-sm text-amber-400">
+                {wishlistMessage}
+              </p>
+            )}
           </div>
 
           <div className="px-2 pb-10">

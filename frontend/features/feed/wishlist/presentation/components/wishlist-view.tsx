@@ -9,11 +9,13 @@ import { formatPrice } from "@/features/feed/domain/format-price";
 import { distributeToColumns } from "@/features/feed/domain/masonry";
 import { FeedGrid } from "@/features/feed/presentation/components/feed-grid";
 import type { FeedCardViewData } from "@/features/feed/presentation/view-model/use-feed-view-model";
+import { wishlistNoticeMessage } from "@/features/feed/wishlist/domain/wishlist-notice";
 import { useWishlist } from "@/features/feed/wishlist/presentation/view-model/use-wishlist";
 
 /** 찜 보관함 — 최신 찜 순 2열 그리드, 탭하면 상세로 (설계 §8 최소 목록 뷰) */
 export function WishlistView() {
-  const { entries } = useWishlist();
+  const { entries, notice } = useWishlist();
+  const message = wishlistNoticeMessage(notice);
   const { stack, open, requestClose, finishClose } = useDetailState();
   // 보관함은 무한 스크롤이 없다 — FeedGrid 계약용 더미 센티널
   const sentinelRef = useRef<HTMLDivElement | null>(null);
@@ -44,6 +46,12 @@ export function WishlistView() {
           보관함{entries.length > 0 && ` ${String(entries.length)}`}
         </h1>
       </header>
+
+      {message !== null && (
+        <p role="status" className="mx-1 mb-2 text-sm text-amber-400">
+          {message}
+        </p>
+      )}
 
       {entries.length === 0 ? (
         <div className="flex flex-col items-center gap-3 py-24 text-neutral-400">
