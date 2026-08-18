@@ -19,9 +19,11 @@ from pathlib import Path
 import psycopg
 
 OUT = Path(__file__).parent / "큐레이션화면.html"
-# 화면(client)이 읽는 같은 데이터. 목업 HTML과 한 번에 같이 쓴다 — 둘이 어긋나면 안 된다.
-JSON_OUT = (Path(__file__).resolve().parents[2]
-            / "client/features/curation/data/curations.json")
+# 화면이 읽는 같은 데이터. 목업 HTML과 한 번에 같이 쓴다 — 셋이 어긋나면 안 된다.
+# 큐레이션 탭은 aTee(frontend)에도 붙어 있어서 두 앱에 같은 바이트를 쓴다.
+_REPO = Path(__file__).resolve().parents[3]
+JSON_OUTS = [_REPO / "curation/client/features/curation/data/curations.json",
+             _REPO / "frontend/features/curation/data/curations.json"]
 ENV = Path(__file__).resolve().parents[1] / ".env.local"
 TOP_N = 9   # ponytail: 상위 9개만 노출. 상품마다 NOTES를 손으로 쓰는 비용이 크다.
 
@@ -33,6 +35,12 @@ MIN_BUY = 100      # 구매 100개 미만은 검증 안 된 것으로 본다 (12
 MIN_REVIEW = 30    # 리뷰 30개 미만의 평점 100점은 표본이 작아서 못 믿는다
 ORDER = "review_score desc nulls last, goods_no desc"
 MAX_APPEAR = 2    # 한 상품이 나갈 수 있는 큐레이션 수. 앞선 큐레이션이 우선권을 갖는다
+
+# 화면의 "N건"을 **하한 통과분**으로 세는 게시물 (사람 결정 2026-08-18).
+# 기본은 하한 전 숫자인데, 반팔 카탈로그의 8할이 구매 0건이라 체형 게시물은
+# "9개 보여주면서 8,830건"이 된다. 실제로 뽑을 수 있는 풀을 적는다.
+# ⚠️ 여기 없는 게시물과 기준이 다르다. 나란히 비교하면 안 된다.
+N_GATED = {"body_straight", "body_wave_w", "body_natural"}
 
 # 반소매 티셔츠 = 일반(001001) + 스포츠(017016005). 긴팔·후드·나시는 뺀다.
 BASE_SCOPE = "base_cat in ('001001','017016005')"
@@ -71,7 +79,7 @@ POS = "coalesce(ai_summary->'sentimentSummary'->>'positive','')"
 #   {"kw": ["래글런","링거"]}                        제목이나 태그에 키워드
 #   {"color": ["화이트"], "sheer": {"any":["없음"]}}  색 + 비침
 #   {"price_final": {"lte": 30000}}
-# 연산자: kw / not_kw / color / color_only / any / all / in / lte / gte / eq
+# 연산자: kw / not_kw / color / color_only / any / all / not_any / in / lte / gte / eq
 def compile_rules(rules):
     """규칙 스펙을 (SQL 조각, 파라미터)로. 컬럼명은 화이트리스트로만 통과시킨다."""
     where, params = [], []
@@ -146,6 +154,14 @@ def compile_rules(rules):
                     params.append(list(want))
                 elif op == "all":
                     where.append(f"{col} @> %s")
+                    params.append(list(want))
+                elif op == "not_any":
+                    # 이 값들이 **아닌** 것. ⚠️ 값이 없는 상품(설문 미기재)은 통과시킨다 —
+                    # not (NULL && ...) 은 NULL이라 그냥 쓰면 미기재가 조용히 전부 탈락한다.
+                    # 반소매에서 thickness·fit·touch는 36%만 채워져 있어 낙차가 크다.
+                    where.append(f"coalesce(not ({col} && %s), true)"
+                                 if key in MULTI | ARRAY else
+                                 f"coalesce({key} <> all(%s), true)")
                     params.append(list(want))
                 elif op == "in":
                     where.append(f"{key} = any(%s)")
@@ -337,6 +353,57 @@ SEED = [
      "lede": "고프코어. 등산이나 캠핑용으로 나온 옷을 시내에서 그냥 입는 흐름이다.",
      "rules": {"kw": ["고프", "아웃도어", "트레킹", "캠핑"]},
      "cond_labels": ["고프코어", "아웃도어"]},
+    # ── 골격 체형 (계획: docs/plans/2026-08-18-curation-body-type.md) ──────────
+    # 조건은 검색의 골격 체형 매핑표(query-plan.ts "골격 체형" 절)에서 옮긴 것이다.
+    # 어깨·가슴·기장은 전부 **실측 백분위**다 — 설문 fit·thickness는 반소매의 36%만
+    # 채워져 있어 하드 조건으로 못 쓴다. 실측이 같은 구분을 재현한다
+    # (라벨별 실측 평균: 슬림 .23 / 레귤러 .47 / 루즈 .77 / 오버 .84, 2026-08-18).
+    # ⚠️ fit_m은 일반 반소매(001001)만 담은 표라 스포츠 티(017016005)는 통째로 빠진다.
+    # ⚠️ pop='여성'은 성별 필터가 아니라 백분위 모집단인데, 그 모집단이 gender='여성'
+    #    상품만 담고 있어 결과적으로 여성 상품만 남는다(실측 확인: 후보 풀 1,939건 전부 여성).
+
+    {"key": "body_straight",
+     "title": "스트레이트 체형이 가장 잘 입는 기본 티셔츠",
+     "lede": "어깨선이 실제 어깨에서 끊기고 몸통이 일자로 떨어지는 것. 상체에 두께가 있는 체형이라 "
+             "잘 만든 기본 티가 제일 잘 맞는다. 아주 얇은 원단과 큰 오버핏은 둘 다 뺐다.",
+     "rules": {"fit_m": {"pop": {"eq": "여성"},
+                         "shoulder_band": {"any": ["정어깨"]},
+                         "length_pct": {"gte": 0.25, "lte": 0.80},
+                         "chest_pct": {"gte": 0.30, "lte": 0.65}},
+               "thickness": {"not_any": ["얇음", "약간 얇음"]},
+               # kw(제목+태그)로 걸면 셔츠가 딸려온다 — 태그 `코튼셔츠`에 "코튼"이 맞아
+               # `Double button shirts top`이 티셔츠 큐레이션에 들어왔다(2026-08-18).
+               # 태그로 빼려 했으나 `셔츠` 태그를 단 상품 대부분이 실제로는 티셔츠라
+               # 멀쩡한 것을 같이 버린다. 제목만 보는 kw_title을 쓴다(후보 94 → 30건).
+               "kw_title": ["무지", "베이직", "에센셜", "솔리드", "코튼",
+                            "cotton", "basic", "essential"],
+               # 실측 기장 백분위는 여성 모집단 기준이라 크롭도 중간대에 들어온다
+               # (`세미 크롭 슬림 반팔티`가 기장 0.40으로 통과했다, 2026-08-18).
+               # 스트레이트는 몸통이 일자로 떨어지는 기본형이라 제목 쪽을 믿고 뺀다.
+               "not_kw": ["크롭", "크랍", "슬림", "머슬"]},
+     "cond_labels": ["정어깨", "코튼 기본형", "얇지 않음"]},
+
+    {"key": "body_wave_w",
+     "title": "웨이브 체형 여성에게 맞는 짧고 슬림한 반팔",
+     "lede": "상체가 얇고 무게중심이 아래인 체형. 상체를 작고 정돈되게 보이게 하는 짧은 기장과 "
+             "몸에 붙는 실루엣이 맞는다. ⚠️ 남성 웨이브는 조건이 정반대라(어깨를 넓혀야 한다) "
+             "이 게시물은 여성 기준이다.",
+     "rules": {"fit_m": {"pop": {"eq": "여성"},
+                         "shoulder_band": {"any": ["좁은 어깨", "정어깨"]},
+                         "length_pct": {"lte": 0.35},
+                         "chest_pct": {"lte": 0.40}}},
+     "cond_labels": ["여성 기준", "좁은 어깨·정어깨", "짧은 기장"]},
+
+    {"key": "body_natural",
+     "title": "내추럴 체형에 균형이 맞는 오버·루즈 반팔",
+     "lede": "뼈대와 관절의 존재감이 있어 옷에도 볼륨이 있어야 균형이 맞는 체형. 몸에 붙는 얇은 반팔은 "
+             "골격을 더 도드라지게 한다. 극단적 드롭숄더는 어깨 위치가 사라져 오히려 좁아 보여 뺐다.",
+     "rules": {"fit_m": {"pop": {"eq": "여성"},
+                         "shoulder_band": {"any": ["어깨 확장", "가벼운 드롭"]},
+                         "chest_pct": {"gte": 0.60},
+                         "length_pct": {"gte": 0.50}},
+               "thickness": {"not_any": ["얇음", "약간 얇음"]}},
+     "cond_labels": ["어깨 확장·드롭", "볼륨 실루엣", "얇지 않음"]},
 ]
 
 # ── 손으로 쓰는 상품 한마디 (goods_no: 글) ────────────────────
@@ -407,7 +474,9 @@ def build(cur, curations):
     out, appear = [], {}   # appear: 상품이 지금까지 몇 개 큐레이션에 들어갔나
     for c in curations:
         where, params = compile_rules(c["rules"])
-        cur.execute(f"select count(*) from c_goods where {BASE_SCOPE} and {where}", params)
+        gate = (f" and purchase_total >= {MIN_BUY} and review_count >= {MIN_REVIEW}"
+                if c["key"] in N_GATED else "")
+        cur.execute(f"select count(*) from c_goods where {BASE_SCOPE} and {where}{gate}", params)
         n = cur.fetchone()[0]
         cur.execute(f"""select {CARD_COLS} from c_goods where {BASE_SCOPE} and {where}
                         and purchase_total >= {MIN_BUY} and review_count >= {MIN_REVIEW}
@@ -651,6 +720,11 @@ def demo():
     w, _ = compile_rules({"season_year": {"eq": "2026"}, "kw": ["그래픽"]})
     assert " and " in w, w
 
+    # 설문 미기재(NULL)가 not_any에서 조용히 탈락하면 안 된다
+    w, p = compile_rules({"thickness": {"not_any": ["얇음"]}})
+    assert w.startswith("coalesce(not (") and w.endswith(", true)"), w
+    assert p == [["얇음"]], p
+
     # 요약이 없는 상품이 "불만 없음"으로 새어 나오면 안 된다
     w, p = compile_rules({"neg_free": ["비침"]})
     assert "ai_summary is not null" in w and w.count("not (") == 1, w
@@ -688,11 +762,14 @@ def main():
         data = build(cur, load(cur))
     js = JS.replace("__DATA__", json.dumps(data, ensure_ascii=False, separators=(",", ":")))
     OUT.write_text(PAGE % (CSS, js), encoding="utf-8")
-    JSON_OUT.write_text(json.dumps(data, ensure_ascii=False, indent=1) + "\n",
-                        encoding="utf-8")
+    payload = json.dumps(data, ensure_ascii=False, indent=1) + "\n"
+    for out in JSON_OUTS:
+        # 두 앱 중 한쪽만 체크아웃된 상태에서도 돌아야 한다.
+        out.parent.mkdir(parents=True, exist_ok=True)
+        out.write_text(payload, encoding="utf-8")
     for c in data:
         print(f"{c['n']:>7,}건  {c['title']}")
-    print(f"→ {OUT}\n→ {JSON_OUT}")
+    print("\n".join(f"→ {p}" for p in [OUT, *JSON_OUTS]))
 
 
 if __name__ == "__main__":
