@@ -1,0 +1,4 @@
+[submodule "curation"]
+	path = curation
+	url = https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-2teams.git
+	branch = develop
