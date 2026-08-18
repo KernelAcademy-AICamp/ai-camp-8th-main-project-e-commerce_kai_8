@@ -70,6 +70,14 @@ export async function fetchSearchPage(
   query: string,
   cursor: SearchCursor | null,
   size: number,
+  /**
+   * LLM이 읽은 부정 조건 (부정 조각 3단계). 없으면 지금까지와 똑같이 동작한다 —
+   * 해석은 **필수 경로가 아니다**(설계 S-02).
+   *
+   * ⚠️ **모든 페이지에 같은 값을 보내야 한다.** 1페이지에서만 빼면 2페이지부터
+   * 위반이 다시 올라온다. 호출자가 제출 단위로 붙잡아 두는 것이 계약이다.
+   */
+  plan?: { exclude: string[]; exclude_colors: string[] },
 ): Promise<SearchPage> {
   if (!isSearchV2Enabled()) {
     const dtos = await rpcPost<(FeedProductDto & WithUsedQuery)[]>(
@@ -95,6 +103,9 @@ export async function fetchSearchPage(
       p_after_score: cursor?.score ?? null,
       p_after: cursor?.goodsNo ?? null,
       p_size: size,
+      // 빈 배열이 아니라 null을 보낸다 — 서버가 `is null`로 조건 자체를 건너뛴다.
+      p_exclude: plan?.exclude.length ? plan.exclude : null,
+      p_exclude_colors: plan?.exclude_colors.length ? plan.exclude_colors : null,
     },
     { timeoutMs: SEARCH_TIMEOUT_MS },
   );
@@ -121,6 +132,7 @@ export async function fetchSearchPage(
 export async function fetchSearchPageWithFallback(
   query: string,
   size: number,
+  plan?: { exclude: string[]; exclude_colors: string[] },
 ): Promise<SearchPage> {
-  return fetchSearchPage(query, null, size);
+  return fetchSearchPage(query, null, size, plan);
 }
