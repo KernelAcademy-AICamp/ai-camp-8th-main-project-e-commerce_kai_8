@@ -6,7 +6,7 @@
 import { createBrowserClient } from "@supabase/ssr";
 import type { SupabaseClient } from "@supabase/supabase-js";
 
-import { readSupabaseConfig } from "./supabase-config";
+import { readSupabaseConfig } from "@/shared/supabase/config";
 
 let cached: SupabaseClient | null = null;
 

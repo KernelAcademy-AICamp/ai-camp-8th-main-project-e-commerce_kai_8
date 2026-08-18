@@ -5,7 +5,7 @@ import { createServerClient } from "@supabase/ssr";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { cookies } from "next/headers";
 
-import { readSupabaseConfig } from "./supabase-config";
+import { readSupabaseConfig } from "@/shared/supabase/config";
 
 export async function createServerSupabase(): Promise<SupabaseClient> {
   const cookieStore = await cookies();
