@@ -63,6 +63,12 @@ describe("identityScopedKeys", () => {
     expect(identityScopedKeys(["atee-identity-tab"])).toEqual([]);
   });
 
+  it("삭제 대기 표식은 남긴다 — 탈퇴 직후 로그아웃이 곧 신원 전환이다", () => {
+    // 탈퇴하면 세션이 사라지면서 여기(신원 전환 정리)가 곧바로 돈다.
+    // 이 표식을 같이 지우면 "삭제가 서버에 닿았는지" 확인할 손잡이를 잃는다.
+    expect(identityScopedKeys(["atee-pending-account-delete"])).toEqual([]);
+  });
+
   it("우리 것이 아닌 키는 건드리지 않는다", () => {
     expect(identityScopedKeys(["other-app-data", "sb-auth-token"])).toEqual([]);
   });
