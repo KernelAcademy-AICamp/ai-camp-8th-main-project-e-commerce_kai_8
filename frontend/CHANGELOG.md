@@ -1,3 +1,14 @@
+## [0.1.7](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/compare/v0.1.6...v0.1.7) (2026-08-18)
+
+### Features
+
+* 설치 가능한 PWA — 매니페스트·아이콘·iOS 메타 ([#46](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/issues/46)) ([1ff7726](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/commit/1ff77262c32f107566c15c5660e4cb26ba279a53)), closes [#0a0a0a](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/issues/0a0a0a)
+* 찜을 계정으로 옮기고 로그인·마이페이지 화면을 만든다 (조각 2) ([#43](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/issues/43)) ([2e4434f](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/commit/2e4434f6734c00b36cb97cfef1544bfeb658d13a))
+* 취향 프로필을 계정으로 옮기고 내 취향 카드를 만든다 ([#44](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/issues/44)) ([a5249b2](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/commit/a5249b209a6dd6cbd4e07d1c653eb7e83255f377))
+
+### Bug Fixes
+
+* 고지를 사실과 맞추고 삭제 약속의 구멍을 막는다 ([#42](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/issues/42)) ([d1e8a93](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/commit/d1e8a931d282496bd49263a565e7ba365616aa80))
 ## [0.1.6](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/compare/v0.1.5...v0.1.6) (2026-08-18)
 
 ### Features
