@@ -1,3 +1,9 @@
+## [0.1.4](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/compare/v0.1.3...v0.1.4) (2026-08-18)
+
+### Bug Fixes
+
+* 키보드 올릴 때 검색창이 접히고 화면이 확대되는 문제 ([#30](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/issues/30)) ([c58fd75](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/commit/c58fd7559457e35ec7f979e59ec9821f6b2a78b5))
+* 프로덕션 이미지 깨짐 - Vercel 최적화 끄기 ([#37](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/issues/37)) ([027b9fc](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/commit/027b9fc829fd8de10ccba011076ff3dc159fe12c))
 ## [0.1.3](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/compare/v0.1.2...v0.1.3) (2026-08-18)
 
 ### Features
