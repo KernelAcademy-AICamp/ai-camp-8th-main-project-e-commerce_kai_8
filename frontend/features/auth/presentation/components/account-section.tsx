@@ -45,8 +45,8 @@ export function AccountSection({ notice }: { notice: AuthNotice | null }) {
             구글로 계속하기
           </button>
           <p className="text-sm text-neutral-400">
-            지금은 로그인해도 달라지는 것이 없습니다. 다음 업데이트에서 찜을 계정에
-            저장할 예정입니다.
+            로그인하면 찜한 상품이 계정에 저장돼 다른 기기에서도 보입니다. 이 기기에
+            찜해둔 것이 있다면 로그인할 때 함께 올라옵니다.
           </p>
         </div>
       )}

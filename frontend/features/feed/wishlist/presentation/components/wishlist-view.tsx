@@ -14,7 +14,7 @@ import { useWishlist } from "@/features/feed/wishlist/presentation/view-model/us
 
 /** 찜 보관함 — 최신 찜 순 2열 그리드, 탭하면 상세로 (설계 §8 최소 목록 뷰) */
 export function WishlistView() {
-  const { entries, notice } = useWishlist();
+  const { entries, notice, access } = useWishlist();
   const message = wishlistNoticeMessage(notice);
   const { stack, open, requestClose, finishClose } = useDetailState();
   // 보관함은 무한 스크롤이 없다 — FeedGrid 계약용 더미 센티널
@@ -47,20 +47,43 @@ export function WishlistView() {
         </h1>
       </header>
 
+      {/* 판정 전에는 비어 보이는 화면을 먼저 그리지 않는다 — 로그인한 사람에게
+          "로그인하세요"가 잠깐 스치면 안 된다 */}
+      {access === "unknown" && <div className="py-24" aria-label="불러오는 중" />}
+
+      {access === "out" && (
+        <div className="flex flex-col items-center gap-3 px-6 py-24 text-center text-neutral-400">
+          <p className="text-[15px] text-neutral-200">
+            찜은 로그인해야 담을 수 있어요.
+          </p>
+          <p className="text-sm">
+            이 기기에 찜해둔 것이 있다면 로그인할 때 계정으로 올라옵니다.
+          </p>
+          <Link
+            href="/settings"
+            className="mt-2 rounded-xl bg-neutral-800 px-5 py-3 font-medium text-white"
+          >
+            로그인하러 가기
+          </Link>
+        </div>
+      )}
+
       {message !== null && (
         <p role="status" className="mx-1 mb-2 text-sm text-amber-400">
           {message}
         </p>
       )}
 
-      {entries.length === 0 ? (
+      {access === "in" && entries.length === 0 && (
         <div className="flex flex-col items-center gap-3 py-24 text-neutral-400">
           <p>아직 찜한 상품이 없어요.</p>
           <Link href="/" className="rounded-xl bg-neutral-800 px-4 py-2 text-white">
             피드 둘러보기
           </Link>
         </div>
-      ) : (
+      )}
+
+      {access === "in" && entries.length > 0 && (
         <FeedGrid
           columns={columns}
           sentinelRef={sentinelRef}

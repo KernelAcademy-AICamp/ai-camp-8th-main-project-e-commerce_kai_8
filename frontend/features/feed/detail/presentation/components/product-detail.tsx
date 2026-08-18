@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { useEffect, useMemo } from "react";
 
 import { buildSlides } from "@/features/feed/detail/domain/detail-slides";
@@ -204,9 +205,17 @@ export function ProductDetail({
 
             {/* 하트가 되돌아간 이유를 알린다 — 조용히 어긋난 채로 두지 않는다 */}
             {wishlistMessage !== null && (
-              <p role="status" className="mt-2 text-sm text-amber-400">
-                {wishlistMessage}
-              </p>
+              <div role="status" className="mt-2 text-sm text-amber-400">
+                <p>{wishlistMessage}</p>
+                {notice === "login" && (
+                  <Link
+                    href="/settings"
+                    className="mt-2 inline-block rounded-lg bg-neutral-800 px-4 py-2 font-medium text-white"
+                  >
+                    로그인하러 가기
+                  </Link>
+                )}
+              </div>
             )}
           </div>
 
