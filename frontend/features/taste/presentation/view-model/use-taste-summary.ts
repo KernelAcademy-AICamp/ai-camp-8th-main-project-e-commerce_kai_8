@@ -1,10 +1,10 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 import { useSignedIn } from "@/shared/supabase/use-signed-in";
 
-import { fetchTasteSummary } from "../../data/taste-summary-api";
+import { fetchTasteSummary, refreshTasteSummary } from "../../data/taste-summary-api";
 import type { TasteSummary } from "../../domain/taste-summary";
 
 export type TasteCardState =
@@ -27,9 +27,18 @@ type Loaded =
  * 로그인 여부는 **상태로 복사하지 않고** 그때그때 파생한다 — 두 벌로 두면
  * 로그아웃한 뒤에도 남의 취향이 잠깐 남는다.
  */
-export function useTasteSummary(): TasteCardState {
+export interface TasteCardViewModel {
+  state: TasteCardState;
+  /** 새로고침이 도는 중 — 버튼을 잠그고 도는 표시를 낸다 */
+  refreshing: boolean;
+  /** 지금 세션의 취향까지 접어 올리고 다시 그린다 */
+  refresh: () => void;
+}
+
+export function useTasteSummary(): TasteCardViewModel {
   const signedIn = useSignedIn();
   const [loaded, setLoaded] = useState<Loaded>({ kind: "loading" });
+  const [refreshing, setRefreshing] = useState(false);
 
   useEffect(() => {
     if (signedIn !== "in") return;
@@ -51,7 +60,32 @@ export function useTasteSummary(): TasteCardState {
     };
   }, [signedIn]);
 
-  if (signedIn === "out") return { kind: "hidden" };
-  if (signedIn === "unknown") return { kind: "loading" };
-  return loaded;
+  // 도는 중의 재클릭은 무시 — 접기는 한 번이면 충분하고, 겹치면 올리기 순서가 섞인다
+  const busyRef = useRef(false);
+  const refresh = useCallback(() => {
+    if (busyRef.current) return;
+    busyRef.current = true;
+    setRefreshing(true);
+    void refreshTasteSummary()
+      .then(
+        (summary) => {
+          setLoaded({ kind: "ready", summary });
+        },
+        () => {
+          setLoaded({ kind: "failed" });
+        },
+      )
+      .finally(() => {
+        busyRef.current = false;
+        setRefreshing(false);
+      });
+  }, []);
+
+  const state: TasteCardState =
+    signedIn === "out"
+      ? { kind: "hidden" }
+      : signedIn === "unknown"
+        ? { kind: "loading" }
+        : loaded;
+  return { state, refreshing, refresh };
 }

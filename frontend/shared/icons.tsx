@@ -51,6 +51,26 @@ export function BackIcon({ size = 20 }: IconProps) {
   );
 }
 
+/** 원형 화살표 — 새로고침 */
+export function RefreshIcon({ size = 20 }: IconProps) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      width={size}
+      height={size}
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.8"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      <path d="M20 12a8 8 0 1 1-2.34-5.66" />
+      <path d="M20 3v4h-4" />
+    </svg>
+  );
+}
+
 /** 톱니 — 설정 */
 export function GearIcon({ size = 20 }: IconProps) {
   return (
