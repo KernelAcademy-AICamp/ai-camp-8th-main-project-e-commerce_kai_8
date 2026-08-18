@@ -16,10 +16,16 @@ import { GearIcon } from "@/shared/icons";
  * 수단이 있다. 막으면 방침이 약속한 "설정의 초기화 버튼 한 번으로 지워진다"가
  * 깨진다.
  *
- * 카드를 두지 않는다 — 지금 가진 것은 계정뿐이고, 없는 기능을 카드로 약속하지
- * 않는다.
+ * 계정 아래에 붙는 카드는 **children으로 받는다.** 여기서 직접 import하면
+ * feature끼리 얽힌다(frontend/AGENTS.md) — 조립은 라우트가 한다.
  */
-export function MyPage({ notice }: { notice: AuthNotice | null }) {
+export function MyPage({
+  notice,
+  children,
+}: {
+  notice: AuthNotice | null;
+  children?: React.ReactNode;
+}) {
   const { state, busy, failed, signOut } = useAuthSession();
   const showFailure = failed || notice === "failed";
 
@@ -89,6 +95,8 @@ export function MyPage({ notice }: { notice: AuthNotice | null }) {
           로그인에 실패했습니다. 다시 시도해 주세요.
         </p>
       )}
+
+      {children}
     </main>
   );
 }
