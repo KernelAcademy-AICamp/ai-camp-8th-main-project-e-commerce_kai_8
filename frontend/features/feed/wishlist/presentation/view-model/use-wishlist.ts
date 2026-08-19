@@ -9,6 +9,8 @@ import {
 } from "@/features/feed/wishlist/data/account-wish-actions";
 import {
   clearAccountWishes,
+  getAccountFoldersServerSnapshot,
+  getAccountFoldersSnapshot,
   getAccountNoticeSnapshot,
   getAccountWishesServerSnapshot,
   getAccountWishesSnapshot,
@@ -16,8 +18,13 @@ import {
   setAccountWishes,
   subscribeAccountWishes,
 } from "@/features/feed/wishlist/data/account-wishlist-store";
+import type { WishFolder } from "@/features/feed/wishlist/domain/wish-folders";
 import type { WishlistEntry } from "@/features/feed/wishlist/domain/wishlist";
-import { isWished, toggleWish } from "@/features/feed/wishlist/domain/wishlist";
+import {
+  addWish,
+  isWished,
+  removeWish,
+} from "@/features/feed/wishlist/domain/wishlist";
 import type { WishlistNotice } from "@/features/feed/wishlist/domain/wishlist-notice";
 import { logAction } from "@/shared/signals/signals";
 import { useSignedIn } from "@/shared/supabase/use-signed-in";
@@ -25,6 +32,7 @@ import { useSignedIn } from "@/shared/supabase/use-signed-in";
 const NO_NOTICE = (): WishlistNotice => null;
 /** 참조가 안정적이어야 한다 — 매번 새 배열을 주면 헛렌더가 난다 */
 const NO_ENTRIES: WishlistEntry[] = [];
+const NO_FOLDERS: WishFolder[] = [];
 
 /**
  * 찜 목록 구독 + 토글.
@@ -55,6 +63,11 @@ export function useWishlist() {
     getAccountNoticeSnapshot,
     NO_NOTICE,
   );
+  const accountFolders = useSyncExternalStore(
+    subscribeAccountWishes,
+    getAccountFoldersSnapshot,
+    getAccountFoldersServerSnapshot,
+  );
 
   useEffect(() => {
     if (signedIn === "in") {
@@ -67,21 +80,36 @@ export function useWishlist() {
   }, [signedIn]);
 
   const entries = signedIn === "in" ? account : NO_ENTRIES;
+  const folders = signedIn === "in" ? accountFolders : NO_FOLDERS;
   const notice = signedIn === "in" ? accountNotice : null;
 
-  const toggle = useCallback(
-    (product: Product): boolean => {
+  /** 폴더를 골라 담는다 (folderId=null이면 기본 폴더). 시트가 부른다. */
+  const save = useCallback(
+    (product: Product, folderId: string | null): void => {
       // 로그인하지 않았거나 판정 전이면 담지 않는다. 로그인으로 보내는 것은
       // 화면의 몫이다 — 하트를 누르면 곧바로 로그인 화면으로 간다.
-      if (signedIn !== "in") return false;
+      if (signedIn !== "in") return;
 
       setAccountNotice(null);
       // 구독한 값이 아니라 스냅샷을 읽는다 — 오래된 클로저를 잡지 않는다
-      const result = toggleWish(getAccountWishesSnapshot(), product, Date.now());
-      setAccountWishes(result.entries);
-      logAction(result.added ? "wish" : "unwish", product.goodsNo);
-      requestAccountWish(product.goodsNo, result.added);
-      return result.added;
+      setAccountWishes(
+        addWish(getAccountWishesSnapshot(), product, folderId, Date.now()),
+      );
+      logAction("wish", product.goodsNo);
+      requestAccountWish(product.goodsNo, true, folderId);
+    },
+    [signedIn],
+  );
+
+  /** 찜을 뺀다. 채워진 하트 재탭 = 즉시 해제 (2026-08-20 결정). */
+  const remove = useCallback(
+    (product: Product): void => {
+      if (signedIn !== "in") return;
+
+      setAccountNotice(null);
+      setAccountWishes(removeWish(getAccountWishesSnapshot(), product.goodsNo));
+      logAction("unwish", product.goodsNo);
+      requestAccountWish(product.goodsNo, false);
     },
     [signedIn],
   );
@@ -91,5 +119,5 @@ export function useWishlist() {
     [entries],
   );
 
-  return { entries, wished, toggle, notice, access: signedIn };
+  return { entries, folders, wished, save, remove, notice, access: signedIn };
 }

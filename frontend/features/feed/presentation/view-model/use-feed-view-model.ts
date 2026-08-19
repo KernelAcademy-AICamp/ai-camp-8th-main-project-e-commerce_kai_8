@@ -16,6 +16,7 @@ import type {
   ImpressionDomInfo,
 } from "@/features/feed/presentation/view-model/card-view-data";
 import type { ProfileSummary } from "@/shared/profile/profile-store";
+import { nearestScrollRoot } from "@/shared/scroll/nearest-scroll-root";
 import { getFeedProfileSummary, logImpression } from "@/shared/signals/signals";
 import type { FeedPolicy, SourceBucket, Surface } from "@/shared/signals/types";
 
@@ -195,8 +196,14 @@ export function useFeedViewModel(options?: FeedOptions) {
       (entries) => {
         if (entries.some((entry) => entry.isIntersecting)) loadMore();
       },
-      // 바닥에 닿기 전에 미리 불러와 스크롤이 끊기지 않게 한다
-      { rootMargin: "800px 0px" },
+      {
+        // 이 피드를 굴리는 것이 화면 자체가 아니라 칸이나 상세 본문일 수 있다.
+        // 그때 뷰포트를 기준으로 재면 아래 800px이 칸 밖이라 잘려 나가, 미리
+        // 불러오기가 죽고 바닥에 닿아야 다음 장이 시작된다.
+        root: nearestScrollRoot(sentinel),
+        // 바닥에 닿기 전에 미리 불러와 스크롤이 끊기지 않게 한다
+        rootMargin: "800px 0px",
+      },
     );
     observer.observe(sentinel);
     return () => {

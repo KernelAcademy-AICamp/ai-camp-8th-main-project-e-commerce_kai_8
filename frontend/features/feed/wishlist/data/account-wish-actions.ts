@@ -4,6 +4,7 @@
 // 어느 쪽이 이겼는지 아무도 모른다. 공유 저장소와 짝을 이루는 짝꿍이다.
 
 import {
+  setAccountFolders,
   setAccountNotice,
   setAccountWishes,
 } from "@/features/feed/wishlist/data/account-wishlist-store";
@@ -11,21 +12,29 @@ import { uploadCarriedWishes } from "@/features/feed/wishlist/data/upload-carrie
 import { createWishSync } from "@/features/feed/wishlist/data/wish-sync";
 import {
   addAccountWish,
+  createWishFolder,
+  deleteWishFolder,
   fetchAccountWishes,
+  fetchWishFolders,
   removeAccountWish,
+  renameWishFolder,
   WishlistFullError,
 } from "@/features/feed/wishlist/data/wishlist-api";
 
 /**
- * 서버에서 계정 찜을 다시 읽어 저장소를 맞춘다.
+ * 서버에서 계정 찜과 폴더를 다시 읽어 저장소를 맞춘다.
  *
  * 읽은 상태를 전송 관리자에게도 알린다 — 알리지 않으면 서버에 이미 담긴 찜을
  * 풀 때 "이미 그 상태"로 보고 요청을 건너뛴다.
  */
 export async function reloadAccountWishes(): Promise<void> {
   try {
-    const entries = await fetchAccountWishes();
+    const [entries, folders] = await Promise.all([
+      fetchAccountWishes(),
+      fetchWishFolders(),
+    ]);
     setAccountWishes(entries);
+    setAccountFolders(folders);
     for (const entry of entries) {
       sync.setConfirmed(entry.product.goodsNo, true);
     }
@@ -35,7 +44,8 @@ export async function reloadAccountWishes(): Promise<void> {
 }
 
 const sync = createWishSync(
-  (goodsNo, wanted) => (wanted ? addAccountWish(goodsNo) : removeAccountWish(goodsNo)),
+  (goodsNo, wanted, folderId) =>
+    wanted ? addAccountWish(goodsNo, folderId) : removeAccountWish(goodsNo),
   (_goodsNo, _confirmed, cause) => {
     setAccountNotice(cause instanceof WishlistFullError ? "full" : "failed");
     // 되돌리기는 서버를 다시 읽어 맞춘다. 화면에서 지운 상품의 정보를 되살릴
@@ -45,8 +55,38 @@ const sync = createWishSync(
 );
 
 /** 이 상품을 wanted 상태로 만들고 싶다고 알린다. 순서는 sync가 맡는다. */
-export function requestAccountWish(goodsNo: number, wanted: boolean): void {
-  sync.request(goodsNo, wanted);
+export function requestAccountWish(
+  goodsNo: number,
+  wanted: boolean,
+  folderId: string | null = null,
+): void {
+  sync.request(goodsNo, wanted, folderId);
+}
+
+// ── 폴더 동작 ───────────────────────────────────────────────────────────────
+// 찜 토글과 달리 연타 경합이 없다 — 서버 확답을 기다렸다가 목록을 다시 읽는다.
+// 실패는 호출한 화면이 그 자리에서 알린다(DuplicateFolderError 등을 그대로 던짐).
+
+/** 폴더를 만들고 새 id를 돌려준다 */
+export async function createAccountFolder(name: string): Promise<string> {
+  const id = await createWishFolder(name);
+  setAccountFolders(await fetchWishFolders());
+  return id;
+}
+
+export async function renameAccountFolder(
+  folderId: string,
+  name: string,
+): Promise<void> {
+  await renameWishFolder(folderId, name);
+  setAccountFolders(await fetchWishFolders());
+}
+
+/** 폴더를 지운다 — 안의 찜은 기본 폴더로 옮겨진 채 살아 있다 */
+export async function deleteAccountFolder(folderId: string): Promise<void> {
+  await deleteWishFolder(folderId);
+  // 찜의 folder_id도 바뀌었으므로 둘 다 다시 읽는다
+  await reloadAccountWishes();
 }
 
 /**

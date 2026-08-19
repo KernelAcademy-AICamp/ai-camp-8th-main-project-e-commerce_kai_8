@@ -1,9 +1,9 @@
-import { WishlistView } from "@/features/feed/wishlist/presentation/components/wishlist-view";
+import { FolderGridView } from "@/features/feed/wishlist/presentation/components/folder-grid-view";
 
 export default function WishlistPage() {
   return (
     <main>
-      <WishlistView />
+      <FolderGridView />
     </main>
   );
 }

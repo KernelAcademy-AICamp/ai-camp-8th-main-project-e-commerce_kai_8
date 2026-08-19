@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback } from "react";
+import { useCallback, useRef } from "react";
 
 import curationData from "@/features/curation/data/curations.json";
 import type { Curation, CurationItem } from "@/features/curation/domain/curation";
@@ -25,7 +25,10 @@ const curations: Curation[] = curationData;
  * RSC 페이로드로 다시 보내야 해 오히려 커진다.
  */
 export function CurationPane() {
-  const { openKey, open: openCuration, back } = useCurationScreen();
+  // 이 화면을 굴리는 것은 자신이 놓인 칸이다(home-shell). 목록 자리를 저장·복원하는
+  // 훅이 그 칸을 스스로 찾도록 자리만 알려 준다 (shared/scroll).
+  const rootRef = useRef<HTMLDivElement>(null);
+  const { openKey, open: openCuration, back } = useCurationScreen(rootRef);
   const open = curations.find((c) => c.key === openKey) ?? null;
 
   const {
@@ -58,7 +61,7 @@ export function CurationPane() {
   );
 
   return (
-    <>
+    <div ref={rootRef}>
       {open ? (
         <CurationDetailScreen
           curation={open}
@@ -76,6 +79,6 @@ export function CurationPane() {
         onClosed={finishClose}
         onSelectProduct={openProduct}
       />
-    </>
+    </div>
   );
 }
