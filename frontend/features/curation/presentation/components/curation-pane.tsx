@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback } from "react";
 
 import curationData from "@/features/curation/data/curations.json";
 import type { Curation, CurationItem } from "@/features/curation/domain/curation";
@@ -10,6 +10,7 @@ import {
 } from "@/features/curation/domain/curation-product";
 import { CurationDetailScreen } from "@/features/curation/presentation/components/curation-detail-screen";
 import { CurationList } from "@/features/curation/presentation/components/curation-list";
+import { useCurationScreen } from "@/features/curation/presentation/view-model/use-curation-screen";
 import { fetchProduct } from "@/features/feed/data/feed-api";
 import { DetailLayers } from "@/features/feed/detail/presentation/components/detail-layers";
 import { useDetailState } from "@/features/feed/detail/presentation/view-model/use-detail-state";
@@ -24,25 +25,15 @@ const curations: Curation[] = curationData;
  * RSC 페이로드로 다시 보내야 해 오히려 커진다.
  */
 export function CurationPane() {
-  const [openKey, setOpenKey] = useState<string | null>(null);
+  const { openKey, open: openCuration, back } = useCurationScreen();
   const open = curations.find((c) => c.key === openKey) ?? null;
-  // 목록으로 돌아왔을 때 보던 자리로 — 칸이 문서 스크롤을 공유해서(use-pane-swipe)
-  // 화면을 갈아 끼우면 세로 위치가 그대로 남는다
-  const listScrollY = useRef(0);
 
-  const { stack, open: openProduct, requestClose, finishClose } = useDetailState();
-
-  const back = useCallback(() => {
-    setOpenKey(null);
-  }, []);
-
-  useEffect(() => {
-    if (openKey === null) {
-      window.scrollTo(0, listScrollY.current);
-      return;
-    }
-    window.scrollTo(0, 0);
-  }, [openKey]);
+  const {
+    stack,
+    open: openProduct,
+    requestClose,
+    finishClose,
+  } = useDetailState("curation");
 
   const selectItem = useCallback(
     async (item: CurationItem, thumb: DOMRect) => {
@@ -77,13 +68,7 @@ export function CurationPane() {
           }}
         />
       ) : (
-        <CurationList
-          curations={curations}
-          onOpen={(key) => {
-            listScrollY.current = window.scrollY;
-            setOpenKey(key);
-          }}
-        />
+        <CurationList curations={curations} onOpen={openCuration} />
       )}
       <DetailLayers
         stack={stack}

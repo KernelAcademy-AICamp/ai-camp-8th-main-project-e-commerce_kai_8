@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 
+import { BackLink } from "@/shared/history/back-link";
 import { BackIcon } from "@/shared/icons";
 
 /**
@@ -27,13 +28,13 @@ export default function PrivacyPolicyPage() {
     <main className="mx-auto max-w-md px-4 pb-6 text-neutral-200">
       {/* 뒤로가기 좌표를 마이페이지와 맞춘다 — 왼쪽 16px·위 8px (전 화면 공통) */}
       <header className="mb-4 flex items-center gap-1 py-2">
-        <Link
+        <BackLink
           href="/settings"
-          aria-label="설정으로 돌아가기"
+          label="설정으로 돌아가기"
           className="flex h-10 w-10 items-center justify-center rounded-full text-neutral-400"
         >
           <BackIcon />
-        </Link>
+        </BackLink>
         <h1 className="text-lg font-semibold text-white">개인정보 처리방침</h1>
       </header>
 
