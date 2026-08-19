@@ -3,6 +3,7 @@ import "./globals.css";
 import type { Metadata, Viewport } from "next";
 
 import { IdentityGuard } from "@/features/auth/presentation/components/identity-guard";
+import { NavMarkGuard } from "@/shared/history/nav-mark-guard";
 import { AccountProfileGuard } from "@/shared/profile/account-profile-guard";
 
 export const metadata: Metadata = {
@@ -31,6 +32,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="ko">
       <body>
+        <NavMarkGuard />
         <IdentityGuard />
         <AccountProfileGuard />
         {children}
