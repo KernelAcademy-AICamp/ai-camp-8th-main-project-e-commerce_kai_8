@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 
 import { startGoogleSignIn } from "@/features/auth/data/auth-repository";
-import { useScreenClose } from "@/features/auth/presentation/view-model/use-screen-close";
+import { useBackTo } from "@/shared/history/use-nav-history";
 import { useSignedIn } from "@/shared/supabase/use-signed-in";
 
 export interface LoginScreenViewModel {
@@ -39,7 +39,7 @@ export function useLoginScreen(): LoginScreenViewModel {
     });
   }, []);
 
-  const close = useScreenClose("/login");
+  const close = useBackTo("/");
 
   return { ready: signedIn === "out", busy, failed, signIn, close };
 }

@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 
+import { BackLink } from "@/shared/history/back-link";
+
 /**
  * 공개 개인정보 처리방침.
  *
@@ -24,13 +26,13 @@ export default function PrivacyPolicyPage() {
   return (
     <main className="mx-auto max-w-md px-4 py-6 text-neutral-200">
       <header className="mb-6 flex items-center gap-3">
-        <Link
+        <BackLink
           href="/settings"
-          aria-label="설정으로 돌아가기"
+          label="설정으로 돌아가기"
           className="flex h-10 w-10 items-center justify-center rounded-full text-xl text-white"
         >
           ←
-        </Link>
+        </BackLink>
         <h1 className="text-lg font-semibold text-white">개인정보 처리방침</h1>
       </header>
 
