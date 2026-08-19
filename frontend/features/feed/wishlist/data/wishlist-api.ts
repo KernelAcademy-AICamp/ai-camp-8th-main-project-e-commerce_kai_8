@@ -3,6 +3,7 @@
 // 익명 통로(`shared/supabase-rpc.ts`)를 쓰지 않는다. 계정 데이터는 인증 통로로만
 // 나간다(조각 1 설계 §2 transport 경계).
 
+import { toGalleryUrls } from "@/features/feed/domain/image-url";
 import type { Product } from "@/features/feed/domain/product";
 import type { WishlistEntry } from "@/features/feed/wishlist/domain/wishlist";
 import { authedRpc, AuthedRpcError } from "@/shared/supabase/authed-rpc";
@@ -33,7 +34,9 @@ function toEntry(dto: WishRowDto): WishlistEntry {
     gender: dto.gender,
     width: dto.width ?? 0,
     height: dto.height ?? 0,
-    gallery: dto.gallery ?? [],
+    // 서버(c_wish_page)는 c_goods의 상대경로를 그대로 내려준다 — 피드와 같은
+    // 규칙으로 호스트를 붙인다. 안 붙이면 상세가 첫 장만 보인다.
+    gallery: toGalleryUrls(dto.gallery ?? []),
   };
   return { product, addedAtMs: Date.parse(dto.added_at) };
 }
