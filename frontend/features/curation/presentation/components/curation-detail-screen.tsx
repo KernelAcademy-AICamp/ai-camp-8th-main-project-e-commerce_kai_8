@@ -4,6 +4,7 @@ import Image from "next/image";
 
 import type { Curation, CurationItem } from "@/features/curation/domain/curation";
 import { formatPrice } from "@/features/feed/domain/format-price";
+import { BackIcon } from "@/shared/icons";
 
 export function CurationDetailScreen({
   curation,
@@ -19,9 +20,10 @@ export function CurationDetailScreen({
       <button
         type="button"
         onClick={onBack}
-        className="w-full cursor-pointer border-b border-neutral-800 px-4 py-2.5 text-left text-[11px] tracking-[0.1em] text-neutral-400"
+        className="flex w-full cursor-pointer items-center gap-1.5 border-b border-neutral-800 px-4 py-2.5 text-left text-[11px] tracking-[0.1em] text-neutral-400"
       >
-        ← 큐레이션
+        <BackIcon size={14} />
+        큐레이션
       </button>
 
       <h2 className="px-4 pt-4 text-2xl leading-tight font-semibold tracking-tight text-white">

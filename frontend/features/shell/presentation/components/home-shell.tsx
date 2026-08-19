@@ -76,7 +76,7 @@ export function HomeShell({ forYou }: { forYou: ReactNode }) {
       <div
         ref={railRef}
         onScroll={onScroll}
-        className="flex snap-x snap-mandatory scroll-smooth overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+        className="flex snap-x snap-mandatory scroll-smooth overflow-x-auto overscroll-x-none [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
       >
         <div className="w-full shrink-0 snap-center">
           <MosaicFeed active={pane === "browse"} />

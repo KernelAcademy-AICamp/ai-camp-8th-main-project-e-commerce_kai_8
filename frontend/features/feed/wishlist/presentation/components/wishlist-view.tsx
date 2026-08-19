@@ -13,6 +13,7 @@ import type { FeedCardViewData } from "@/features/feed/presentation/view-model/u
 import { wishlistNoticeMessage } from "@/features/feed/wishlist/domain/wishlist-notice";
 import { useWishlist } from "@/features/feed/wishlist/presentation/view-model/use-wishlist";
 import { BackLink } from "@/shared/history/back-link";
+import { BackIcon } from "@/shared/icons";
 
 /** 찜 보관함 — 최신 찜 순 2열 그리드, 탭하면 상세로 (설계 §8 최소 목록 뷰) */
 export function WishlistView() {
@@ -40,14 +41,15 @@ export function WishlistView() {
   }, [entries]);
 
   return (
-    <div className="mx-auto max-w-md px-2 pt-2 pb-10">
-      <header className="flex items-center gap-1 px-1 py-2">
+    <div className="mx-auto max-w-md px-2 pb-10">
+      {/* 뒤로가기 좌표를 마이페이지와 맞춘다 — 왼쪽 16px·위 8px (전 화면 공통) */}
+      <header className="flex items-center gap-1 px-2 py-2">
         <BackLink
           href="/"
           label="피드로 돌아가기"
-          className="flex h-10 w-10 items-center justify-center rounded-full text-xl text-white"
+          className="flex h-10 w-10 items-center justify-center rounded-full text-neutral-400"
         >
-          ←
+          <BackIcon />
         </BackLink>
         <h1 className="text-lg font-semibold text-white">
           보관함{entries.length > 0 && ` ${String(entries.length)}`}
