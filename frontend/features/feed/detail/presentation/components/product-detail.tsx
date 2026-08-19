@@ -23,6 +23,8 @@ import {
   useFeedViewModel,
 } from "@/features/feed/presentation/view-model/use-feed-view-model";
 import { wishlistNoticeMessage } from "@/features/feed/wishlist/domain/wishlist-notice";
+import { SaveSheet } from "@/features/feed/wishlist/presentation/components/save-sheet";
+import { useSaveSheet } from "@/features/feed/wishlist/presentation/view-model/use-save-sheet";
 import { useWishlist } from "@/features/feed/wishlist/presentation/view-model/use-wishlist";
 import { BackIcon } from "@/shared/icons";
 import { logAction } from "@/shared/signals/signals";
@@ -83,7 +85,8 @@ export function ProductDetail({
     paused: !active,
   });
   const router = useRouter();
-  const { wished, toggle, notice, access } = useWishlist();
+  const { wished, save, remove, folders, entries, notice, access } = useWishlist();
+  const sheet = useSaveSheet(save);
   const isWishedNow = wished(product.goodsNo);
   const wishlistMessage = wishlistNoticeMessage(notice);
   useBodyScrollLock();
@@ -191,7 +194,13 @@ export function ProductDetail({
                       router.push("/login");
                       return;
                     }
-                    toggle(product);
+                    // 채워진 하트는 즉시 해제, 빈 하트는 폴더 고르는 시트
+                    // (docs/plans/2026-08-20-wishlist-folders.md)
+                    if (isWishedNow) {
+                      remove(product);
+                    } else {
+                      sheet.open(product);
+                    }
                   }}
                 >
                   {isWishedNow ? "♥" : "♡"}
@@ -248,6 +257,24 @@ export function ProductDetail({
           </button>
         )}
       </div>
+
+      {sheet.pending !== null && (
+        <SaveSheet
+          folders={folders}
+          entries={entries}
+          onPick={sheet.pick}
+          onClose={sheet.close}
+          creating={sheet.creating}
+          onStartCreating={sheet.startCreating}
+          draftName={sheet.draftName}
+          onDraftName={sheet.setDraftName}
+          createError={sheet.createError}
+          saving={sheet.saving}
+          onSubmitCreate={() => {
+            void sheet.submitCreate();
+          }}
+        />
+      )}
     </div>
   );
 }

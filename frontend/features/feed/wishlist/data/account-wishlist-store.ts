@@ -8,12 +8,15 @@
 //
 // useSyncExternalStore 계약을 지킨다 — 바뀌기 전까지 같은 참조를 돌려준다.
 
+import type { WishFolder } from "@/features/feed/wishlist/domain/wish-folders";
 import type { WishlistEntry } from "@/features/feed/wishlist/domain/wishlist";
 import type { WishlistNotice } from "@/features/feed/wishlist/domain/wishlist-notice";
 
 const EMPTY: WishlistEntry[] = [];
+const NO_FOLDERS: WishFolder[] = [];
 
 let entries: WishlistEntry[] = EMPTY;
+let folders: WishFolder[] = NO_FOLDERS;
 let notice: WishlistNotice = null;
 const listeners = new Set<() => void>();
 
@@ -37,6 +40,20 @@ export function setAccountWishes(next: WishlistEntry[]): void {
   notify();
 }
 
+/** 폴더 목록도 찜과 같은 저장소에 둔다 — 시트와 보관함이 같은 사본을 본다 */
+export function getAccountFoldersSnapshot(): WishFolder[] {
+  return folders;
+}
+
+export function getAccountFoldersServerSnapshot(): WishFolder[] {
+  return NO_FOLDERS;
+}
+
+export function setAccountFolders(next: WishFolder[]): void {
+  folders = next;
+  notify();
+}
+
 /**
  * 알림도 화면 사이에 공유한다.
  *
@@ -55,8 +72,9 @@ export function setAccountNotice(next: WishlistNotice): void {
 /** 로그아웃·신원 전환 때 비운다 — 앞사람 찜이 다음 사람에게 보이면 안 된다 */
 export function clearAccountWishes(): void {
   // 이미 비어 있으면 알리지 않는다 — 비회원 화면이 뜰 때마다 헛렌더가 난다
-  if (entries === EMPTY && notice === null) return;
+  if (entries === EMPTY && folders === NO_FOLDERS && notice === null) return;
   entries = EMPTY;
+  folders = NO_FOLDERS;
   notice = null;
   notify();
 }
