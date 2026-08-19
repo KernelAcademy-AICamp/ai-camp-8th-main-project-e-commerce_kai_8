@@ -2,6 +2,8 @@
 
 import { type RefObject, useCallback, useEffect, useRef, useState } from "react";
 
+import { scrollHostFor } from "@/shared/scroll/scroll-host";
+
 /** 같은 방향으로 이만큼 누적되면 전환한다 (짧은 흔들림 무시) */
 const TOGGLE_THRESHOLD_PX = 60;
 /** 이 위쪽에서는 항상 확장 상태를 유지한다 */
@@ -21,7 +23,10 @@ const EXPAND_SUPPRESS_MS = 600;
  * suppressUntilRef(performance.now 기준 시각) 이전의 스크롤 이벤트는
  * 프로그램적 스크롤(검색 전환의 상단 이동·복원)이므로 판정에서 제외한다.
  */
-export function useSearchCollapse(suppressUntilRef: RefObject<number>) {
+export function useSearchCollapse(
+  suppressUntilRef: RefObject<number>,
+  anchorRef: RefObject<HTMLElement | null>,
+) {
   const [collapsed, setCollapsed] = useState(false);
   // 손으로 펼친 시각 + 억제 구간. 렌더와 무관한 진행 상태라 ref로 둔다.
   const expandedUntilRef = useRef(0);
@@ -30,10 +35,12 @@ export function useSearchCollapse(suppressUntilRef: RefObject<number>) {
   const focusedRef = useRef(false);
 
   useEffect(() => {
-    let lastY = window.scrollY;
+    // 굴리는 주체를 놓인 자리에서 찾는다 — 홈에서는 칸이 굴린다 (shared/scroll)
+    const host = scrollHostFor(anchorRef.current);
+    let lastY = host.top();
     let accumulated = 0;
     const onScroll = () => {
-      const y = window.scrollY;
+      const y = host.top();
       const delta = y - lastY;
       lastY = y;
       // "상단 = 항상 확장"은 프로그램적 스크롤에도 적용한다 — 검색 제출로
@@ -64,11 +71,8 @@ export function useSearchCollapse(suppressUntilRef: RefObject<number>) {
       if (accumulated > TOGGLE_THRESHOLD_PX) setCollapsed(true);
       else if (accumulated < -TOGGLE_THRESHOLD_PX) setCollapsed(false);
     };
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => {
-      window.removeEventListener("scroll", onScroll);
-    };
-  }, [suppressUntilRef]);
+    return host.subscribe(onScroll);
+  }, [suppressUntilRef, anchorRef]);
 
   /** 축소된 버튼을 탭했을 때 — 검색창으로 재확장 */
   const expand = useCallback(() => {

@@ -4,6 +4,9 @@ import { beforeEach, describe, expect, it } from "vitest";
 
 import { useSearchCollapse } from "@/features/feed/search/presentation/view-model/use-search-collapse";
 
+/** 굴리는 조상이 없는 자리 — 문서가 굴린다 (shared/scroll) */
+const documentAnchor = { current: null };
+
 function setScrollY(y: number) {
   Object.defineProperty(window, "scrollY", { value: y, configurable: true });
 }
@@ -22,7 +25,9 @@ beforeEach(() => {
 describe("useSearchCollapse", () => {
   it("아래로 일정량 넘게 스크롤하면 축소된다", () => {
     const suppressUntilRef = { current: 0 };
-    const { result } = renderHook(() => useSearchCollapse(suppressUntilRef));
+    const { result } = renderHook(() =>
+      useSearchCollapse(suppressUntilRef, documentAnchor),
+    );
     expect(result.current.collapsed).toBe(false);
     scrollTo(200);
     scrollTo(400);
@@ -31,7 +36,9 @@ describe("useSearchCollapse", () => {
 
   it("위로 스크롤하면 다시 펼쳐진다", () => {
     const suppressUntilRef = { current: 0 };
-    const { result } = renderHook(() => useSearchCollapse(suppressUntilRef));
+    const { result } = renderHook(() =>
+      useSearchCollapse(suppressUntilRef, documentAnchor),
+    );
     scrollTo(400);
     expect(result.current.collapsed).toBe(true);
     scrollTo(200);
@@ -40,7 +47,9 @@ describe("useSearchCollapse", () => {
 
   it("상단 근처에서는 항상 펼쳐진다", () => {
     const suppressUntilRef = { current: 0 };
-    const { result } = renderHook(() => useSearchCollapse(suppressUntilRef));
+    const { result } = renderHook(() =>
+      useSearchCollapse(suppressUntilRef, documentAnchor),
+    );
     scrollTo(400);
     expect(result.current.collapsed).toBe(true);
     scrollTo(10);
@@ -49,7 +58,9 @@ describe("useSearchCollapse", () => {
 
   it("프로그램적 스크롤(복원·상단 이동) 동안은 판정하지 않는다", () => {
     const suppressUntilRef = { current: performance.now() + 10000 };
-    const { result } = renderHook(() => useSearchCollapse(suppressUntilRef));
+    const { result } = renderHook(() =>
+      useSearchCollapse(suppressUntilRef, documentAnchor),
+    );
     scrollTo(2000);
     scrollTo(4000);
     expect(result.current.collapsed).toBe(false);
@@ -57,7 +68,9 @@ describe("useSearchCollapse", () => {
 
   it("프로그램적 스크롤이라도 상단 도착은 확장시킨다 (검색 제출 → 결과 상단)", () => {
     const suppressUntilRef = { current: 0 };
-    const { result } = renderHook(() => useSearchCollapse(suppressUntilRef));
+    const { result } = renderHook(() =>
+      useSearchCollapse(suppressUntilRef, documentAnchor),
+    );
     scrollTo(400);
     expect(result.current.collapsed).toBe(true);
     suppressUntilRef.current = performance.now() + 10000;
@@ -73,7 +86,9 @@ describe("useSearchCollapse", () => {
    */
   it("입력에 포커스가 있는 동안은 스크롤로 접히지 않는다", () => {
     const suppressUntilRef = { current: 0 };
-    const { result } = renderHook(() => useSearchCollapse(suppressUntilRef));
+    const { result } = renderHook(() =>
+      useSearchCollapse(suppressUntilRef, documentAnchor),
+    );
     act(() => {
       result.current.onInputFocus();
     });
@@ -86,7 +101,9 @@ describe("useSearchCollapse", () => {
 
   it("포커스를 잡으면 접혀 있던 검색창이 펼쳐진다", () => {
     const suppressUntilRef = { current: 0 };
-    const { result } = renderHook(() => useSearchCollapse(suppressUntilRef));
+    const { result } = renderHook(() =>
+      useSearchCollapse(suppressUntilRef, documentAnchor),
+    );
     scrollTo(400);
     expect(result.current.collapsed).toBe(true);
 
@@ -99,7 +116,9 @@ describe("useSearchCollapse", () => {
 
   it("포커스가 풀린 뒤에는 다시 스크롤로 접힌다", () => {
     const suppressUntilRef = { current: 0 };
-    const { result } = renderHook(() => useSearchCollapse(suppressUntilRef));
+    const { result } = renderHook(() =>
+      useSearchCollapse(suppressUntilRef, documentAnchor),
+    );
     act(() => {
       result.current.onInputFocus();
     });
@@ -115,9 +134,49 @@ describe("useSearchCollapse", () => {
     expect(result.current.collapsed).toBe(true);
   });
 
+  /*
+   * 홈에서는 문서가 아니라 칸이 굴린다(home-shell). 문서 스크롤만 듣던 시절엔
+   * 이 화면에서 접힘 판정이 아예 돌지 않았다.
+   */
+  it("굴리는 칸 안에 놓이면 칸의 스크롤로 판정한다", () => {
+    const pane = document.createElement("div");
+    pane.style.overflowY = "auto";
+    const anchorEl = document.createElement("div");
+    pane.appendChild(anchorEl);
+    document.body.appendChild(pane);
+    let paneTop = 0;
+    Object.defineProperty(pane, "scrollTop", {
+      get: () => paneTop,
+      configurable: true,
+    });
+    const scrollPane = (y: number) => {
+      act(() => {
+        paneTop = y;
+        pane.dispatchEvent(new Event("scroll"));
+      });
+    };
+
+    const suppressUntilRef = { current: 0 };
+    const { result } = renderHook(() =>
+      useSearchCollapse(suppressUntilRef, { current: anchorEl }),
+    );
+
+    scrollPane(200);
+    scrollPane(400);
+    expect(result.current.collapsed).toBe(true);
+
+    // 문서 스크롤은 이 칸의 판정에 끼어들지 않는다
+    scrollTo(0);
+    expect(result.current.collapsed).toBe(true);
+
+    document.body.removeChild(pane);
+  });
+
   it("expand()는 축소 상태를 강제로 푼다", () => {
     const suppressUntilRef = { current: 0 };
-    const { result } = renderHook(() => useSearchCollapse(suppressUntilRef));
+    const { result } = renderHook(() =>
+      useSearchCollapse(suppressUntilRef, documentAnchor),
+    );
     scrollTo(400);
     expect(result.current.collapsed).toBe(true);
     act(() => {
