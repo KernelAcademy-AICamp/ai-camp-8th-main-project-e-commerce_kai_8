@@ -3,7 +3,7 @@
 // 보조 상태(노출 횟수·최근 노출)만 유지한다.
 
 /** 프로필 스키마 버전 — 구조를 바꾸면 올린다 */
-export const PROFILE_SCHEMA_VERSION = 1;
+export const PROFILE_SCHEMA_VERSION = 2;
 
 /** 앵커 상한 (설계 §6 초기값) */
 export const LONG_ANCHOR_MAX = 50;
@@ -34,10 +34,14 @@ export const STYLE_BOOST_IMPRESSIONS = 60;
 
 export type ProfileActionType = keyof typeof SIGNAL_WEIGHTS | "unwish";
 
+/** 앵커 성별 — 성별 미상은 필드 자체를 두지 않는다(undefined) */
+export type AnchorGender = "남성" | "여성" | "공용";
+
 export interface Anchor {
   goodsNo: number;
   weight: number;
   lastMs: number;
+  gender?: AnchorGender;
 }
 
 export interface SessionProfile {
@@ -83,6 +87,7 @@ export interface ProfileAction {
   type: ProfileActionType;
   goodsNo: number;
   nowMs: number;
+  gender?: AnchorGender;
 }
 
 export function applyAction(
@@ -104,12 +109,23 @@ export function applyAction(
   const anchors = existing
     ? session.anchors.map((a) =>
         a.goodsNo === action.goodsNo
-          ? { ...a, weight: a.weight + gain, lastMs: action.nowMs }
+          ? {
+              ...a,
+              weight: a.weight + gain,
+              lastMs: action.nowMs,
+              // 성별이 있으면 갱신, 없으면 기존 값 유지
+              gender: action.gender ?? a.gender,
+            }
           : a,
       )
     : [
         ...session.anchors,
-        { goodsNo: action.goodsNo, weight: gain, lastMs: action.nowMs },
+        {
+          goodsNo: action.goodsNo,
+          weight: gain,
+          lastMs: action.nowMs,
+          gender: action.gender,
+        },
       ];
   return {
     ...session,
@@ -175,6 +191,8 @@ export function foldSessionIntoLongTerm(
       goodsNo: anchor.goodsNo,
       weight: (existing?.weight ?? 0) + anchor.weight,
       lastMs: Math.max(existing?.lastMs ?? 0, anchor.lastMs),
+      // 한쪽에만 성별이 있으면 있는 쪽 값을 취한다
+      gender: anchor.gender ?? existing?.gender,
     });
   }
   return {
@@ -190,7 +208,13 @@ export function mergeLongTerm(a: LongTermProfile, b: LongTermProfile): LongTermP
   for (const anchor of [...a.anchors, ...b.anchors]) {
     const existing = merged.get(anchor.goodsNo);
     if (!existing || anchor.weight > existing.weight) {
-      merged.set(anchor.goodsNo, anchor);
+      // 가중 최대 쪽을 취하되, 성별은 한쪽에만 있어도 잃지 않는다
+      merged.set(anchor.goodsNo, {
+        ...anchor,
+        gender: anchor.gender ?? existing?.gender,
+      });
+    } else if (!existing.gender && anchor.gender) {
+      merged.set(anchor.goodsNo, { ...existing, gender: anchor.gender });
     }
   }
   return {
@@ -198,4 +222,35 @@ export function mergeLongTerm(a: LongTermProfile, b: LongTermProfile): LongTermP
     anchors: pruneAnchors([...merged.values()], LONG_ANCHOR_MAX),
     updatedAtMs: Math.max(a.updatedAtMs, b.updatedAtMs),
   };
+}
+
+/** 우세 성별 판정 모수가 되는 최소 앵커 수 — 시작값, 실측으로 튜닝 */
+export const GENDER_MIN_ANCHORS = 3;
+
+/** 우세 성별로 판정하는 가중 비율 기준 — 시작값, 실측으로 튜닝 */
+export const GENDER_SHARE_THRESHOLD = 0.6;
+
+/**
+ * 기기 앵커 목록에서 우세 성별을 판정한다 (설계: 성별 피드 하드 필터 2단계).
+ * '공용'·성별 미상 앵커는 모수에서 제외한다. 풀림은 별도 이력 없이 매번
+ * 같은 계산으로 자동 대칭이다(히스테리시스 없음 — YAGNI).
+ */
+export function deriveDominantGender(anchors: Anchor[]): "남성" | "여성" | null {
+  const gendered = anchors.filter(
+    (a): a is Anchor & { gender: "남성" | "여성" } =>
+      a.gender === "남성" || a.gender === "여성",
+  );
+  if (gendered.length < GENDER_MIN_ANCHORS) return null;
+
+  const totalWeight = gendered.reduce((sum, a) => sum + a.weight, 0);
+  if (totalWeight <= 0) return null;
+
+  const maleWeight = gendered
+    .filter((a) => a.gender === "남성")
+    .reduce((sum, a) => sum + a.weight, 0);
+  const femaleWeight = totalWeight - maleWeight;
+
+  if (maleWeight / totalWeight >= GENDER_SHARE_THRESHOLD) return "남성";
+  if (femaleWeight / totalWeight >= GENDER_SHARE_THRESHOLD) return "여성";
+  return null;
 }
