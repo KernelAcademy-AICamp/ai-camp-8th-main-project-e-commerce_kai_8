@@ -139,10 +139,33 @@ export function TasteCard() {
         </button>
       </div>
 
+      {/* 완성된 카드와 같은 배치(축 4줄·색 칩·브랜드)로 영역을 잡는다 —
+          로드 후 내용이 그 자리에 그대로 들어와 화면이 튀지 않는다 */}
       {state.kind === "loading" && (
-        <div aria-label="불러오는 중" className="mt-6 animate-pulse space-y-7">
-          <div className="h-1 rounded-full bg-neutral-800" />
-          <div className="h-1 rounded-full bg-neutral-800" />
+        <div aria-label="불러오는 중" className="animate-pulse">
+          <ul className="mt-6 space-y-7">
+            {AXES_IN_ORDER.map((axis) => (
+              <li key={axis.key}>
+                <div className="flex items-center justify-between">
+                  <div className="h-3 w-10 rounded bg-neutral-800" />
+                  <div className="h-3 w-10 rounded bg-neutral-800" />
+                </div>
+                <div className="mt-1.5 h-1 rounded-full bg-neutral-800" />
+              </li>
+            ))}
+          </ul>
+          <div className="mt-7">
+            <div className="h-3 w-12 rounded bg-neutral-800" />
+            <div className="mt-3 flex flex-wrap gap-2">
+              <div className="h-[34px] w-24 rounded-full bg-neutral-800" />
+              <div className="h-[34px] w-20 rounded-full bg-neutral-800" />
+              <div className="h-[34px] w-24 rounded-full bg-neutral-800" />
+            </div>
+          </div>
+          <div className="mt-7">
+            <div className="h-3 w-16 rounded bg-neutral-800" />
+            <div className="mt-3 h-5 w-48 rounded bg-neutral-800" />
+          </div>
         </div>
       )}
 
