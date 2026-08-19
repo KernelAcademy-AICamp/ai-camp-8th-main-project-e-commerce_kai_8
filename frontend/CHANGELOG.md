@@ -1,3 +1,15 @@
+## [0.1.12](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/compare/v0.1.11...v0.1.12) (2026-08-19)
+
+### Features
+
+* 보관함을 폴더로 나누고 하트는 담을 폴더를 고르게 한다 ([#56](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/issues/56)) ([128d3cc](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/commit/128d3cc842188654dea5ca8bffd4982bb9a1c18d))
+
+### Bug Fixes
+
+* 개인화 초기화가 계정 취향까지 지운다 ([#57](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/issues/57)) ([8f6021b](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/commit/8f6021b0e56bcf186c74255fcdafaa309fa21af7))
+* 두 탭이 각자 세로 스크롤을 갖게 한다 ([#60](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/issues/60)) ([9837919](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/commit/98379193c07a63fde96a03e212138c80fa774db0))
+* 마이페이지 이동 지연 — 즉시 뼈대 + 인증 왕복 제거 ([#58](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/issues/58)) ([b413f8b](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/commit/b413f8b276fcb7236d4d49a1d2a4f2f7364878bb))
+* 보관함 상세도 갤러리 전체를 보여준다 ([#55](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/issues/55)) ([cc13fd8](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/commit/cc13fd8ea9bc52577579cfbfd971eb21b159699f))
 ## [0.1.11](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/compare/v0.1.10...v0.1.11) (2026-08-19)
 
 ### Bug Fixes
