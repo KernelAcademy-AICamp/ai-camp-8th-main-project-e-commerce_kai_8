@@ -10,6 +10,7 @@ import {
   type TasteSummary,
 } from "../../domain/taste-summary";
 import { useTasteSummary } from "../view-model/use-taste-summary";
+import { TasteCardSkeleton } from "./taste-card-skeleton";
 
 /** 색 칩과 브랜드는 몇 개 넘으면 읽히지 않는다. 서버는 더 보내도 화면이 줄인다. */
 const MAX_COLORS = 5;
@@ -120,17 +121,20 @@ export function TasteCard() {
   const { state, refreshing, refresh } = useTasteSummary();
 
   if (state.kind === "hidden") return null;
+  // 뼈대는 이동 중 화면과 공유한다 — 각자 그리면 도착하는 순간 깜빡인다
+  if (state.kind === "loading") return <TasteCardSkeleton />;
 
   return (
     <section className="mt-10 rounded-2xl border border-neutral-800 p-5">
       <div className="flex items-center justify-between">
         <h2 className="text-base font-semibold text-white">내 취향</h2>
-        {/* 세션 취향은 30분 쉬어야 반영되므로, "지금까지 본 것까지"를 원하면 이 버튼 */}
+        {/* 세션 취향은 30분 쉬어야 반영되므로, "지금까지 본 것까지"를 원하면 이 버튼.
+            불러오는 중 잠그는 일은 뼈대(TasteCardSkeleton)가 맡는다 — 여기까지 왔으면 끝났다 */}
         <button
           type="button"
           aria-label="지금까지 본 것까지 반영해 새로고침"
           onClick={refresh}
-          disabled={refreshing || state.kind === "loading"}
+          disabled={refreshing}
           className={`-m-2 flex h-9 w-9 cursor-pointer items-center justify-center rounded-full text-neutral-400 disabled:opacity-50 ${
             refreshing ? "animate-spin" : ""
           }`}
@@ -138,36 +142,6 @@ export function TasteCard() {
           <RefreshIcon size={17} />
         </button>
       </div>
-
-      {/* 완성된 카드와 같은 배치(축 4줄·색 칩·브랜드)로 영역을 잡는다 —
-          로드 후 내용이 그 자리에 그대로 들어와 화면이 튀지 않는다 */}
-      {state.kind === "loading" && (
-        <div aria-label="불러오는 중" className="animate-pulse">
-          <ul className="mt-6 space-y-7">
-            {AXES_IN_ORDER.map((axis) => (
-              <li key={axis.key}>
-                <div className="flex items-center justify-between">
-                  <div className="h-3 w-10 rounded bg-neutral-800" />
-                  <div className="h-3 w-10 rounded bg-neutral-800" />
-                </div>
-                <div className="mt-1.5 h-1 rounded-full bg-neutral-800" />
-              </li>
-            ))}
-          </ul>
-          <div className="mt-7">
-            <div className="h-3 w-12 rounded bg-neutral-800" />
-            <div className="mt-3 flex flex-wrap gap-2">
-              <div className="h-[34px] w-24 rounded-full bg-neutral-800" />
-              <div className="h-[34px] w-20 rounded-full bg-neutral-800" />
-              <div className="h-[34px] w-24 rounded-full bg-neutral-800" />
-            </div>
-          </div>
-          <div className="mt-7">
-            <div className="h-3 w-16 rounded bg-neutral-800" />
-            <div className="mt-3 h-5 w-48 rounded bg-neutral-800" />
-          </div>
-        </div>
-      )}
 
       {state.kind === "failed" && (
         <p role="status" className="mt-1 text-sm text-neutral-500">
