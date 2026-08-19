@@ -1,3 +1,8 @@
+## [0.1.8](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/compare/v0.1.7...v0.1.8) (2026-08-19)
+
+### Features
+
+* 취향 카드 새로고침 + 접기 저장이 감쇠를 되돌리던 결함 수정 ([#47](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/issues/47)) ([b430339](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/commit/b43033995bfb0e298fffab0c98f4dc37ea21ad3d))
 ## [0.1.7](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/compare/v0.1.6...v0.1.7) (2026-08-18)
 
 ### Features
