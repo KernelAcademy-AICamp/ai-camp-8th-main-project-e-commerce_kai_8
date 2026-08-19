@@ -1,5 +1,7 @@
 import type { NextConfig } from "next";
 
+import { version as appVersion } from "./package.json";
+
 /**
  * 인증이 관여하는 경로 — 세션 쿠키가 오가는 응답.
  *
@@ -43,6 +45,17 @@ const BASE_SECURITY_HEADERS = [
 ];
 
 const nextConfig: NextConfig = {
+  /**
+   * 화면에 보여줄 빌드 정보 (설계 §2).
+   *
+   * Vercel이 자동 노출하는 `NEXT_PUBLIC_*` 계열에 기대지 않는다 — 그 노출은
+   * 프로젝트 설정에 달려 있어 조용히 꺼질 수 있다. 여기서 명시적으로 넘긴다.
+   * 빌드 시점에 굳으므로 환경변수만 바꿔서는 안 바뀐다(재빌드 필요).
+   */
+  env: {
+    APP_VERSION: appVersion,
+    APP_ENV: process.env.VERCEL_ENV ?? "",
+  },
   images: {
     // 무신사 CDN이 이미 500px 완성 썸네일을 CloudFront로 1년 캐시해 서빙한다.
     // Vercel 이미지 최적화를 거쳐도 화질·용량 이득이 없는데 변환 쿼터만 태워
