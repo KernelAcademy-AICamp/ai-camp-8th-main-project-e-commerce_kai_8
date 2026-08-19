@@ -200,4 +200,38 @@ describe("useFeedViewModel — 우세 성별 하드 필터 (설계: 성별 피�
       expect(fetchFeedPageMock).toHaveBeenCalledWith(1000, null, 30, null);
     });
   });
+
+  it("explore 이어받기(2페이지 이후)에도 우세 성별이 실린다 — 회귀", async () => {
+    // 결함: 예전엔 explore 모드의 무작위 이어받기가 인자 없이 loadRandom을
+    // 호출해 gender가 항상 null이었다 (상세 하단 탐색 2페이지부터 반대
+    // 성별이 샜다).
+    getFeedProfileSummaryMock.mockReturnValue(summary({ gender: "남성" }));
+    fetchFeedPageMock.mockResolvedValue([]);
+    renderFeedViewModel({ exploreFrom: 7 });
+    await waitFor(() => {
+      expect(fetchFeedPageMock).toHaveBeenCalledWith(
+        deriveSeed(1000, 7),
+        null,
+        30,
+        "남성",
+      );
+    });
+  });
+
+  it("유사 상품 0건 폴백에도 우세 성별이 실린다 — 회귀", async () => {
+    // 결함: loadSimilarFirst 내부의 0건 폴백도 인자 없이 loadRandom을
+    // 호출해 gender가 항상 null이었다.
+    getFeedProfileSummaryMock.mockReturnValue(summary({ gender: "여성" }));
+    fetchSimilarPageMock.mockResolvedValue([]);
+    fetchFeedPageMock.mockResolvedValue([]);
+    renderFeedViewModel({ exploreFrom: 7, similarFirst: true });
+    await waitFor(() => {
+      expect(fetchFeedPageMock).toHaveBeenCalledWith(
+        deriveSeed(1000, 7),
+        null,
+        30,
+        "여성",
+      );
+    });
+  });
 });

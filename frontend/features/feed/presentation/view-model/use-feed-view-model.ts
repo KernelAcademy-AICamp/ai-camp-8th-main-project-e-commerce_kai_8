@@ -101,6 +101,15 @@ export function useFeedViewModel(options?: FeedOptions) {
     if (pausedRef.current || loadingRef.current || exhaustedRef.current) return;
     loadingRef.current = true;
 
+    // 요청 시점 프로필 요약을 한 번만 읽는다(비회원이면 null) — 메인 피드
+    // 개인화 판단과 무작위 경로 성별 필터가 같은 값을 보게 한다. 요약이
+    // 있으면(회원) 그 우세 성별을, 없으면(비회원·콜드스타트) null을 모든
+    // loadRandom 호출(메인·폴백·explore 이어받기·유사 0건 폴백)에 함께
+    // 싣는다 — 폴백이 "개인화인 척" 안 해도 성별 하드 필터는 유지되는 것이
+    // 핵심 요구사항 (설계: 성별 피드 하드 필터 3단계).
+    const summary = getFeedProfileSummary();
+    const genderFilter: DominantGender = summary?.gender ?? null;
+
     const applyPage = (products: Product[], advanceCursor: boolean) => {
       setReady(true);
       setItems((prev) => {
@@ -113,8 +122,13 @@ export function useFeedViewModel(options?: FeedOptions) {
     };
 
     // gender: 요청 시점에 판정된 우세 성별 하드 필터 (설계: 성별 피드 하드
-    // 필터 3단계). 기본 null이면 서버가 무시해 기존과 같은 동작이다.
-    const loadRandom = (policy: FeedPolicy = "random", gender: DominantGender = null) =>
+    // 필터 3단계). 기본값은 위에서 구한 genderFilter — 호출부가 따로 넘기지
+    // 않아도 모든 무작위 경로가 같은 필터를 쓴다. null이면 서버가 무시해
+    // 기존과 같은 동작이다.
+    const loadRandom = (
+      policy: FeedPolicy = "random",
+      gender: DominantGender = genderFilter,
+    ) =>
       fetchFeedPage(seed, afterRef.current, PAGE_SIZE, gender).then((products) => {
         policyRef.current = policy;
         applyPage(products, true);
@@ -159,22 +173,19 @@ export function useFeedViewModel(options?: FeedOptions) {
     } else if (exploreFrom == null) {
       // 메인 피드: 앵커가 있으면 개인화, 없으면(콜드스타트) 기존 무작위.
       // 개인화 실패는 무작위로 폴백하고 개인화인 척하지 않는다 (PRD·설계 §9).
-      const summary = getFeedProfileSummary();
       const hasAnchors =
         summary !== null &&
         (summary.longAnchors.length > 0 || summary.sessionAnchors.length > 0);
-      // 요약이 있으면(회원) 그 우세 성별을, 없으면(비회원·콜드스타트) null을
-      // 무작위·폴백에도 함께 싣는다 — 폴백이 "개인화인 척" 안 해도 성별
-      // 하드 필터는 유지되는 것이 핵심 요구사항 (설계: 3단계).
-      const genderFilter: DominantGender = summary?.gender ?? null;
       first =
         summary !== null && hasAnchors
           ? loadPersonalized(summary).catch((error: unknown) => {
               console.error("개인화 피드 로드 실패 — 무작위 폴백", error);
-              return loadRandom("fallback", genderFilter);
+              return loadRandom("fallback");
             })
-          : loadRandom("random", genderFilter);
+          : loadRandom("random");
     } else {
+      // explore 모드 이어받기(2페이지 이후) — genderFilter 기본값으로 하드
+      // 필터가 계속 실린다 (결함: 예전엔 인자 없이 호출돼 항상 null이었다).
       first = loadRandom("random");
     }
 
