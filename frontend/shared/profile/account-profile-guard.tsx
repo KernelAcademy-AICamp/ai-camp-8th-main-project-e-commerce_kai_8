@@ -2,9 +2,11 @@
 
 import { useEffect } from "react";
 
+import { getCurrentUserId } from "@/shared/supabase/current-user";
 import { useSignedIn } from "@/shared/supabase/use-signed-in";
 
 import { fetchAccountProfile, saveAccountProfile } from "./account-profile-api";
+import { hasPendingTasteForget, retryPendingTasteForget } from "./pending-taste-forget";
 import {
   installLongTermFromServer,
   readLongTerm,
@@ -31,8 +33,11 @@ export function AccountProfileGuard() {
     if (signedIn !== "in") return;
 
     let alive = true;
+    // await 사이에 정리될 수 있다. 함수로 읽는다 — 지역 변수를 그대로 보면
+    // 타입 검사기가 "항상 true"로 좁혀 두 번째 확인을 지워 버린다.
+    const isAlive = () => alive;
     const sync = createProfileSync({
-      isSignedIn: () => alive,
+      isSignedIn: isAlive,
       read: readLongTerm,
       upload: saveAccountProfile,
     });
@@ -41,16 +46,30 @@ export function AccountProfileGuard() {
     // 서버에 덮어쓰지 않는다 — 실패를 빈 프로필로 오인해 계정 취향을 날리면
     // 안 된다.
     let loaded = false;
-    void fetchAccountProfile().then(
-      (profile) => {
-        if (!alive) return;
-        installLongTermFromServer(profile);
-        loaded = true;
-      },
-      () => {
-        // 다음 로그인에 다시 읽는다
-      },
-    );
+
+    /**
+     * **밀린 삭제를 먼저 처리하고 읽는다.** 순서가 바뀌면 지우려던 취향을
+     * 그대로 기기에 내려놓고, 그 다음 삭제가 성공해도 화면에는 옛 취향이
+     * 남는다 (방침 O-32 삭제 계약).
+     *
+     * 밀린 것이 없으면 저장소만 한 번 읽고 곧바로 넘어간다 — 정상 접속에
+     * 왕복을 더하지 않는다.
+     */
+    async function forgetThenLoad(): Promise<void> {
+      if (hasPendingTasteForget()) {
+        const userId = await getCurrentUserId();
+        if (userId !== null) await retryPendingTasteForget(userId);
+      }
+      if (!isAlive()) return;
+      const profile = await fetchAccountProfile();
+      if (!isAlive()) return;
+      installLongTermFromServer(profile);
+      loaded = true;
+    }
+
+    void forgetThenLoad().catch(() => {
+      // 다음 로그인에 다시 읽는다. 삭제도 큐에 남아 다시 시도된다.
+    });
 
     setLongTermChangeListener(() => {
       if (loaded) sync.markDirty();
