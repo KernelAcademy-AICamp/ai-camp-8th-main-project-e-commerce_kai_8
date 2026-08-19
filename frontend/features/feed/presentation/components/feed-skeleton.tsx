@@ -18,7 +18,8 @@ export function FeedSkeleton() {
           {column.map((height, cardIndex) => (
             <div
               key={`skeleton-${String(columnIndex)}-${String(cardIndex)}`}
-              className="rounded-xl bg-neutral-900"
+              // 배경(#0a0a0a) 위에서 neutral-900은 pulse 하한에서 거의 안 보인다
+              className="rounded-xl bg-neutral-800"
               style={{ height }}
             />
           ))}
