@@ -1,8 +1,9 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { type RefObject, useCallback, useEffect, useRef, useState } from "react";
 
 import { readEntryValue, withEntryValue } from "@/shared/history/history-state";
+import { scrollHostFor } from "@/shared/scroll/scroll-host";
 
 /** 이 화면이 히스토리 항목에 쓰는 자리 이름 */
 const CURATION_KEY = "aTeeCuration";
@@ -23,9 +24,9 @@ function readCurationKey(state: unknown): string | null {
  * 어느 큐레이션이 열려 있는지는 **항목 자체에 적는다.** 화면 쪽 기억은 뒤로가기·
  * 새로고침·앱 재기동으로 사라지지만 항목은 남기 때문이다 (`shared/history`).
  */
-export function useCurationScreen() {
+export function useCurationScreen(anchorRef: RefObject<HTMLElement | null>) {
   const [openKey, setOpenKey] = useState<string | null>(null);
-  /** 목록으로 돌아왔을 때 보던 자리로 — 칸이 문서 스크롤을 공유한다(use-pane-swipe) */
+  /** 목록으로 돌아왔을 때 보던 자리로 — 굴리는 것은 이 화면이 놓인 칸이다(shared/scroll) */
   const listScrollY = useRef(0);
 
   // 항목만 남고 화면 쪽 기억이 사라진 자리에서 시작할 수 있다.
@@ -48,14 +49,17 @@ export function useCurationScreen() {
     };
   }, []);
 
-  const open = useCallback((key: string) => {
-    listScrollY.current = window.scrollY;
-    setOpenKey(key);
-    window.history.pushState(
-      withEntryValue(window.history.state, CURATION_KEY, key),
-      "",
-    );
-  }, []);
+  const open = useCallback(
+    (key: string) => {
+      listScrollY.current = scrollHostFor(anchorRef.current).top();
+      setOpenKey(key);
+      window.history.pushState(
+        withEntryValue(window.history.state, CURATION_KEY, key),
+        "",
+      );
+    },
+    [anchorRef],
+  );
 
   // 화면 안의 ← 큐레이션도 스와이프와 같은 길을 지나야 한다 —
   // 그래야 히스토리와 화면이 갈리지 않는다
@@ -64,12 +68,13 @@ export function useCurationScreen() {
   }, []);
 
   useEffect(() => {
+    const host = scrollHostFor(anchorRef.current);
     if (openKey === null) {
-      window.scrollTo(0, listScrollY.current);
+      host.moveTo(listScrollY.current);
       return;
     }
-    window.scrollTo(0, 0);
-  }, [openKey]);
+    host.moveTo(0);
+  }, [openKey, anchorRef]);
 
   return { openKey, open, back };
 }
