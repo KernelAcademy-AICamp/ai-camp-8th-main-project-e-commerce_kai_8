@@ -68,6 +68,7 @@ design/     # 디자인 시스템·시안
 - **CI 게이트**: `develop`·`main` 대상 PR을 열면 자동으로 frontend(lint·typecheck·format·test·build)와 backend(pytest) 검사가 돈다. 초록불 후 squash 병합.
 - 브랜치 보호: `develop`·`main` 모두 force-push·삭제 차단. 병합 방식은 squash만 허용, 병합 시 작업 브랜치 자동 삭제.
 - **Vercel 배포**: repo가 Vercel에 Git 연동돼 있다(Root Directory=`frontend`). PR을 열면 preview URL이 자동 생성되고, `main`에 push되면 프로덕션이 자동 배포된다.
+- **함수 리전은 서울(`icn1`)** — `frontend/vercel.json`. **Supabase가 서울에 있어서다.** 기본값(`iad1`, 미국 버지니아)으로 두면 서울 사용자의 요청이 미국까지 갔다가 서울의 DB에 묻고 돌아와 태평양을 두 번 건넌다. 실측으로 그 왕복이 요청당 약 0.28초였다(`docs/plans/2026-08-20-my-page-navigation-latency.md`). 대시보드가 아니라 파일로 두는 이유는, 설정이 코드에 없으면 다음 사람이 느린 원인을 찾을 방법이 없기 때문이다. **Supabase 리전을 옮기면 이 값도 같이 옮겨야 한다.**
 - **릴리즈**: Actions 탭의 `Release` 워크플로우를 수동 실행(auto/patch/minor/major). Conventional Commits로 버전을 올리고 `frontend/CHANGELOG.md`·태그·GitHub Release를 만든 뒤 `develop`을 `main`으로 승격(merge)해 프로덕션 배포까지 이어진다. **릴리즈 봇의 main 직접 push는 "main 직접 push 금지" 규칙의 유일한 예외다.**
 - **Slack 알림**: 프로덕션 배포가 성공하면 `notify-slack.yml`이 릴리즈 태그·커밋·사이트 링크를 Slack으로 보낸다 (시크릿 `SLACK_WEBHOOK_URL`, 2026-08-14 ecommerce 방식 이식).
 
