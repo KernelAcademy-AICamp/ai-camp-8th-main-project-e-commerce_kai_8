@@ -24,6 +24,7 @@ import {
 } from "@/features/feed/presentation/view-model/use-feed-view-model";
 import { wishlistNoticeMessage } from "@/features/feed/wishlist/domain/wishlist-notice";
 import { useWishlist } from "@/features/feed/wishlist/presentation/view-model/use-wishlist";
+import { BackIcon } from "@/shared/icons";
 import { logAction } from "@/shared/signals/signals";
 
 interface ProductDetailProps {
@@ -94,14 +95,15 @@ export function ProductDetail({
       }`}
     >
       <div className="relative mx-auto flex h-full max-w-md flex-col">
-        <header className="relative flex items-center px-2 py-2">
+        {/* 뒤로가기 좌표를 마이페이지와 맞춘다 — 왼쪽 16px·위 8px (전 화면 공통) */}
+        <header className="relative flex items-center px-4 py-2">
           <button
             type="button"
             aria-label="뒤로 가기"
-            className="flex h-10 w-10 cursor-pointer items-center justify-center rounded-full text-xl text-white"
+            className="flex h-10 w-10 cursor-pointer items-center justify-center rounded-full text-neutral-400"
             onClick={onRequestClose}
           >
-            ←
+            <BackIcon />
           </button>
           {pastHero && (
             <button

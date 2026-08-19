@@ -1,3 +1,13 @@
+## [0.1.9](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/compare/v0.1.8...v0.1.9) (2026-08-19)
+
+### Features
+
+* 오버스크롤 바운스 제거·뒤로가기 통일·설정 정리 ([#51](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/issues/51)) ([c021abc](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/commit/c021abcb2d3f7d25cd1a8171277cb3b24f6a53b7))
+
+### Bug Fixes
+
+* 상세 화면 스택을 브라우저 히스토리와 일치시킨다 ([#48](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/issues/48)) ([092a3d6](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/commit/092a3d64f68f412fd2b6626bc97af99f36c5a407))
+* 화면 안 뒤로가기가 새로 쌓지 않고 되돌아가게 한다 ([#50](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/issues/50)) ([f456ce5](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/commit/f456ce534df29530f069367a711c9b2232971557)), closes [#48](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/issues/48)
 ## [0.1.8](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/compare/v0.1.7...v0.1.8) (2026-08-19)
 
 ### Features

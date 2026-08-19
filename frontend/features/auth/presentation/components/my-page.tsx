@@ -4,7 +4,7 @@ import Link from "next/link";
 
 import type { AuthNotice } from "@/features/auth/domain/auth-session";
 import { useAuthSession } from "@/features/auth/presentation/view-model/use-auth-session";
-import { useScreenClose } from "@/features/auth/presentation/view-model/use-screen-close";
+import { useBackTo } from "@/shared/history/use-nav-history";
 import { BackIcon, GearIcon } from "@/shared/icons";
 
 /**
@@ -28,7 +28,7 @@ export function MyPage({
   children?: React.ReactNode;
 }) {
   const { state, busy, failed, signOut } = useAuthSession();
-  const close = useScreenClose("/my");
+  const close = useBackTo("/");
   const showFailure = failed || notice === "failed";
 
   return (

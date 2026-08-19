@@ -19,7 +19,7 @@ import { useRetryPendingForget } from "@/shared/signals/use-retry-pending-forget
 // active=false 면 다른 칸을 보고 있다는 뜻 — 화면은 그대로 두고(스크롤 위치·검색
 // 상태 보존) 떠 있는 검색창만 감춘다.
 export function MosaicFeed({ active = true }: { active?: boolean }) {
-  const { stack, open, requestClose, finishClose } = useDetailState();
+  const { stack, open, requestClose, finishClose } = useDetailState("feed");
   const detailOpen = stack.length > 0;
 
   // 검색 상태는 상세 스택과 같은 층위에서 항상 유지 — 상세가 열려도

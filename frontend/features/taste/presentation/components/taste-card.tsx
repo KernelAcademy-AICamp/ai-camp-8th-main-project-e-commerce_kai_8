@@ -68,10 +68,6 @@ function TasteBody({ summary }: { summary: TasteSummary }) {
 
   return (
     <>
-      <p className="mt-1 text-sm text-neutral-400">
-        눌러 본 상품 {summary.matchedCount}개로 그린 경향이에요
-      </p>
-
       {summary.axes.length > 0 && (
         <ul className="mt-6 space-y-7">
           {summary.axes.map((axis) => (
