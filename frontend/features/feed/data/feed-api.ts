@@ -1,3 +1,4 @@
+import { toGalleryUrls } from "@/features/feed/domain/image-url";
 import type { Product } from "@/features/feed/domain/product";
 import { restSelect, rpcPost } from "@/shared/supabase-rpc";
 
@@ -14,9 +15,6 @@ export interface FeedProductDto {
   height: number;
 }
 
-// 갤러리는 DB에 상대경로로 저장돼 있다 (카탈로그 감사에서 확인)
-const CDN_BASE = "https://image.msscdn.net";
-
 export function mapFeedDto(dto: FeedProductDto): Product {
   return {
     goodsNo: dto.goods_no,
@@ -27,9 +25,7 @@ export function mapFeedDto(dto: FeedProductDto): Product {
     gender: dto.gender,
     width: dto.width,
     height: dto.height,
-    gallery: dto.gallery.map((path) =>
-      path.startsWith("http") ? path : `${CDN_BASE}${path}`,
-    ),
+    gallery: toGalleryUrls(dto.gallery),
   };
 }
 
