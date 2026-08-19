@@ -37,6 +37,21 @@ export type ProfileActionType = keyof typeof SIGNAL_WEIGHTS | "unwish";
 /** 앵커 성별 — 성별 미상은 필드 자체를 두지 않는다(undefined) */
 export type AnchorGender = "남성" | "여성" | "공용";
 
+/** 우세 성별 판정 결과 — 하드 필터로 그대로 실어 보낼 수 있는 형태 */
+export type DominantGender = "남성" | "여성" | null;
+
+/**
+ * 상품 성별(카탈로그 원문, string|null)을 앵커 성별로 바꾼다.
+ * '남성'/'여성'/'공용' 외의 값(빈 문자열 포함 — 카탈로그에 1,911건 있다)은
+ * 전부 미상(undefined)으로 취급한다.
+ */
+export function toAnchorGender(
+  gender: string | null | undefined,
+): AnchorGender | undefined {
+  if (gender === "남성" || gender === "여성" || gender === "공용") return gender;
+  return undefined;
+}
+
 export interface Anchor {
   goodsNo: number;
   weight: number;
@@ -235,7 +250,7 @@ export const GENDER_SHARE_THRESHOLD = 0.6;
  * '공용'·성별 미상 앵커는 모수에서 제외한다. 풀림은 별도 이력 없이 매번
  * 같은 계산으로 자동 대칭이다(히스테리시스 없음 — YAGNI).
  */
-export function deriveDominantGender(anchors: Anchor[]): "남성" | "여성" | null {
+export function deriveDominantGender(anchors: Anchor[]): DominantGender {
   const gendered = anchors.filter(
     (a): a is Anchor & { gender: "남성" | "여성" } =>
       a.gender === "남성" || a.gender === "여성",

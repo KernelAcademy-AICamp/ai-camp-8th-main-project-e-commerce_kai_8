@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import { fetchFeedPage } from "@/features/feed/data/feed-api";
+import { backfillAnchorGenders } from "@/features/feed/data/gender-backfill";
 import { fetchMixPage } from "@/features/feed/data/mix-api";
 import { getSessionSeed } from "@/features/feed/data/session-seed";
 import { fetchSimilarPage } from "@/features/feed/data/similar-api";
@@ -15,10 +16,12 @@ import type {
   FeedCardViewData,
   ImpressionDomInfo,
 } from "@/features/feed/presentation/view-model/card-view-data";
+import type { DominantGender } from "@/shared/profile/profile-rules";
 import type { ProfileSummary } from "@/shared/profile/profile-store";
 import { nearestScrollRoot } from "@/shared/scroll/nearest-scroll-root";
 import { getFeedProfileSummary, logImpression } from "@/shared/signals/signals";
 import type { FeedPolicy, SourceBucket, Surface } from "@/shared/signals/types";
+import { isSignedInNow } from "@/shared/supabase/session-state";
 
 const PAGE_SIZE = 30;
 // 유사 첫 페이지 크기 — 재정렬 후보(×20)가 크기에 비례해 콜드 응답을 좌우한다.
@@ -109,8 +112,10 @@ export function useFeedViewModel(options?: FeedOptions) {
       });
     };
 
-    const loadRandom = (policy: FeedPolicy = "random") =>
-      fetchFeedPage(seed, afterRef.current, PAGE_SIZE).then((products) => {
+    // gender: 요청 시점에 판정된 우세 성별 하드 필터 (설계: 성별 피드 하드
+    // 필터 3단계). 기본 null이면 서버가 무시해 기존과 같은 동작이다.
+    const loadRandom = (policy: FeedPolicy = "random", gender: DominantGender = null) =>
+      fetchFeedPage(seed, afterRef.current, PAGE_SIZE, gender).then((products) => {
         policyRef.current = policy;
         applyPage(products, true);
       });
@@ -128,6 +133,7 @@ export function useFeedViewModel(options?: FeedOptions) {
         seed,
         size: PAGE_SIZE,
         boost: summary.boostActive,
+        gender: summary.gender,
       }).then((products) => {
         policyRef.current = "personalized";
         applyPage(products, false);
@@ -157,13 +163,17 @@ export function useFeedViewModel(options?: FeedOptions) {
       const hasAnchors =
         summary !== null &&
         (summary.longAnchors.length > 0 || summary.sessionAnchors.length > 0);
+      // 요약이 있으면(회원) 그 우세 성별을, 없으면(비회원·콜드스타트) null을
+      // 무작위·폴백에도 함께 싣는다 — 폴백이 "개인화인 척" 안 해도 성별
+      // 하드 필터는 유지되는 것이 핵심 요구사항 (설계: 3단계).
+      const genderFilter: DominantGender = summary?.gender ?? null;
       first =
         summary !== null && hasAnchors
           ? loadPersonalized(summary).catch((error: unknown) => {
               console.error("개인화 피드 로드 실패 — 무작위 폴백", error);
-              return loadRandom("fallback");
+              return loadRandom("fallback", genderFilter);
             })
-          : loadRandom("random");
+          : loadRandom("random", genderFilter);
     } else {
       first = loadRandom("random");
     }
@@ -179,6 +189,14 @@ export function useFeedViewModel(options?: FeedOptions) {
         loadingRef.current = false;
       });
   }, [seed, exploreFrom]);
+
+  // 성별 없는 장기 앵커 1회 보강 (설계: 성별 피드 하드 필터 3단계) — 회원일
+  // 때만 시도하고, 대상이 없거나 실패해도 조용히 넘어간다(backfillAnchorGenders가
+  // 이미 그렇게 만든다). 피드 로드와 무관하게 백그라운드로 돈다.
+  useEffect(() => {
+    if (!isSignedInNow()) return;
+    void backfillAnchorGenders();
+  }, []);
 
   const sentinelRef = useRef<HTMLDivElement | null>(null);
 

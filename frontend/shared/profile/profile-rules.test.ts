@@ -18,6 +18,7 @@ import {
   SESSION_ANCHOR_MAX,
   SIGNAL_WEIGHTS,
   STYLE_BOOST_IMPRESSIONS,
+  toAnchorGender,
 } from "./profile-rules";
 
 const NOW = 1_000_000;
@@ -310,5 +311,35 @@ describe("deriveDominantGender (우세 성별 판정)", () => {
   it("GENDER_MIN_ANCHORS·GENDER_SHARE_THRESHOLD는 문서화된 시작값이다", () => {
     expect(GENDER_MIN_ANCHORS).toBe(3);
     expect(GENDER_SHARE_THRESHOLD).toBe(0.6);
+  });
+});
+
+describe("toAnchorGender (상품 성별 → 앵커 성별 변환)", () => {
+  it("'남성'은 그대로 남성이다", () => {
+    expect(toAnchorGender("남성")).toBe("남성");
+  });
+
+  it("'여성'은 그대로 여성이다", () => {
+    expect(toAnchorGender("여성")).toBe("여성");
+  });
+
+  it("'공용'은 그대로 공용이다", () => {
+    expect(toAnchorGender("공용")).toBe("공용");
+  });
+
+  it("빈 문자열은 미상(undefined)이다 — 카탈로그의 빈 문자열 성별 1,911건 대응", () => {
+    expect(toAnchorGender("")).toBeUndefined();
+  });
+
+  it("null은 미상이다", () => {
+    expect(toAnchorGender(null)).toBeUndefined();
+  });
+
+  it("undefined는 미상이다", () => {
+    expect(toAnchorGender(undefined)).toBeUndefined();
+  });
+
+  it("정의된 값 외의 문자열(이상값)은 미상이다", () => {
+    expect(toAnchorGender("아동")).toBeUndefined();
   });
 });

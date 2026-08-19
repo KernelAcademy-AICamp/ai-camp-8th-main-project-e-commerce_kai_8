@@ -213,7 +213,7 @@ export function ProductDetail({
                   title="판매처로 이동"
                   className="flex h-11 w-11 items-center justify-center text-2xl font-semibold text-white"
                   onClick={() => {
-                    logAction("outbound", product.goodsNo);
+                    logAction("outbound", product.goodsNo, { gender: product.gender });
                   }}
                 >
                   ↗

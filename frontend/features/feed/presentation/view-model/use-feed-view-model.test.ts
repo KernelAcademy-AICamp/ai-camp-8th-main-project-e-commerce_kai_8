@@ -4,6 +4,7 @@ import { createElement } from "react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { fetchFeedPage } from "@/features/feed/data/feed-api";
+import { fetchMixPage } from "@/features/feed/data/mix-api";
 import { fetchSimilarPage } from "@/features/feed/data/similar-api";
 import { deriveSeed } from "@/features/feed/domain/derive-seed";
 import type { Product } from "@/features/feed/domain/product";
@@ -11,11 +12,18 @@ import {
   type FeedOptions,
   useFeedViewModel,
 } from "@/features/feed/presentation/view-model/use-feed-view-model";
+import type { ProfileSummary } from "@/shared/profile/profile-store";
+import { getFeedProfileSummary } from "@/shared/signals/signals";
 
 vi.mock("@/features/feed/data/feed-api", () => ({ fetchFeedPage: vi.fn() }));
+vi.mock("@/features/feed/data/mix-api", () => ({ fetchMixPage: vi.fn() }));
 vi.mock("@/features/feed/data/similar-api", () => ({ fetchSimilarPage: vi.fn() }));
 vi.mock("@/features/feed/data/session-seed", () => ({
   getSessionSeed: () => 1000,
+}));
+vi.mock("@/shared/signals/signals", () => ({
+  getFeedProfileSummary: vi.fn(),
+  logImpression: vi.fn(),
 }));
 
 const product = (goodsNo: number): Product => ({
@@ -50,12 +58,19 @@ class ObserverStub {
 }
 
 const fetchFeedPageMock = vi.mocked(fetchFeedPage);
+const fetchMixPageMock = vi.mocked(fetchMixPage);
 const fetchSimilarPageMock = vi.mocked(fetchSimilarPage);
+const getFeedProfileSummaryMock = vi.mocked(getFeedProfileSummary);
 
 beforeEach(() => {
   vi.stubGlobal("IntersectionObserver", ObserverStub);
   fetchFeedPageMock.mockReset();
+  fetchMixPageMock.mockReset();
   fetchSimilarPageMock.mockReset();
+  getFeedProfileSummaryMock.mockReset();
+  // 기존 테스트는 전부 비회원·콜드스타트를 전제한다 — 실제 signals.ts도
+  // 로그인하지 않았으면 null을 돌려준다 (O-37)
+  getFeedProfileSummaryMock.mockReturnValue(null);
 });
 
 // renderHook은 훅을 실제 DOM에 붙이지 않아 sentinelRef.current가 계속 null로 남고,
@@ -79,7 +94,7 @@ describe("useFeedViewModel", () => {
     fetchFeedPageMock.mockResolvedValue([]);
     renderFeedViewModel();
     await waitFor(() => {
-      expect(fetchFeedPageMock).toHaveBeenCalledWith(1000, null, 30);
+      expect(fetchFeedPageMock).toHaveBeenCalledWith(1000, null, 30, null);
     });
   });
 
@@ -94,7 +109,12 @@ describe("useFeedViewModel", () => {
     });
     // 이어지는 무작위 페이지는 커서 처음(null)부터, 이미 보인 22는 중복 제거
     await waitFor(() => {
-      expect(fetchFeedPageMock).toHaveBeenCalledWith(deriveSeed(1000, 7), null, 30);
+      expect(fetchFeedPageMock).toHaveBeenCalledWith(
+        deriveSeed(1000, 7),
+        null,
+        30,
+        null,
+      );
       const goodsNos = result.current.columns
         .flat()
         .map((card) => card.product.goodsNo)
@@ -121,13 +141,63 @@ describe("useFeedViewModel", () => {
       .mockResolvedValue([]);
     const { result } = renderFeedViewModel({ exploreFrom: 7 });
     await waitFor(() => {
-      expect(fetchFeedPageMock).toHaveBeenCalledWith(deriveSeed(1000, 7), null, 30);
+      expect(fetchFeedPageMock).toHaveBeenCalledWith(
+        deriveSeed(1000, 7),
+        null,
+        30,
+        null,
+      );
     });
     await waitFor(() => {
       const goodsNos = result.current.columns
         .flat()
         .map((card) => card.product.goodsNo);
       expect(goodsNos).toEqual([8]);
+    });
+  });
+});
+
+describe("useFeedViewModel — 우세 성별 하드 필터 (설계: 성별 피드 하드 필터 3단계)", () => {
+  const summary = (overrides: Partial<ProfileSummary> = {}): ProfileSummary => ({
+    schemaVersion: 2,
+    longAnchors: [{ goodsNo: 1, weight: 5 }],
+    sessionAnchors: [],
+    recentImpressions: [],
+    boostActive: false,
+    gender: null,
+    ...overrides,
+  });
+
+  it("개인화 요청에 우세 성별을 함께 보낸다", async () => {
+    getFeedProfileSummaryMock.mockReturnValue(summary({ gender: "남성" }));
+    fetchMixPageMock.mockResolvedValue([]);
+    renderFeedViewModel();
+    await waitFor(() => {
+      expect(fetchMixPageMock).toHaveBeenCalledWith(
+        expect.objectContaining({ gender: "남성" }),
+      );
+    });
+  });
+
+  it("개인화 실패 시 폴백 요청에도 같은 우세 성별이 실린다 — 핵심 요구사항", async () => {
+    getFeedProfileSummaryMock.mockReturnValue(summary({ gender: "여성" }));
+    fetchMixPageMock.mockRejectedValue(new Error("RPC 오류"));
+    fetchFeedPageMock.mockResolvedValue([]);
+    renderFeedViewModel();
+    await waitFor(() => {
+      expect(fetchFeedPageMock).toHaveBeenCalledWith(1000, null, 30, "여성");
+    });
+  });
+
+  it("앵커가 없는 콜드스타트(요약은 있으나 gender=null)는 성별 없이 무작위 요청한다", async () => {
+    getFeedProfileSummaryMock.mockReturnValue(
+      summary({ longAnchors: [], sessionAnchors: [], gender: null }),
+    );
+    fetchFeedPageMock.mockResolvedValue([]);
+    renderFeedViewModel();
+    await waitFor(() => {
+      expect(fetchMixPageMock).not.toHaveBeenCalled();
+      expect(fetchFeedPageMock).toHaveBeenCalledWith(1000, null, 30, null);
     });
   });
 });
