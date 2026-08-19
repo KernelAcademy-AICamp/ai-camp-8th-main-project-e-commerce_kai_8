@@ -21,6 +21,10 @@ function givenServerSends(raw: unknown) {
   summary.current = raw;
 }
 
+/**
+ * 실측 치수 축 넷은 커버리지가 정확히 같아(45.3%) 늘 함께 있거나 함께 없다.
+ * 그래서 `measured`도 넷이 같은 값이다.
+ */
 const FULL = {
   anchor_count: 18,
   matched_count: 16,
@@ -29,9 +33,21 @@ const FULL = {
     graphic: { value: 0.2, measured: 16 },
     price: { value: 0.45, measured: 16 },
     shoulder: { value: 0.8, measured: 7 },
+    length: { value: 0.35, measured: 7 },
+    chest: { value: 0.78, measured: 7 },
+    sleeve: { value: 0.4, measured: 7 },
   },
   colors: [{ group: "black", share: 0.34 }],
   brands: [{ name: "커버낫", share: 0.2 }],
+};
+
+const WITHOUT_FIT_MEASURES = {
+  ...FULL,
+  axes: {
+    color_vivid: FULL.axes.color_vivid,
+    graphic: FULL.axes.graphic,
+    price: FULL.axes.price,
+  },
 };
 
 afterEach(cleanup);
@@ -52,13 +68,28 @@ describe("내 취향 카드", () => {
   });
 
   it("잴 수 없었던 묶음은 소제목째 사라진다", async () => {
-    // 실측 치수는 카탈로그 45%뿐이라 실루엣이 통째로 빠지는 일이 흔하다.
+    // 실측 치수는 카탈로그 45.3%뿐이고 넷이 늘 함께 빠진다. 실제로 앵커 4개짜리
+    // 계정에서 실루엣 축 넷이 전부 없는 응답을 확인했다(2026-08-20).
     // 빈 소제목이 남으면 "잴 수 없었다"가 아니라 "있던 게 사라졌다"로 읽힌다.
-    givenServerSends({ ...FULL, axes: { ...FULL.axes, shoulder: undefined } });
+    givenServerSends(WITHOUT_FIT_MEASURES);
     render(<TasteCard />);
 
     expect(await screen.findByRole("heading", { name: "색·프린트" })).toBeTruthy();
     expect(screen.queryByRole("heading", { name: "실루엣" })).toBeNull();
+  });
+
+  it("실루엣 축 넷을 한 묶음에 그린다", async () => {
+    givenServerSends(FULL);
+    render(<TasteCard />);
+
+    const silhouette = await screen.findByRole("heading", { name: "실루엣" });
+    const group = silhouette.parentElement;
+    if (!group) throw new Error("묶음 소제목에 부모가 없다");
+
+    expect(within(group).getAllByRole("img")).toHaveLength(4);
+    for (const name of [/좁은 어깨/, /크롭/, /슬림/, /짧은 소매/]) {
+      expect(within(group).getByRole("img", { name })).toBeTruthy();
+    }
   });
 
   it("몇 개로 잰 값인지 밝힌다", async () => {
@@ -67,8 +98,10 @@ describe("내 취향 카드", () => {
 
     // 카드 전체의 모수
     expect(await screen.findByText("상품 16개로 쟀어요")).toBeTruthy();
-    // 축마다 다른 모수 — 색은 16개로, 어깨는 7개로 쟀다
-    expect(screen.getByText("7")).toBeTruthy();
+    // 축마다 모수가 다르다 — 색·프린트·가격은 16개로, 실측 치수 넷은 7개로 쟀다.
+    // 이 차이가 안 보이면 7개로 잰 막대를 16개로 잰 막대만큼 믿게 된다.
+    expect(screen.getAllByText("16")).toHaveLength(3);
+    expect(screen.getAllByText("7")).toHaveLength(4);
   });
 
   it("색 칩과 브랜드가 그대로 남는다", async () => {

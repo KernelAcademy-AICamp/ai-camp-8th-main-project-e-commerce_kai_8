@@ -3,7 +3,8 @@
 // 서버(`c_taste_summary`)가 집계한 값을 화면이 쓸 형태로 편다. **서버가 보낸 값을
 // 그대로 믿지 않는다** — 형태가 어긋난 항목 하나가 카드 전체를 못 쓰게 만들면 안 된다.
 
-export type TasteAxisKey = "color_vivid" | "graphic" | "price" | "shoulder";
+export type TasteAxisKey =
+  "color_vivid" | "graphic" | "price" | "shoulder" | "length" | "chest" | "sleeve";
 
 export interface TasteAxisLabel {
   key: TasteAxisKey;
@@ -49,8 +50,20 @@ export const GROUPS_IN_ORDER: readonly TasteGroupLabel[] = [
   },
   {
     key: "silhouette",
+    // 넷 다 같은 실측(반팔 대표 사이즈)에서 나오고 커버리지가 **정확히 같다**(45.3%,
+    // 2026-08-20 실측). 한 상품에 넷이 다 있거나 다 없으므로, 이 묶음은 통째로
+    // 보이거나 통째로 사라진다.
+    //
+    // ⚠️ 어깨와 가슴은 상관 0.777로 많이 겹친다 — 두 값이 눈에 띄게 다른 상품은
+    // 23.8%뿐이다. 그래도 둘 다 두기로 했다(제품 책임자 2026-08-20): 그 24%에서는
+    // "어깨는 드롭인데 품은 슬림"처럼 한 축으로 못 하는 말을 한다.
     title: "실루엣",
-    axes: [{ key: "shoulder", left: "좁은 어깨", right: "드롭" }],
+    axes: [
+      { key: "shoulder", left: "좁은 어깨", right: "드롭" },
+      { key: "length", left: "크롭", right: "롱" },
+      { key: "chest", left: "슬림", right: "박시" },
+      { key: "sleeve", left: "짧은 소매", right: "긴 소매" },
+    ],
   },
 ];
 
