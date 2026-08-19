@@ -51,6 +51,11 @@ export function readLongTerm(): LongTermProfile {
 /**
  * 저장 직전 재읽기 후 병합(앵커 합집합+가중 최대) — 멀티탭에서 마지막 쓰기가
  * 다른 탭의 갱신을 덮지 않게 한다. 직전 정상본은 백업 슬롯으로 밀어둔다.
+ *
+ * ⚠️ **접기 결과에 쓰면 안 된다.** 접기는 현재 장기를 변형(감쇠·해제)한
+ * 대체본인데, 병합의 "가중 최대"가 감쇠를 되돌리고 합집합이 해제를 부활시킨다
+ * — 실제로 그렇게 저장해서 오래된 취향이 영영 안 옅어지는 회귀가 있었다.
+ * 접기는 writeLongTermReplacing을 쓴다.
  */
 function writeLongTerm(next: LongTermProfile): void {
   try {
@@ -61,6 +66,25 @@ function writeLongTerm(next: LongTermProfile): void {
     localStorage.setItem(LONG_KEY, JSON.stringify(merged));
   } catch {
     // 저장 불가 환경 — 프로필 없이 동작 (콜드스타트와 동일)
+  }
+  changeListener?.();
+}
+
+/**
+ * 현재 장기를 **대체**하는 저장 — 접기 전용. 병합하지 않는다.
+ *
+ * 다른 탭이 읽기와 쓰기 사이에 끼어드는 좁은 틈은 남지만, 병합이 감쇠·해제를
+ * 무효화하는 확실한 손해보다 낫다. 끼어든 탭의 몫은 그 탭의 다음 저장이 되살린다.
+ */
+function writeLongTermReplacing(next: LongTermProfile): void {
+  try {
+    const currentRaw = localStorage.getItem(LONG_KEY);
+    if (currentRaw && parseLongTerm(currentRaw)) {
+      localStorage.setItem(BACKUP_KEY, currentRaw);
+    }
+    localStorage.setItem(LONG_KEY, JSON.stringify(next));
+  } catch {
+    // 저장 불가 환경 — 프로필 없이 동작
   }
   changeListener?.();
 }
@@ -132,7 +156,7 @@ function readSessionProfile(sessionId: string, nowMs: number): SessionProfile {
     if (!stored) return emptySession(sessionId);
     if (stored.sessionId === sessionId) return stored;
     if (stored.anchors.length > 0 || stored.removed.length > 0) {
-      writeLongTerm(foldSessionIntoLongTerm(readLongTerm(), stored, nowMs));
+      writeLongTermReplacing(foldSessionIntoLongTerm(readLongTerm(), stored, nowMs));
     }
     return emptySession(sessionId);
   } catch {
@@ -145,6 +169,35 @@ function writeSessionProfile(session: SessionProfile): void {
     sessionStorage.setItem(SESSION_PROFILE_KEY, JSON.stringify(session));
   } catch {
     // 저장 불가 — 세션 프로필 없이 동작
+  }
+}
+
+/**
+ * 지금 세션의 취향을 **즉시** 장기로 접는다 — 마이페이지 새로고침용.
+ *
+ * 원래 접기는 세션이 끝나야(비활성 30분 뒤 같은 탭의 다음 활동) 일어나서,
+ * "지금까지 본 것"이 취향 카드에 30분 넘게 안 보였다. 새로고침은 "여기까지를
+ * 반영해줘"이므로 그 자리에서 접는다.
+ *
+ * 접은 뒤 세션 앵커를 비운다 — 세션이 이어지다 끝날 때 **같은 행동이 두 번
+ * 반영되면 안 된다.** 노출 기억(중복 노출 감쇠·피드 최근 제외)과 부스트는
+ * 접기와 무관하므로 남긴다.
+ *
+ * 접을 것이 없으면 아무것도 하지 않는다 — 빈 접기도 장기 앵커를 한 세션만큼
+ * 감쇠시키므로, 연타가 취향을 깎게 두면 안 된다.
+ *
+ * @returns 실제로 접었는가 (호출부가 서버 올리기 여부를 가른다)
+ */
+export function foldSessionProfileNow(nowMs: number): boolean {
+  try {
+    const stored = parseSession(sessionStorage.getItem(SESSION_PROFILE_KEY));
+    if (!stored) return false;
+    if (stored.anchors.length === 0 && stored.removed.length === 0) return false;
+    writeLongTermReplacing(foldSessionIntoLongTerm(readLongTerm(), stored, nowMs));
+    writeSessionProfile({ ...stored, anchors: [], removed: [] });
+    return true;
+  } catch {
+    return false;
   }
 }
 
