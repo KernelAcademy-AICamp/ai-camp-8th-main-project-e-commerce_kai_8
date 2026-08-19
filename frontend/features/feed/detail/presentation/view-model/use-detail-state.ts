@@ -31,7 +31,7 @@ export type { DetailEntry, OriginRect };
  * 화면 쪽 기억만 믿던 예전에는 앞으로가기가 삼켜지고 고아 항목이 남았다
  * (`detail-history.ts` 머리말).
  *
- * @param owner 이 상세를 여는 화면. 홈은 BROWSE와 FOR YOU가 하나의 히스토리를
+ * @param owner 이 상세를 여는 화면. 홈은 BROWSE와 PICKS가 하나의 히스토리를
  *   함께 쓰므로, 이 값이 없으면 뒤로가기 한 번에 두 화면이 같이 움직인다.
  */
 export function useDetailState(owner: string) {

@@ -40,7 +40,7 @@ describe("readDetailMark", () => {
   });
 
   it("다른 주인의 표식은 내 것이 아니다", () => {
-    // 홈 화면은 BROWSE와 FOR YOU가 하나의 히스토리를 함께 쓴다.
+    // 홈 화면은 BROWSE와 PICKS가 하나의 히스토리를 함께 쓴다.
     // 남의 표식에 반응하면 뒤로가기 한 번에 두 화면이 닫힌다.
     const state = withDetailMark(null, mark(1, 7, "curation"));
     expect(readDetailMark(state, "feed")).toBeNull();

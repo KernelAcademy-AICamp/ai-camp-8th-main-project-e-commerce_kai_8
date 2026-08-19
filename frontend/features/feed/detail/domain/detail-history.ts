@@ -18,7 +18,7 @@ const MARK_KEY = "aTeeDetail";
 /** 히스토리 항목 하나에 실리는 표식 — 이 자리에서 어떤 상세가 몇 번째로 열려 있는가 */
 export interface DetailMark {
   /**
-   * 이 상세를 연 화면. 홈은 BROWSE와 FOR YOU가 **하나의 히스토리를 함께 쓰므로**,
+   * 이 상세를 연 화면. 홈은 BROWSE와 PICKS가 **하나의 히스토리를 함께 쓰므로**,
    * 주인을 적어 두지 않으면 뒤로가기 한 번에 두 화면이 함께 닫힌다.
    */
   owner: string;

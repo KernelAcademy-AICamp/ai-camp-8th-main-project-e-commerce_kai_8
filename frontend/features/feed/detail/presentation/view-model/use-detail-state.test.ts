@@ -147,7 +147,7 @@ describe("useDetailState", () => {
   });
 
   it("다른 화면이 연 상세에는 반응하지 않는다", () => {
-    // 홈은 BROWSE와 FOR YOU가 하나의 히스토리를 함께 쓴다.
+    // 홈은 BROWSE와 PICKS가 하나의 히스토리를 함께 쓴다.
     // 남의 표식에 반응하면 뒤로가기 한 번에 두 화면이 함께 움직인다.
     const { result } = renderHook(() => useDetailState("curation"));
 
