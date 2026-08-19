@@ -140,10 +140,10 @@ export function TasteCard() {
       </div>
 
       {state.kind === "loading" && (
-        <div
-          className="mt-4 h-1 w-full rounded-full bg-neutral-900"
-          aria-label="불러오는 중"
-        />
+        <div aria-label="불러오는 중" className="mt-6 animate-pulse space-y-7">
+          <div className="h-1 rounded-full bg-neutral-800" />
+          <div className="h-1 rounded-full bg-neutral-800" />
+        </div>
       )}
 
       {state.kind === "failed" && (
