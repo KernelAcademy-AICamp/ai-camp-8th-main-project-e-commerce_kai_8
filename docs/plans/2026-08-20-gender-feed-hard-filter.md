@@ -54,3 +54,53 @@ aTee는 티셔츠 이미지를 무한 스크롤로 훑는 PWA다. 피드는 세 
 - 인덱스 필요 여부와 종류 — 0단계 실측이 정한다.
 - 문턱 시작값의 최종치 — 4단계 관찰이 정한다.
 - 기존 앵커 성별 보강의 구체 방법 — 구현 시 선택(여러 방법 가능, 완료 기준만 고정).
+
+## 0단계 실측 기록 (2026-08-20)
+
+프로덕션 Supabase(`backend/.env.local`의 `SUPABASE_DB_URL`)에서 psql로 직접 측정. 데이터 변경 없음(읽기 전용 — 임시 인덱스도 필요 없어 생성하지 않았다). PostgreSQL 17.6. `c_thumb_dims` 총 226,205행, 자격(`width>0 and card_ok and feed_ok`) 226,194행 — 성별 분포 남성 93,324 / 여성 89,874 / 공용 41,085 / 미상 1,911.
+
+### 1) base_pool 쿼리 (마이그레이션 186~196행, `c_thumb_dims` 직접 스캔)
+
+EXPLAIN (ANALYZE, BUFFERS) 각 3회, Execution Time 기준. 1회차는 이 세션에서의 첫 실행이지만 직전 `count(*)` 조회로 페이지가 이미 캐시돼 있어 콜드/웜 차이는 미미했다(모두 `Buffers: shared hit`만, `read` 없음).
+
+| 쿼리 | 1회 | 2회(웜) | 3회(웜) | 웜 평균 | 스캔 방식 |
+|---|---|---|---|---|---|
+| 기준선(필터 없음) | 167.6ms | 166.0ms | 166.2ms | 166.1ms | Parallel Seq Scan → top-N heapsort, `Buffers: shared hit=3745` |
+| 남성 필터(`gender in ('남성','공용')`) | 132.9ms | 132.6ms | 132.7ms | 132.7ms | 동일 구조, Filter에 gender 조건 추가, `Buffers: shared hit=3745` |
+| 여성 필터(`gender in ('여성','공용')`) | 130.6ms | 130.7ms | 130.9ms | 130.8ms | 동일 구조, `Buffers: shared hit=3745` |
+
+성별 필터를 얹으면 정렬 대상 행 수가 줄어(133,125 → 79,138 / 77,315 추정) top-N heapsort 비용이 줄어서 **필터가 기준선보다 오히려 20% 가량 빠르다.** 버퍼 사용량은 세 쿼리 모두 동일(전체 테이블을 훑는 Seq Scan이라 필터 여부와 무관). 인덱스 불필요.
+
+### 2) 벡터 버킷 프로브 (`sess_cand` LATERAL 패턴, 마이그레이션 134~148행)
+
+샘플 앵커: `goods_no=6440370` (`c_img_vecs where img_type in (0,1) limit 1`). 원 쿼리와 동일하게 **LATERAL** 구조로 재구성해야 `c_img_vecs_bq_idx`(ivfflat, bit_hamming_ops) 인덱스가 실제로 쓰인다 — 처음에 비-LATERAL(단순 CROSS JOIN)로 재구성했더니 플래너가 인덱스를 버리고 전체 `c_img_vecs`(약 92만 행)를 Seq Scan + Sort 해 **36초**가 걸리는 것을 확인했다(이 결과는 재구성 오류였고 실제 함수 동작과 무관 — 산출물 2번 원문에 남겨둠). `ivfflat.probes=40`(프로덕션 믹스 RPC와 동일) 설정 후 LATERAL로 재측정:
+
+| 쿼리 | 1회(콜드) | 2회(웜) | 3회(웜) | 웜 평균 | 스캔 방식 |
+|---|---|---|---|---|---|
+| 프로브 기준선(gender 조건 없음) | 883.9ms | 51.5ms | 33.1ms | 42.3ms | `Index Scan using c_img_vecs_bq_idx` (Order By ivfflat) + `c_thumb_dims_pkey` Memoize 조인 |
+| 프로브 + 남성 필터(exists 절 안) | 189.7ms | 31.8ms | 32.9ms | 32.4ms | 동일 구조, `c_thumb_dims_pkey` Filter에 gender 조건 추가 |
+
+1회차는 `c_img_vecs`가 디스크에서 읽혀(`read=158` 등) 콜드였고, 이후 캐시로 33~52ms까지 떨어졌다. 성별 필터를 exists 절 안(가장 얇은 `c_thumb_dims_pkey` 인덱스 스캔)에 추가해도 웜 평균이 오히려 약간 더 빠르다(42.3ms → 32.4ms). 인덱스 불필요.
+
+### 3) statement_timeout (참고)
+
+```
+rolname       | setconfig
+anon          | statement_timeout=8s
+authenticated | statement_timeout=8s
+authenticator | statement_timeout=8s, lock_timeout=8s (+ session_preload_libraries)
+```
+psql 세션 기본값은 `2min`이지만 API 경로(PostgREST)는 8초 제한. 위 실측치는 모두 1초 미만이라 이 한도에 여유가 크다.
+
+### 4) 엔드투엔드 참고 (psql 직접 호출, 인자 기본값)
+
+- `c_feed_page(42, null, 30)` → 267.7ms (30행)
+- `c_mix_page('[]','[]','{}',42,30,false)` → 271.6ms (30행, 앵커 없이 무작위 계열 위주)
+
+### 5) 임시 인덱스
+
+만들지 않았다. base_pool·벡터 프로브 모두 필터 적용 후 웜 시간이 기준선과 같거나 더 빨라 판정 기준(2배 미만·절대 300ms 미만)을 이미 만족한다.
+
+### 판정: **진행 가능** (인덱스 불필요)
+
+성별 필터를 얹어도 두 후보풀 쿼리 모두 기준선 대비 느려지지 않았다(오히려 20~25% 빨라짐). `c_thumb_dims`가 226K행짜리 좁은 물질화 테이블이라 Seq Scan 자체가 이미 저렴하고, 필터는 정렬 대상 행 수만 줄이기 때문으로 보인다. 벡터 버킷도 ivfflat 인덱스가 정상적으로 쓰이는 LATERAL 형태에서는 성별 조건이 가장 얇은 PK 인덱스 스캔에 얹혀 영향이 없다. 1단계(서버 RPC에 성별 인자 추가)로 진행해도 좋다.
