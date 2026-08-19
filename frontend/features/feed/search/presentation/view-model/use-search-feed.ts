@@ -21,6 +21,7 @@ import {
 } from "@/features/feed/search/data/search-log-api";
 import { emptyPlan, type QueryPlan } from "@/features/feed/search/domain/query-plan";
 import type { SearchSubmission } from "@/features/feed/search/presentation/view-model/use-search-state";
+import { nearestScrollRoot } from "@/shared/scroll/nearest-scroll-root";
 
 const PAGE_SIZE = 30;
 const COLUMN_COUNT = 2;
@@ -281,8 +282,12 @@ export function useSearchFeed({ query, submission, paused }: SearchFeedOptions) 
       (entries) => {
         if (entries.some((entry) => entry.isIntersecting)) loadMore();
       },
-      // 바닥에 닿기 전에 미리 불러와 스크롤이 끊기지 않게 한다
-      { rootMargin: "800px 0px" },
+      {
+        // 굴리는 주체를 놓인 자리에서 찾는다 (use-feed-view-model과 같은 이유)
+        root: nearestScrollRoot(sentinel),
+        // 바닥에 닿기 전에 미리 불러와 스크롤이 끊기지 않게 한다
+        rootMargin: "800px 0px",
+      },
     );
     observer.observe(sentinel);
     return () => {
