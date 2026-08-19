@@ -4,6 +4,8 @@ import {
   AXES_IN_ORDER,
   colorChip,
   emptyTasteSummary,
+  groupAxes,
+  GROUPS_IN_ORDER,
   isStillCollecting,
   readTasteSummary,
 } from "./taste-summary";
@@ -119,6 +121,52 @@ describe("AXES_IN_ORDER", () => {
     for (const axis of AXES_IN_ORDER) {
       expect(axis.left).toBeTruthy();
       expect(axis.right).toBeTruthy();
+    }
+  });
+
+  it("묶음에서 파생된다 — 축 목록이 두 군데에 따로 있지 않다", () => {
+    expect(AXES_IN_ORDER).toEqual(GROUPS_IN_ORDER.flatMap((g) => g.axes));
+  });
+
+  it("같은 축이 두 묶음에 들어가지 않는다", () => {
+    const keys = AXES_IN_ORDER.map((a) => a.key);
+    expect(new Set(keys).size).toBe(keys.length);
+  });
+});
+
+describe("groupAxes", () => {
+  const axis = (key: string, value = 0.5, measured = 5) =>
+    readTasteSummary({ axes: { [key]: { value, measured } } }).axes[0];
+
+  it("묶음 순서는 커버리지 높은 순으로 고정이다", () => {
+    // 잰 개수 순으로 정렬하면 사람마다 카드 모양이 달라져 자기 카드를 기억할 수 없다.
+    const groups = groupAxes([
+      axis("shoulder", 0.5, 3),
+      axis("color_vivid", 0.5, 40),
+      axis("price", 0.5, 40),
+    ]);
+    expect(groups.map((g) => g.key)).toEqual(["print", "value", "silhouette"]);
+  });
+
+  it("묶음 안 축 순서도 고정이다", () => {
+    const groups = groupAxes([axis("graphic"), axis("color_vivid")]);
+    expect(groups[0].axes.map((a) => a.key)).toEqual(["color_vivid", "graphic"]);
+  });
+
+  it("축이 하나도 없는 묶음은 소제목째 빠진다", () => {
+    // 빈 소제목이 남으면 "실루엣을 잴 수 없었다"가 아니라 "여기 뭔가 있었는데
+    // 사라졌다"로 읽힌다.
+    const groups = groupAxes([axis("color_vivid")]);
+    expect(groups.map((g) => g.key)).toEqual(["print"]);
+  });
+
+  it("축이 하나도 없으면 묶음도 없다", () => {
+    expect(groupAxes([])).toEqual([]);
+  });
+
+  it("묶음마다 소제목이 있다", () => {
+    for (const group of GROUPS_IN_ORDER) {
+      expect(group.title).toBeTruthy();
     }
   });
 });

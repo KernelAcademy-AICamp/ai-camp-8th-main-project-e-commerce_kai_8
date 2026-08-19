@@ -5,6 +5,7 @@ import { RefreshIcon } from "@/shared/icons";
 import {
   AXES_IN_ORDER,
   colorChip,
+  groupAxes,
   isStillCollecting,
   type TasteAxis,
   type TasteSummary,
@@ -25,28 +26,40 @@ function percent(share: number): string {
  *
  * **채우지 않고 점을 찍는다.** 채우면 "얼마나 많이"로 읽히는데, 이 값은 양이
  * 아니라 **양 끝 사이의 위치**다.
+ *
+ * **잰 개수를 오른쪽 고정 폭 칸에 적는다.** 축이 여럿 세로로 늘어서므로 숫자
+ * 자리가 흔들리면 읽히지 않는다. 이 숫자는 막대의 `aria-label`에 이미 들어 있어
+ * 스크린리더에는 감춘다 — 안 감추면 같은 말을 두 번 읽는다.
  */
 function AxisBar({ axis }: { axis: TasteAxis }) {
   const label = AXES_IN_ORDER.find((a) => a.key === axis.key);
   if (!label) return null;
 
   return (
-    <li>
-      <div className="flex items-center justify-between text-xs text-neutral-500">
-        <span>{label.left}</span>
-        <span>{label.right}</span>
+    <li className="flex items-center gap-3">
+      <div className="flex-1">
+        <div className="flex items-center justify-between text-xs text-neutral-500">
+          <span>{label.left}</span>
+          <span>{label.right}</span>
+        </div>
+        <div
+          role="img"
+          aria-label={`${label.left}에서 ${label.right} 사이 ${percent(axis.value)} 지점, 상품 ${String(axis.measured)}개로 잼`}
+          className="relative mt-1.5 h-1 rounded-full bg-neutral-800"
+        >
+          <span
+            aria-hidden
+            className="absolute top-1/2 h-3 w-3 -translate-x-1/2 -translate-y-1/2 rounded-full bg-white"
+            style={{ left: `${String(axis.value * 100)}%` }}
+          />
+        </div>
       </div>
-      <div
-        role="img"
-        aria-label={`${label.left}에서 ${label.right} 사이 ${percent(axis.value)} 지점, 상품 ${String(axis.measured)}개로 잼`}
-        className="relative mt-1.5 h-1 rounded-full bg-neutral-800"
+      <span
+        aria-hidden
+        className="w-5 shrink-0 text-right text-[11px] text-neutral-600 tabular-nums"
       >
-        <span
-          aria-hidden
-          className="absolute top-1/2 h-3 w-3 -translate-x-1/2 -translate-y-1/2 rounded-full bg-white"
-          style={{ left: `${String(axis.value * 100)}%` }}
-        />
-      </div>
+        {axis.measured > 0 ? axis.measured : ""}
+      </span>
     </li>
   );
 }
@@ -69,13 +82,21 @@ function TasteBody({ summary }: { summary: TasteSummary }) {
 
   return (
     <>
-      {summary.axes.length > 0 && (
-        <ul className="mt-6 space-y-7">
-          {summary.axes.map((axis) => (
-            <AxisBar key={axis.key} axis={axis} />
-          ))}
-        </ul>
-      )}
+      {/* 무엇으로 잰 값인지 먼저 밝힌다. 축마다 잰 개수가 다르므로(색은 거의 다
+          잡히고 실측 치수는 절반뿐이다) 이 수는 축별 숫자의 상한으로 읽힌다. */}
+      <p className="mt-1 text-sm text-neutral-500">
+        상품 {summary.matchedCount}개로 쟀어요
+      </p>
+
+      {groupAxes(summary.axes).map((group) => (
+        <Section key={group.key} title={group.title}>
+          <ul className="space-y-7">
+            {group.axes.map((axis) => (
+              <AxisBar key={axis.key} axis={axis} />
+            ))}
+          </ul>
+        </Section>
+      ))}
 
       {colors.length > 0 && (
         <Section title="자주 본 색">

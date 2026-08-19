@@ -13,16 +13,51 @@ export interface TasteAxisLabel {
   right: string;
 }
 
+export type TasteGroupKey = "print" | "value" | "silhouette";
+
+export interface TasteGroupLabel {
+  key: TasteGroupKey;
+  /** 카드에 그리는 소제목 */
+  title: string;
+  axes: readonly TasteAxisLabel[];
+}
+
 /**
- * 그리는 순서. 커버리지가 높은 축을 앞에 둔다 — 어깨는 카탈로그 45%라
- * 자주 빠지므로 맨 뒤다(설계 §4).
+ * 그리는 순서. **커버리지가 높은 묶음을 앞에 둔다** — 실루엣은 실측이 카탈로그
+ * 45%뿐이라 자주 통째로 빠지므로 맨 뒤다. 이 순서여야 카드가 구멍으로 시작하지
+ * 않는다(설계 2026-08-20 §2).
+ *
+ * **잰 개수 순으로 정렬하지 않는다.** 그러면 사람마다·시점마다 카드 모양이 달라져
+ * 자기 카드를 기억할 수 없다.
+ *
+ * `value`가 아직 가격 하나뿐이라 소제목이 `값`이다. 대중성 축이 들어오는 조각 2에서
+ * `값·인기`로 바뀐다.
  */
-export const AXES_IN_ORDER: readonly TasteAxisLabel[] = [
-  { key: "color_vivid", left: "무채색", right: "원색" },
-  { key: "graphic", left: "무지", right: "그래픽" },
-  { key: "price", left: "저가", right: "고가" },
-  { key: "shoulder", left: "좁은 어깨", right: "드롭" },
+export const GROUPS_IN_ORDER: readonly TasteGroupLabel[] = [
+  {
+    key: "print",
+    title: "색·프린트",
+    axes: [
+      { key: "color_vivid", left: "무채색", right: "원색" },
+      { key: "graphic", left: "무지", right: "그래픽" },
+    ],
+  },
+  {
+    key: "value",
+    title: "값",
+    axes: [{ key: "price", left: "저가", right: "고가" }],
+  },
+  {
+    key: "silhouette",
+    title: "실루엣",
+    axes: [{ key: "shoulder", left: "좁은 어깨", right: "드롭" }],
+  },
 ];
+
+/** 축 목록은 묶음에서 파생한다 — 두 군데에 따로 두면 한쪽만 고쳐진다. */
+export const AXES_IN_ORDER: readonly TasteAxisLabel[] = GROUPS_IN_ORDER.flatMap(
+  (group) => group.axes,
+);
 
 export interface TasteAxis {
   key: TasteAxisKey;
@@ -50,6 +85,32 @@ export interface TasteSummary {
   axes: TasteAxis[];
   colors: TasteColor[];
   brands: TasteBrand[];
+}
+
+export interface TasteAxisGroup {
+  key: TasteGroupKey;
+  title: string;
+  axes: TasteAxis[];
+}
+
+/**
+ * 잰 축들을 묶음으로 나눈다.
+ *
+ * **빠짐은 두 겹이다.** 서버가 안 보낸 축은 이미 `readTasteSummary`에서 떨어졌고,
+ * 여기서는 **축이 하나도 안 남은 묶음의 소제목까지 없앤다.** 빈 소제목이 남으면
+ * "잴 수 없었다"가 아니라 "여기 있던 게 사라졌다"로 읽힌다.
+ */
+export function groupAxes(axes: TasteAxis[]): TasteAxisGroup[] {
+  const groups: TasteAxisGroup[] = [];
+  for (const group of GROUPS_IN_ORDER) {
+    // 서버가 보낸 순서가 아니라 묶음이 정한 순서로 편다
+    const found = group.axes
+      .map((label) => axes.find((axis) => axis.key === label.key))
+      .filter((axis): axis is TasteAxis => axis !== undefined);
+    if (found.length > 0)
+      groups.push({ key: group.key, title: group.title, axes: found });
+  }
+  return groups;
 }
 
 export function emptyTasteSummary(): TasteSummary {
