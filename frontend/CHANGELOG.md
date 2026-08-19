@@ -1,3 +1,8 @@
+## [0.1.11](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/compare/v0.1.10...v0.1.11) (2026-08-19)
+
+### Bug Fixes
+
+* 취향 카드 스켈레톤이 완성 레이아웃 영역을 그대로 잡게 한다 ([#54](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/issues/54)) ([c8dd35d](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/commit/c8dd35d59c9a9f948493331c241ed72b6906dc3b))
 ## [0.1.10](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/compare/v0.1.9...v0.1.10) (2026-08-19)
 
 ### Bug Fixes
