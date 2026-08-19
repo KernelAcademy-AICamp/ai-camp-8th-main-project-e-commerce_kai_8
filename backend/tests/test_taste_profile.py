@@ -26,9 +26,11 @@ pytestmark = pytest.mark.skipif(not DSN, reason="PG_TEST_DSN 미설정 — Postg
 
 MIGRATIONS = Path(__file__).resolve().parents[1] / "supabase" / "migrations"
 TASTE_SQL = "20260819100000_account_taste_profile.sql"
+FORGET_SQL = "20260820000000_taste_forget.sql"
 
 GET = "c_taste_get"
 PUT = "c_taste_put"
+FORGET = "c_taste_forget"
 
 PUBLIC_GRANTEE = 0
 
@@ -64,6 +66,7 @@ def conn():
         with c.cursor() as cur:
             cur.execute(f"drop function if exists {GET}()")
             cur.execute(f"drop function if exists {PUT}(int, jsonb)")
+            cur.execute(f"drop function if exists {FORGET}()")
             cur.execute("drop table if exists c_taste_profiles")
             cur.execute("drop schema if exists auth cascade")
 
@@ -73,6 +76,7 @@ def db(conn):
     with conn.cursor() as cur:
         cur.execute(f"drop function if exists {GET}()")
         cur.execute(f"drop function if exists {PUT}(int, jsonb)")
+        cur.execute(f"drop function if exists {FORGET}()")
         cur.execute("drop table if exists c_taste_profiles")
         cur.execute("drop schema if exists auth cascade")
 
@@ -97,6 +101,7 @@ def db(conn):
         cur.execute("grant select, delete on auth.users to postgres")
 
         cur.execute(migration_text(TASTE_SQL))
+        cur.execute(migration_text(FORGET_SQL))
     return conn
 
 
@@ -133,10 +138,14 @@ def get(db, user, role: str = "authenticated"):
     return call_as(db, role, user, f"select * from {GET}()")
 
 
+def forget(db, user, role: str = "authenticated"):
+    return call_as(db, role, user, f"select {FORGET}()")
+
+
 # ── 권한 행렬 ────────────────────────────────────────────────────────────────
 
 
-@pytest.mark.parametrize("fn", [GET, PUT])
+@pytest.mark.parametrize("fn", [GET, PUT, FORGET])
 def test_public에_실행권한이_남아있지_않다(db, fn):
     with db.cursor() as cur:
         cur.execute(
@@ -247,6 +256,63 @@ def test_스키마_버전이_이상하면_거부한다(db):
     user = make_user(db, "badversion@example.com")
     with pytest.raises(psycopg.Error):
         put(db, user, anchors(1), version=0)
+
+
+# ── 초기화(취향 삭제) ───────────────────────────────────────────────────────
+# 설정 화면의 "개인화 데이터 모두 지우기"가 이 함수를 부른다. 이게 없던 동안
+# 초기화는 서버의 취향을 남겨 뒀고, 마이페이지 새로고침이 옛 취향을 그대로
+# 보여줬다(다음 접속에는 기기로 다시 내려와 개인화까지 되살아났다).
+
+
+def test_비로그인_역할은_지울_수_없다(db):
+    user = make_user(db, "anon-forget@example.com")
+    with pytest.raises(psycopg.errors.InsufficientPrivilege):
+        forget(db, user, role="anon")
+
+
+def test_인증_주체가_없으면_지우지_않고_오류를_낸다(db):
+    with pytest.raises(psycopg.Error) as caught:
+        forget(db, None)
+    assert not isinstance(caught.value, psycopg.errors.InsufficientPrivilege)
+
+
+def test_지우면_읽을_것이_없다(db):
+    user = make_user(db, "forget-roundtrip@example.com")
+    put(db, user, anchors(3))
+    assert forget(db, user)[0][0] == 1
+    assert get(db, user) == [], "초기화 뒤에는 서버에 남은 취향이 없어야 한다"
+
+
+def test_없는_것을_지워도_오류가_아니다(db):
+    """서버 삭제가 실패하면 클라이언트가 다음 접속에 다시 부른다.
+    두 번째 호출이 오류를 내면 재시도 큐에서 영영 빠지지 않는다."""
+    user = make_user(db, "forget-twice@example.com")
+    put(db, user, anchors(2))
+    assert forget(db, user)[0][0] == 1
+    assert forget(db, user)[0][0] == 0
+
+
+def test_저장한_적_없어도_지울_수_있다(db):
+    user = make_user(db, "forget-never-saved@example.com")
+    assert forget(db, user)[0][0] == 0
+
+
+def test_남의_취향은_지워지지_않는다(db):
+    mine = make_user(db, "forget-mine@example.com")
+    other = make_user(db, "forget-other@example.com")
+    put(db, mine, anchors(2))
+    put(db, other, anchors(4))
+    forget(db, mine)
+    assert len(get(db, other)[0][1]) == 4
+
+
+def test_지운_뒤_다시_저장할_수_있다(db):
+    """초기화는 계정을 못 쓰게 만드는 것이 아니라 처음 상태로 되돌리는 것이다."""
+    user = make_user(db, "forget-then-save@example.com")
+    put(db, user, anchors(3))
+    forget(db, user)
+    put(db, user, anchors(1))
+    assert len(get(db, user)[0][1]) == 1
 
 
 # ── 계정 삭제 ────────────────────────────────────────────────────────────────
