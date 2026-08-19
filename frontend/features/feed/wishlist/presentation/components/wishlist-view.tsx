@@ -18,7 +18,7 @@ export function WishlistView() {
   const router = useRouter();
   const { entries, notice, access } = useWishlist();
   const message = wishlistNoticeMessage(notice);
-  const { stack, open, requestClose, finishClose } = useDetailState();
+  const { stack, open, requestClose, finishClose } = useDetailState("wishlist");
 
   useEffect(() => {
     if (access === "out") router.replace("/login");
