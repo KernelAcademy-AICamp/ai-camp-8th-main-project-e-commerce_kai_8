@@ -1,3 +1,9 @@
+## [0.1.10](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/compare/v0.1.9...v0.1.10) (2026-08-19)
+
+### Bug Fixes
+
+* 마이페이지·취향 카드 로딩도 스켈레톤으로 보여준다 ([#53](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/issues/53)) ([34b94cb](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/commit/34b94cb6a41389cf927c6b88dfdcd084d4108d07))
+* 피드 스켈레톤 색을 배경과 구분되게 밝힌다 ([#52](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/issues/52)) ([2eb3a7f](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/commit/2eb3a7fc04d35c82258df977ef9d53d9d8e2a1bb)), closes [#0a0a0a](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/issues/0a0a0a)
 ## [0.1.9](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/compare/v0.1.8...v0.1.9) (2026-08-19)
 
 ### Features
