@@ -56,7 +56,10 @@ export function MyPage({
         <div aria-hidden className="h-20 w-20 shrink-0 rounded-full bg-neutral-800" />
         <div className="min-w-0">
           {state.kind === "loading" && (
-            <div className="h-6 w-40 rounded bg-neutral-900" aria-label="확인 중" />
+            <div aria-label="확인 중" className="animate-pulse space-y-2">
+              <div className="h-5 w-44 rounded bg-neutral-800" />
+              <div className="h-4 w-56 rounded bg-neutral-800" />
+            </div>
           )}
           {state.kind === "signedOut" && (
             <>
@@ -80,6 +83,13 @@ export function MyPage({
       </div>
 
       <div className="mt-8">
+        {/* 로그인/로그아웃 버튼 자리 — 판정이 끝나면 같은 크기의 버튼이 들어와 화면이 튀지 않는다 */}
+        {state.kind === "loading" && (
+          <div
+            aria-hidden
+            className="h-[52px] w-full animate-pulse rounded-full bg-neutral-800"
+          />
+        )}
         {state.kind === "signedOut" && (
           <Link
             href="/login"
