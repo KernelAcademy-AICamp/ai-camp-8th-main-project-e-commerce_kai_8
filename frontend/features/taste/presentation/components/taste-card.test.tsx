@@ -29,6 +29,7 @@ const FULL = {
   anchor_count: 18,
   matched_count: 16,
   axes: {
+    cohesion: { value: 0.3, measured: 20 },
     color_vivid: { value: 0.7, measured: 16 },
     graphic: { value: 0.2, measured: 16 },
     price: { value: 0.45, measured: 16 },
@@ -48,6 +49,12 @@ const WITHOUT_FIT_MEASURES = {
     graphic: FULL.axes.graphic,
     price: FULL.axes.price,
   },
+};
+
+/** 앵커 20개를 못 채우면 서버가 응집도를 아예 안 보낸다. */
+const WITHOUT_COHESION = {
+  ...FULL,
+  axes: { ...FULL.axes, cohesion: undefined },
 };
 
 afterEach(cleanup);
@@ -103,6 +110,28 @@ describe("내 취향 카드", () => {
     // 한 덩어리로 읽혀 막대를 방해했다). 대신 막대 설명에는 남아 있어야 한다.
     expect(screen.getByRole("img", { name: /좁은 어깨.*상품 7개로 잼/ })).toBeTruthy();
     expect(screen.getByRole("img", { name: /무채색.*상품 16개로 잼/ })).toBeTruthy();
+  });
+
+  it("응집도는 소제목 없이 맨 위에 홀로 그린다", async () => {
+    givenServerSends(FULL);
+    render(<TasteCard />);
+
+    const lead = await screen.findByRole("img", { name: /두루에서 확고 사이/ });
+    // 어느 묶음 안에도 있으면 안 된다 — 성질이 다른 값이라 따로 그린다
+    for (const title of ["색·프린트", "값", "실루엣"]) {
+      const group = screen.getByRole("heading", { name: title }).parentElement;
+      if (!group) throw new Error("묶음 소제목에 부모가 없다");
+      expect(group.contains(lead)).toBe(false);
+    }
+  });
+
+  it("앵커가 모자라면 응집도 줄이 아예 없다", async () => {
+    // 앵커가 적으면 우연히 확고해 보인다. 서버가 20개 미만이면 안 보낸다.
+    givenServerSends(WITHOUT_COHESION);
+    render(<TasteCard />);
+
+    expect(await screen.findByRole("heading", { name: "색·프린트" })).toBeTruthy();
+    expect(screen.queryByRole("img", { name: /두루에서 확고 사이/ })).toBeNull();
   });
 
   it("색 칩과 브랜드가 그대로 남는다", async () => {

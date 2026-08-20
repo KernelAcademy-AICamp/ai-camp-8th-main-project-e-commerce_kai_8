@@ -2,6 +2,19 @@ import { RefreshIcon } from "@/shared/icons";
 
 import { GROUPS_IN_ORDER } from "../../domain/taste-summary";
 
+/** 축 한 줄의 자리 — 라벨 두 개와 막대. 카드의 `AxisBar`와 같은 높이라야 한다. */
+function AxisRowSkeleton() {
+  return (
+    <li>
+      <div className="flex items-center justify-between">
+        <div className="h-3 w-10 rounded bg-neutral-800" />
+        <div className="h-3 w-10 rounded bg-neutral-800" />
+      </div>
+      <div className="mt-1.5 h-1 rounded-full bg-neutral-800" />
+    </li>
+  );
+}
+
 /**
  * 취향 카드의 뼈대.
  *
@@ -38,18 +51,15 @@ export function TasteCardSkeleton() {
 
       <div aria-label="불러오는 중" className="animate-pulse">
         <div className="mt-1 h-5 w-32 rounded bg-neutral-800" />
-        {GROUPS_IN_ORDER.map((group, index) => (
-          <div key={group.key} className={index === 0 ? "mt-8" : "mt-10"}>
+        <ul className="mt-7">
+          <AxisRowSkeleton />
+        </ul>
+        {GROUPS_IN_ORDER.map((group) => (
+          <div key={group.key} className="mt-10">
             <div className="h-3 w-12 rounded bg-neutral-800" />
             <ul className="mt-3 space-y-6">
               {group.axes.map((axis) => (
-                <li key={axis.key}>
-                  <div className="flex items-center justify-between">
-                    <div className="h-3 w-10 rounded bg-neutral-800" />
-                    <div className="h-3 w-10 rounded bg-neutral-800" />
-                  </div>
-                  <div className="mt-1.5 h-1 rounded-full bg-neutral-800" />
-                </li>
+                <AxisRowSkeleton key={axis.key} />
               ))}
             </ul>
           </div>

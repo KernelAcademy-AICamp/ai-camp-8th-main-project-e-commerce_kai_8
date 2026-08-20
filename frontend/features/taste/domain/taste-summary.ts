@@ -4,7 +4,14 @@
 // 그대로 믿지 않는다** — 형태가 어긋난 항목 하나가 카드 전체를 못 쓰게 만들면 안 된다.
 
 export type TasteAxisKey =
-  "color_vivid" | "graphic" | "price" | "shoulder" | "length" | "chest" | "sleeve";
+  | "cohesion"
+  | "color_vivid"
+  | "graphic"
+  | "price"
+  | "shoulder"
+  | "length"
+  | "chest"
+  | "sleeve";
 
 export interface TasteAxisLabel {
   key: TasteAxisKey;
@@ -67,10 +74,27 @@ export const GROUPS_IN_ORDER: readonly TasteGroupLabel[] = [
   },
 ];
 
-/** 축 목록은 묶음에서 파생한다 — 두 군데에 따로 두면 한쪽만 고쳐진다. */
-export const AXES_IN_ORDER: readonly TasteAxisLabel[] = GROUPS_IN_ORDER.flatMap(
-  (group) => group.axes,
-);
+/**
+ * 묶음에 속하지 않고 카드 맨 위에 홀로 그리는 축.
+ *
+ * **다른 축과 성질이 다르다.** 나머지는 "양 끝 사이 어디"이고 좋고 나쁨이 없는데,
+ * 이건 "앵커 중 몇 %가 아주 닮은 짝을 갖고 있나"이고 **쓸수록 오른쪽으로 간다.**
+ * 그래서 묶음 안에 넣지 않는다 — 배치로 "다른 종류의 값"이라고 말한다.
+ *
+ * `좁다↔넓다`가 아니라 `두루↔확고`인 이유: 좁다는 사람을 평가하는 말로 읽히고,
+ * 취향이 진짜로 넓은 사람을 "아직 몰라서"로 몰지 않기 위해서다(제품 책임자 2026-08-20).
+ */
+export const LEAD_AXIS: TasteAxisLabel = {
+  key: "cohesion",
+  left: "두루",
+  right: "확고",
+};
+
+/** 축 목록은 한 군데서 파생한다 — 두 군데에 따로 두면 한쪽만 고쳐진다. */
+export const AXES_IN_ORDER: readonly TasteAxisLabel[] = [
+  LEAD_AXIS,
+  ...GROUPS_IN_ORDER.flatMap((group) => group.axes),
+];
 
 export interface TasteAxis {
   key: TasteAxisKey;
@@ -112,6 +136,8 @@ export interface TasteAxisGroup {
  * **빠짐은 두 겹이다.** 서버가 안 보낸 축은 이미 `readTasteSummary`에서 떨어졌고,
  * 여기서는 **축이 하나도 안 남은 묶음의 소제목까지 없앤다.** 빈 소제목이 남으면
  * "잴 수 없었다"가 아니라 "여기 있던 게 사라졌다"로 읽힌다.
+ *
+ * `LEAD_AXIS`는 어느 묶음에도 없으므로 여기서 자연히 빠진다 — 카드가 따로 그린다.
  */
 export function groupAxes(axes: TasteAxis[]): TasteAxisGroup[] {
   const groups: TasteAxisGroup[] = [];

@@ -7,6 +7,7 @@ import {
   colorChip,
   groupAxes,
   isStillCollecting,
+  LEAD_AXIS,
   type TasteAxis,
   type TasteSummary,
 } from "../../domain/taste-summary";
@@ -79,6 +80,7 @@ function TasteBody({ summary }: { summary: TasteSummary }) {
     .filter((c) => c.chip !== undefined)
     .slice(0, MAX_COLORS);
   const brands = summary.brands.slice(0, MAX_BRANDS);
+  const lead = summary.axes.find((axis) => axis.key === LEAD_AXIS.key);
 
   return (
     <>
@@ -87,6 +89,15 @@ function TasteBody({ summary }: { summary: TasteSummary }) {
       <p className="mt-1 text-sm text-neutral-500">
         상품 {summary.matchedCount}개로 쟀어요
       </p>
+
+      {/* 응집도는 어느 묶음에도 속하지 않는다. 소제목 없이 맨 위에 홀로 둬서
+          "이건 다른 종류의 값"이라고 배치로 말한다. 앵커 20개를 못 채우면
+          서버가 아예 안 보낸다 — 적은 앵커는 우연히 확고해 보이기 때문이다. */}
+      {lead && (
+        <ul className="mt-7">
+          <AxisBar axis={lead} />
+        </ul>
+      )}
 
       {groupAxes(summary.axes).map((group) => (
         <Section key={group.key} title={group.title}>

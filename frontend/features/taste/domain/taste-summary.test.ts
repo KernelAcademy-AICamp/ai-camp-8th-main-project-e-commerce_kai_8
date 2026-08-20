@@ -7,6 +7,7 @@ import {
   groupAxes,
   GROUPS_IN_ORDER,
   isStillCollecting,
+  LEAD_AXIS,
   readTasteSummary,
 } from "./taste-summary";
 
@@ -124,8 +125,17 @@ describe("AXES_IN_ORDER", () => {
     }
   });
 
-  it("묶음에서 파생된다 — 축 목록이 두 군데에 따로 있지 않다", () => {
-    expect(AXES_IN_ORDER).toEqual(GROUPS_IN_ORDER.flatMap((g) => g.axes));
+  it("맨 위 축과 묶음에서 파생된다 — 축 목록이 두 군데에 따로 있지 않다", () => {
+    expect(AXES_IN_ORDER).toEqual([
+      LEAD_AXIS,
+      ...GROUPS_IN_ORDER.flatMap((g) => g.axes),
+    ]);
+  });
+
+  it("맨 위 축은 어느 묶음에도 들어 있지 않다", () => {
+    // 묶음에 있으면 소제목 아래에 그려진다. 이 축은 성질이 달라 따로 그린다.
+    const inGroups = GROUPS_IN_ORDER.flatMap((g) => g.axes).map((a) => a.key);
+    expect(inGroups).not.toContain(LEAD_AXIS.key);
   });
 
   it("같은 축이 두 묶음에 들어가지 않는다", () => {
@@ -162,6 +172,13 @@ describe("groupAxes", () => {
 
   it("축이 하나도 없으면 묶음도 없다", () => {
     expect(groupAxes([])).toEqual([]);
+  });
+
+  it("맨 위 축은 묶음에 들어가지 않는다", () => {
+    // 카드가 소제목 없이 따로 그린다. 여기 섞이면 엉뚱한 묶음에 붙는다.
+    expect(groupAxes([axis("cohesion"), axis("price")]).map((g) => g.key)).toEqual([
+      "value",
+    ]);
   });
 
   it("묶음마다 소제목이 있다", () => {
