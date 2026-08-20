@@ -1,3 +1,14 @@
+## [0.1.14](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/compare/v0.1.13...v0.1.14) (2026-08-20)
+
+### Features
+
+* 검색이 성별어를 하드 조건으로 이해한다 ([#65](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/issues/65)) ([77eb95e](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/commit/77eb95eab9226a11e12f30af9047a2f686c11a74)), closes [#63](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/issues/63)
+* 큐레이션 상세 488장에 전부 장 제목을 붙인다 ([#70](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/issues/70)) ([003ac18](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/commit/003ac187bdf64218c436cc426dc97cca7b52af4d)), closes [#68](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/issues/68)
+* 큐레이션을 슬라이드로 바꾸고 축을 57개로 늘린다 ([#67](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/issues/67)) ([4507f4d](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/commit/4507f4db6ca412d93d5ee67e581a2ada5f1f1e72))
+
+### Bug Fixes
+
+* 큐레이션에서 겹치는 썸네일과 같은 옷 다른 색을 뺀다 ([#68](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/issues/68)) ([38d975e](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/commit/38d975e593a84004bfd5d2a15fca5e781d7ac918)), closes [#66](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/issues/66)
 ## [0.1.13](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/compare/v0.1.12...v0.1.13) (2026-08-20)
 
 ### Features
