@@ -13,8 +13,12 @@
 
 이미 채워진 값은 건드리지 않는다(손으로 고른 것을 덮어쓰지 않기 위해).
 
+장 제목(head)은 여기서 못 만든다 — 사람이 쓰는 유일한 문장이라 워크시트로 주고받는다.
+
 사용:
-    python scripts/fill_curation_notes.py [--json PATH] [--workers N] [--dry-run]
+    python scripts/fill_curation_notes.py                 채우기
+    python scripts/fill_curation_notes.py --worksheet OUT  장 제목 쓸 표를 뽑는다(TSV)
+    python scripts/fill_curation_notes.py --read IN        채워온 표를 overlay 에 넣는다
 """
 
 import argparse
@@ -83,6 +87,51 @@ def pick_con(neg: str) -> tuple[str, str]:
     return "", ""
 
 
+def write_worksheet(data: list[dict], out: Path) -> int:
+    """장 제목을 쓸 표. 마지막 칸만 채우면 된다 — 빈 줄은 --read 가 건너뛴다."""
+    rows = ["게시물\t상품번호\t브랜드\t상품명\t한마디\t제목(여기를 채우세요)"]
+    for c in data:
+        rows.append(f"# {c['key']}\t\t\t\t{c['title']}\t")
+        for it in c["items"]:
+            rows.append(
+                "\t".join(
+                    [
+                        c["key"],
+                        str(goods_no(it["u"]) or ""),
+                        it["b"],
+                        it["t"][:40],
+                        (it.get("note") or "")[:60],
+                        it.get("head", ""),
+                    ]
+                )
+            )
+    out.write_text("\n".join(rows) + "\n", encoding="utf-8")
+    return len(rows)
+
+
+def read_worksheet(src: Path, overlay_path: Path) -> int:
+    """채워온 표에서 제목만 골라 overlay 의 heads 에 넣는다. 고른 상품·순서는 안 건드린다."""
+    overlay = (
+        json.loads(overlay_path.read_text(encoding="utf-8"))
+        if overlay_path.exists()
+        else {}
+    )
+    added = 0
+    for line in src.read_text(encoding="utf-8").splitlines()[1:]:
+        if line.startswith("#"):
+            continue
+        cols = line.split("\t")
+        if len(cols) < 6 or not cols[5].strip():
+            continue
+        spec = overlay.setdefault(cols[0], {})
+        spec.setdefault("heads", {})[cols[1]] = cols[5].strip()
+        added += 1
+    overlay_path.write_text(
+        json.dumps(overlay, ensure_ascii=False, indent=1), encoding="utf-8"
+    )
+    return added
+
+
 def accent_for(c: dict, palette: dict) -> str:
     """조건 라벨에서 주제를 읽어 색을 정한다 — 취향이 아니라 규칙이라 게시물이 늘어도 붙는다.
 
@@ -125,6 +174,10 @@ def apply_overlay(data: list[dict], overlay: dict) -> int:
         if picked:
             c["items"] = picked
             c["n"] = len(picked)
+        for no, head in (spec.get("heads") or {}).items():
+            item = pool.get(int(no))
+            if item is not None:
+                item["head"] = head
         if spec.get("accent"):
             c["accent"] = spec["accent"]
         touched += 1
@@ -137,9 +190,18 @@ def main() -> int:
     ap.add_argument("--overlay", type=Path, default=DEFAULT_OVERLAY)
     ap.add_argument("--workers", type=int, default=8)
     ap.add_argument("--dry-run", action="store_true")
+    ap.add_argument("--worksheet", type=Path, help="장 제목 쓸 표를 뽑을 경로")
+    ap.add_argument("--read", type=Path, help="채워온 표를 overlay 에 넣는다")
     args = ap.parse_args()
 
     data = json.loads(args.json.read_text(encoding="utf-8"))
+
+    if args.read:
+        print(f"제목 {read_worksheet(args.read, args.overlay)}개를 {args.overlay} 에 넣었다")
+
+    if args.worksheet:
+        print(f"{write_worksheet(data, args.worksheet)}줄 → {args.worksheet}")
+        return 0
 
     if args.overlay.exists():
         overlay = json.loads(args.overlay.read_text(encoding="utf-8"))
