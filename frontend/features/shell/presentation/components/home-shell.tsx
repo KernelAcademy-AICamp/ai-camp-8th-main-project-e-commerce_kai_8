@@ -12,7 +12,7 @@ import { PersonIcon } from "@/shared/icons";
 
 const TABS: { id: Pane; label: string }[] = [
   { id: "browse", label: "BROWSE" },
-  { id: "forYou", label: "FOR YOU" },
+  { id: "forYou", label: "PICKS" },
 ];
 
 /**
