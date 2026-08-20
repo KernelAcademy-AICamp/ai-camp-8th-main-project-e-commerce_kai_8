@@ -1,3 +1,10 @@
+## [0.1.13](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/compare/v0.1.12...v0.1.13) (2026-08-20)
+
+### Features
+
+* 설정 화면에서 앱 버전을 확인할 수 있게 한다 ([#62](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/issues/62)) ([c10c24d](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/commit/c10c24d1b5bb1cb4321b357257ecf342d6272261))
+* 취향 카드 측정 축을 4개에서 8개로 늘린다 ([#64](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/issues/64)) ([a6b1518](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/commit/a6b1518c99f75118f882c91cd14549ef8474a08c))
+* 행동 기반 성별 피드 하드 필터 ([#63](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/issues/63)) ([8b39590](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/commit/8b3959045231d118f0f3ac57773e77c93c3ddf0c))
 ## [0.1.12](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/compare/v0.1.11...v0.1.12) (2026-08-19)
 
 ### Features
