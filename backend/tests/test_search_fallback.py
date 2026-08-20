@@ -560,9 +560,9 @@ def test_single_word_that_is_both_brand_and_color_stays_a_color(cur):
 def test_price_and_color_conditions_are_never_violated(cur, query, pmin, pmax, code):
     """이 네 질의의 상위 20개에 **가격·색** 위반이 없어야 한다.
 
-    ⚠️ 성별은 세지 않는다. 성별은 이 계획의 범위 밖이고(가입 정보 기반 고정
-    필터로 다룬다) 검색이 구조화 조건으로 보장하지도 않는다. 기준서 G4의
-    하드 조건 전체를 보장한다고 읽히지 않게 이름을 좁혔다.
+    성별은 여기서 세지 않는다 — 2026-08-20부터 검색이 성별도 구조화 조건으로
+    보장하지만(20260820700000), 그 보장은 아래 성별 전용 테스트가 따로 본다.
+    이 테스트의 `남성`·`여성`이 든 질의는 이제 성별 하드 조건까지 걸린 채 돈다.
     """
     cur.execute(
         "select count(*),"
@@ -610,7 +610,63 @@ def test_search_docs_price_matches_the_catalog(cur):
     )
     assert cur.fetchone()[0] == 0, (
         "c_search_docs.price_final이 카탈로그와 다르다 — "
-        "20260817200000을 다시 돌려야 한다(backend/README.md 갱신 계약)"
+        "20260820600000을 다시 돌려야 한다(backend/README.md 갱신 계약)"
+    )
+
+
+# ── 성별 하드 조건 (검색 성별 조건, 2026-08-20) ─────────────────────────────
+#
+# '남성전용'은 제목 커버리지가 0이라 텍스트로는 영원히 0건이다. 성별은 카탈로그
+# 라벨(c_search_docs.gender)로 거른다. 파서 규칙 자체는 test_search_functions.py가
+# CI에서 잡고, 여기서는 **검색 경로 전체**가 라벨을 지키는지 본다.
+
+
+@pytest.mark.parametrize(
+    "query,allowed",
+    [
+        # '전용' 형태는 그 성별만
+        ("남성전용", {"남성"}),
+        ("여성전용", {"여성"}),
+        # 일반 성별어는 해당 성별 + 공용 (피드 #63과 같은 의미)
+        ("남성", {"남성", "공용"}),
+        ("여성 반팔", {"여성", "공용"}),
+        # 다른 하드 조건과 함께 걸려도 성별이 유지된다
+        ("검정 남성 반팔", {"남성", "공용"}),
+    ],
+)
+def test_gender_condition_is_never_violated(cur, query, allowed):
+    """성별어가 든 질의의 상위 20개는 전부 허용 라벨 안이어야 한다."""
+    cur.execute(
+        "select count(*), array_agg(distinct gender) from c_search_page_v2(%s, null, null, 20)",
+        (query,),
+    )
+    total, genders = cur.fetchone()
+    assert total > 0, f"{query}: 결과가 있어야 한다 (바꾸기 전 '남성전용'은 0건이었다)"
+    assert set(genders) <= allowed, f"{query}: 허용 밖 성별 {set(genders) - allowed}"
+
+
+def test_conflicting_genders_drop_the_condition(cur):
+    """서로 다른 성별을 함께 말하면 조건을 걸지 않는다 — AND면 공집합이 된다."""
+    cur.execute("select gender, strict from c_search_gender_parse(c_search_split('남성 여성'))")
+    assert cur.fetchone() == (None, None)
+    # 조건 없이도 검색 자체는 텍스트 매칭으로 돈다
+    cur.execute("select count(*) from c_search_page_v2('남성 여성', null, null, 20)")
+    assert cur.fetchone()[0] > 0
+
+
+def test_search_docs_gender_matches_the_catalog(cur):
+    """성별도 색인 복사본으로 거른다 — 가격과 같은 낡음 감시다.
+
+    재수집 뒤 파생 테이블을 다시 만들지 않으면 라벨이 바뀐 상품이
+    반대 성별 검색에 남는다.
+    """
+    cur.execute(
+        "select count(*) from c_search_docs s join c_goods g using (goods_no)"
+        " where s.gender <> coalesce(g.gender, '')"
+    )
+    assert cur.fetchone()[0] == 0, (
+        "c_search_docs.gender가 카탈로그와 다르다 — "
+        "20260820600000을 다시 돌려야 한다(backend/README.md 갱신 계약)"
     )
 
 

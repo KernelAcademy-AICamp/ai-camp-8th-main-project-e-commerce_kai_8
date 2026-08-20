@@ -1,9 +1,0 @@
-.next
-node_modules
-out
-build
-package-lock.json
-# 릴리즈 워크플로우가 자동 생성 — 포맷 검사 제외
-CHANGELOG.md
-# 큐레이션 생성 스크립트가 자동 생성 — 포맷 검사 제외
-features/curation/data/curations.json

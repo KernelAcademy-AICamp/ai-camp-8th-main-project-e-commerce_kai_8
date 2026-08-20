@@ -19,6 +19,10 @@
 | 상품별 실측 백분위 | `c_search_fit_measures` (102,610행 · `pop`으로 남녀 분리) | 기장·어깨 조건에 쓴다 |
 | 큐레이션 화면·게시물 형식 | `curation/client/features/curation/`, `curation/backend/scripts/gen_curation_page.py` | 게시물을 여기에 얹는다 |
 
+> ⚠️ **경로가 바뀌었다 (2026-08-20).** 위 표의 `curation/`은 별개 제품(search-by-llm)
+> 폴더였고 저장소에서 뺐다. 생성기는 **`backend/scripts/gen_curation_page.py`** 로 옮겼고,
+> 화면은 처음부터 `frontend/features/curation/`이 정본이다. 표는 당시 기록이라 그대로 둔다.
+
 **직접 만들려다 만 것**: 어깨/가슴 비율 백분위를 새로 계산할 뻔했으나 `c_search_fit_measures`가
 이미 같은 일을 하고 있었다(2026-08-18 확인). 성별 모집단 분리까지 되어 있어 다시 만들 이유가 없다.
 

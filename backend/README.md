@@ -16,6 +16,10 @@ aTee가 쓰는 티셔츠 카탈로그. `musinsa-c-db-handoff` 꾸러미(2026-08-
 - `musinsa/` — 무신사 API 클라이언트(`client.py`)·수집 경계(`c_landing.py`)·가격 구간 분할(`c_shards.py`)·판매자 정보 차단(`sanitize.py`)
 - `db/` — psycopg 적재(`c_upsert.py`)
 - `run_c_ingest.py` — 전체 수집 러너 (모수 확정 → 상세 수집, 중단·재개 가능)
+- `scripts/` — 손으로 돌리는 도구 (2026-08-20에 `curation/` 폴더를 지우며 여기로 옮겼다)
+  - `gen_curation_page.py` — **큐레이션 화면 데이터 생성기.** `c_goods`·`c_search_fit_measures`와 `curations` 표를 읽어 `frontend/features/curation/data/curations.json`을 만든다. 큐레이션 정의는 코드가 아니라 **`curations` 표**에 있다 — 트렌드가 바뀌면 그 표의 행만 고치고 이 스크립트를 다시 돌린다. ⚠️ **커밋된 JSON은 자동으로 갱신되지 않는다** (2026-08-20 기준 표 50건 vs 커밋된 JSON 28건).
+  - `probe_body_type.py` — 골격 체형별 조건 조사 (`gen_curation_page`의 규칙을 그대로 쓴다)
+  - `backup_db.sh` — 원격 Supabase → `backups/`로 pg_dump (로컬 전용, 커밋 안 됨)
 - `supabase/migrations/` — **Supabase 적용 대상** (`c_jsonb_helpers`, `c_goods`) — 이미 적용됨
 - `supabase/migrations-local/` — **로컬 전용** (`c_raw_goods`, `c_ingest_state`) — Supabase에 올리지 않는다 (해당 README 참고)
 - 설계 문서: [`docs/specs/2026-08-11-musinsa-c-db-design.md`](../docs/specs/2026-08-11-musinsa-c-db-design.md) · [수집 계획](../docs/specs/2026-08-11-musinsa-c-db-ingest.md)
@@ -80,14 +84,21 @@ venv/bin/python run_c_ingest.py status --run-id r1
 
 `c_goods` 재수집이나 `c_thumb_dims.card_ok` 재분류 후에는 **검색 파생 테이블을 반드시 재생성**해야 한다. 재생성하지 않으면 **자격을 잃은 상품이 검색에 다시 노출되거나 신규 상품이 검색에서 빠진다.**
 
-재생성 대상이 **셋**이다. 하나만 돌리면 나머지가 낡는다. **순서가 있다** — `c_search_vocab`은 `c_search_docs`에서 파생되므로 뒤에 돌린다.
+재생성 대상이 **넷**이다. 하나만 돌리면 나머지가 낡는다. **순서가 있다** — `c_search_vocab`은 `c_search_docs`에서 파생되므로 뒤에 돌린다.
 
 | 순서 | 대상 | 재실행할 마이그레이션 | 쓰는 곳 |
 |---|---|---|---|
 | — | `c_search_text` (2026-08-16) | `20260816240000_c_search_page.sql` | 구 검색 `c_search_page` |
-| 1 | **`c_search_docs`** (2026-08-17) | **`20260817200000_c_search_docs.sql`** | 새 검색 `c_search_page_v2` (PGroonga 색인·초성) |
+| 1 | **`c_search_docs`** (2026-08-20) | **`20260820600000_search_docs_gender.sql`** | 새 검색 `c_search_page_v2` (PGroonga 색인·초성·성별) |
 | 2 | **`c_search_vocab`** (2026-08-17) | **`20260817600000_search_typo.sql`** | 오타 교정 `c_search_correct_query` |
 | 3 | **`c_search_color_terms`** (2026-08-17) | **`20260817900000_search_color_terms.sql`** | 색 조건 (브랜드 사전을 참조하므로 vocab 뒤) |
+| 4 | **`c_search_negation_flags`** (2026-08-18) | **`20260818800000_search_fit_rules.sql`** | 부정 조건 `p_exclude` (docs에서 파생 — 낡으면 신규 위반 상품이 부정 검색에 노출) |
+
+> ⚠️ **1번은 20260817200000이 아니다.** 그 파일을 돌리면 성별 열이 사라지고, 프론트가
+> 부르는 6-인자 `c_search_page_v2`(성별 조건 포함)가 `s.gender` 참조로 **전부 실패**하며,
+> 같은 트랜잭션이 만드는 4-인자 구버전 RPC가 anon 권한까지 달고 부활한다.
+> docs를 다시 만들었으면 마지막에 **`20260820700000_search_gender_condition.sql`도 재실행**해
+> RPC 정의를 정본으로 되돌린다.
 
 > ⚠️ **가격은 특히 위험하다.** `c_search_docs.price_final`은 적재 시점 복사본이고
 > **하드 필터**로 쓰인다(`3만원 이하`). 재수집으로 가격이 바뀐 뒤 재생성을 놓치면
