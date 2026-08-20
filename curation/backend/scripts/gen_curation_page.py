@@ -40,7 +40,21 @@ MAX_APPEAR = 2    # 한 상품이 나갈 수 있는 큐레이션 수. 앞선 큐
 # 기본은 하한 전 숫자인데, 반팔 카탈로그의 8할이 구매 0건이라 체형 게시물은
 # "9개 보여주면서 8,830건"이 된다. 실제로 뽑을 수 있는 풀을 적는다.
 # ⚠️ 여기 없는 게시물과 기준이 다르다. 나란히 비교하면 안 된다.
-N_GATED = {"body_straight", "body_wave_w", "body_natural"}
+N_GATED = {"body_straight", "body_wave_w", "body_natural",
+           "outdoor_brand", "sports_brand", "spa_brand", "women_online_brand",
+           "new_arrival_watch", "outdoor_new", "women_online_new"}
+
+# 큐레이션별 카드 게이트·정렬 덮어쓰기. 기본은 (MIN_BUY, MIN_REVIEW, ORDER).
+# 기본 게이트는 "검증된 것만 보여준다"는 뜻이라, 이번 시즌에 막 들어온 것을
+# 소개하는 큐레이션에는 정반대로 작동한다 — 신상은 구매·후기가 0이라 전멸한다.
+# (실측: 아웃도어 브랜드 26SS 1,671건 중 기본 게이트 통과 0건.)
+# 그런 큐레이션은 게이트를 풀고, 대신 review_score가 없으니 조회수로 정렬한다.
+NEW_ARRIVAL_ORDER = "page_view desc nulls last, goods_no desc"
+CARD_RULE = {   # key -> (min_buy, min_review, order)
+    "new_arrival_watch": (0, 0, NEW_ARRIVAL_ORDER),
+    "outdoor_new":       (0, 0, NEW_ARRIVAL_ORDER),
+    "women_online_new":  (0, 0, NEW_ARRIVAL_ORDER),
+}
 
 # 반소매 티셔츠 = 일반(001001) + 스포츠(017016005). 긴팔·후드·나시는 뺀다.
 BASE_SCOPE = "base_cat in ('001001','017016005')"
@@ -404,6 +418,254 @@ SEED = [
                          "length_pct": {"gte": 0.50}},
                "thickness": {"not_any": ["얇음", "약간 얇음"]}},
      "cond_labels": ["어깨 확장·드롭", "볼륨 실루엣", "얇지 않음"]},
+
+    # ── 트렌드 축 (2026-08-20 추가) ───────────────────────────────
+    # 근거: 26SS 신상 비중(공급) + 조회/후기 격차(수요) + 8/12~8/20 후기 증가(판매).
+    # 세 신호가 같은 곳을 가리킨 축만 넣었다. 재현: report_trend_diff.py
+    # review_count 하한을 건 이유 — ORDER가 review_score desc라 후기 1건짜리(=100점)가
+    # 맨 앞에 오기 때문. 규칙으로 막는다(기존 큐레이션에도 같은 문제가 있다).
+    {"key": "muscle_fit",
+     "title": "몸에 붙여 입으려고 나온 머슬핏 반팔",
+     "lede": "가슴과 팔에 붙고 소매가 짧아 팔이 그대로 드러나는 컷. 헬스장 옷으로 나왔는데 "
+             "여름엔 그대로 밖에서 입는다. 오버핏과 정반대 방향이라 같이 놓고 고르면 실루엣 "
+             "차이가 크게 난다. 태그가 헐거워 오버핏 로고티까지 딸려와서, 상품명에 머슬핏이 "
+             "박힌 것만 남겼다.",
+     "rules": {"kw_title": ["머슬핏", "머슬 핏", "머슬드", "애슬릿"],
+               "not_kw": ["오버핏", "오버 핏", "루즈", "세트", "SET"],
+               "review_count": {"gte": 30}},
+     "cond_labels": ["상품명에 머슬핏", "오버핏 제외", "후기 30개 이상"]},
+
+    {"key": "rollup_sleeve",
+     "title": "소매를 접어 박아 고정한 롤업 반팔",
+     "lede": "소매 끝을 한 번 접어 올린 채로 박음질해 고정한 재단. 접힌 선에서 팔뚝이 끊겨 "
+             "소매가 길게 늘어지지 않는다. 크롭 기장과 같이 나오는 경우가 많아 배꼽 위에서 "
+             "끝나는 것이 섞여 있다.",
+     "rules": {"kw": ["롤업", "롤 업", "rollup", "roll-up"],
+               "review_count": {"gte": 30}},
+     "cond_labels": ["롤업 소매", "후기 30개 이상"]},
+
+    {"key": "off_shoulder",
+     "title": "어깨를 한쪽만, 또는 양쪽 다 드러내는 티",
+     "lede": "목선을 옆으로 눕히거나 한쪽 어깨만 걸치는 컷. 티셔츠인데 실루엣은 상의보다 "
+             "원피스 쪽에 가깝다. 나시·민소매는 다른 옷이라 뺐고, 안에 받쳐 입도록 나온 "
+             "레이어드용은 남겼다.",
+     "rules": {"kw": ["오프숄더", "오프 숄더", "원숄더", "원 숄더",
+                      "off-shoulder", "one-shoulder"],
+               "not_kw": ["나시", "슬리브리스", "민소매"],
+               "review_count": {"gte": 30}},
+     "cond_labels": ["원숄더·오프숄더", "나시 제외", "후기 30개 이상"]},
+
+    # ── 축 확장 32~50 (2026-08-20) ────────────────────────────────
+    # 기존 31개가 반소매의 51%(62,787건)를 이미 덮어서, 겹침이 아니라 "축이 새로운가"로 골랐다.
+    # 모수 45건 미만(밴드 21·타이다이 11·체크 19·커플 0)은 카드 9장 뽑을 선택지가 없어 뺐다.
+    {"key": "slim_fit",
+     "title": "오버핏 말고 몸선이 보이는 슬림핏",
+     "lede": "어깨와 품이 몸에 가깝게 떨어지는 컷. 오버핏이 몇 년째 기본값이라 오히려 "
+             "찾기 어려워졌다. 머슬핏만큼 붙지는 않아 운동복처럼 보이지는 않는다.",
+     "rules": {"kw_title": ["슬림핏", "슬림 핏", "슬림"],
+               "not_kw": ["오버핏", "오버 핏", "루즈"], "review_count": {"gte": 30}},
+     "cond_labels": ["슬림핏", "오버핏 제외", "후기 30개 이상"]},
+
+    {"key": "black_only",
+     "title": "검정 하나로만 이뤄진 반팔",
+     "lede": "다른 색을 섞지 않고 검정만 쓴 상품. 프린트까지 검정이라 멀리서는 무지처럼 "
+             "보인다. 여름엔 더워 보이지만 땀자국이 눈에 덜 띈다.",
+     "rules": {"color_only": ["블랙"], "review_count": {"gte": 30}},
+     "cond_labels": ["블랙 단독", "후기 30개 이상"]},
+
+    {"key": "premium_yarn",
+     "title": "원단 이름을 앞에 붙여 파는 반팔",
+     "lede": "수피마·코마사·텐셀처럼 실 이름을 상품명에 박아 파는 것들. 이름을 걸었다는 건 "
+             "원단이 판매 포인트라는 뜻이다. 대신 그 이름값이 가격에 붙는다.",
+     "rules": {"kw_title": ["수피마", "코마사", "supima", "텐셀", "모달"],
+               "review_count": {"gte": 30}},
+     "cond_labels": ["고급 원단명 표기", "후기 30개 이상"]},
+
+    {"key": "knit_tee",
+     "title": "티셔츠인데 저지가 아니라 니트로 짠 것",
+     "lede": "일반 저지 원단이 아니라 실로 짠 반팔. 형태가 잡히고 목이 잘 늘어나지 않는다. "
+             "대신 세탁기에 그냥 돌리면 늘어나서 세탁 표기를 봐야 한다.",
+     "rules": {"kw_title": ["니트", "knit"], "review_count": {"gte": 30}},
+     "cond_labels": ["니트 조직", "후기 30개 이상"]},
+
+    {"key": "layered_tee",
+     "title": "안에 하나 더 입은 것처럼 나온 레이어드",
+     "lede": "밑단이나 소매에 다른 원단을 덧대 두 겹으로 보이게 만든 컷. 한 장만 입어도 "
+             "겹쳐 입은 모양이 난다. 올해 신상에서 특히 많이 나온 축이다.",
+     "rules": {"kw_title": ["레이어드", "레이어링"], "review_count": {"gte": 30}},
+     "cond_labels": ["레이어드 디자인", "후기 30개 이상"]},
+
+    {"key": "y2k_motif",
+     "title": "하트·체리·나비가 박힌 Y2K 모티프",
+     "lede": "2000년대 초 옷에 흔하던 상징들. 큰 그래픽 하나 대신 작은 무늬를 반복해 넣는 "
+             "방식이다. 신상보다 오래 팔린 것이 많은 축이다.",
+     "rules": {"kw_title": ["하트", "체리", "나비", "스마일"], "review_count": {"gte": 30}},
+     "cond_labels": ["Y2K 모티프", "후기 30개 이상"]},
+
+    {"key": "square_neck",
+     "title": "목선을 가로로 넓게 판 스퀘어넥·보트넥",
+     "lede": "둥근 라운드넥 대신 목선을 가로로 반듯하게 자른 컷. 쇄골이 드러나 목이 길어 "
+             "보인다. 브이넥은 파는 방향이 반대라 따로 뒀다.",
+     "rules": {"kw_title": ["스퀘어넥", "스퀘어 넥", "보트넥", "보트 넥"],
+               "review_count": {"gte": 30}},
+     "cond_labels": ["스퀘어·보트넥", "후기 30개 이상"]},
+
+    {"key": "v_neck",
+     "title": "라운드넥이 답답할 때 고르는 브이넥",
+     "lede": "목선을 V자로 판 컷. 라운드넥보다 목이 트이고 얼굴이 길어 보인다. 깊이가 "
+             "상품마다 크게 달라 상세컷으로 어디까지 파였는지 봐야 한다.",
+     "rules": {"kw_title": ["브이넥", "v넥", "v-neck"], "review_count": {"gte": 30}},
+     "cond_labels": ["브이넥", "후기 30개 이상"]},
+
+    {"key": "embroidery",
+     "title": "프린트가 아니라 실로 박은 자수",
+     "lede": "그림을 인쇄한 게 아니라 실로 박은 것. 세탁해도 갈라지거나 벗겨지지 않는다. "
+             "대신 뒷면에 자수 실이 닿아 살에 배기는 경우가 있다.",
+     "rules": {"kw_title": ["자수", "엠브로", "embroider"], "review_count": {"gte": 30}},
+     "cond_labels": ["자수 디테일", "후기 30개 이상"]},
+
+    {"key": "rib_knit",
+     "title": "세로로 골이 진 골지 반팔",
+     "lede": "원단에 세로 골이 잡혀 몸에 감기듯 붙는다. 늘어나는 폭이 커서 사이즈를 덜 타지만 "
+             "몸선이 그대로 드러난다. 올해 신상 비중이 높은 축이다.",
+     "rules": {"kw_title": ["골지", "리브드"], "review_count": {"gte": 30}},
+     "cond_labels": ["골지·리브 조직", "후기 30개 이상"]},
+
+    {"key": "pastel_tone",
+     "title": "채도를 낮춘 파스텔 반팔",
+     "lede": "라벤더·민트·피치처럼 색을 연하게 뺀 것들. 흰 티는 비치고 검정은 더워 보일 때 "
+             "중간이 된다. 색이 옅어서 땀자국과 이염이 그대로 드러나는 건 감수해야 한다.",
+     "rules": {"kw_title": ["파스텔", "라벤더", "민트", "피치", "코랄"],
+               "review_count": {"gte": 30}},
+     "cond_labels": ["파스텔 톤", "후기 30개 이상"]},
+
+    {"key": "lettering",
+     "title": "그림 없이 글자만으로 가는 티",
+     "lede": "그래픽 대신 문장이나 단어만 크게 박은 것. 무지는 심심하고 캐릭터는 부담스러울 때 "
+             "중간이 된다. 영문 문구는 뜻을 한 번 확인하는 게 좋다.",
+     "rules": {"kw_title": ["레터링", "타이포", "슬로건"], "review_count": {"gte": 30}},
+     "cond_labels": ["레터링·타이포", "후기 30개 이상"]},
+
+    {"key": "pocket_tee",
+     "title": "가슴에 주머니 하나 달린 포켓티",
+     "lede": "왼쪽 가슴에 주머니를 단 기본형. 무지인데 포인트가 하나 생긴다. 뭘 넣으면 원단이 "
+             "처지므로 장식으로 보는 게 맞다. 포켓몬은 다른 옷이라 뺐다.",
+     "rules": {"kw_title": ["포켓"], "not_kw": ["포켓몬"], "review_count": {"gte": 30}},
+     "cond_labels": ["가슴 포켓", "포켓몬 제외", "후기 30개 이상"]},
+
+    {"key": "cooling_fabric",
+     "title": "원단부터 시원하라고 만든 냉감 반팔",
+     "lede": "냉감·쿨맥스처럼 열을 빼도록 짠 원단을 쓴 것. 그냥 얇아서 시원한 것과는 방식이 "
+             "다르다. 올해 신상 비중이 평균보다 높은 축이다.",
+     "rules": {"kw_title": ["냉감", "쿨링", "쿨맥스", "coolmax", "아이스"],
+               "review_count": {"gte": 30}},
+     "cond_labels": ["냉감 원단", "후기 30개 이상"]},
+
+    {"key": "mesh_sheer",
+     "title": "구멍이 뚫려 비치는 메쉬·시스루",
+     "lede": "원단에 구멍을 내거나 얇게 짜 살이 비치는 컷. 단독보다 안에 받쳐 입는 걸 전제로 "
+             "나온다. 비침 정도가 상품마다 크게 달라 후기를 보는 게 빠르다.",
+     "rules": {"kw_title": ["메쉬", "메시", "시스루", "펀칭"], "review_count": {"gte": 30}},
+     "cond_labels": ["메쉬·시스루", "후기 30개 이상"]},
+
+    {"key": "color_block",
+     "title": "색 두세 개를 면으로 나눠 붙인 배색",
+     "lede": "몸판과 소매, 또는 위아래를 다른 색으로 자른 것. 프린트 없이 색만으로 무늬를 "
+             "만든다. 올해 신상 비중이 평균보다 높은 축이다.",
+     "rules": {"kw_title": ["배색", "컬러블록", "블로킹"], "review_count": {"gte": 30}},
+     "cond_labels": ["배색·컬러블록", "후기 30개 이상"]},
+
+    {"key": "art_print",
+     "title": "명화나 일러스트를 그대로 얹은 티",
+     "lede": "로고도 캐릭터도 아니고 그림 한 장을 크게 넣은 것. 인쇄 면적이 넓어서 뒤집어 "
+             "빨지 않으면 갈라진다.",
+     "rules": {"kw_title": ["아트", "명화", "페인팅", "일러스트"], "review_count": {"gte": 30}},
+     "cond_labels": ["아트·명화 프린트", "후기 30개 이상"]},
+
+    {"key": "red_only",
+     "title": "빨강 하나로만 이뤄진 반팔",
+     "lede": "다른 색을 섞지 않고 빨강만 쓴 상품. 이 한 벌이 코디를 정해버려서 나머지를 "
+             "검정이나 데님으로 맞추게 된다. 초기 세탁에서 이염이 잘 나는 색이라 따로 빤다.",
+     "rules": {"color_only": ["레드"], "review_count": {"gte": 30}},
+     "cond_labels": ["레드 단독", "후기 30개 이상"]},
+
+    {"key": "bear_bunny",
+     "title": "곰이나 토끼가 박힌 티",
+     "lede": "강아지·고양이 다음으로 많은 동물. 캐릭터보다 그림에 가까워 나이대를 덜 탄다.",
+     "rules": {"kw_title": ["곰", "베어", "토끼", "래빗", "버니"], "review_count": {"gte": 30}},
+     "cond_labels": ["곰·토끼 그래픽", "후기 30개 이상"]},
+
+    # ── 브랜드 축 51~54 (2026-08-20) ──────────────────────────────
+    # 태그가 아니라 "누가 냈는가"로 본 축. 26SS 신상을 브랜드별로 세었더니 성별로
+    # 갈렸다 — 남성은 아웃도어·스포츠 브랜드가 대거 진입(디스커버리 35배, 언더아머
+    # 신규 200개), 여성은 SPA·온라인 여성 브랜드(미쏘 133배, 이스케이프프롬 33배).
+    # ⚠️ 카드 게이트(구매 100+ · 후기 30+)를 26SS 신상은 거의 못 넘는다. 아웃도어는
+    # 26SS 통과가 0건이다 — 공급만 들어오고 수요는 아직 없다는 뜻. 그래서 이 넷의
+    # 카드는 "그 브랜드의 검증된 상품"이지 "그 브랜드의 신상"이 아니다.
+    # 네 키를 N_GATED에 넣어 표시 건수도 게이트 기준으로 맞췄다.
+    {"key": "outdoor_brand",
+     "title": "산에 안 가도 입는 아웃도어 브랜드 티",
+     "lede": "등산·캠핑 브랜드가 만든 반팔. 기능성 원단이라 땀이 빨리 마르고 로고가 작아 "
+             "산이 아닌 데서도 티가 덜 난다. 값은 일반 티보다 높은 편이다.",
+     "rules": {"brand": {"any": ["discoveryexpedition", "snowpeakapparel", "k2", "blackyak",
+                                 "eider", "nepa", "kolonsport", "thenorthface", "patagonia",
+                                 "salomon", "spyder", "jeep", "nationalgeographic"]}},
+     "cond_labels": ["아웃도어 브랜드", "구매 100개·후기 30개 이상"]},
+
+    {"key": "sports_brand",
+     "title": "운동복 브랜드 티인데 운동은 안 할 때",
+     "lede": "스포츠 브랜드가 낸 반팔. 흡한속건 원단이 기본이라 여름에 유리하고 로고 하나로 "
+             "코디가 끝난다. 러닝 전용으로 나온 것은 따로 있다.",
+     "rules": {"brand": {"any": ["underarmour", "adidas", "newbalance", "diadora",
+                                 "dynafit", "nba", "sergiotacchini"]}},
+     "cond_labels": ["스포츠 브랜드", "구매 100개·후기 30개 이상"]},
+
+    {"key": "spa_brand",
+     "title": "SPA가 올여름 대량으로 민 것",
+     "lede": "스파오·미쏘·에잇세컨즈·탑텐이 낸 반팔. 값이 싸고 물량이 많아 실패해도 부담이 "
+             "적다. 대신 같은 옷을 입은 사람을 만날 확률도 그만큼 높다.",
+     "rules": {"brand": {"any": ["spao", "mixxo", "8seconds", "topten"]}},
+     "cond_labels": ["SPA 브랜드", "구매 100개·후기 30개 이상"]},
+
+    {"key": "women_online_brand",
+     "title": "온라인 여성 브랜드가 먼저 내는 실루엣",
+     "lede": "이스케이프프롬·페이지시시·일리고처럼 온라인에서 큰 여성 브랜드들. 크롭·오프숄더· "
+             "셔링 같은 실루엣을 가장 먼저 내놓는 쪽이라 지금 뭐가 오는지 보기에 좋다.",
+     "rules": {"brand": {"any": ["escapefrom", "pagesiisii", "illigo", "drawfitwomen",
+                                 "deinet", "themorfhouse", "amesworldwide", "comieu"]}},
+     "cond_labels": ["온라인 여성 브랜드", "구매 100개·후기 30개 이상"]},
+
+    # ── 신상 축 55~57 (2026-08-20) ────────────────────────────────
+    # 기본 게이트를 푼 큐레이션. CARD_RULE 에 (0, 0, 조회순) 으로 등록돼 있다.
+    # 검증된 것이 아니라 "지금 막 들어온 것"을 보여주는 게 목적이라 후기가 없는 게 정상이다.
+    {"key": "new_arrival_watch",
+     "title": "후기는 아직 없는데 사람들이 보고 있는 신상",
+     "lede": "이번 시즌에 나왔고 후기가 아직 한 줄도 없는데 조회는 1,000회를 넘긴 것들. "
+             "후기는 사서 입어보고 쓰기까지 몇 주가 걸리니 늘 늦다. 그 사이의 관심만 먼저 "
+             "잡은 목록이라, 검증된 물건이 아니라 지금 눈길이 몰리는 물건이다.",
+     "rules": {"season_year": {"eq": "2026"}, "review_count": {"lte": 0},
+               "page_view": {"gte": 1000}},
+     "cond_labels": ["26SS 신상", "후기 0", "조회 1,000회 이상"]},
+
+    {"key": "outdoor_new",
+     "title": "아웃도어 브랜드가 올여름 통째로 깔아둔 것",
+     "lede": "디스커버리·스노우피크·케이투 같은 등산·캠핑 브랜드가 이번 시즌 반팔을 대량으로 "
+             "냈다. 아직 구매 100개를 넘긴 신상이 하나도 없을 만큼 반응은 시작 전이다. "
+             "브랜드가 먼저 움직인 자리라 지금 보는 게 가장 이르다.",
+     "rules": {"brand": {"any": ["discoveryexpedition", "snowpeakapparel", "k2", "blackyak",
+                                 "eider", "nepa", "kolonsport", "thenorthface", "patagonia",
+                                 "salomon", "spyder"]},
+               "season_year": {"eq": "2026"}, "review_count": {"lte": 5}},
+     "cond_labels": ["아웃도어 브랜드", "26SS 신상", "후기 5개 이하"]},
+
+    {"key": "women_online_new",
+     "title": "온라인 여성 브랜드가 이번 시즌 새로 낸 것",
+     "lede": "이스케이프프롬·페이지시시·일리고가 26SS에 낸 반팔. 크롭·오프숄더·셔링 같은 "
+             "실루엣을 가장 먼저 내놓는 쪽이라, 다음 시즌에 흔해질 모양이 여기 먼저 나온다.",
+     "rules": {"brand": {"any": ["escapefrom", "pagesiisii", "illigo", "drawfitwomen",
+                                 "deinet", "themorfhouse", "amesworldwide", "comieu"]},
+               "season_year": {"eq": "2026"}, "review_count": {"lte": 5}},
+     "cond_labels": ["온라인 여성 브랜드", "26SS 신상", "후기 5개 이하"]},
 ]
 
 # ── 손으로 쓰는 상품 한마디 (goods_no: 글) ────────────────────
@@ -446,10 +708,18 @@ def load(cur):
     return rows
 
 
+def strip_variant(title):
+    """상품명에서 색상·팩 수 같은 옵션 표기를 지운다. 색만 다른 옷을 한 옷으로 묶는 열쇠."""
+    t = re.sub(r"\[[^\]]*\]|\([^)]*\)", " ", title)
+    t = re.sub(r"[_\-]\s*\d*\s*(color|컬러|colors)\b", " ", t, flags=re.I)
+    return re.sub(r"\s+", " ", t).strip().lower()
+
+
 def dedupe_variants(rows, limit, appear=None):
     """같은 옷 색상만 다른 것(similar_no 공유)은 앞선 하나만 남기고 다음 순위로 채운다.
 
-    similar_no = 0 은 묶음이 없다는 뜻이라 상품별로 따로 센다.
+    similar_no = 0 은 묶음이 없다는 뜻이라, 그때는 브랜드 + 색상 표기를 지운
+    상품명으로 묶는다 ("... 티셔츠 [블랙]" 과 "... 티셔츠 (화이트)" 는 한 옷이다).
     rows 는 CARD_COLS 순서(0=goods_no, 10=similar_no)를 전제한다.
 
     appear 를 넘기면 큐레이션을 가로질러 같은 상품이 MAX_APPEAR 개를 넘게
@@ -459,10 +729,12 @@ def dedupe_variants(rows, limit, appear=None):
     """
     seen, out = set(), []
     for r in rows:
-        k = ("s", r[10]) if r[10] else ("g", r[0])
-        if k in seen or (appear is not None and appear.get(r[0], 0) >= MAX_APPEAR):
+        ks = {("t", r[2] or r[3], strip_variant(r[1]))}
+        if r[10]:
+            ks.add(("s", r[10]))
+        if ks & seen or (appear is not None and appear.get(r[0], 0) >= MAX_APPEAR):
             continue
-        seen.add(k); out.append(r)
+        seen |= ks; out.append(r)
         if appear is not None:
             appear[r[0]] = appear.get(r[0], 0) + 1
         if len(out) == limit:
@@ -472,23 +744,32 @@ def dedupe_variants(rows, limit, appear=None):
 
 def build(cur, curations):
     out, appear = [], {}   # appear: 상품이 지금까지 몇 개 큐레이션에 들어갔나
+    covers = set()         # 목록 카드에 쓰인 첫 상품. 카드 썸네일이 겹치면 안 된다
     for c in curations:
         where, params = compile_rules(c["rules"])
-        gate = (f" and purchase_total >= {MIN_BUY} and review_count >= {MIN_REVIEW}"
+        min_buy, min_rev, order = CARD_RULE.get(c["key"], (MIN_BUY, MIN_REVIEW, ORDER))
+        gate = (f" and purchase_total >= {min_buy} and review_count >= {min_rev}"
                 if c["key"] in N_GATED else "")
         cur.execute(f"select count(*) from c_goods where {BASE_SCOPE} and {where}{gate}", params)
         n = cur.fetchone()[0]
         cur.execute(f"""select {CARD_COLS} from c_goods where {BASE_SCOPE} and {where}
-                        and purchase_total >= {MIN_BUY} and review_count >= {MIN_REVIEW}
-                        order by {ORDER} limit {TOP_N * 5}""", params)
+                        and purchase_total >= {min_buy} and review_count >= {min_rev}
+                        order by {order} limit {TOP_N * 5}""", params)
         rows = dedupe_variants(cur.fetchall(), TOP_N, appear)
         items = [{"t": r[1], "b": r[2] or r[3], "p": r[4], "img": r[5],
                   "rc": r[6] or 0, "rs": r[7], "buy": r[8] or 0,
                   "u": f"https://www.musinsa.com/products/{r[0]}",
                   "tg": [t for t in (r[9] or []) if 1 < len(t) <= 7][:3],
                   "note": NOTES.get(str(r[0]), "")} for r in rows]
+        # 목록 카드는 첫 상품 이미지를 쓴다. 앞선 큐레이션이 이미 쓴 상품이면 뺀다
+        # (9개를 채우려고 다음 순위를 끌어오지 않는다 — 사람 결정 2026-08-20).
+        while items and items[0]["u"] in covers:
+            items.pop(0)
+        if items:
+            covers.add(items[0]["u"])
         out.append({**{k: c[k] for k in ("key", "title", "cond")},
                     "lede": c["lede"] or "", "n": n, "items": items,
+                    "sort": "조회순" if order == NEW_ARRIVAL_ORDER else "평점순",
                     "date": c["at"].strftime("%Y.%m.%d")})
     return out
 
@@ -595,7 +876,7 @@ function openDetail(c){
     <div class=dethd><h2>${c.title}</h2></div>
     <p class=lede>${c.lede}</p>
     <div class=cond>${c.cond.map(t=>`<span class=cd>${t}</span>`).join('')}</div>
-    <div class=detmeta>${c.date} · ${won(c.n)}건 중 평점순 ${c.items.length}건</div>
+    <div class=detmeta>${c.date} · ${won(c.n)}건 중 ${c.sort} ${c.items.length}건</div>
     <div class=pgrid>${c.items.map(x=>`<a class=item href="${x.u}" target=_blank rel=noopener>
       ${img(x.img)}
       <div class=b>${x.b}</div><div class=t>${x.t}</div>
@@ -649,6 +930,16 @@ PAGE = """<!doctype html><html lang=ko><head><meta charset=utf-8>
 
 def demo():
     """자체 점검: 규칙이 의도한 SQL로 번역되는지."""
+    # 색만 다른 옷은 similar_no가 0이어도 한 옷으로 묶인다 (r = CARD_COLS 순서)
+    def row(no, title, brand, sim=0):
+        return (no, title, brand, brand, 0, "", 0, 0, 0, [], sim)
+    picked = dedupe_variants([row(1, "포켓 티셔츠 (그레이)", "노이어"),
+                              row(2, "포켓 티셔츠 (블루)", "노이어"),
+                              row(3, "포켓 티셔츠 [블랙]", "다른브랜드"),
+                              row(4, "소로나 크롭 - 3COLOR", "테이크이지"),
+                              row(5, "소로나 크롭", "테이크이지")], 9)
+    assert [r[0] for r in picked] == [1, 3, 4], picked
+
     w, p = compile_rules({"kw": ["래글런"]})
     assert "title ilike %s" in w and "unnest(tags)" in w, w
     assert p == ["%래글런%", "%래글런%"], p
