@@ -1,5 +1,6 @@
 // View: 큐레이션 목록 — 카드 하나가 통째로 버튼이다(누르면 상세 화면).
-// 티:파운드(curation/client)의 같은 화면을 aTee 다크 팔레트로 옮긴 것이다.
+// 별개 제품 "티:파운드"(search-by-llm)의 같은 화면을 aTee 다크 팔레트로 옮긴 것이다.
+// 그 프로젝트 폴더는 2026-08-20에 저장소에서 뺐다 — 원본을 보려면 git 이력을 봐야 한다.
 import Image from "next/image";
 
 import type { Curation } from "@/features/curation/domain/curation";
