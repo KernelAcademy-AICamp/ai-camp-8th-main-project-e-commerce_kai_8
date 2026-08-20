@@ -80,14 +80,21 @@ venv/bin/python run_c_ingest.py status --run-id r1
 
 `c_goods` 재수집이나 `c_thumb_dims.card_ok` 재분류 후에는 **검색 파생 테이블을 반드시 재생성**해야 한다. 재생성하지 않으면 **자격을 잃은 상품이 검색에 다시 노출되거나 신규 상품이 검색에서 빠진다.**
 
-재생성 대상이 **셋**이다. 하나만 돌리면 나머지가 낡는다. **순서가 있다** — `c_search_vocab`은 `c_search_docs`에서 파생되므로 뒤에 돌린다.
+재생성 대상이 **넷**이다. 하나만 돌리면 나머지가 낡는다. **순서가 있다** — `c_search_vocab`은 `c_search_docs`에서 파생되므로 뒤에 돌린다.
 
 | 순서 | 대상 | 재실행할 마이그레이션 | 쓰는 곳 |
 |---|---|---|---|
 | — | `c_search_text` (2026-08-16) | `20260816240000_c_search_page.sql` | 구 검색 `c_search_page` |
-| 1 | **`c_search_docs`** (2026-08-17) | **`20260817200000_c_search_docs.sql`** | 새 검색 `c_search_page_v2` (PGroonga 색인·초성) |
+| 1 | **`c_search_docs`** (2026-08-20) | **`20260820600000_search_docs_gender.sql`** | 새 검색 `c_search_page_v2` (PGroonga 색인·초성·성별) |
 | 2 | **`c_search_vocab`** (2026-08-17) | **`20260817600000_search_typo.sql`** | 오타 교정 `c_search_correct_query` |
 | 3 | **`c_search_color_terms`** (2026-08-17) | **`20260817900000_search_color_terms.sql`** | 색 조건 (브랜드 사전을 참조하므로 vocab 뒤) |
+| 4 | **`c_search_negation_flags`** (2026-08-18) | **`20260818800000_search_fit_rules.sql`** | 부정 조건 `p_exclude` (docs에서 파생 — 낡으면 신규 위반 상품이 부정 검색에 노출) |
+
+> ⚠️ **1번은 20260817200000이 아니다.** 그 파일을 돌리면 성별 열이 사라지고, 프론트가
+> 부르는 6-인자 `c_search_page_v2`(성별 조건 포함)가 `s.gender` 참조로 **전부 실패**하며,
+> 같은 트랜잭션이 만드는 4-인자 구버전 RPC가 anon 권한까지 달고 부활한다.
+> docs를 다시 만들었으면 마지막에 **`20260820700000_search_gender_condition.sql`도 재실행**해
+> RPC 정의를 정본으로 되돌린다.
 
 > ⚠️ **가격은 특히 위험하다.** `c_search_docs.price_final`은 적재 시점 복사본이고
 > **하드 필터**로 쓰인다(`3만원 이하`). 재수집으로 가격이 바뀐 뒤 재생성을 놓치면

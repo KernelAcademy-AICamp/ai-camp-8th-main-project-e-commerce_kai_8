@@ -151,6 +151,26 @@ def cur():
                 "revoke all on function c_search_color_parse",
             ),
         ]
+        # 성별 파서도 같은 방식 — 표는 픽스처, 규칙은 실제 DDL에서 떼어 온다.
+        # 실제 사전은 19항목이지만 규칙(일반=성별+공용의 신호인 strict=false,
+        # '전용'=strict, 서로 다른 성별이면 포기, strict 승격)은 이 부분집합으로 다 돈다.
+        c.execute(
+            "create table c_search_gender_terms"
+            " (term text primary key, gender text not null, strict boolean not null)"
+        )
+        c.execute(
+            "insert into c_search_gender_terms values"
+            " ('남성', '남성', false), ('남자', '남성', false),"
+            " ('남성전용', '남성', true), ('여성', '여성', false),"
+            " ('여성전용', '여성', true), ('유니섹스', '공용', true)"
+        )
+        chunks += [
+            extract(
+                "20260820500000_search_gender_terms.sql",
+                "create or replace function c_search_gender_parse",
+                "revoke all on function c_search_gender_parse",
+            ),
+        ]
 
         for chunk in chunks:
             # 주석을 걷어낸 실행문만 본다 — 주석에는 c_search_docs 얘기가 나온다
@@ -377,6 +397,36 @@ def test_color_lookup_returns_the_canonical_term(cur):
     """
     cur.execute("select term, codes from c_search_color_lookup('주황색이')")
     assert cur.fetchone() == ("주황색", ["12", "75", "76"])
+
+
+# ── 성별 파서 규칙 (픽스처 표 위에서 돈다) ──────────────────────────────────
+# 검색 성별 하드 조건(2026-08-20)의 파서. 색·카테고리 파서와 같은 규칙 구조다.
+
+
+@pytest.mark.parametrize(
+    "words,gender,strict,rest",
+    [
+        # 일반 성별어 — strict=false가 "해당 성별+공용"의 신호다
+        (["남성", "반팔"], "남성", False, ["반팔"]),
+        (["여성"], "여성", False, None),
+        # '전용' 형태는 그 성별만 (strict)
+        (["남성전용", "반팔"], "남성", True, ["반팔"]),
+        (["여성전용"], "여성", True, None),
+        # 공용 계열은 항상 공용 라벨만
+        (["유니섹스", "무지", "티"], "공용", True, ["무지", "티"]),
+        # 서로 다른 성별이 둘이면 손대지 않는다 — AND 하드 조건은 공집합이 된다
+        (["남성", "여성"], None, None, ["남성", "여성"]),
+        # 같은 성별의 두 형태는 정상 질의 — strict가 있으면 strict로 승격
+        (["남성", "남성전용", "티"], "남성", True, ["티"]),
+        # 성별어가 없으면 아무것도 하지 않는다
+        (["검정", "반팔"], None, None, ["검정", "반팔"]),
+        # 사전에 없는 '전용' 단독은 텍스트로 남는다
+        (["전용", "반팔"], None, None, ["전용", "반팔"]),
+    ],
+)
+def test_gender_parse(cur, words, gender, strict, rest):
+    cur.execute("select gender, strict, rest from c_search_gender_parse(%s)", (words,))
+    assert cur.fetchone() == (gender, strict, rest)
 # ── 검색 로그의 대체 피드 보정 (계측 0단계) ────────────────────────────────
 # 이 계약이 깨지면 **매칭 수 정본이 오염되거나** 대체 피드 기록이 사라진다.
 # 둘 다 조용히 일어나므로 여기서 고정한다.
