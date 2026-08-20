@@ -2,8 +2,11 @@
 // 세션 = sessionStorage(탭 단위). 규칙 계산은 profile-rules(순수)로 위임한다.
 
 import {
+  type AnchorGender,
   applyAction,
   applyImpression,
+  deriveDominantGender,
+  type DominantGender,
   emptyLongTerm,
   emptySession,
   foldSessionIntoLongTerm,
@@ -11,6 +14,7 @@ import {
   mergeLongTerm,
   type ProfileActionType,
   type SessionProfile,
+  toAnchorGender,
 } from "./profile-rules";
 
 const LONG_KEY = "atee-profile";
@@ -206,9 +210,12 @@ export function recordProfileAction(
   goodsNo: number,
   sessionId: string,
   nowMs: number,
+  gender?: string | null,
 ): void {
   const session = readSessionProfile(sessionId, nowMs);
-  writeSessionProfile(applyAction(session, { type, goodsNo, nowMs }));
+  writeSessionProfile(
+    applyAction(session, { type, goodsNo, nowMs, gender: toAnchorGender(gender) }),
+  );
 }
 
 export function recordProfileImpression(
@@ -228,6 +235,8 @@ export interface ProfileSummary {
   recentImpressions: number[];
   /** `이 스타일로 계속 탐색` 부스트가 아직 살아 있는가 (노출 60장 기준) */
   boostActive: boolean;
+  /** 장기+세션 앵커를 합쳐 판정한 우세 성별 (설계: 성별 피드 하드 필터 2단계) */
+  gender: DominantGender;
 }
 
 export function getProfileSummary(sessionId: string, nowMs: number): ProfileSummary {
@@ -239,7 +248,38 @@ export function getProfileSummary(sessionId: string, nowMs: number): ProfileSumm
     sessionAnchors: session.anchors.map(({ goodsNo, weight }) => ({ goodsNo, weight })),
     recentImpressions: session.recentImpressions,
     boostActive: session.boostRemaining > 0,
+    gender: deriveDominantGender([...longTerm.anchors, ...session.anchors]),
   };
+}
+
+/**
+ * 성별 필드가 없는 장기 앵커의 goods_no 목록 — 기기 보강(3단계)의 조회 대상.
+ * 세션 앵커는 대상이 아니다(새 행동은 기록 시점에 이미 성별이 실린다).
+ */
+export function longAnchorsMissingGender(): number[] {
+  return readLongTerm()
+    .anchors.filter((a) => a.gender === undefined)
+    .map((a) => a.goodsNo);
+}
+
+/**
+ * 장기 앵커에 성별을 일괄 적용한다 — 기기 보강(3단계) 전용.
+ * 이미 성별이 있는 앵커나 응답에 없는 goods_no(뷰에 없거나 빈 문자열)는
+ * 손대지 않는다(미상으로 남긴다 — 다음 접속에 다시 물어도 저렴하다).
+ */
+export function applyAnchorGenders(genders: Map<number, AnchorGender>): void {
+  if (genders.size === 0) return;
+  const current = readLongTerm();
+  const hasTarget = current.anchors.some(
+    (a) => a.gender === undefined && genders.has(a.goodsNo),
+  );
+  if (!hasTarget) return;
+  const anchors = current.anchors.map((a) =>
+    a.gender === undefined && genders.has(a.goodsNo)
+      ? { ...a, gender: genders.get(a.goodsNo) }
+      : a,
+  );
+  writeLongTerm({ ...current, anchors });
 }
 
 /** 개인화 데이터 초기화(설정)에서 함께 지운다 */

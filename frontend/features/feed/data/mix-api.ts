@@ -1,6 +1,7 @@
 import { type FeedProductDto, mapFeedDto } from "@/features/feed/data/feed-api";
 import type { Product } from "@/features/feed/domain/product";
 import { slotImageUrl } from "@/features/feed/domain/similar";
+import type { DominantGender } from "@/shared/profile/profile-rules";
 import { rpcPost } from "@/shared/supabase-rpc";
 
 // c_mix_page RPC 응답 행 — 피드 행 + 매칭 슬롯 + 포트폴리오 유형 + 신선도
@@ -32,6 +33,8 @@ export interface MixPageRequest {
   seed: number;
   size: number;
   boost: boolean;
+  /** 우세 성별 하드 필터 — null이면 서버가 무시해 기존과 같은 동작 */
+  gender: DominantGender;
 }
 
 /** 5유형 포트폴리오 믹스 한 페이지 (개인화 피드) */
@@ -50,6 +53,7 @@ export async function fetchMixPage(request: MixPageRequest): Promise<Product[]> 
       p_seed: request.seed,
       p_size: request.size,
       p_boost: request.boost,
+      p_gender: request.gender,
     },
     // 서버가 느려질 때(콜드) 스켈레톤을 오래 잡고 있지 않도록 —
     // 초과 시 호출부가 무작위 피드로 폴백한다 (설계 §9)
