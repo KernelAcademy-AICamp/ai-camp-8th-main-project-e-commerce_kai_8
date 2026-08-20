@@ -19,11 +19,12 @@ from pathlib import Path
 import psycopg
 
 OUT = Path(__file__).parent / "큐레이션화면.html"
-# 화면이 읽는 같은 데이터. 목업 HTML과 한 번에 같이 쓴다 — 셋이 어긋나면 안 된다.
-# 큐레이션 탭은 aTee(frontend)에도 붙어 있어서 두 앱에 같은 바이트를 쓴다.
-_REPO = Path(__file__).resolve().parents[3]
-JSON_OUTS = [_REPO / "curation/client/features/curation/data/curations.json",
-             _REPO / "frontend/features/curation/data/curations.json"]
+# 화면이 읽는 같은 데이터. 목업 HTML과 한 번에 같이 쓴다 — 둘이 어긋나면 안 된다.
+#
+# 원래 `curation/client`에도 같은 바이트를 썼다. 그 폴더(별개 제품 search-by-llm)를
+# 지우면서 목적지가 하나로 줄었다 — 사본이 둘이면 한쪽만 고쳐져 조용히 갈라진다.
+_REPO = Path(__file__).resolve().parents[2]
+JSON_OUTS = [_REPO / "frontend/features/curation/data/curations.json"]
 ENV = Path(__file__).resolve().parents[1] / ".env.local"
 TOP_N = 9   # ponytail: 상위 9개만 노출. 상품마다 NOTES를 손으로 쓰는 비용이 크다.
 

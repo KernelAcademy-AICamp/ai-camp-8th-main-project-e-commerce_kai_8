@@ -16,6 +16,10 @@ aTee가 쓰는 티셔츠 카탈로그. `musinsa-c-db-handoff` 꾸러미(2026-08-
 - `musinsa/` — 무신사 API 클라이언트(`client.py`)·수집 경계(`c_landing.py`)·가격 구간 분할(`c_shards.py`)·판매자 정보 차단(`sanitize.py`)
 - `db/` — psycopg 적재(`c_upsert.py`)
 - `run_c_ingest.py` — 전체 수집 러너 (모수 확정 → 상세 수집, 중단·재개 가능)
+- `scripts/` — 손으로 돌리는 도구 (2026-08-20에 `curation/` 폴더를 지우며 여기로 옮겼다)
+  - `gen_curation_page.py` — **큐레이션 화면 데이터 생성기.** `c_goods`·`c_search_fit_measures`와 `curations` 표를 읽어 `frontend/features/curation/data/curations.json`을 만든다. 큐레이션 정의는 코드가 아니라 **`curations` 표**에 있다 — 트렌드가 바뀌면 그 표의 행만 고치고 이 스크립트를 다시 돌린다. ⚠️ **커밋된 JSON은 자동으로 갱신되지 않는다** (2026-08-20 기준 표 50건 vs 커밋된 JSON 28건).
+  - `probe_body_type.py` — 골격 체형별 조건 조사 (`gen_curation_page`의 규칙을 그대로 쓴다)
+  - `backup_db.sh` — 원격 Supabase → `backups/`로 pg_dump (로컬 전용, 커밋 안 됨)
 - `supabase/migrations/` — **Supabase 적용 대상** (`c_jsonb_helpers`, `c_goods`) — 이미 적용됨
 - `supabase/migrations-local/` — **로컬 전용** (`c_raw_goods`, `c_ingest_state`) — Supabase에 올리지 않는다 (해당 README 참고)
 - 설계 문서: [`docs/specs/2026-08-11-musinsa-c-db-design.md`](../docs/specs/2026-08-11-musinsa-c-db-design.md) · [수집 계획](../docs/specs/2026-08-11-musinsa-c-db-ingest.md)

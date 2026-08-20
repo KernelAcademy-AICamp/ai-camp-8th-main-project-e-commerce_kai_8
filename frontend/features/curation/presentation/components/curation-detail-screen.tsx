@@ -1,5 +1,6 @@
 // View: 큐레이션 상세 — 제목·소개·조건·선별 메타 + 고른 상품 9개.
-// 목업(curation/backend/scripts/큐레이션화면.html)의 detail 화면을 aTee 다크 팔레트로 옮긴 것이다.
+// 목업(backend/scripts/gen_curation_page.py 가 만드는 큐레이션화면.html)의 detail 화면을
+// aTee 다크 팔레트로 옮긴 것이다.
 import Image from "next/image";
 
 import type { Curation, CurationItem } from "@/features/curation/domain/curation";

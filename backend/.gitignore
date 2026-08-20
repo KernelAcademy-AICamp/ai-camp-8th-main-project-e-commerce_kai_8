@@ -10,6 +10,9 @@ __pycache__/
 # 로컬 백업 (커밋 금지)
 backups/
 
+# 큐레이션 목업 — gen_curation_page.py가 매번 다시 만든다 (정본은 curations 표)
+scripts/큐레이션화면.html
+
 # Supabase CLI 로컬 상태
 supabase/.temp/
 embed/data/
