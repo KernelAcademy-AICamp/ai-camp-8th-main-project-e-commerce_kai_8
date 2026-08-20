@@ -5,7 +5,12 @@
 
 import { authedRpc } from "@/shared/supabase/authed-rpc";
 
-import { type Anchor, emptyLongTerm, type LongTermProfile } from "./profile-rules";
+import {
+  type Anchor,
+  emptyLongTerm,
+  type LongTermProfile,
+  toAnchorGender,
+} from "./profile-rules";
 
 interface TasteRowDto {
   schema_version: number;
@@ -18,13 +23,15 @@ function toAnchors(raw: unknown): Anchor[] {
   const anchors: Anchor[] = [];
   for (const item of raw) {
     if (typeof item !== "object" || item === null) continue;
-    const { goodsNo, weight, lastMs } = item as Record<string, unknown>;
+    const { goodsNo, weight, lastMs, gender } = item as Record<string, unknown>;
     if (typeof goodsNo !== "number" || !Number.isFinite(goodsNo)) continue;
     if (typeof weight !== "number" || !Number.isFinite(weight)) continue;
+    const anchorGender = toAnchorGender(typeof gender === "string" ? gender : null);
     anchors.push({
       goodsNo,
       weight,
       lastMs: typeof lastMs === "number" && Number.isFinite(lastMs) ? lastMs : 0,
+      ...(anchorGender !== undefined ? { gender: anchorGender } : {}),
     });
   }
   return anchors;
@@ -52,4 +59,24 @@ export async function saveAccountProfile(profile: LongTermProfile): Promise<void
     p_schema_version: profile.schemaVersion,
     p_anchors: profile.anchors,
   });
+}
+
+/**
+ * 이 계정에 보관된 취향을 지운다 — 설정의 "개인화 데이터 모두 지우기".
+ *
+ * **대상을 보내지 않는다** — 서버 함수가 호출자의 인증 주체만 본다.
+ *
+ * 빈 프로필을 저장하는 것으로 대신하지 않는다. 화면이 "모두 삭제"를 약속했는데
+ * 행을 남기면 말과 다르다.
+ *
+ * @returns 지운 행 수. **0은 오류가 아니라 지울 것이 없었던 것**이다 —
+ * 재시도로 두 번 불려도 두 번째는 0이고, 그것도 성공이다.
+ * @throws 지워졌는지 알 수 없을 때. 호출자가 재시도 큐에 적어야 한다.
+ */
+export async function forgetAccountProfile(): Promise<number> {
+  const deleted = await authedRpc<unknown>("c_taste_forget");
+  // 숫자가 아니면 결과를 모르는 것이다. 0으로 넘기면 "지울 것이 없었다"로 오인해
+  // 재시도 큐에서 빠지고, 서버에 남은 취향을 다시 지울 기회를 잃는다.
+  if (typeof deleted !== "number") throw new Error("삭제 결과를 해석할 수 없다");
+  return deleted;
 }

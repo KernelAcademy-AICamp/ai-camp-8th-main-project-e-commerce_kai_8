@@ -5,41 +5,32 @@ import { useCallback, useRef, useState } from "react";
 export const PANES = ["browse", "forYou"] as const;
 export type Pane = (typeof PANES)[number];
 
-// 스냅이 멈춘 걸로 보는 시간. 미는 도중에 세로 위치를 건드리면 손이 튄다.
-const SETTLE_MS = 140;
-
 /**
  * 두 화면을 가로로 밀어서 넘기는 상태.
  *
- * 피드는 **window 스크롤**을 쓴다(use-search-scroll 참고). 그래서 칸마다 세로
- * 스크롤 컨테이너를 따로 두지 않고 문서 스크롤을 그대로 공유한다 — 그러면 두 칸이
- * 세로 위치를 나눠 갖게 되므로, 칸이 바뀔 때 **떠나는 칸의 위치를 보관하고 들어가는
- * 칸의 위치로 되돌린다.** 안 하면 피드에서 한참 내려간 채 넘어갔을 때 큐레이션이
- * 끝난 자리(빈 화면)가 나온다.
+ * **세로는 칸이 각자 맡는다**(home-shell 참고). 그래서 여기서는 지금 어느 칸인지만
+ * 판정하고 세로 위치에는 손대지 않는다.
+ *
+ * 예전에는 두 칸이 문서 스크롤 하나를 공유해, 칸이 바뀔 때 떠나는 칸의 세로 위치를
+ * 보관했다가 들어가는 칸의 위치로 되돌렸다. 그 보정에 두 가지 결함이 있었다 —
+ * ⓐ 칸이 바뀌지 않아도(가로로 살짝 흔들리기만 해도) 되돌리기가 돌아 낡은 값,
+ * 대개 맨 위로 튀었고 ⓑ 칸이 바뀔 때도 되돌리기가 슬라이드가 끝난 뒤라 눈에 보였다.
+ * 칸마다 스크롤을 갖게 하면서 보정 자체가 필요 없어졌다.
  */
 export function usePaneSwipe() {
   const railRef = useRef<HTMLDivElement>(null);
   const [pane, setPane] = useState<Pane>("browse");
   // 렌더와 무관하게 "지금 어느 칸인지"를 스크롤 핸들러가 읽어야 한다
   const paneRef = useRef<Pane>("browse");
-  const scrollYByPane = useRef<Record<Pane, number>>({ browse: 0, forYou: 0 });
-  const settleRef = useRef(0);
 
   const onScroll = useCallback(() => {
     const el = railRef.current;
     if (!el || el.clientWidth === 0) return;
 
     const next = PANES[Math.round(el.scrollLeft / el.clientWidth)] ?? "browse";
-    if (next !== paneRef.current) {
-      scrollYByPane.current[paneRef.current] = window.scrollY;
-      paneRef.current = next;
-      setPane(next);
-    }
-
-    clearTimeout(settleRef.current);
-    settleRef.current = window.setTimeout(() => {
-      window.scrollTo(0, scrollYByPane.current[paneRef.current]);
-    }, SETTLE_MS);
+    if (next === paneRef.current) return;
+    paneRef.current = next;
+    setPane(next);
   }, []);
 
   /**

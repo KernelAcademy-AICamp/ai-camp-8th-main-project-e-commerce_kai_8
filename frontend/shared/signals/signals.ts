@@ -2,6 +2,8 @@
 // 서버(c_events)는 계측·평가 전용이고, 취향 프로필 계산은 기기가 한다(설계 §2).
 // 모든 공개 함수는 SSR·저장 불가 환경에서 조용히 no-op한다.
 
+import { forgetAccountProfile } from "@/shared/profile/account-profile-api";
+import { rememberPendingTasteForget } from "@/shared/profile/pending-taste-forget";
 import { PROFILE_SCHEMA_VERSION } from "@/shared/profile/profile-rules";
 import {
   clearProfile,
@@ -11,6 +13,7 @@ import {
   recordProfileImpression,
 } from "@/shared/profile/profile-store";
 import { rememberPendingForget } from "@/shared/signals/pending-forget";
+import { getCurrentUserId } from "@/shared/supabase/current-user";
 import { isSignedInNow } from "@/shared/supabase/session-state";
 import { rpcPost } from "@/shared/supabase-rpc";
 
@@ -213,11 +216,15 @@ export type ActionType = Exclude<
 /**
  * 탭·찜·스타일 탐색·판매처 이동 — 해당 상품의 최근 노출에 귀속된다.
  * 로그인하지 않았으면 기록하지 않는다 (O-37).
+ *
+ * `gender`는 상품의 카탈로그 원문 성별(Product.gender)을 그대로 넘기면 된다 —
+ * 앵커 성별로의 변환(빈 문자열·이상값 → 미상)은 profile-store가 한 곳에서 한다
+ * (성별 피드 하드 필터 3단계).
  */
 export function logAction(
   type: ActionType,
   goodsNo: number,
-  options?: { policy?: FeedPolicy },
+  options?: { policy?: FeedPolicy; gender?: string | null },
 ): void {
   if (!isBrowser() || !isSignedInNow()) return;
   const sessionId = touchSession();
@@ -227,7 +234,7 @@ export function logAction(
     impression_id: impressionByGoods.get(goodsNo),
   });
   // 행동은 취향 프로필의 세션 앵커에도 반영된다 (설계 §6 가중 서열)
-  recordProfileAction(type, goodsNo, sessionId, Date.now());
+  recordProfileAction(type, goodsNo, sessionId, Date.now(), options?.gender);
 }
 
 /**
@@ -242,16 +249,45 @@ export function getFeedProfileSummary(): ProfileSummary | null {
 }
 
 /**
- * 개인화 데이터 초기화(설정) — 기기 ID·세션·미전송 큐를 지우고
+ * 계정에 보관된 취향을 지운다 — 로그인했을 때만 지울 것이 있다.
+ *
+ * 여기서 안 지우면 초기화가 **되살아난다.** 기기 것만 지워도 서버에 취향이
+ * 남아, 마이페이지 새로고침은 옛 취향을 그대로 보여주고 다음 접속에는
+ * AccountProfileGuard가 그것을 기기로 다시 내려놓는다.
+ *
+ * @returns 성공했는가 (실패는 미완료 큐에 적어 두고 다음 접속에 다시 시도)
+ */
+async function clearAccountTaste(): Promise<boolean> {
+  const userId = await getCurrentUserId();
+  if (userId === null) return true; // 로그인하지 않았으면 계정에 지울 것이 없다
+  try {
+    await forgetAccountProfile();
+    return true;
+  } catch {
+    rememberPendingTasteForget(userId);
+    return false;
+  }
+}
+
+/**
+ * 개인화 데이터 초기화(설정) — 기기 ID·세션·미전송 큐·계정 취향을 지우고
  * 서버에 이 기기의 기록 삭제를 요청한다(설계 §4 프라이버시, 방침 O-32).
  * 반환값 = 서버에서 지운 행 수 (요청 실패 시 null).
  *
  * 서버 요청이 실패하면 그 기기 ID를 미완료 큐에 적어 둔다 — 로컬 ID를 지운 뒤에도
  * 다음 접속에 재시도할 수 있어야 삭제 약속이 지켜진다.
+ *
+ * **어느 한쪽이라도 밀리면 null을 돌려준다.** 화면이 "다음 접속에서 다시
+ * 시도됩니다"를 보여줘야 한다 — 취향이 서버에 남았는데 "삭제했습니다"만
+ * 보여주면 거짓이 된다.
  */
 export async function clearSignals(): Promise<number | null> {
   if (!isBrowser()) return null;
   const deviceId = getDeviceId();
+  // 서버를 부르기 **전에** 기기 취향을 비운다. 부르는 사이 계정 동기화(5초 간격)가
+  // 한 번 돌면 방금 지우려는 것을 그대로 다시 올린다 — 비어 있으면 올라가도 해가
+  // 없다. 지운 뒤 올라간 빈 프로필은 아래 서버 삭제가 행째로 걷어낸다.
+  clearProfile();
   let deleted: number | null = null;
   try {
     deleted = await rpcPost<number>("c_forget_device", { p_device: deviceId });
@@ -262,6 +298,9 @@ export async function clearSignals(): Promise<number | null> {
     // 설정 화면이 약속한 "다음 접속에서 재시도"가 거짓이 된다 (방침 O-32).
     rememberPendingForget(deviceId);
   }
+  // 기기 기록 삭제가 실패해도 계정 취향은 따로 시도한다 — 한쪽 실패가 다른 쪽
+  // 삭제를 막을 이유가 없다. 각자 자기 몫을 재시도 큐에 적는다.
+  if (!(await clearAccountTaste())) deleted = null;
   try {
     localStorage.removeItem("atee-device-id");
     localStorage.removeItem(SESSION_KEY);
@@ -269,7 +308,6 @@ export async function clearSignals(): Promise<number | null> {
   } catch {
     // 저장소 접근 불가면 지울 것도 없다
   }
-  clearProfile();
   queue = null;
   impressionByGoods.clear();
   return deleted;

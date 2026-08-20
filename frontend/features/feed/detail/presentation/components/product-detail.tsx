@@ -23,7 +23,10 @@ import {
   useFeedViewModel,
 } from "@/features/feed/presentation/view-model/use-feed-view-model";
 import { wishlistNoticeMessage } from "@/features/feed/wishlist/domain/wishlist-notice";
+import { SaveSheet } from "@/features/feed/wishlist/presentation/components/save-sheet";
+import { useSaveSheet } from "@/features/feed/wishlist/presentation/view-model/use-save-sheet";
 import { useWishlist } from "@/features/feed/wishlist/presentation/view-model/use-wishlist";
+import { BackIcon } from "@/shared/icons";
 import { logAction } from "@/shared/signals/signals";
 
 interface ProductDetailProps {
@@ -82,7 +85,8 @@ export function ProductDetail({
     paused: !active,
   });
   const router = useRouter();
-  const { wished, toggle, notice, access } = useWishlist();
+  const { wished, save, remove, folders, entries, notice, access } = useWishlist();
+  const sheet = useSaveSheet(save);
   const isWishedNow = wished(product.goodsNo);
   const wishlistMessage = wishlistNoticeMessage(notice);
   useBodyScrollLock();
@@ -94,14 +98,15 @@ export function ProductDetail({
       }`}
     >
       <div className="relative mx-auto flex h-full max-w-md flex-col">
-        <header className="relative flex items-center px-2 py-2">
+        {/* 뒤로가기 좌표를 마이페이지와 맞춘다 — 왼쪽 16px·위 8px (전 화면 공통) */}
+        <header className="relative flex items-center px-4 py-2">
           <button
             type="button"
             aria-label="뒤로 가기"
-            className="flex h-10 w-10 cursor-pointer items-center justify-center rounded-full text-xl text-white"
+            className="flex h-10 w-10 cursor-pointer items-center justify-center rounded-full text-neutral-400"
             onClick={onRequestClose}
           >
-            ←
+            <BackIcon />
           </button>
           {pastHero && (
             <button
@@ -189,7 +194,13 @@ export function ProductDetail({
                       router.push("/login");
                       return;
                     }
-                    toggle(product);
+                    // 채워진 하트는 즉시 해제, 빈 하트는 폴더 고르는 시트
+                    // (docs/plans/2026-08-20-wishlist-folders.md)
+                    if (isWishedNow) {
+                      remove(product);
+                    } else {
+                      sheet.open(product);
+                    }
                   }}
                 >
                   {isWishedNow ? "♥" : "♡"}
@@ -202,7 +213,7 @@ export function ProductDetail({
                   title="판매처로 이동"
                   className="flex h-11 w-11 items-center justify-center text-2xl font-semibold text-white"
                   onClick={() => {
-                    logAction("outbound", product.goodsNo);
+                    logAction("outbound", product.goodsNo, { gender: product.gender });
                   }}
                 >
                   ↗
@@ -246,6 +257,24 @@ export function ProductDetail({
           </button>
         )}
       </div>
+
+      {sheet.pending !== null && (
+        <SaveSheet
+          folders={folders}
+          entries={entries}
+          onPick={sheet.pick}
+          onClose={sheet.close}
+          creating={sheet.creating}
+          onStartCreating={sheet.startCreating}
+          draftName={sheet.draftName}
+          onDraftName={sheet.setDraftName}
+          createError={sheet.createError}
+          saving={sheet.saving}
+          onSubmitCreate={() => {
+            void sheet.submitCreate();
+          }}
+        />
+      )}
     </div>
   );
 }

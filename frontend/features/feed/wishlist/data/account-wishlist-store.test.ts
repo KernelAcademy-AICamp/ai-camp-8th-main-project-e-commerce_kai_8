@@ -26,6 +26,7 @@ function entry(goodsNo: number): WishlistEntry {
       gallery: [],
     },
     addedAtMs: 1_760_000_000_000,
+    folderId: null,
   };
 }
 

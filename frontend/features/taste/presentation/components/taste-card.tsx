@@ -5,11 +5,14 @@ import { RefreshIcon } from "@/shared/icons";
 import {
   AXES_IN_ORDER,
   colorChip,
+  groupAxes,
   isStillCollecting,
+  LEAD_AXIS,
   type TasteAxis,
   type TasteSummary,
 } from "../../domain/taste-summary";
 import { useTasteSummary } from "../view-model/use-taste-summary";
+import { TasteCardSkeleton } from "./taste-card-skeleton";
 
 /** 색 칩과 브랜드는 몇 개 넘으면 읽히지 않는다. 서버는 더 보내도 화면이 줄인다. */
 const MAX_COLORS = 5;
@@ -24,6 +27,12 @@ function percent(share: number): string {
  *
  * **채우지 않고 점을 찍는다.** 채우면 "얼마나 많이"로 읽히는데, 이 값은 양이
  * 아니라 **양 끝 사이의 위치**다.
+ *
+ * **잰 개수를 막대 옆에 숫자로 적지 않는다.** 축마다 적어 봤더니 숫자가 라벨과 한
+ * 덩어리로 읽혀 막대를 방해했다(2026-08-20 화면 확인, 제품 책임자 판단). 개수는
+ * `aria-label`과 카드 머리말에 남는다.
+ *
+ * ⚠️ 그래서 화면만 보면 **24개로 잰 막대와 50개로 잰 막대가 똑같아 보인다.**
  */
 function AxisBar({ axis }: { axis: TasteAxis }) {
   const label = AXES_IN_ORDER.find((a) => a.key === axis.key);
@@ -50,10 +59,16 @@ function AxisBar({ axis }: { axis: TasteAxis }) {
   );
 }
 
+/**
+ * 카드 안의 한 묶음.
+ *
+ * **묶음 사이 간격을 축 사이 간격보다 크게 둔다.** 둘이 같으면 소제목이 묶음의
+ * 머리가 아니라 그냥 떠 있는 글자로 읽힌다(2026-08-20 화면 확인).
+ */
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <section className="mt-7">
-      <h3 className="text-xs font-medium text-neutral-500">{title}</h3>
+    <section className="mt-10 first:mt-8">
+      <h3 className="text-xs font-medium text-neutral-400">{title}</h3>
       <div className="mt-3">{children}</div>
     </section>
   );
@@ -65,20 +80,34 @@ function TasteBody({ summary }: { summary: TasteSummary }) {
     .filter((c) => c.chip !== undefined)
     .slice(0, MAX_COLORS);
   const brands = summary.brands.slice(0, MAX_BRANDS);
+  const lead = summary.axes.find((axis) => axis.key === LEAD_AXIS.key);
 
   return (
     <>
-      <p className="mt-1 text-sm text-neutral-400">
-        눌러 본 상품 {summary.matchedCount}개로 그린 경향이에요
+      {/* 무엇으로 잰 값인지 먼저 밝힌다. 축마다 잰 개수가 다르므로(색은 거의 다
+          잡히고 실측 치수는 절반뿐이다) 이 수는 축별 숫자의 상한으로 읽힌다. */}
+      <p className="mt-1 text-sm text-neutral-500">
+        상품 {summary.matchedCount}개로 쟀어요
       </p>
 
-      {summary.axes.length > 0 && (
-        <ul className="mt-6 space-y-7">
-          {summary.axes.map((axis) => (
-            <AxisBar key={axis.key} axis={axis} />
-          ))}
+      {/* 응집도는 어느 묶음에도 속하지 않는다. 소제목 없이 맨 위에 홀로 둬서
+          "이건 다른 종류의 값"이라고 배치로 말한다. 앵커 20개를 못 채우면
+          서버가 아예 안 보낸다 — 적은 앵커는 우연히 확고해 보이기 때문이다. */}
+      {lead && (
+        <ul className="mt-7">
+          <AxisBar axis={lead} />
         </ul>
       )}
+
+      {groupAxes(summary.axes).map((group) => (
+        <Section key={group.key} title={group.title}>
+          <ul className="space-y-6">
+            {group.axes.map((axis) => (
+              <AxisBar key={axis.key} axis={axis} />
+            ))}
+          </ul>
+        </Section>
+      ))}
 
       {colors.length > 0 && (
         <Section title="자주 본 색">
@@ -124,17 +153,20 @@ export function TasteCard() {
   const { state, refreshing, refresh } = useTasteSummary();
 
   if (state.kind === "hidden") return null;
+  // 뼈대는 이동 중 화면과 공유한다 — 각자 그리면 도착하는 순간 깜빡인다
+  if (state.kind === "loading") return <TasteCardSkeleton />;
 
   return (
     <section className="mt-10 rounded-2xl border border-neutral-800 p-5">
       <div className="flex items-center justify-between">
         <h2 className="text-base font-semibold text-white">내 취향</h2>
-        {/* 세션 취향은 30분 쉬어야 반영되므로, "지금까지 본 것까지"를 원하면 이 버튼 */}
+        {/* 세션 취향은 30분 쉬어야 반영되므로, "지금까지 본 것까지"를 원하면 이 버튼.
+            불러오는 중 잠그는 일은 뼈대(TasteCardSkeleton)가 맡는다 — 여기까지 왔으면 끝났다 */}
         <button
           type="button"
           aria-label="지금까지 본 것까지 반영해 새로고침"
           onClick={refresh}
-          disabled={refreshing || state.kind === "loading"}
+          disabled={refreshing}
           className={`-m-2 flex h-9 w-9 cursor-pointer items-center justify-center rounded-full text-neutral-400 disabled:opacity-50 ${
             refreshing ? "animate-spin" : ""
           }`}
@@ -142,13 +174,6 @@ export function TasteCard() {
           <RefreshIcon size={17} />
         </button>
       </div>
-
-      {state.kind === "loading" && (
-        <div
-          className="mt-4 h-1 w-full rounded-full bg-neutral-900"
-          aria-label="불러오는 중"
-        />
-      )}
 
       {state.kind === "failed" && (
         <p role="status" className="mt-1 text-sm text-neutral-500">

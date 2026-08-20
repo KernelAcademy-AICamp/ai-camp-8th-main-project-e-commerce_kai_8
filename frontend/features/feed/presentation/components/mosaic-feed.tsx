@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 
 import { DetailLayers } from "@/features/feed/detail/presentation/components/detail-layers";
 import { useDetailState } from "@/features/feed/detail/presentation/view-model/use-detail-state";
@@ -19,7 +19,7 @@ import { useRetryPendingForget } from "@/shared/signals/use-retry-pending-forget
 // active=false 면 다른 칸을 보고 있다는 뜻 — 화면은 그대로 두고(스크롤 위치·검색
 // 상태 보존) 떠 있는 검색창만 감춘다.
 export function MosaicFeed({ active = true }: { active?: boolean }) {
-  const { stack, open, requestClose, finishClose } = useDetailState();
+  const { stack, open, requestClose, finishClose } = useDetailState("feed");
   const detailOpen = stack.length > 0;
 
   // 검색 상태는 상세 스택과 같은 층위에서 항상 유지 — 상세가 열려도
@@ -62,16 +62,24 @@ export function MosaicFeed({ active = true }: { active?: boolean }) {
   useEffect(() => {
     if (showReplacement) searchFeed.markReplacementShown();
   }, [showReplacement, searchFeed]);
-  const { saveFeedScroll, suppressUntilRef } = useSearchScroll(search.submittedQuery);
-  const { collapsed, expand, onInputFocus, onInputBlur } =
-    useSearchCollapse(suppressUntilRef);
+  // 이 피드를 굴리는 것이 문서가 아니라 칸이다(home-shell). 스크롤을 읽고 옮기는
+  // 훅들이 그 칸을 스스로 찾도록 자리만 알려 준다 (shared/scroll).
+  const rootRef = useRef<HTMLDivElement>(null);
+  const { saveFeedScroll, suppressUntilRef } = useSearchScroll(
+    search.submittedQuery,
+    rootRef,
+  );
+  const { collapsed, expand, onInputFocus, onInputBlur } = useSearchCollapse(
+    suppressUntilRef,
+    rootRef,
+  );
   // 키보드가 하단 고정 검색창을 가리지 않게 그 높이만큼 띄운다
   const keyboardInset = useKeyboardInset();
   // 지난번 서버 삭제가 실패했다면 조용히 다시 시도한다 (방침 O-32 삭제 계약)
   useRetryPendingForget();
 
   return (
-    <div className="mx-auto max-w-md px-2 pt-2 pb-24">
+    <div ref={rootRef} className="mx-auto max-w-md px-2 pt-2 pb-24">
       {search.submittedQuery != null ? (
         <SearchResults
           query={search.submittedQuery}

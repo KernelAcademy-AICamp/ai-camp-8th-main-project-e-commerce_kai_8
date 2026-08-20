@@ -1,3 +1,43 @@
+## [0.1.13](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/compare/v0.1.12...v0.1.13) (2026-08-20)
+
+### Features
+
+* 설정 화면에서 앱 버전을 확인할 수 있게 한다 ([#62](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/issues/62)) ([c10c24d](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/commit/c10c24d1b5bb1cb4321b357257ecf342d6272261))
+* 취향 카드 측정 축을 4개에서 8개로 늘린다 ([#64](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/issues/64)) ([a6b1518](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/commit/a6b1518c99f75118f882c91cd14549ef8474a08c))
+* 행동 기반 성별 피드 하드 필터 ([#63](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/issues/63)) ([8b39590](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/commit/8b3959045231d118f0f3ac57773e77c93c3ddf0c))
+## [0.1.12](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/compare/v0.1.11...v0.1.12) (2026-08-19)
+
+### Features
+
+* 보관함을 폴더로 나누고 하트는 담을 폴더를 고르게 한다 ([#56](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/issues/56)) ([128d3cc](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/commit/128d3cc842188654dea5ca8bffd4982bb9a1c18d))
+
+### Bug Fixes
+
+* 개인화 초기화가 계정 취향까지 지운다 ([#57](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/issues/57)) ([8f6021b](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/commit/8f6021b0e56bcf186c74255fcdafaa309fa21af7))
+* 두 탭이 각자 세로 스크롤을 갖게 한다 ([#60](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/issues/60)) ([9837919](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/commit/98379193c07a63fde96a03e212138c80fa774db0))
+* 마이페이지 이동 지연 — 즉시 뼈대 + 인증 왕복 제거 ([#58](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/issues/58)) ([b413f8b](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/commit/b413f8b276fcb7236d4d49a1d2a4f2f7364878bb))
+* 보관함 상세도 갤러리 전체를 보여준다 ([#55](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/issues/55)) ([cc13fd8](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/commit/cc13fd8ea9bc52577579cfbfd971eb21b159699f))
+## [0.1.11](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/compare/v0.1.10...v0.1.11) (2026-08-19)
+
+### Bug Fixes
+
+* 취향 카드 스켈레톤이 완성 레이아웃 영역을 그대로 잡게 한다 ([#54](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/issues/54)) ([c8dd35d](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/commit/c8dd35d59c9a9f948493331c241ed72b6906dc3b))
+## [0.1.10](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/compare/v0.1.9...v0.1.10) (2026-08-19)
+
+### Bug Fixes
+
+* 마이페이지·취향 카드 로딩도 스켈레톤으로 보여준다 ([#53](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/issues/53)) ([34b94cb](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/commit/34b94cb6a41389cf927c6b88dfdcd084d4108d07))
+* 피드 스켈레톤 색을 배경과 구분되게 밝힌다 ([#52](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/issues/52)) ([2eb3a7f](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/commit/2eb3a7fc04d35c82258df977ef9d53d9d8e2a1bb)), closes [#0a0a0a](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/issues/0a0a0a)
+## [0.1.9](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/compare/v0.1.8...v0.1.9) (2026-08-19)
+
+### Features
+
+* 오버스크롤 바운스 제거·뒤로가기 통일·설정 정리 ([#51](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/issues/51)) ([c021abc](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/commit/c021abcb2d3f7d25cd1a8171277cb3b24f6a53b7))
+
+### Bug Fixes
+
+* 상세 화면 스택을 브라우저 히스토리와 일치시킨다 ([#48](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/issues/48)) ([092a3d6](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/commit/092a3d64f68f412fd2b6626bc97af99f36c5a407))
+* 화면 안 뒤로가기가 새로 쌓지 않고 되돌아가게 한다 ([#50](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/issues/50)) ([f456ce5](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/commit/f456ce534df29530f069367a711c9b2232971557)), closes [#48](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/issues/48)
 ## [0.1.8](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/compare/v0.1.7...v0.1.8) (2026-08-19)
 
 ### Features

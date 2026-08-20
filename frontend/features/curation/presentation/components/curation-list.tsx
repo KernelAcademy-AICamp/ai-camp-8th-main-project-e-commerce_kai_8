@@ -1,5 +1,7 @@
 // View: 큐레이션 목록 — BROWSE 피드와 같은 2열 모자이크. 카드 하나가 통째로 버튼이다(누르면 상세).
 // 탭을 넘겨도 손이 같은 격자를 만나도록 피드의 배치 계산을 그대로 쓴다.
+// 원형은 별개 제품 "티:파운드"(search-by-llm)의 같은 화면이다. 그 폴더는 2026-08-20에
+// 저장소에서 뺐다 — 원본을 보려면 git 이력을 봐야 한다.
 import Image from "next/image";
 
 import type { Curation } from "@/features/curation/domain/curation";

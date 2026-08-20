@@ -9,6 +9,7 @@ import type { CSSProperties } from "react";
 import type { Curation, CurationItem } from "@/features/curation/domain/curation";
 import { useCurationSlides } from "@/features/curation/presentation/view-model/use-curation-slides";
 import { formatPrice } from "@/features/feed/domain/format-price";
+import { BackIcon } from "@/shared/icons";
 
 /** pos가 없거나 짝이 안 맞는 상품의 버튼 자리 */
 const DEFAULT_X = 50;
@@ -38,9 +39,10 @@ export function CurationDetailScreen({
         <button
           type="button"
           onClick={onBack}
-          className="cursor-pointer text-[11px] tracking-[0.1em] text-neutral-500"
+          className="flex cursor-pointer items-center gap-1.5 text-[11px] tracking-[0.1em] text-neutral-500"
         >
-          ← PICKS
+          <BackIcon size={14} />
+          PICKS
         </button>
         <h2 className="pt-1 text-base leading-tight font-semibold tracking-tight text-white">
           {curation.title}

@@ -5,3 +5,9 @@ body {
   background-color: #0a0a0a;
   color: #f5f5f5;
 }
+
+/* 설치형 앱 느낌: 문서 끝 고무줄 바운스·당겨서 새로고침을 끈다.
+   overflow와 달리 body에서 전파되지 않아 root(html)에 걸어야 먹는다 */
+html {
+  overscroll-behavior-y: none;
+}

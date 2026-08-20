@@ -3,9 +3,12 @@
 import Link from "next/link";
 
 import type { AuthNotice } from "@/features/auth/domain/auth-session";
+import {
+  ActionSkeleton,
+  IdentitySkeleton,
+  MyPageShell,
+} from "@/features/auth/presentation/components/my-page-shell";
 import { useAuthSession } from "@/features/auth/presentation/view-model/use-auth-session";
-import { useScreenClose } from "@/features/auth/presentation/view-model/use-screen-close";
-import { BackIcon, GearIcon } from "@/shared/icons";
 
 /**
  * 마이페이지 — 계정만 다룬다.
@@ -19,6 +22,9 @@ import { BackIcon, GearIcon } from "@/shared/icons";
  *
  * 계정 아래에 붙는 카드는 **children으로 받는다.** 여기서 직접 import하면
  * feature끼리 얽힌다(frontend/AGENTS.md) — 조립은 라우트가 한다.
+ *
+ * 틀은 `MyPageShell`이 갖는다. 이동 중 화면(`app/my/loading.tsx`)이 같은 틀을
+ * 쓰기 때문이다 — 자세한 이유는 그쪽 주석 참고.
  */
 export function MyPage({
   notice,
@@ -28,36 +34,13 @@ export function MyPage({
   children?: React.ReactNode;
 }) {
   const { state, busy, failed, signOut } = useAuthSession();
-  const close = useScreenClose("/my");
-  const showFailure = failed || notice === "failed";
 
   return (
-    <main className="mx-auto max-w-md px-6 pb-10 text-neutral-200">
-      <header className="-mx-2 flex items-center justify-between py-2">
-        <button
-          type="button"
-          aria-label="뒤로"
-          onClick={close}
-          className="flex h-10 w-10 cursor-pointer items-center justify-center rounded-full text-neutral-400"
-        >
-          <BackIcon />
-        </button>
-        <Link
-          href="/settings"
-          aria-label="설정"
-          className="flex h-10 w-10 items-center justify-center rounded-full text-neutral-400"
-        >
-          <GearIcon />
-        </Link>
-      </header>
-
-      <div className="mt-6 flex items-center gap-4">
-        {/* 회색 원. 사진에 시선이 가야 하므로 화려한 아바타를 쓰지 않는다 */}
-        <div aria-hidden className="h-20 w-20 shrink-0 rounded-full bg-neutral-800" />
-        <div className="min-w-0">
-          {state.kind === "loading" && (
-            <div className="h-6 w-40 rounded bg-neutral-900" aria-label="확인 중" />
-          )}
+    <MyPageShell
+      failure={failed || notice === "failed"}
+      identity={
+        <>
+          {state.kind === "loading" && <IdentitySkeleton />}
           {state.kind === "signedOut" && (
             <>
               <h1 className="text-xl font-semibold text-white">로그인이 필요해요</h1>
@@ -76,37 +59,33 @@ export function MyPage({
               </p>
             </>
           )}
-        </div>
-      </div>
-
-      <div className="mt-8">
-        {state.kind === "signedOut" && (
-          <Link
-            href="/login"
-            className="block w-full rounded-full bg-white py-3.5 text-center font-medium text-[#1f1f1f]"
-          >
-            로그인하기
-          </Link>
-        )}
-        {state.kind === "signedIn" && (
-          <button
-            type="button"
-            onClick={signOut}
-            disabled={busy}
-            className="w-full cursor-pointer rounded-full border border-neutral-800 py-3.5 font-medium text-neutral-300 disabled:opacity-60"
-          >
-            로그아웃
-          </button>
-        )}
-      </div>
-
-      {showFailure && (
-        <p role="status" className="mt-4 text-sm text-red-400">
-          로그인에 실패했습니다. 다시 시도해 주세요.
-        </p>
-      )}
-
+        </>
+      }
+      action={
+        <>
+          {state.kind === "loading" && <ActionSkeleton />}
+          {state.kind === "signedOut" && (
+            <Link
+              href="/login"
+              className="block w-full rounded-full bg-white py-3.5 text-center font-medium text-[#1f1f1f]"
+            >
+              로그인하기
+            </Link>
+          )}
+          {state.kind === "signedIn" && (
+            <button
+              type="button"
+              onClick={signOut}
+              disabled={busy}
+              className="w-full cursor-pointer rounded-full border border-neutral-800 py-3.5 font-medium text-neutral-300 disabled:opacity-60"
+            >
+              로그아웃
+            </button>
+          )}
+        </>
+      }
+    >
       {children}
-    </main>
+    </MyPageShell>
   );
 }

@@ -50,6 +50,10 @@ export function ProductCard({
           screenY: Math.round(visible.boundingClientRect.top),
         });
       },
+      // 기준은 **화면**이다 — 바닥 감지와 달리 여기서 굴리는 칸을 기준으로 잡으면
+      // 안 된다. 지금 보고 있지 않은 칸은 가로로 화면 밖에 있을 뿐 자기 칸 안에서는
+      // 멀쩡히 보이는 상태라, 칸을 기준으로 재면 사용자가 본 적 없는 카드가 노출로
+      // 기록된다. 화면 기준으로 재면 칸이 세로로 잘라낸 부분도 함께 빠진다.
       { threshold: 0.5 },
     );
     observer.observe(element);
