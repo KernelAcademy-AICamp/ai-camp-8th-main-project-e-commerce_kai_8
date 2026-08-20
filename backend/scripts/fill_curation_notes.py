@@ -154,6 +154,10 @@ def apply_overlay(data: list[dict], overlay: dict) -> int:
     """
     pool = {no: it for c in data for it in c["items"] if (no := goods_no(it["u"]))}
     palette = overlay.get("_palette") or {}
+    # 장 제목은 overlay 가 전부 갖는다. 지웠다 다시 얹어야 뺀 제목이 JSON에 남지 않는다.
+    for c in data:
+        for it in c["items"]:
+            it.pop("head", None)
     touched = 0
     for c in data:
         if palette and not c.get("accent"):
@@ -175,9 +179,13 @@ def apply_overlay(data: list[dict], overlay: dict) -> int:
             c["items"] = picked
             c["n"] = len(picked)
         for no, head in (spec.get("heads") or {}).items():
-            item = pool.get(int(no))
-            if item is not None:
-                item["head"] = head
+            # 그 게시물 안에서만 찾는다. pool(파일 전체)로 찾으면 같은 상품이 든 다른
+            # 게시물에 제목이 붙는다 — 실제로 crop 의 제목이 not_hot 에 붙었다.
+            item = next((it for it in c["items"] if str(goods_no(it["u"])) == str(no)), None)
+            if item is None:
+                print(f"  ! {c['key']}: {no} 가 이 게시물에 없다 — 제목 건너뜀")
+                continue
+            item["head"] = head
         if spec.get("accent"):
             c["accent"] = spec["accent"]
         touched += 1
