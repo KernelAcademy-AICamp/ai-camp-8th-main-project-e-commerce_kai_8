@@ -1,3 +1,8 @@
+## [0.1.15](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/compare/v0.1.14...v0.1.15) (2026-08-20)
+
+### Features
+
+* admin 이벤트 대시보드 ([#71](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/issues/71)) ([862de57](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/commit/862de578ffafe7cd3ca8cf8a4e0a09c3c1da30aa))
 ## [0.1.14](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/compare/v0.1.13...v0.1.14) (2026-08-20)
 
 ### Features
