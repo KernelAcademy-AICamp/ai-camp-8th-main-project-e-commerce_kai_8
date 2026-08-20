@@ -96,12 +96,13 @@ describe("내 취향 카드", () => {
     givenServerSends(FULL);
     render(<TasteCard />);
 
-    // 카드 전체의 모수
+    // 카드 전체의 모수는 눈에 보인다
     expect(await screen.findByText("상품 16개로 쟀어요")).toBeTruthy();
-    // 축마다 모수가 다르다 — 색·프린트·가격은 16개로, 실측 치수 넷은 7개로 쟀다.
-    // 이 차이가 안 보이면 7개로 잰 막대를 16개로 잰 막대만큼 믿게 된다.
-    expect(screen.getAllByText("16")).toHaveLength(3);
-    expect(screen.getAllByText("7")).toHaveLength(4);
+
+    // 축별 모수는 숫자로 적지 않기로 했다(2026-08-20 화면 확인 — 숫자가 라벨과
+    // 한 덩어리로 읽혀 막대를 방해했다). 대신 막대 설명에는 남아 있어야 한다.
+    expect(screen.getByRole("img", { name: /좁은 어깨.*상품 7개로 잼/ })).toBeTruthy();
+    expect(screen.getByRole("img", { name: /무채색.*상품 16개로 잼/ })).toBeTruthy();
   });
 
   it("색 칩과 브랜드가 그대로 남는다", async () => {

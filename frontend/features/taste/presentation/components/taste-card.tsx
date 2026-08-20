@@ -27,47 +27,47 @@ function percent(share: number): string {
  * **채우지 않고 점을 찍는다.** 채우면 "얼마나 많이"로 읽히는데, 이 값은 양이
  * 아니라 **양 끝 사이의 위치**다.
  *
- * **잰 개수를 오른쪽 고정 폭 칸에 적는다.** 축이 여럿 세로로 늘어서므로 숫자
- * 자리가 흔들리면 읽히지 않는다. 이 숫자는 막대의 `aria-label`에 이미 들어 있어
- * 스크린리더에는 감춘다 — 안 감추면 같은 말을 두 번 읽는다.
+ * **잰 개수를 막대 옆에 숫자로 적지 않는다.** 축마다 적어 봤더니 숫자가 라벨과 한
+ * 덩어리로 읽혀 막대를 방해했다(2026-08-20 화면 확인, 제품 책임자 판단). 개수는
+ * `aria-label`과 카드 머리말에 남는다.
+ *
+ * ⚠️ 그래서 화면만 보면 **24개로 잰 막대와 50개로 잰 막대가 똑같아 보인다.**
  */
 function AxisBar({ axis }: { axis: TasteAxis }) {
   const label = AXES_IN_ORDER.find((a) => a.key === axis.key);
   if (!label) return null;
 
   return (
-    <li className="flex items-center gap-3">
-      <div className="flex-1">
-        <div className="flex items-center justify-between text-xs text-neutral-500">
-          <span>{label.left}</span>
-          <span>{label.right}</span>
-        </div>
-        <div
-          role="img"
-          aria-label={`${label.left}에서 ${label.right} 사이 ${percent(axis.value)} 지점, 상품 ${String(axis.measured)}개로 잼`}
-          className="relative mt-1.5 h-1 rounded-full bg-neutral-800"
-        >
-          <span
-            aria-hidden
-            className="absolute top-1/2 h-3 w-3 -translate-x-1/2 -translate-y-1/2 rounded-full bg-white"
-            style={{ left: `${String(axis.value * 100)}%` }}
-          />
-        </div>
+    <li>
+      <div className="flex items-center justify-between text-xs text-neutral-500">
+        <span>{label.left}</span>
+        <span>{label.right}</span>
       </div>
-      <span
-        aria-hidden
-        className="w-5 shrink-0 text-right text-[11px] text-neutral-600 tabular-nums"
+      <div
+        role="img"
+        aria-label={`${label.left}에서 ${label.right} 사이 ${percent(axis.value)} 지점, 상품 ${String(axis.measured)}개로 잼`}
+        className="relative mt-1.5 h-1 rounded-full bg-neutral-800"
       >
-        {axis.measured > 0 ? axis.measured : ""}
-      </span>
+        <span
+          aria-hidden
+          className="absolute top-1/2 h-3 w-3 -translate-x-1/2 -translate-y-1/2 rounded-full bg-white"
+          style={{ left: `${String(axis.value * 100)}%` }}
+        />
+      </div>
     </li>
   );
 }
 
+/**
+ * 카드 안의 한 묶음.
+ *
+ * **묶음 사이 간격을 축 사이 간격보다 크게 둔다.** 둘이 같으면 소제목이 묶음의
+ * 머리가 아니라 그냥 떠 있는 글자로 읽힌다(2026-08-20 화면 확인).
+ */
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <section className="mt-7">
-      <h3 className="text-xs font-medium text-neutral-500">{title}</h3>
+    <section className="mt-10 first:mt-8">
+      <h3 className="text-xs font-medium text-neutral-400">{title}</h3>
       <div className="mt-3">{children}</div>
     </section>
   );
@@ -90,7 +90,7 @@ function TasteBody({ summary }: { summary: TasteSummary }) {
 
       {groupAxes(summary.axes).map((group) => (
         <Section key={group.key} title={group.title}>
-          <ul className="space-y-7">
+          <ul className="space-y-6">
             {group.axes.map((axis) => (
               <AxisBar key={axis.key} axis={axis} />
             ))}

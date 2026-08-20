@@ -38,26 +38,23 @@ export function TasteCardSkeleton() {
 
       <div aria-label="불러오는 중" className="animate-pulse">
         <div className="mt-1 h-5 w-32 rounded bg-neutral-800" />
-        {GROUPS_IN_ORDER.map((group) => (
-          <div key={group.key} className="mt-7">
+        {GROUPS_IN_ORDER.map((group, index) => (
+          <div key={group.key} className={index === 0 ? "mt-8" : "mt-10"}>
             <div className="h-3 w-12 rounded bg-neutral-800" />
-            <ul className="mt-3 space-y-7">
+            <ul className="mt-3 space-y-6">
               {group.axes.map((axis) => (
-                <li key={axis.key} className="flex items-center gap-3">
-                  <div className="flex-1">
-                    <div className="flex items-center justify-between">
-                      <div className="h-3 w-10 rounded bg-neutral-800" />
-                      <div className="h-3 w-10 rounded bg-neutral-800" />
-                    </div>
-                    <div className="mt-1.5 h-1 rounded-full bg-neutral-800" />
+                <li key={axis.key}>
+                  <div className="flex items-center justify-between">
+                    <div className="h-3 w-10 rounded bg-neutral-800" />
+                    <div className="h-3 w-10 rounded bg-neutral-800" />
                   </div>
-                  <div className="h-3 w-5 shrink-0 rounded bg-neutral-800" />
+                  <div className="mt-1.5 h-1 rounded-full bg-neutral-800" />
                 </li>
               ))}
             </ul>
           </div>
         ))}
-        <div className="mt-7">
+        <div className="mt-10">
           <div className="h-3 w-12 rounded bg-neutral-800" />
           <div className="mt-3 flex flex-wrap gap-2">
             <div className="h-[34px] w-24 rounded-full bg-neutral-800" />
@@ -65,7 +62,7 @@ export function TasteCardSkeleton() {
             <div className="h-[34px] w-24 rounded-full bg-neutral-800" />
           </div>
         </div>
-        <div className="mt-7">
+        <div className="mt-10">
           <div className="h-3 w-16 rounded bg-neutral-800" />
           <div className="mt-3 h-5 w-48 rounded bg-neutral-800" />
         </div>
