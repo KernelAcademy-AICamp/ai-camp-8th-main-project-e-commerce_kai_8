@@ -33,7 +33,7 @@ import requests
 API = "https://goods.musinsa.com/api2/review/v1/ai-summary/{no}"
 HEADERS = {"User-Agent": "Mozilla/5.0", "Referer": "https://www.musinsa.com/"}
 DEFAULT_JSON = (
-    Path(__file__).resolve().parents[3]
+    Path(__file__).resolve().parents[2]
     / "frontend/features/curation/data/curations.json"
 )
 # 손으로 정한 것(고른 상품·장 제목·버튼 자리·상황 색). 생성기가 JSON을 다시 뽑으면
