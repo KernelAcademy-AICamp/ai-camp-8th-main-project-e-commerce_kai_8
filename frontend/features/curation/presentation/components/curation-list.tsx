@@ -1,8 +1,14 @@
-// View: 큐레이션 목록 — 카드 하나가 통째로 버튼이다(누르면 상세 화면).
-// 티:파운드(curation/client)의 같은 화면을 aTee 다크 팔레트로 옮긴 것이다.
+// View: 큐레이션 목록 — BROWSE 피드와 같은 2열 모자이크. 카드 하나가 통째로 버튼이다(누르면 상세).
+// 탭을 넘겨도 손이 같은 격자를 만나도록 피드의 배치 계산을 그대로 쓴다.
 import Image from "next/image";
 
 import type { Curation } from "@/features/curation/domain/curation";
+// 배치 계산만 가져오는 feature 간 참조 — 두 탭의 격자 리듬이 어긋나면 안 된다.
+import { distributeToColumns } from "@/features/feed/domain/masonry";
+
+/** 썸네일 크기가 JSON에 없을 때. 실측 450장 중 409장이 이 크기다. */
+const FALLBACK_WIDTH = 500;
+const FALLBACK_HEIGHT = 600;
 
 export function CurationList({
   curations,
@@ -11,56 +17,54 @@ export function CurationList({
   curations: Curation[];
   onOpen: (key: string) => void;
 }) {
+  const sized = curations
+    .filter((curation) => curation.items.length > 0)
+    .map((curation) => {
+      const cover = curation.items[0];
+      return {
+        curation,
+        cover,
+        width: cover.w ?? FALLBACK_WIDTH,
+        height: cover.h ?? FALLBACK_HEIGHT,
+      };
+    });
+
   return (
-    <ul className="divide-y divide-neutral-800">
-      {curations.map((c) => (
-        <li key={c.key}>
-          <button
-            type="button"
-            className="block w-full cursor-pointer py-5 text-left"
-            onClick={() => {
-              onOpen(c.key);
-            }}
-          >
-            {c.items.length > 0 && (
-              <div className="mb-3 flex gap-px overflow-hidden rounded-xl bg-neutral-800">
-                {c.items.slice(0, 4).map((item) => (
-                  <div key={item.u} className="relative aspect-square flex-1">
-                    <Image
-                      src={item.img}
-                      alt={item.t}
-                      fill
-                      sizes="25vw"
-                      className="object-cover"
-                    />
-                  </div>
-                ))}
-              </div>
-            )}
-
-            <div className="px-4">
-              <h2 className="text-lg leading-tight font-semibold tracking-tight">
-                {c.title}
-              </h2>
-            </div>
-
-            <p className="px-4 pt-2 text-[13px] leading-relaxed text-neutral-400">
-              {c.lede}
-            </p>
-
-            <div className="flex flex-wrap gap-1.5 px-4 pt-3">
-              {c.cond.map((label) => (
-                <span
-                  key={label}
-                  className="rounded-full bg-neutral-800 px-2 py-0.5 text-[11px] text-neutral-300"
-                >
-                  {label}
+    <div className="flex items-start gap-2 px-3 pt-3">
+      {distributeToColumns(sized, 2).map((column, columnIndex) => (
+        <div
+          key={`curation-col-${String(columnIndex)}`}
+          className="flex min-w-0 flex-1 flex-col gap-2"
+        >
+          {column.map(({ curation, cover, width, height }) => (
+            <button
+              key={curation.key}
+              type="button"
+              className="relative block w-full cursor-pointer overflow-hidden rounded-xl bg-neutral-900 text-left"
+              onClick={() => {
+                onOpen(curation.key);
+              }}
+            >
+              <Image
+                src={cover.img}
+                alt={curation.title}
+                width={width}
+                height={height}
+                sizes="50vw"
+                className="h-auto w-full"
+              />
+              <span className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/90 from-30% to-transparent px-2.5 pt-8 pb-2.5">
+                <span className="block text-[13px] leading-snug font-semibold text-white">
+                  {curation.title}
                 </span>
-              ))}
-            </div>
-          </button>
-        </li>
+                <span className="mt-1 block text-[10.5px] text-neutral-400">
+                  {curation.items.length}개
+                </span>
+              </span>
+            </button>
+          ))}
+        </div>
       ))}
-    </ul>
+    </div>
   );
 }

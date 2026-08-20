@@ -17,7 +17,7 @@ import { useDetailState } from "@/features/feed/detail/presentation/view-model/u
 const curations: Curation[] = curationData;
 
 /**
- * PICKS 칸 — 큐레이션 목록과 상세(고른 상품 9개) 두 화면을 갈아 끼운다.
+ * FOR YOU 칸 — 큐레이션 목록과 상세(고른 상품 9개) 두 화면을 갈아 끼운다.
  *
  * 목록·상세 모두 클라이언트에서 그린다. 상세가 목록의 9개 항목 전부를 필요로 해서
  * curations.json(gzip 20KB)이 이 칸의 청크에 실린다 — 서버 렌더로 감춰 두면 그 데이터를
@@ -32,18 +32,9 @@ export function CurationPane() {
 
   const { stack, open: openProduct, requestClose, finishClose } = useDetailState();
 
-  // 상세를 열 때 히스토리를 한 칸 쌓는다 — 기기의 뒤로 가기(가장자리에서 옆으로 밀기,
-  // 뒤로 가기 버튼)가 목록으로 되돌린다. 화면 안의 뒤로 가기 줄은 그래서 없앴다.
-  // 상품 상세가 위에 떠 있으면 그쪽(use-detail-state)이 먼저 닫히고, 다 닫힌 뒤에야 목록으로.
-  useEffect(() => {
-    const onPopState = () => {
-      if (!stack.some((entry) => entry.phase === "open")) setOpenKey(null);
-    };
-    window.addEventListener("popstate", onPopState);
-    return () => {
-      window.removeEventListener("popstate", onPopState);
-    };
-  }, [stack]);
+  const back = useCallback(() => {
+    setOpenKey(null);
+  }, []);
 
   useEffect(() => {
     if (openKey === null) {
@@ -80,6 +71,7 @@ export function CurationPane() {
       {open ? (
         <CurationDetailScreen
           curation={open}
+          onBack={back}
           onSelectItem={(item, thumb) => {
             void selectItem(item, thumb);
           }}
@@ -90,7 +82,6 @@ export function CurationPane() {
           onOpen={(key) => {
             listScrollY.current = window.scrollY;
             setOpenKey(key);
-            window.history.pushState({ aTeeCuration: true }, "");
           }}
         />
       )}
