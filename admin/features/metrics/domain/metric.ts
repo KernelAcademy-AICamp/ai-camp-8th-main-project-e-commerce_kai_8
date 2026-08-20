@@ -102,6 +102,18 @@ export function findWriteKeywords(sql: string): string[] {
 }
 
 /**
+ * 조회로 시작하는가.
+ *
+ * `with`(CTE)도 허용한다 — 세션 단위 집계처럼 중간 결과가 필요한 지표는 `with`로
+ * 시작한다. `with` 안에 쓰기를 숨길 수는 있지만(data-modifying CTE) 그것은
+ * `findWriteKeywords`가 잡는다. 두 검사는 서로를 대신하지 않는다.
+ */
+export function isReadOnlyStart(sql: string): boolean {
+  const head = sql.trim().toLowerCase();
+  return head.startsWith("select") || head.startsWith("with");
+}
+
+/**
  * 조회 결과를 표로 바꾼다.
  *
  * 컬럼은 **결과가 0행이어도** 유지된다. 컬럼까지 사라지면 "정상적으로 0건"인

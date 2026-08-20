@@ -4,6 +4,7 @@ import {
   findDuplicateIds,
   findWriteKeywords,
   formatCell,
+  isReadOnlyStart,
   type MetricDefinition,
   sortMetrics,
   toTable,
@@ -61,6 +62,29 @@ describe("findWriteKeywords", () => {
     // "updated_at" 컬럼 때문에 멀쩡한 지표가 막히면 안 된다
     expect(findWriteKeywords("select updated_at from c_events")).toEqual([]);
     expect(findWriteKeywords("select created_at from c_events")).toEqual([]);
+  });
+
+  it("with 안에 숨은 쓰기도 잡는다", () => {
+    // isReadOnlyStart가 with를 허용하므로 이 검사가 유일한 방어선이 된다
+    expect(
+      findWriteKeywords("with x as (delete from c_events returning 1) select 1"),
+    ).toContain("delete");
+  });
+});
+
+describe("isReadOnlyStart", () => {
+  it("select로 시작하면 통과", () => {
+    expect(isReadOnlyStart("select 1")).toBe(true);
+    expect(isReadOnlyStart("\n  SELECT 1")).toBe(true);
+  });
+
+  it("with(CTE)로 시작해도 통과", () => {
+    expect(isReadOnlyStart("with s as (select 1) select * from s")).toBe(true);
+  });
+
+  it("그 외는 막는다", () => {
+    expect(isReadOnlyStart("delete from c_events")).toBe(false);
+    expect(isReadOnlyStart("")).toBe(false);
   });
 });
 

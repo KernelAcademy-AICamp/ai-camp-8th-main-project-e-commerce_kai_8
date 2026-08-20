@@ -2,7 +2,11 @@
 
 import { describe, expect, it } from "vitest";
 
-import { findDuplicateIds, findWriteKeywords } from "@/features/metrics/domain/metric";
+import {
+  findDuplicateIds,
+  findWriteKeywords,
+  isReadOnlyStart,
+} from "@/features/metrics/domain/metric";
 
 import { METRICS } from "./index";
 
@@ -32,9 +36,17 @@ describe("지표 명단", () => {
   );
 
   it.each(METRICS.map((metric) => [metric.id, metric] as const))(
-    "%s — SQL이 select로 시작한다",
+    "%s — SQL이 조회로 시작한다 (select 또는 with)",
     (_id, metric) => {
-      expect(metric.sql.trim().toLowerCase().startsWith("select")).toBe(true);
+      expect(isReadOnlyStart(metric.sql)).toBe(true);
+    },
+  );
+
+  it.each(METRICS.map((metric) => [metric.id, metric.order] as const))(
+    "%s — order가 정해져 있다",
+    (_id, order) => {
+      // order를 빠뜨리면 0이 되어 맨 위로 올라간다. 유입 카드가 맨 위여야 한다
+      expect(order).toBeGreaterThan(0);
     },
   );
 });
