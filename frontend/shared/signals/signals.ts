@@ -216,11 +216,15 @@ export type ActionType = Exclude<
 /**
  * 탭·찜·스타일 탐색·판매처 이동 — 해당 상품의 최근 노출에 귀속된다.
  * 로그인하지 않았으면 기록하지 않는다 (O-37).
+ *
+ * `gender`는 상품의 카탈로그 원문 성별(Product.gender)을 그대로 넘기면 된다 —
+ * 앵커 성별로의 변환(빈 문자열·이상값 → 미상)은 profile-store가 한 곳에서 한다
+ * (성별 피드 하드 필터 3단계).
  */
 export function logAction(
   type: ActionType,
   goodsNo: number,
-  options?: { policy?: FeedPolicy },
+  options?: { policy?: FeedPolicy; gender?: string | null },
 ): void {
   if (!isBrowser() || !isSignedInNow()) return;
   const sessionId = touchSession();
@@ -230,7 +234,7 @@ export function logAction(
     impression_id: impressionByGoods.get(goodsNo),
   });
   // 행동은 취향 프로필의 세션 앵커에도 반영된다 (설계 §6 가중 서열)
-  recordProfileAction(type, goodsNo, sessionId, Date.now());
+  recordProfileAction(type, goodsNo, sessionId, Date.now(), options?.gender);
 }
 
 /**

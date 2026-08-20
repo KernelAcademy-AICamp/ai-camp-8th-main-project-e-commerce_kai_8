@@ -5,7 +5,9 @@ import { RefreshIcon } from "@/shared/icons";
 import {
   AXES_IN_ORDER,
   colorChip,
+  groupAxes,
   isStillCollecting,
+  LEAD_AXIS,
   type TasteAxis,
   type TasteSummary,
 } from "../../domain/taste-summary";
@@ -25,6 +27,12 @@ function percent(share: number): string {
  *
  * **채우지 않고 점을 찍는다.** 채우면 "얼마나 많이"로 읽히는데, 이 값은 양이
  * 아니라 **양 끝 사이의 위치**다.
+ *
+ * **잰 개수를 막대 옆에 숫자로 적지 않는다.** 축마다 적어 봤더니 숫자가 라벨과 한
+ * 덩어리로 읽혀 막대를 방해했다(2026-08-20 화면 확인, 제품 책임자 판단). 개수는
+ * `aria-label`과 카드 머리말에 남는다.
+ *
+ * ⚠️ 그래서 화면만 보면 **24개로 잰 막대와 50개로 잰 막대가 똑같아 보인다.**
  */
 function AxisBar({ axis }: { axis: TasteAxis }) {
   const label = AXES_IN_ORDER.find((a) => a.key === axis.key);
@@ -51,10 +59,16 @@ function AxisBar({ axis }: { axis: TasteAxis }) {
   );
 }
 
+/**
+ * 카드 안의 한 묶음.
+ *
+ * **묶음 사이 간격을 축 사이 간격보다 크게 둔다.** 둘이 같으면 소제목이 묶음의
+ * 머리가 아니라 그냥 떠 있는 글자로 읽힌다(2026-08-20 화면 확인).
+ */
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <section className="mt-7">
-      <h3 className="text-xs font-medium text-neutral-500">{title}</h3>
+    <section className="mt-10 first:mt-8">
+      <h3 className="text-xs font-medium text-neutral-400">{title}</h3>
       <div className="mt-3">{children}</div>
     </section>
   );
@@ -66,16 +80,34 @@ function TasteBody({ summary }: { summary: TasteSummary }) {
     .filter((c) => c.chip !== undefined)
     .slice(0, MAX_COLORS);
   const brands = summary.brands.slice(0, MAX_BRANDS);
+  const lead = summary.axes.find((axis) => axis.key === LEAD_AXIS.key);
 
   return (
     <>
-      {summary.axes.length > 0 && (
-        <ul className="mt-6 space-y-7">
-          {summary.axes.map((axis) => (
-            <AxisBar key={axis.key} axis={axis} />
-          ))}
+      {/* 무엇으로 잰 값인지 먼저 밝힌다. 축마다 잰 개수가 다르므로(색은 거의 다
+          잡히고 실측 치수는 절반뿐이다) 이 수는 축별 숫자의 상한으로 읽힌다. */}
+      <p className="mt-1 text-sm text-neutral-500">
+        상품 {summary.matchedCount}개로 쟀어요
+      </p>
+
+      {/* 응집도는 어느 묶음에도 속하지 않는다. 소제목 없이 맨 위에 홀로 둬서
+          "이건 다른 종류의 값"이라고 배치로 말한다. 앵커 20개를 못 채우면
+          서버가 아예 안 보낸다 — 적은 앵커는 우연히 확고해 보이기 때문이다. */}
+      {lead && (
+        <ul className="mt-7">
+          <AxisBar axis={lead} />
         </ul>
       )}
+
+      {groupAxes(summary.axes).map((group) => (
+        <Section key={group.key} title={group.title}>
+          <ul className="space-y-6">
+            {group.axes.map((axis) => (
+              <AxisBar key={axis.key} axis={axis} />
+            ))}
+          </ul>
+        </Section>
+      ))}
 
       {colors.length > 0 && (
         <Section title="자주 본 색">
