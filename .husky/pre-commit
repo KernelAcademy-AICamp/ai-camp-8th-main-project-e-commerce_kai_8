@@ -1,1 +1,6 @@
-cd frontend && npx lint-staged
+set -e
+# lint-staged는 실행한 디렉토리 아래의 스테이징 파일만 다룬다.
+# 그래서 앱마다 한 번씩 돌린다 — 해당 앱 파일이 없으면 그냥 아무것도 하지 않는다.
+# ⚠️ 앱을 추가하면 여기에도 줄을 추가해야 한다. 빠뜨리면 그 앱은 커밋 검사를 안 받는다.
+(cd frontend && npx lint-staged)
+(cd admin && npx lint-staged)
