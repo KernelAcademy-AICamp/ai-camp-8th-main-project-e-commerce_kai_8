@@ -28,6 +28,31 @@ jobs:
       - run: npm run test
       - run: npm run build
 
+  # admin 이벤트 대시보드. frontend job에 얹지 않고 따로 두는 이유는 별개의 앱이라
+  # 의존성도 lockfile도 다르기 때문이다 — 한 job에 섞으면 어느 쪽이 깨졌는지 보이지 않는다.
+  # ⚠️ 이 job이 없으면 admin 코드는 CI가 한 줄도 검사하지 않는다.
+  admin:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: admin
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: admin/package-lock.json
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run typecheck
+      - run: npm run format:check
+      - run: npm run test
+      # DB에 붙지 않고도 빌드가 되는지 본다. 대시보드는 열 때마다 계산하므로
+      # (app/page.tsx의 force-dynamic) 빌드 시점에 접속이 필요 없어야 정상이다.
+      # 여기서 접속을 요구하기 시작하면 그 자체가 회귀다.
+      - run: npm run build
+
   backend:
     runs-on: ubuntu-latest
     defaults:
