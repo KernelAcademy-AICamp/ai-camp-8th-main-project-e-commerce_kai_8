@@ -57,6 +57,7 @@ describe("fetchMixPage — 성별 하드 필터 (설계: 성별 피드 하드 �
     size: 30,
     boost: false,
     after: null,
+    rotation: 0,
   };
 
   it("성별을 주면 p_gender로 싣는다", async () => {
@@ -97,6 +98,7 @@ describe("fetchMixPage — 성별 하드 필터 (설계: 성별 피드 하드 �
         p_gender: "여성",
         p_after_hk: null,
         p_after_no: null,
+        p_rotation: 0,
       },
       { timeoutMs: 5_000 },
     );
@@ -112,6 +114,7 @@ describe("fetchMixPage — 후보풀 커서", () => {
     size: 30,
     boost: false,
     gender: "남성" as const,
+    rotation: 0,
   };
 
   // 실제 서버가 낸 값이다. 64비트 경계 근처라 number로 다루면 깎인다.
@@ -171,5 +174,38 @@ describe("fetchMixPage — 후보풀 커서", () => {
     expect(sent).toHaveLength(600);
     expect(sent[0]).toBe(100); // 앞의 100개(가장 오래된 것)가 빠졌다
     expect(sent.at(-1)).toBe(699); // 가장 최근 것이 남았다
+  });
+});
+
+describe("fetchMixPage — 앵커 회전", () => {
+  const req = {
+    sessionAnchors: [],
+    longAnchors: [{ goodsNo: 2, weight: 3 }],
+    exclude: [],
+    seed: 1000,
+    size: 30,
+    boost: false,
+    gender: "남성" as const,
+    after: null,
+  };
+
+  it("회전 번호를 p_rotation으로 싣는다", async () => {
+    rpcPostMock.mockResolvedValue([]);
+    await fetchMixPage({ ...req, rotation: 7 });
+    expect(rpcPostMock).toHaveBeenCalledWith(
+      "c_mix_page",
+      expect.objectContaining({ p_rotation: 7 }),
+      expect.anything(),
+    );
+  });
+
+  it("첫 페이지는 0이다 — 개정 전과 같은 동작", async () => {
+    rpcPostMock.mockResolvedValue([]);
+    await fetchMixPage({ ...req, rotation: 0 });
+    expect(rpcPostMock).toHaveBeenCalledWith(
+      "c_mix_page",
+      expect.objectContaining({ p_rotation: 0 }),
+      expect.anything(),
+    );
   });
 });
