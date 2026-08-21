@@ -203,7 +203,11 @@ def test_short_result_set_does_not_switch_query_on_next_page(cur, query):
 
     cur.execute("select max(goods_no) from c_search_page(%s, null, 30, '남성')", (query,))
     v1_last = cur.fetchone()[0]
-    assert v1_last is not None, f"{query}: v1 1페이지에 결과가 있어야 이 검사가 성립한다"
+    if v1_last is None:
+        # 성별이 필수·등식이 된 뒤로는(2026-08-22) 이 질의가 남성 쪽에서 0건일 수 있다
+        # — `클로에`는 여성 브랜드다. 재려는 것은 "소진 뒤 질의가 바뀌지 않는가"이므로,
+        # 셀 것이 없으면 이 표본은 건너뛴다(조용히 통과시키지 않고 이유를 남긴다).
+        pytest.skip(f"{query}: 남성 쪽 결과가 0건이라 소진 검사를 세울 수 없다")
     cur.execute("select count(*) from c_search_page(%s, %s, 30, '남성')", (query, v1_last))
     assert cur.fetchone()[0] == 0, f"{query}: v1도 소진 뒤 0건이어야 한다"
 
@@ -471,7 +475,8 @@ def test_query_used_is_re_inputtable(cur):
 )
 def test_query_used_carries_every_branch_to_the_next_page(cur, query, size):
     cur.execute(
-        "select score, goods_no, query_used from c_search_page_v2(%s, null, null, %s)"
+        "select score, goods_no, query_used"
+        " from c_search_page_v2(%s, null, null, %s, null, null, '남성')"
         " order by score, goods_no desc limit 1",
         (query, size),
     )
@@ -479,13 +484,16 @@ def test_query_used_carries_every_branch_to_the_next_page(cur, query, size):
     assert row is not None, f"{query}: 1페이지에 결과가 있어야 한다"
     score, goods_no, used = row
     cur.execute(
-        "select count(*) from c_search_page_v2(%s, %s::real, %s::bigint, %s)",
+        "select count(*)"
+        " from c_search_page_v2(%s, %s::real, %s::bigint, %s, null, null, '남성')",
         (used, score, goods_no, size),
     )
     assert cur.fetchone()[0] > 0, f"{query}: 돌려준 질의로 다음 페이지가 이어져야 한다"
     cur.execute(
-        "select count(*) from c_search_page_v2(%s, %s::real, %s::bigint, %s) p2"
-        " where p2.goods_no in (select goods_no from c_search_page_v2(%s, null, null, %s))",
+        "select count(*)"
+        " from c_search_page_v2(%s, %s::real, %s::bigint, %s, null, null, '남성') p2"
+        " where p2.goods_no in ("
+        "   select goods_no from c_search_page_v2(%s, null, null, %s, null, null, '남성'))",
         (used, score, goods_no, size, query, size),
     )
     assert cur.fetchone()[0] == 0, f"{query}: 1페이지와 겹치면 안 된다"
@@ -520,14 +528,29 @@ def test_multiword_brand_names_are_not_split_by_color(cur, query):
     assert cur.fetchone()[0] is None, f"{query}: 브랜드명 안의 색은 색이 아니다"
 
 
-@pytest.mark.parametrize("query", ["톰 브라운", "브라운 스튜디오", "하이퍼 데님", "블랙 퍼플"])
-def test_brand_queries_still_return_products(cur, query):
+# 성별은 **브랜드마다 상품이 있는 쪽**으로 준다. 성별이 필수·등식이 된 뒤로는
+# (2026-08-22) 브랜드가 한쪽 성별만 취급하면 반대 성별로는 0건이 정상이다 —
+# 예: `블랙 퍼플`은 상품 26개가 전부 여성이다. 여기서 재려는 것은 "색 추출이
+# 브랜드를 지우지 않는가"이지 성별이 아니므로, 성별 때문에 0건이 되지 않게 맞춘다.
+@pytest.mark.parametrize(
+    "query,gender",
+    [
+        ("톰 브라운", "남성"),
+        ("브라운 스튜디오", "남성"),
+        ("하이퍼 데님", "남성"),
+        ("블랙 퍼플", "여성"),
+    ],
+)
+def test_brand_queries_still_return_products(cur, query, gender):
     """색 추출로 브랜드가 사라지지 않는지. `하이퍼 데님`은 실제로 0건이 됐었다.
 
     조건어를 붙인 형태(`하이퍼 데님 반팔`)는 여기서 세지 않는다 — 그 브랜드
     상품 3개의 제목에 `반팔`이 없어서 0건인 것이 정상이고, 색과 무관하다.
     """
-    cur.execute("select count(*) from c_search_page_v2(%s, null, null, 20, null, null, '남성')", (query,))
+    cur.execute(
+        "select count(*) from c_search_page_v2(%s, null, null, 20, null, null, %s)",
+        (query, gender),
+    )
     assert cur.fetchone()[0] > 0
 
 
