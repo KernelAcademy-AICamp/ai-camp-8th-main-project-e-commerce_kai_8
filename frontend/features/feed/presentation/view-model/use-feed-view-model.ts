@@ -244,9 +244,13 @@ export function useFeedViewModel(options?: FeedOptions) {
 
     first
       .then(() => {
+        if (generation !== generationRef.current) return; // 늦은 성공 — 상한을 건드리지 않는다
         retriesRef.current = 0; // 한 번이라도 성공하면 상한을 되돌린다
       })
       .catch((error: unknown) => {
+        // **늦은 실패가 새 세대를 오염시키지 않게 한다.** 이 확인이 없으면 이전 성별
+        // 요청이 늦게 실패했을 때 새 성별 피드에 오류 화면과 재시도가 심긴다(교차 리뷰 지적).
+        if (generation !== generationRef.current) return;
         if (!isRetryable(error) || retriesRef.current >= MAX_RETRIES) {
           // 다시 해도 같거나, 상한을 다 썼다 — 스켈레톤을 붙잡지 않고 드러낸다.
           console.error("피드 로드 실패 — 재시도하지 않는다", error);
@@ -264,6 +268,8 @@ export function useFeedViewModel(options?: FeedOptions) {
         );
       })
       .finally(() => {
+        // 늦은 요청이 새 세대의 진행 중 표시를 풀면 첫 페이지가 중복으로 나간다.
+        if (generation !== generationRef.current) return;
         loadingRef.current = false;
       });
   }, [seed, exploreFrom, gender]);

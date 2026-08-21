@@ -2,7 +2,11 @@
 
 import { useSyncExternalStore } from "react";
 
-import { isSignedInNow } from "@/shared/supabase/session-state";
+import {
+  getSignedInServerSnapshot,
+  getSignedInSnapshot,
+  subscribeSession,
+} from "@/shared/supabase/session-state";
 
 import {
   getSyncServerStatus,
@@ -43,9 +47,17 @@ export type GenderGateState = "pending" | "ask" | "ready";
 export function useGenderGateState(): GenderGateState {
   const setting = useGenderSetting();
   const sync = useSyncExternalStore(subscribeSync, getSyncStatus, getSyncServerStatus);
+  const session = useSyncExternalStore(
+    subscribeSession,
+    getSignedInSnapshot,
+    getSignedInServerSnapshot,
+  );
   if (setting !== null) return "ready";
+  // **세션을 아직 모르는 동안에도 묻지 않는다.** `unknown`을 비로그인으로 단정하면
+  // 계정에 값이 있는 사람이 새 기기에서 다시 질문받는다(교차 리뷰 지적).
+  if (session === "unknown") return "pending";
   // 비회원은 기다릴 것이 없다 — 계정에 값이 있을 수 없다(O-37).
-  if (isSignedInNow() && sync !== "settled") return "pending";
+  if (session === "in" && sync !== "settled") return "pending";
   return "ask";
 }
 

@@ -34,8 +34,33 @@ function classifyStatus(status: number | null): RpcErrorKind {
   return "transient";
 }
 
+/**
+ * 인증 통로(`authedRpc`)는 HTTP 상태 대신 **PostgreSQL 오류 코드**를 준다. 그것도
+ * 종류로 옮긴다 — 안 옮기면 인증 만료·권한 거부·계약 위반이 전부 "일시적 실패"가 되어,
+ * 낙관적으로 바꾼 화면 값이 서버와 갈린 채 남는다(교차 리뷰 지적).
+ *
+ * `22023`(잘못된 인자)·`23xxx`(제약 위반)·`42xxx`(문법·권한)은 다시 해도 같다.
+ * `28000`(인증 아님)은 권한 문제다.
+ */
+function kindFromPgCode(code: string): RpcErrorKind {
+  if (code === "28000" || code.startsWith("42")) return "auth";
+  if (code === "22023" || code.startsWith("23") || code.startsWith("22"))
+    return "contract";
+  return "transient";
+}
+
 export function rpcErrorKind(error: unknown): RpcErrorKind {
-  return error instanceof RpcError ? error.kind : "transient";
+  if (error instanceof RpcError) return error.kind;
+  // 인증 통로의 오류. 순환 import를 피하려고 형태로 판별한다.
+  if (
+    error !== null &&
+    typeof error === "object" &&
+    (error as { name?: unknown }).name === "AuthedRpcError"
+  ) {
+    const code = (error as { code?: unknown }).code;
+    return typeof code === "string" ? kindFromPgCode(code) : "transient";
+  }
+  return "transient";
 }
 
 /** 다시 시도해서 달라질 수 있는가 */

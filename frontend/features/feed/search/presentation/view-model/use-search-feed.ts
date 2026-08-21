@@ -129,7 +129,10 @@ export function useSearchFeed({ query, submission, paused }: SearchFeedOptions) 
 
   // 검색어 전환 시 표시를 즉시 비운다 (React 권장 렌더 중 리셋) — 같은 검색어를
   // 해제 후 재제출해도 이전 세션의 결과·오류가 잠깐 비치지 않는다
-  const identity = query == null ? null : `${String(submission?.seq ?? 0)}:${query}`;
+  // **성별도 표시 identity에 넣는다.** 세대만 올리면 새 응답이 올 때까지 이전 성별
+  // 카드가 화면에 남는다 — 설정에서 돌아오거나 다른 탭에서 바꿨을 때 그렇다(교차 리뷰 지적).
+  const identity =
+    query == null ? null : `${String(submission?.seq ?? 0)}:${gender ?? ""}:${query}`;
   const [lastQuery, setLastQuery] = useState(identity);
   if (lastQuery !== identity) {
     setLastQuery(identity);

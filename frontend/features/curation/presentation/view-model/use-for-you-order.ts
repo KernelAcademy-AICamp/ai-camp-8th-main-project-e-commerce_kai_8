@@ -60,6 +60,9 @@ export function useForYouOrder(
   useEffect(() => {
     // 목록이나 성별이 바뀌면 예전 정렬은 버린다 — 남겨 두면 반대 성별 순서가 한 프레임
     // 비친다.
+    // 이 효과가 만든 요청인지 표시한다 — 성별이 바뀌면 이전 요청의 완료 콜백이
+    // **옛 성별로 거른 목록**을 다시 설치할 수 있다(교차 리뷰 지적).
+    let live = true;
     const showBase = () => {
       shownRef.current = mine;
       setTasteOrdered(null);
@@ -76,6 +79,7 @@ export function useForYouOrder(
     // 노출 횟수는 이번 마운트 동안 고정한다 — 아래에서 적어도 순서가 흔들리지 않는다
     const views = readCurationViews();
     const reorder = () => {
+      if (!live) return; // 성별·목록이 바뀐 뒤 도착한 응답은 버린다
       const next = orderByTaste(mine, rules, cachedAnchorTitles(anchors), views);
       shownRef.current = next;
       setTasteOrdered(next);
@@ -88,6 +92,10 @@ export function useForYouOrder(
       .catch(() => {
         // 제목을 못 받으면 지금 순서 그대로 둔다 — 다음 방문에 다시 시도된다
       });
+
+    return () => {
+      live = false;
+    };
   }, [mine]);
 
   /**

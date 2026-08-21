@@ -659,10 +659,27 @@ def test_v1_also_obeys_the_setting(cur):
         assert set(genders) == {gender}
 
 
-def test_missing_gender_is_rejected(cur):
-    """성별을 빼고 부르면 거부된다 — 널로 정화하면 필터가 조용히 꺼진다."""
+@pytest.mark.parametrize(
+    "call",
+    [
+        # 인자를 아예 뺀 옛 요청 형태 — 함수 자체가 없다
+        "c_search_page_v2('반팔', null, null, 20)",
+        "c_search_page('반팔', null, 20)",
+        # 인자는 줬지만 허용 밖 값 — 널로 정화하면 필터가 조용히 꺼진다
+        "c_search_page_v2('반팔', null, null, 20, null, null, null)",
+        "c_search_page_v2('반팔', null, null, 20, null, null, '공용')",
+        "c_search_page('반팔', null, 20, '공용')",
+    ],
+)
+def test_missing_or_invalid_gender_is_rejected(cur, call):
+    """성별을 빼거나 허용 밖 값을 주면 거부된다.
+
+    ⚠️ 이 테스트는 한 번 **스스로를 망가뜨린 적이 있다** — 다른 호출부에 성별을 채우는
+    일괄 치환이 이 테스트의 호출까지 고쳐, "생략을 검사한다"면서 생략하지 않았다
+    (교차 리뷰가 잡았다). 여기 호출들은 **일부러 인자가 모자라거나 틀린 것**이다.
+    """
     with pytest.raises(psycopg.errors.Error):
-        cur.execute("select count(*) from c_search_page_v2('반팔', null, null, 20, null, null, '남성')")
+        cur.execute(f"select count(*) from {call}")
 
 
 def test_conflicting_genders_drop_the_condition(cur):

@@ -45,3 +45,24 @@ describe("RPC 오류 분류", () => {
     expect(isRetryable(new Error("x"))).toBe(true);
   });
 });
+
+describe("인증 통로 오류", () => {
+  const authed = (code: string | null) =>
+    Object.assign(new Error("x"), { name: "AuthedRpcError", code });
+
+  it("잘못된 인자·제약 위반은 계약 오류다", () => {
+    expect(rpcErrorKind(authed("22023"))).toBe("contract");
+    expect(rpcErrorKind(authed("23505"))).toBe("contract");
+  });
+
+  it("인증 아님·권한은 auth다 — 다시 해도 같다", () => {
+    expect(rpcErrorKind(authed("28000"))).toBe("auth");
+    expect(rpcErrorKind(authed("42501"))).toBe("auth");
+    expect(isRetryable(authed("28000"))).toBe(false);
+  });
+
+  it("코드가 없거나 모르는 코드는 일시적으로 본다", () => {
+    expect(rpcErrorKind(authed(null))).toBe("transient");
+    expect(rpcErrorKind(authed("54000"))).toBe("transient");
+  });
+});

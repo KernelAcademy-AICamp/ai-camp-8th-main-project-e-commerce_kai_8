@@ -204,7 +204,8 @@ begin
         and exists (select 1 from c_thumb_dims d where d.goods_no = v.goods_no and d.width > 0
                       and (v_gender is null or d.gender = v_gender))
       order by binary_quantize(v.emb)::bit(768) <~> binary_quantize(sv.emb)::bit(768)
-      -- 성별 필터가 켜지면 후보 배수 10 → 17 (최악 통과율 ≈58% 보정, 헤더 주석)
+      -- 후보 배수 10. 0단계 ⑨ 실측에서 17 → 10으로 내렸다 — 공용을 빼면 프로브가
+      -- 더 깊이 걸어 느려지는데, 15개 버킷은 10배로도 늘 찼다.
       limit greatest(v_sess_n, 1) * (10)
     ) c
     order by c.goods_no, c.score
@@ -231,7 +232,8 @@ begin
         and exists (select 1 from c_thumb_dims d where d.goods_no = v.goods_no and d.width > 0
                       and (v_gender is null or d.gender = v_gender))
       order by binary_quantize(v.emb)::bit(768) <~> binary_quantize(lv.emb)::bit(768)
-      -- 성별 필터가 켜지면 후보 배수 10 → 17 (최악 통과율 ≈58% 보정, 헤더 주석)
+      -- 후보 배수 10. 0단계 ⑨ 실측에서 17 → 10으로 내렸다 — 공용을 빼면 프로브가
+      -- 더 깊이 걸어 느려지는데, 15개 버킷은 10배로도 늘 찼다.
       limit greatest(v_long_n, 1) * (10)
     ) c
     order by c.goods_no, c.score
@@ -411,6 +413,12 @@ declare
   v_alt      text;
   v_try      int;
 begin
+  -- 성별은 필수이고 허용값만 받는다. **널로 정화하지 않는다** — 정화하면 필터가
+  -- 조용히 꺼져 반대 성별과 공용이 다시 노출된다(fail-open). 계획 3단계 입력 계약.
+  if p_gender is null or p_gender not in ('남성', '여성') then
+    raise exception '성별 인자는 ''남성'' 또는 ''여성''이어야 한다 (받은 값: %)', coalesce(p_gender, 'null')
+      using errcode = '22023';  -- invalid_parameter_value
+  end if;
   -- 정규화(60자·5단어)를 먼저 하고 **그 결과로** 폴백을 판단한다. 원문을 넘기면
   -- 상한이 이 경로만 비켜 간다(v2와 같은 이유 — 리뷰 M2).
   v_words := c_search_split(p_query);
@@ -514,6 +522,12 @@ declare
   v0_words text[]; v0_cand text[]; v0_chosung boolean; v0_hard boolean;
   v0_gender text; v0_gstrict boolean;
 begin
+  -- 성별은 필수이고 허용값만 받는다. **널로 정화하지 않는다** — 정화하면 필터가
+  -- 조용히 꺼져 반대 성별과 공용이 다시 노출된다(fail-open). 계획 3단계 입력 계약.
+  if p_gender is null or p_gender not in ('남성', '여성') then
+    raise exception '성별 인자는 ''남성'' 또는 ''여성''이어야 한다 (받은 값: %)', coalesce(p_gender, 'null')
+      using errcode = '22023';  -- invalid_parameter_value
+  end if;
   -- 커서 쌍 검증 — 한쪽만 온 요청은 받지 않는다
   if (p_after_score is null) <> (p_after is null) then
     return;

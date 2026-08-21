@@ -9,6 +9,9 @@
 --
 -- ⚠️ 유사·검색 v1·v2는 인자 수가 달라 새 시그니처를 먼저 지워야 한다.
 
+-- 전체를 한 트랜잭션으로. 중간에 실패하면 새 시그니처만 사라진 채 남는다(교차 리뷰 지적).
+begin;
+
 drop function if exists c_similar_page(bigint, int, text);
 drop function if exists c_search_page(text, bigint, int, text);
 drop function if exists c_search_page_v2(text, real, bigint, int, text[], text[], text);
@@ -713,3 +716,5 @@ grant execute on function c_search_page_v2(text, real, bigint, int, text[], text
 
 -- 유사의 work_mem은 ALTER FUNCTION으로만 걸려 있었다 — 위 정의에 SET 절로 들어 있는지
 -- 확인하고, 없으면 여기서 다시 건다 (2026-08-16 vector_query_perf).
+
+commit;
