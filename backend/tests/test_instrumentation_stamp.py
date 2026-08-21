@@ -156,3 +156,38 @@ def test_계측_버전은_16자로_자른다(db):
     event = base_event(occurred_at=now_iso(db), signed_in=True, instr_ver="v" * 40)
     assert log(db, device, event) == 1
     assert fetch(db, event["event_id"])[1] == "v" * 16
+
+
+# ── 찜 저장 실패 이벤트 (계획 A-4) ──────────────────────────────────────────
+
+WISH_FAILED_SQL = "20260821100000_events_wish_failed.sql"
+
+
+@pytest.fixture(scope="module")
+def db_with_wish_failed(db):
+    with db.cursor() as cur:
+        cur.execute(migration_text(WISH_FAILED_SQL))
+    return db
+
+
+def test_찜_저장_실패를_받는다(db_with_wish_failed):
+    """표 제약과 기록 함수 허용 목록을 **둘 다** 고쳐야 통과한다.
+
+    한쪽만 고치면 이 이벤트는 오류가 아니라 조용히 버려진다.
+    """
+    device = uuid.uuid4()
+    event = base_event(
+        occurred_at=now_iso(db_with_wish_failed),
+        event_type="wish_failed",
+        signed_in=True,
+        instr_ver="v2",
+    )
+    assert log(db_with_wish_failed, device, event) == 1
+
+
+def test_모르는_이벤트_종류는_여전히_버린다(db_with_wish_failed):
+    device = uuid.uuid4()
+    event = base_event(
+        occurred_at=now_iso(db_with_wish_failed), event_type="not_a_real_event"
+    )
+    assert log(db_with_wish_failed, device, event) == 0

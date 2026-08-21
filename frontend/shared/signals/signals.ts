@@ -306,8 +306,14 @@ export function logAction(
     goods_no: goodsNo,
     impression_id: impressionIdFor(readImpressions(), goodsNo, sessionId),
   });
-  // 행동은 취향 프로필의 세션 앵커에도 반영된다 (설계 §6 가중 서열)
-  recordProfileAction(type, goodsNo, sessionId, Date.now(), options?.gender);
+  // 행동은 취향 프로필의 세션 앵커에도 반영된다 (설계 §6 가중 서열).
+  //
+  // **찜 저장 실패는 빼고** — 저장이 실패한 것은 취향을 가르칠 근거가 아니다.
+  // 사용자의 의도는 바로 앞의 wish 이벤트가 이미 프로필에 반영했다. 여기서 또
+  // 반영하면 같은 의도를 두 번 세는 셈이고, 실패한 건마다 취향이 더 세진다.
+  if (type !== "wish_failed") {
+    recordProfileAction(type, goodsNo, sessionId, Date.now(), options?.gender);
+  }
 }
 
 /**

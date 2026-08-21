@@ -5,6 +5,7 @@ export type SignalEventType =
   | "impression"
   | "tap"
   | "wish"
+  | "wish_failed"
   | "unwish"
   | "style_explore"
   | "outbound"
