@@ -1,3 +1,8 @@
+## [0.1.20](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/compare/v0.1.19...v0.1.20) (2026-08-21)
+
+### Features
+
+* 설정에서 성별을 고르고 그 성별 상품만 보여준다 (공용 제외) ([#77](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/issues/77)) ([e0da54c](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/commit/e0da54cca86cfea636215fa175f6bba8978863a6)), closes [#76](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/issues/76)
 ## [0.1.19](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/compare/v0.1.18...v0.1.19) (2026-08-21)
 
 ### Features

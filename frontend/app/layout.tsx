@@ -3,6 +3,7 @@ import "./globals.css";
 import type { Metadata, Viewport } from "next";
 
 import { IdentityGuard } from "@/features/auth/presentation/components/identity-guard";
+import { GenderAccountGuard } from "@/shared/gender/gender-account-guard";
 import { NavMarkGuard } from "@/shared/history/nav-mark-guard";
 import { AccountProfileGuard } from "@/shared/profile/account-profile-guard";
 
@@ -35,6 +36,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <NavMarkGuard />
         <IdentityGuard />
         <AccountProfileGuard />
+        <GenderAccountGuard />
         {children}
       </body>
     </html>

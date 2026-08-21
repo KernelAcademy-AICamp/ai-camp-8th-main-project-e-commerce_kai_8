@@ -16,8 +16,10 @@ import type {
   FeedCardViewData,
   ImpressionDomInfo,
 } from "@/features/feed/presentation/view-model/card-view-data";
-import type { DominantGender } from "@/shared/profile/profile-rules";
+import type { GenderChoice } from "@/shared/gender/gender-setting";
+import { useGenderSetting } from "@/shared/gender/use-gender-setting";
 import type { ProfileSummary } from "@/shared/profile/profile-store";
+import { isFallbackable, isRetryable } from "@/shared/rpc-error";
 import { nearestScrollRoot } from "@/shared/scroll/nearest-scroll-root";
 import { getFeedProfileSummary, logImpression } from "@/shared/signals/signals";
 import type { FeedPolicy, SourceBucket, Surface } from "@/shared/signals/types";
@@ -30,6 +32,8 @@ const PAGE_SIZE = 30;
 // 상세 하단은 이 수만큼 이미지도 즉시 프리로드한다 (스크롤 전에 준비).
 export const SIMILAR_PAGE_SIZE = 16;
 const COLUMN_COUNT = 2;
+/** 자동 재시도 상한. 관찰로 조정한다(계획 시작값 3회). */
+const MAX_RETRIES = 3;
 const RETRY_DELAY_MS = 2000;
 
 // 카드 표시 계약은 card-view-data로 분리 (검색 피드와 공유) — 기존 import 경로 유지용 재노출
@@ -63,7 +67,11 @@ export interface FeedOptions {
 
 export function useFeedViewModel(options?: FeedOptions) {
   const exploreFrom = options?.exploreFrom;
-  const paused = options?.paused === true;
+  // **성별이 정해지기 전에는 어떤 요청도 내보내지 않는다.** 호출부(메인 피드·검색 대체
+  // 피드·상세 하단 유사)마다 일시정지 조건이 달라, 각자 앞에 붙이게 하면 한 곳을
+  // 빠뜨리는 순간 선택 전에 요청이 새어 나간다. 그래서 훅 안에서 막는다 (계획 2단계).
+  const gender = useGenderSetting();
+  const paused = options?.paused === true || gender === null;
   const surface = options?.surface;
   // 콜백(loadMore·onImpress)이 호출 시점의 최신 값을 보게 ref로 미러링
   const pausedRef = useRef(paused);
@@ -92,25 +100,64 @@ export function useFeedViewModel(options?: FeedOptions) {
   );
   // 로드 실패 시 잠시 뒤 옵저버를 다시 걸어 재시도하게 하는 신호
   const [retryTick, setRetryTick] = useState(0);
+  // **재시도 상한.** 예전에는 상한이 없어, 고쳐지지 않는 오류를 만나면 2초마다 영원히
+  // 다시 부르며 스켈레톤에서 벗어나지 못했다 (계획 6단계).
+  const retriesRef = useRef(0);
+  // 상한을 다 쓰거나 다시 시도해도 소용없는 오류면 화면에 드러낸다.
+  const [failed, setFailed] = useState(false);
   // 노출 이벤트에 기록할 현재 피드 정책 (개인화/무작위/폴백 — 설계 §4)
   const policyRef = useRef<FeedPolicy>("random");
   // 이미 받은 상품 — 개인화 페이지의 같은 세션 중복 방지 요청에 실어 보낸다
   const loadedGoodsRef = useRef<number[]>([]);
+  // **늦은 응답 폐기의 기준.** 검색 훅에는 제출 단위 세대가 있었지만 여기엔 없어서,
+  // 성별을 바꾸면 이전 성별의 늦은 응답이 새 목록에 그대로 붙었다.
+  //
+  // 세대 번호는 아래 성별 변경 effect에서만 올린다. (렌더 중 ref 대입은 금지라
+  // 값을 직접 견주는 방식은 쓸 수 없다.)
+  const generationRef = useRef(0);
+
+  // 성별이 바뀌면 새 세대 — 결과·커서·소진 표시·제외 목록을 모두 버리고 처음부터 받는다.
+  // (아래 로드 재개 효과보다 먼저 선언해 같은 커밋에서 세대가 먼저 오른다)
+  const firstGenderRef = useRef(true);
+  useEffect(() => {
+    if (firstGenderRef.current) {
+      firstGenderRef.current = false;
+      return; // 첫 확정은 세대 교체가 아니다 — 그냥 시작이다
+    }
+    generationRef.current += 1;
+    afterRef.current = null;
+    exhaustedRef.current = false;
+    // **진행 중 표시도 푼다.** 안 풀면 떠 있던 요청이 끝날 때까지 새 성별 요청이
+    // 막힌다(loadMore가 곧바로 되돌아간다). 떠 있던 응답은 어차피 성별이 달라 버려진다.
+    loadingRef.current = false;
+    retriesRef.current = 0;
+    setFailed(false);
+    loadedGoodsRef.current = [];
+    similarPendingRef.current = options?.similarFirst === true && exploreFrom != null;
+    setReady(false);
+    setItems([]);
+  }, [gender, exploreFrom, options?.similarFirst]);
 
   const loadMore = useCallback(() => {
     if (pausedRef.current || loadingRef.current || exhaustedRef.current) return;
+    // 미확정이면 보내지 않는다. 위 paused와 같은 이유이고, 여기서 한 번 더 좁혀야
+    // 아래에서 성별이 반드시 있는 값이 된다.
+    if (gender === null) return;
     loadingRef.current = true;
 
-    // 요청 시점 프로필 요약을 한 번만 읽는다(비회원이면 null) — 메인 피드
-    // 개인화 판단과 무작위 경로 성별 필터가 같은 값을 보게 한다. 요약이
-    // 있으면(회원) 그 우세 성별을, 없으면(비회원·콜드스타트) null을 모든
-    // loadRandom 호출(메인·폴백·explore 이어받기·유사 0건 폴백)에 함께
-    // 싣는다 — 폴백이 "개인화인 척" 안 해도 성별 하드 필터는 유지되는 것이
-    // 핵심 요구사항 (설계: 성별 피드 하드 필터 3단계).
+    // 요청 시점 프로필 요약을 한 번만 읽는다(비회원이면 null) — 개인화를 걸지
+    // 말지 판단하는 데만 쓴다.
+    //
+    // **성별은 여기서 판정하지 않는다.** 사람이 설정에서 고른 값이 유일한 진실이다
+    // (계획 4단계 — #63의 행동 기반 판정은 더 이상 호출하지 않는다). 위에서 미확정이면
+    // 이미 멈췄으므로 여기서는 반드시 값이 있다.
     const summary = getFeedProfileSummary();
-    const genderFilter: DominantGender = summary?.gender ?? null;
+    const genderFilter: GenderChoice = gender;
 
+    const generation = generationRef.current;
     const applyPage = (products: Product[], advanceCursor: boolean) => {
+      // 이 요청을 보낸 뒤 성별이 바뀌었으면 버린다 — 안 버리면 옛 성별 상품이 섞인다.
+      if (generation !== generationRef.current) return;
       setReady(true);
       setItems((prev) => {
         const page = appendFeedPage(prev, products, exploreFrom);
@@ -127,7 +174,7 @@ export function useFeedViewModel(options?: FeedOptions) {
     // 기존과 같은 동작이다.
     const loadRandom = (
       policy: FeedPolicy = "random",
-      gender: DominantGender = genderFilter,
+      gender: GenderChoice = genderFilter,
     ) =>
       fetchFeedPage(seed, afterRef.current, PAGE_SIZE, gender).then((products) => {
         policyRef.current = policy;
@@ -147,7 +194,7 @@ export function useFeedViewModel(options?: FeedOptions) {
         seed,
         size: PAGE_SIZE,
         boost: summary.boostActive,
-        gender: summary.gender,
+        gender: genderFilter,
       }).then((products) => {
         policyRef.current = "personalized";
         applyPage(products, false);
@@ -155,18 +202,22 @@ export function useFeedViewModel(options?: FeedOptions) {
     };
 
     const loadSimilarFirst = () =>
-      fetchSimilarPage(exploreFrom ?? 0, SIMILAR_PAGE_SIZE).then((products) => {
-        if (products.length === 0) return loadRandom();
-        // 유사 결과는 커서와 무관하다 — items에만 붙이고 afterRef는 건드리지 않아
-        // 다음 로드부터 무작위 피드가 처음 커서에서 이어진다.
-        policyRef.current = "random";
-        applyPage(products, false);
-      });
+      fetchSimilarPage(exploreFrom ?? 0, SIMILAR_PAGE_SIZE, genderFilter).then(
+        (products) => {
+          if (products.length === 0) return loadRandom();
+          // 유사 결과는 커서와 무관하다 — items에만 붙이고 afterRef는 건드리지 않아
+          // 다음 로드부터 무작위 피드가 처음 커서에서 이어진다.
+          policyRef.current = "random";
+          applyPage(products, false);
+        },
+      );
 
     let first: Promise<void>;
     if (similarPendingRef.current) {
       similarPendingRef.current = false;
       first = loadSimilarFirst().catch((error: unknown) => {
+        // **계약·권한 오류는 폴백하지 않는다** — 무작위도 같은 인자로 거부된다.
+        if (!isFallbackable(error)) throw error;
         console.error("유사 상품 로드 실패 — 무작위 탐색으로 폴백", error);
         return loadRandom();
       });
@@ -179,6 +230,8 @@ export function useFeedViewModel(options?: FeedOptions) {
       first =
         summary !== null && hasAnchors
           ? loadPersonalized(summary).catch((error: unknown) => {
+              // 계약·권한 오류면 폴백해도 같은 이유로 실패한다 — 그냥 드러낸다.
+              if (!isFallbackable(error)) throw error;
               console.error("개인화 피드 로드 실패 — 무작위 폴백", error);
               return loadRandom("fallback");
             })
@@ -190,16 +243,43 @@ export function useFeedViewModel(options?: FeedOptions) {
     }
 
     first
+      .then(() => {
+        if (generation !== generationRef.current) return; // 늦은 성공 — 상한을 건드리지 않는다
+        retriesRef.current = 0; // 한 번이라도 성공하면 상한을 되돌린다
+      })
       .catch((error: unknown) => {
+        // **늦은 실패가 새 세대를 오염시키지 않게 한다.** 이 확인이 없으면 이전 성별
+        // 요청이 늦게 실패했을 때 새 성별 피드에 오류 화면과 재시도가 심긴다(교차 리뷰 지적).
+        if (generation !== generationRef.current) return;
+        if (!isRetryable(error) || retriesRef.current >= MAX_RETRIES) {
+          // 다시 해도 같거나, 상한을 다 썼다 — 스켈레톤을 붙잡지 않고 드러낸다.
+          console.error("피드 로드 실패 — 재시도하지 않는다", error);
+          setFailed(true);
+          return;
+        }
+        retriesRef.current += 1;
         console.error("피드 로드 실패 — 잠시 후 재시도", error);
-        setTimeout(() => {
-          setRetryTick((tick) => tick + 1);
-        }, RETRY_DELAY_MS);
+        setTimeout(
+          () => {
+            setRetryTick((tick) => tick + 1);
+          },
+          // 일시 제한(429 등)은 간격을 늘려 다시 시도한다 — 바로 두드리면 같은 답이다.
+          RETRY_DELAY_MS * retriesRef.current,
+        );
       })
       .finally(() => {
+        // 늦은 요청이 새 세대의 진행 중 표시를 풀면 첫 페이지가 중복으로 나간다.
+        if (generation !== generationRef.current) return;
         loadingRef.current = false;
       });
-  }, [seed, exploreFrom]);
+  }, [seed, exploreFrom, gender]);
+
+  /** 사람이 다시 시도한다 — 상한을 되돌리고 한 번 더 부른다. */
+  const retry = useCallback(() => {
+    retriesRef.current = 0;
+    setFailed(false);
+    setRetryTick((tick) => tick + 1);
+  }, []);
 
   // 성별 없는 장기 앵커 1회 보강 (설계: 성별 피드 하드 필터 3단계) — 회원일
   // 때만 시도하고, 대상이 없거나 실패해도 조용히 넘어간다(backfillAnchorGenders가
@@ -279,5 +359,13 @@ export function useFeedViewModel(options?: FeedOptions) {
     [seed],
   );
 
-  return { columns, sentinelRef, onImpress, showSkeleton: !ready };
+  return {
+    columns,
+    sentinelRef,
+    onImpress,
+    // 실패를 드러내는 동안에는 스켈레톤을 접는다 — 둘을 같이 보이면 아직 오는 줄 안다.
+    showSkeleton: !ready && !failed,
+    failed,
+    retry,
+  };
 }

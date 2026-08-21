@@ -53,6 +53,11 @@ LEAKY_FUNCTIONS = [
         "c_log_events",
         "c_log_events(uuid, jsonb)",
     ),
+    # ⚠️ **일부러 옛 정의(성별 인자 없음)를 쓴다.** 이 테스트가 재현하는 것은
+    # "권한 회수 마이그레이션을 얹기 직전의 배포 상태"이고, 그 시점의 시그니처가
+    # 이것이다. 2026-08-22에 성별 인자가 붙었지만 여기서 새 시그니처를 쓰면
+    # 회수 마이그레이션이 없는 함수를 가리켜 픽스처가 깨진다.
+    # 새 시그니처의 권한은 test_gender_migration_grants.py가 따로 본다.
     ("20260814120000_c_img_vecs.sql", "c_similar_page", "c_similar_page(bigint, int)"),
 ]
 
