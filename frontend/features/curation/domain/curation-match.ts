@@ -1,4 +1,4 @@
-// PICKS 개인화 — 내가 반응한 상품이 어느 큐레이션에 걸리는지 판정하고 점수를 매긴다.
+// FOR YOU 개인화 — 내가 반응한 상품이 어느 큐레이션에 걸리는지 판정하고 점수를 매긴다.
 // 계획: docs/plans/2026-08-20-foryou-curation-personalization.md 3단계
 
 /** 큐레이션 규칙 중 제목으로 판정 가능한 부분 (backend/scripts/gen_curation_rules.py 산출) */

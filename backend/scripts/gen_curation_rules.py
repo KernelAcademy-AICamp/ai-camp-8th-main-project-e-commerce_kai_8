@@ -1,4 +1,4 @@
-"""PICKS 개인화가 쓸 키워드 규칙만 뽑아낸다 (계획 2026-08-20-foryou-curation-personalization 3단계).
+"""FOR YOU 개인화가 쓸 키워드 규칙만 뽑아낸다 (계획 2026-08-20-foryou-curation-personalization 3단계).
 
 `curations.rules`의 제목 키워드(`kw`·`kw_title`)와 제외어(`not_kw`)만 작은 파일로 옮긴다.
 기기가 "내가 찜한 상품 제목이 어느 큐레이션에 걸리나"를 서버 없이 판정하는 재료다.

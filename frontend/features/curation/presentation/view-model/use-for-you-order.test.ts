@@ -3,7 +3,7 @@ import { renderHook, waitFor } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import type { Curation } from "@/features/curation/domain/curation";
-import { usePicksOrder } from "@/features/curation/presentation/view-model/use-picks-order";
+import { useForYouOrder } from "@/features/curation/presentation/view-model/use-for-you-order";
 
 const summary = vi.hoisted(() => vi.fn());
 const restSelect = vi.hoisted(() => vi.fn());
@@ -30,17 +30,17 @@ beforeEach(() => {
   restSelect.mockReset();
 });
 
-describe("usePicksOrder", () => {
+describe("useForYouOrder", () => {
   it("비회원(요약 없음)은 기본 순서 그대로다 — 개인화인 척하지 않는다", () => {
     summary.mockReturnValue(null);
-    const { result } = renderHook(() => usePicksOrder(curations));
+    const { result } = renderHook(() => useForYouOrder(curations));
     expect(keys(result.current)).toEqual(keys(curations));
     expect(restSelect).not.toHaveBeenCalled();
   });
 
   it("앵커가 없으면(콜드스타트) 기본 순서 그대로다", () => {
     summary.mockReturnValue({ longAnchors: [], sessionAnchors: [] });
-    const { result } = renderHook(() => usePicksOrder(curations));
+    const { result } = renderHook(() => useForYouOrder(curations));
     expect(keys(result.current)).toEqual(keys(curations));
     expect(restSelect).not.toHaveBeenCalled();
   });
@@ -51,7 +51,7 @@ describe("usePicksOrder", () => {
       sessionAnchors: [],
     });
     restSelect.mockResolvedValue([{ goods_no: 111, title: "고양이 티셔츠" }]);
-    const { result } = renderHook(() => usePicksOrder(curations));
+    const { result } = renderHook(() => useForYouOrder(curations));
     await waitFor(() => {
       expect(result.current[0].key).toBe("cat_print");
     });
@@ -65,12 +65,12 @@ describe("usePicksOrder", () => {
       sessionAnchors: [],
     });
     restSelect.mockResolvedValue([{ goods_no: 111, title: "고양이 티셔츠" }]);
-    const first = renderHook(() => usePicksOrder(curations));
+    const first = renderHook(() => useForYouOrder(curations));
     await waitFor(() => {
       expect(first.result.current[0].key).toBe("cat_print");
     });
 
-    const second = renderHook(() => usePicksOrder(curations));
+    const second = renderHook(() => useForYouOrder(curations));
     expect(second.result.current[0].key).toBe("cat_print");
     expect(restSelect).toHaveBeenCalledTimes(1);
   });
@@ -81,7 +81,7 @@ describe("usePicksOrder", () => {
       sessionAnchors: [],
     });
     restSelect.mockRejectedValue(new Error("서버 실패"));
-    const { result } = renderHook(() => usePicksOrder(curations));
+    const { result } = renderHook(() => useForYouOrder(curations));
     await waitFor(() => {
       expect(restSelect).toHaveBeenCalled();
     });

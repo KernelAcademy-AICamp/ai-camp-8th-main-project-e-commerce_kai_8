@@ -17,7 +17,7 @@ import { getFeedProfileSummary } from "@/shared/signals/signals";
 const rules: Record<string, CurationRule | undefined> = curationRules;
 
 /**
- * PICKS 목록을 그 사람 취향 순으로 세운다 — BROWSE 피드와 **같은 앵커**를 쓴다.
+ * FOR YOU 목록을 그 사람 취향 순으로 세운다 — BROWSE 피드와 **같은 앵커**를 쓴다.
  * 걸린 큐레이션이 앞으로 오고 나머지는 기본 순서로 이어지므로, 첫 화면 6장이
  * 그 사람 것으로 채워진다.
  *
@@ -27,7 +27,7 @@ const rules: Record<string, CurationRule | undefined> = curationRules;
  *
  * 비회원·앵커 없음·조회 실패는 전부 **기본 순서**다 — 개인화인 척하지 않는다.
  */
-export function usePicksOrder(curations: Curation[]): Curation[] {
+export function useForYouOrder(curations: Curation[]): Curation[] {
   const [ordered, setOrdered] = useState(curations);
 
   useEffect(() => {

@@ -7,7 +7,7 @@ import { type Curation, FOR_YOU_VISIBLE } from "@/features/curation/domain/curat
 import { CurationDetailScreen } from "@/features/curation/presentation/components/curation-detail-screen";
 import { CurationList } from "@/features/curation/presentation/components/curation-list";
 import { useCurationScreen } from "@/features/curation/presentation/view-model/use-curation-screen";
-import { usePicksOrder } from "@/features/curation/presentation/view-model/use-picks-order";
+import { useForYouOrder } from "@/features/curation/presentation/view-model/use-for-you-order";
 
 const curations: Curation[] = curationData;
 
@@ -34,7 +34,7 @@ export function CurationPane() {
   const open = curations.find((c) => c.key === openKey) ?? null;
   // 내가 반응한 상품이 걸리는 큐레이션을 앞으로 — 첫 화면 6장이 그 사람 것이 된다.
   // 걸린 것이 없으면(콜드스타트·비회원) 기본 순서 그대로다.
-  const ranked = usePicksOrder(curations);
+  const ranked = useForYouOrder(curations);
   // 첫 화면은 앞의 몇 장만. 상세는 접힌 것도 열려야 해서 `curations` 전체에서 찾는다.
   const visible = showAll ? ranked : ranked.slice(0, FOR_YOU_VISIBLE);
 

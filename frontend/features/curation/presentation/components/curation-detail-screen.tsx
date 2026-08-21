@@ -30,7 +30,7 @@ export function CurationDetailScreen({
 
   return (
     /* 셸 헤더·탭바까지 덮는다 — 상품 상세와 같은 전체화면. 안 덮으면 로고줄과
-       BROWSE/PICKS 탭이 상세 위에 남아 "지금 어디인지"가 두 겹으로 보인다.
+       BROWSE/FOR YOU 탭이 상세 위에 남아 "지금 어디인지"가 두 겹으로 보인다.
        z는 상품 상세(z-50)보다 아래 — 여기서 상품을 열면 그게 위로 와야 한다. */
     <div
       className="fixed inset-0 z-40 overflow-y-auto overscroll-contain bg-[#0a0a0a]"
