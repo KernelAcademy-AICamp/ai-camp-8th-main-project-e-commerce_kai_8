@@ -17,6 +17,11 @@
 --     않는다 — 커서 없음 = 첫 페이지 = 올바른 동작이고 어떤 필터도 우회하지 않는다.
 --     이 기본값 덕에 커서를 안 보내는 옛 클라이언트도 그대로 동작한다.
 --
+-- next_hk/next_no를 **text로 내보내는 이유**: PostgREST는 bigint를 JSON 숫자로 직렬화하고,
+--     브라우저의 JSON.parse가 그것을 53비트 double로 깎는다. 클라이언트에서 문자열로
+--     선언해도 이미 늦다. 실측: 첫 페이지 커서 -9174854730392098679가 137 어긋난다.
+--     입력 인자는 bigint 그대로 둔다 — 문자열 본문 값을 Postgres가 캐스팅한다.
+--
 -- create or replace로는 반환 열을 못 바꾼다. 그래서 지우고 다시 만들며,
 -- 중간 상태를 남기지 않도록 트랜잭션으로 감싼다.
 --
@@ -29,7 +34,7 @@ begin;
 drop function if exists c_mix_page(jsonb, jsonb, bigint[], bigint, integer, boolean, text);
 
 CREATE OR REPLACE FUNCTION public.c_mix_page(p_session jsonb, p_long jsonb, p_exclude bigint[], p_seed bigint, p_size integer, p_boost boolean, p_gender text, p_after_hk bigint DEFAULT NULL::bigint, p_after_no bigint DEFAULT NULL::bigint)
- RETURNS TABLE(goods_no bigint, title text, brand_name text, price_final integer, gender text, slot smallint, width integer, height integer, thumbnail text, gallery text[], source_bucket text, is_fresh boolean, next_hk bigint, next_no bigint, pool_exhausted boolean)
+ RETURNS TABLE(goods_no bigint, title text, brand_name text, price_final integer, gender text, slot smallint, width integer, height integer, thumbnail text, gallery text[], source_bucket text, is_fresh boolean, next_hk text, next_no text, pool_exhausted boolean)
  LANGUAGE plpgsql
  STABLE SECURITY DEFINER
  SET search_path TO 'public', 'extensions'
@@ -331,11 +336,12 @@ begin
   )
   select r.goods_no, r.title, r.brand_name, r.price_final, r.gender,
          r.slot, r.width, r.height, r.thumbnail, r.gallery, r.bucket, r.is_fresh,
-         c.nhk, c.nno, c.done
+         c.nhk::text, c.nno::text, c.done
   from resp r cross join cur c
   order by hashint8extended(r.goods_no, p_seed + 3), r.goods_no;
 end
 $function$
+
 
 ;
 

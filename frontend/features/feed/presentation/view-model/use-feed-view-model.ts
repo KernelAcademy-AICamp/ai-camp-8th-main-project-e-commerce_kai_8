@@ -4,7 +4,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import { fetchFeedPage } from "@/features/feed/data/feed-api";
 import { backfillAnchorGenders } from "@/features/feed/data/gender-backfill";
-import { fetchMixPage } from "@/features/feed/data/mix-api";
+import { fetchMixPage, type MixCursor } from "@/features/feed/data/mix-api";
 import { getSessionSeed } from "@/features/feed/data/session-seed";
 import { fetchSimilarPage } from "@/features/feed/data/similar-api";
 import { deriveSeed } from "@/features/feed/domain/derive-seed";
@@ -90,8 +90,17 @@ export function useFeedViewModel(options?: FeedOptions) {
   const [items, setItems] = useState<FeedItem[]>([]);
   // 첫 페이지가 도착하기 전 = 스켈레톤 표시 구간 (실패 재시도 중에도 유지)
   const [ready, setReady] = useState(false);
-  // 커서·중복 로드 방지는 렌더링과 무관한 진행 상태라 ref로 둔다
+  // 커서·중복 로드 방지는 렌더링과 무관한 진행 상태라 ref로 둔다.
+  //
+  // **커서는 두 벌이고 서로 섞으면 안 된다.**
+  //   afterRef    = 무작위 경로(c_feed_page)의 상품번호 커서
+  //   mixAfterRef = 개인화 후보풀의 (해시, 상품번호) 커서 — 문자열이다
+  // 하나로 합치면 무작위 경로에 해시를 보내게 된다.
   const afterRef = useRef<number | null>(null);
+  const mixAfterRef = useRef<MixCursor | null>(null);
+  // 후보풀이 끝났다 — 개인화를 그만두고 무작위로 넘어간다.
+  // (시드·성별이 바뀌면 아래 세대 효과가 풀어 준다)
+  const mixExhaustedRef = useRef(false);
   const exhaustedRef = useRef(false);
   const loadingRef = useRef(false);
   // 유사 첫 페이지는 딱 한 번만 시도한다 (실패·빈 결과면 무작위로 폴백)
@@ -126,6 +135,8 @@ export function useFeedViewModel(options?: FeedOptions) {
     }
     generationRef.current += 1;
     afterRef.current = null;
+    mixAfterRef.current = null;
+    mixExhaustedRef.current = false;
     exhaustedRef.current = false;
     // **진행 중 표시도 푼다.** 안 풀면 떠 있던 요청이 끝날 때까지 새 성별 요청이
     // 막힌다(loadMore가 곧바로 되돌아간다). 떠 있던 응답은 어차피 성별이 달라 버려진다.
@@ -184,9 +195,12 @@ export function useFeedViewModel(options?: FeedOptions) {
     // 개인화 믹스 페이지 (설계 §7) — 요청 시점의 프로필 요약을 쓰고,
     // 커서 없이 제외 목록(최근 노출 + 이미 받은 상품)으로 이어간다.
     const loadPersonalized = (summary: ProfileSummary) => {
+      // **뒤에서** 자른다. 앞에서 자르면 오래된 600개에 고정돼 그 뒤에 받은 상품이
+      // 무방비가 된다 — 630개에서 멎던 원인이다. 후보풀은 이제 커서가 막으므로
+      // 이 목록은 사실상 벡터 버킷(세션·장기) 전용이다.
       const exclude = [
         ...new Set([...loadedGoodsRef.current, ...summary.recentImpressions]),
-      ].slice(0, 600);
+      ].slice(-600);
       return fetchMixPage({
         sessionAnchors: summary.sessionAnchors,
         longAnchors: summary.longAnchors,
@@ -195,9 +209,15 @@ export function useFeedViewModel(options?: FeedOptions) {
         size: PAGE_SIZE,
         boost: summary.boostActive,
         gender: genderFilter,
-      }).then((products) => {
+        after: mixAfterRef.current,
+      }).then((page) => {
+        // 커서는 응답이 비면 null로 온다 — 그때는 들고 있던 값을 유지한다.
+        if (page.cursor) mixAfterRef.current = page.cursor;
+        // 소진 신호는 행에 실려 온다. 응답이 비면 신호도 없지만, 빈 페이지는
+        // appendFeedPage가 이미 소진으로 처리한다.
+        if (page.exhausted) mixExhaustedRef.current = true;
         policyRef.current = "personalized";
-        applyPage(products, false);
+        applyPage(page.products, false);
       });
     };
 
@@ -227,8 +247,10 @@ export function useFeedViewModel(options?: FeedOptions) {
       const hasAnchors =
         summary !== null &&
         (summary.longAnchors.length > 0 || summary.sessionAnchors.length > 0);
+      // 후보풀이 끝났으면 개인화를 더 부르지 않는다 — 불러 봐야 벡터가 옛것을
+      // 되돌려 줄 뿐이고 커서는 밀 곳이 없다.
       first =
-        summary !== null && hasAnchors
+        summary !== null && hasAnchors && !mixExhaustedRef.current
           ? loadPersonalized(summary).catch((error: unknown) => {
               // 계약·권한 오류면 폴백해도 같은 이유로 실패한다 — 그냥 드러낸다.
               if (!isFallbackable(error)) throw error;

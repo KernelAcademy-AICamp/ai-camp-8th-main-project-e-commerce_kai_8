@@ -40,17 +40,29 @@ const product = (goodsNo: number): Product => ({
   gallery: [],
 });
 
+/** c_mix_page 응답 한 페이지. 커서는 **문자열**이다(정밀도 — mix-api.ts 주석). */
+const mixPage = (
+  products: Product[],
+  cursor: { hk: string; no: string } | null = null,
+  exhausted = false,
+) => ({ products, cursor, exhausted });
+
 // jsdom에는 IntersectionObserver가 없다 — 관찰 즉시 교차한 것으로 알리는 스텁
+// 가장 최근에 걸린 관찰 콜백 — 테스트가 "바닥에 닿았다"를 다시 알릴 때 쓴다.
+let lastCallback: IntersectionObserverCallback | null = null;
+
+// 훅은 콜백의 두 번째 인자(관찰자 자신)를 쓰지 않는다. 스텁이 넘기는 자리 표시.
+const OBSERVER_ARG = {} as IntersectionObserver;
+const INTERSECTING = [{ isIntersecting: true } as IntersectionObserverEntry];
+
 class ObserverStub {
   private readonly callback: IntersectionObserverCallback;
   constructor(callback: IntersectionObserverCallback) {
     this.callback = callback;
+    lastCallback = callback;
   }
   observe() {
-    this.callback(
-      [{ isIntersecting: true } as IntersectionObserverEntry],
-      this as unknown as IntersectionObserver,
-    );
+    this.callback(INTERSECTING, OBSERVER_ARG);
   }
   // IntersectionObserver 인터페이스를 흉내내는 테스트 더블이라 본문이 필요 없다
   /* eslint-disable @typescript-eslint/no-empty-function */
@@ -68,6 +80,7 @@ afterEach(cleanup);
 
 beforeEach(() => {
   vi.stubGlobal("IntersectionObserver", ObserverStub);
+  lastCallback = null;
   // 성별이 정해져 있어야 훅이 요청을 보낸다 — 미확정이면 멈춰 있는 것이 계약이다.
   // 그 계약 자체는 아래 "성별 미확정" describe에서 따로 검증한다.
   localStorage.clear();
@@ -96,6 +109,11 @@ function renderFeedViewModel(options?: FeedOptions) {
   }
   render(createElement(Harness));
   return { result: result as { current: ReturnType<typeof useFeedViewModel> } };
+}
+
+/** 무한 스크롤 바닥에 닿은 것으로 알려 다음 페이지를 부른다. */
+function scrollToBottom() {
+  lastCallback?.(INTERSECTING, OBSERVER_ARG);
 }
 
 describe("useFeedViewModel", () => {
@@ -182,7 +200,7 @@ describe("useFeedViewModel — 우세 성별 하드 필터 (설계: 성별 피�
     // 프로필에 반대 성별이 남아 있어도 설정이 이겨야 한다.
     setGenderSetting("남성");
     getFeedProfileSummaryMock.mockReturnValue(summary({ gender: "여성" }));
-    fetchMixPageMock.mockResolvedValue([]);
+    fetchMixPageMock.mockResolvedValue(mixPage([]));
     renderFeedViewModel();
     await waitFor(() => {
       expect(fetchMixPageMock).toHaveBeenCalledWith(
@@ -388,5 +406,128 @@ describe("오류 분류 (계획 6단계 — 무한 재시도와 헛된 폴백을
       expect(view.current.failed).toBe(false);
       expect(view.current.columns.flat().map((c) => c.product.goodsNo)).toEqual([3]);
     });
+  });
+});
+
+describe("useFeedViewModel — 후보풀 커서 (계획 2026-08-22-feed-depth-cursor 3단계)", () => {
+  const BIG_NEG = "-9174854730392098679";
+  const BIG_POS = "9223187735554687845";
+  const anchored = (): ProfileSummary => ({
+    schemaVersion: 2,
+    longAnchors: [{ goodsNo: 1, weight: 5 }],
+    sessionAnchors: [],
+    recentImpressions: [],
+    boostActive: false,
+    gender: null,
+  });
+
+  beforeEach(() => {
+    setGenderSetting("남성");
+    getFeedProfileSummaryMock.mockReturnValue(anchored());
+  });
+
+  it("첫 요청에는 커서를 안 싣는다", async () => {
+    fetchMixPageMock.mockResolvedValue(mixPage([product(1)]));
+    renderFeedViewModel();
+    await waitFor(() => {
+      expect(fetchMixPageMock).toHaveBeenCalledWith(
+        expect.objectContaining({ after: null }),
+      );
+    });
+  });
+
+  it("받은 커서를 다음 요청에 **문자열 그대로** 싣는다", async () => {
+    fetchMixPageMock.mockResolvedValue(
+      mixPage([product(1)], { hk: BIG_NEG, no: "6393200" }),
+    );
+    renderFeedViewModel();
+    await waitFor(() => {
+      expect(fetchMixPageMock).toHaveBeenCalledTimes(1);
+    });
+    scrollToBottom();
+    await waitFor(() => {
+      expect(fetchMixPageMock).toHaveBeenLastCalledWith(
+        expect.objectContaining({ after: { hk: BIG_NEG, no: "6393200" } }),
+      );
+    });
+  });
+
+  it("응답에 커서가 없으면 들고 있던 값을 유지한다", async () => {
+    // 1번째 응답이 커서를 주고, 그 뒤로는 계속 빈 응답(커서 없음)이다.
+    // 커서를 버리면 이후 요청이 after: null로 나가 처음부터 다시 받는다.
+    fetchMixPageMock
+      .mockResolvedValue(mixPage([], null))
+      .mockResolvedValueOnce(mixPage([product(1)], { hk: BIG_POS, no: "7" }));
+    renderFeedViewModel();
+    await waitFor(() => {
+      expect(fetchMixPageMock.mock.calls.length).toBeGreaterThan(1);
+    });
+    scrollToBottom();
+    await waitFor(() => {
+      expect(fetchMixPageMock).toHaveBeenLastCalledWith(
+        expect.objectContaining({ after: { hk: BIG_POS, no: "7" } }),
+      );
+    });
+    // 첫 요청을 뺀 모든 요청이 그 커서를 들고 있다.
+    const laterCalls = fetchMixPageMock.mock.calls.slice(1);
+    expect(laterCalls.length).toBeGreaterThan(0);
+    for (const [request] of laterCalls) {
+      expect(request.after).toEqual({ hk: BIG_POS, no: "7" });
+    }
+  });
+
+  it("소진 신호를 받으면 개인화를 그만두고 무작위로 넘어간다", async () => {
+    fetchMixPageMock.mockResolvedValue(
+      mixPage([product(1)], { hk: BIG_POS, no: "7" }, true),
+    );
+    fetchFeedPageMock.mockResolvedValue([product(2)]);
+    renderFeedViewModel();
+    await waitFor(() => {
+      expect(fetchMixPageMock).toHaveBeenCalledTimes(1);
+    });
+    scrollToBottom();
+    await waitFor(() => {
+      expect(fetchFeedPageMock).toHaveBeenCalled();
+    });
+    // 소진 뒤에는 개인화를 다시 부르지 않는다 — 불러 봐야 커서를 밀 곳이 없다.
+    expect(fetchMixPageMock).toHaveBeenCalledTimes(1);
+  });
+
+  it("성별이 바뀌면 커서와 소진 상태를 모두 버린다", async () => {
+    fetchMixPageMock.mockResolvedValue(
+      mixPage([product(1)], { hk: BIG_POS, no: "7" }, true),
+    );
+    fetchFeedPageMock.mockResolvedValue([product(2)]);
+    renderFeedViewModel();
+    await waitFor(() => {
+      expect(fetchMixPageMock).toHaveBeenCalledTimes(1);
+    });
+    fetchMixPageMock.mockResolvedValue(mixPage([product(3)]));
+    setGenderSetting("여성");
+    await waitFor(() => {
+      // 소진이 풀려 개인화를 다시 시도하고, 커서 없이 처음부터 간다.
+      expect(fetchMixPageMock).toHaveBeenLastCalledWith(
+        expect.objectContaining({ gender: "여성", after: null }),
+      );
+    });
+  });
+
+  it("무작위 경로에는 믹스 해시 커서가 실려 나가지 않는다", async () => {
+    // 무작위는 상품번호 커서를 쓴다. 둘을 섞으면 무작위에 해시를 보내게 된다.
+    fetchMixPageMock.mockResolvedValue(
+      mixPage([product(1)], { hk: BIG_NEG, no: "6393200" }, true),
+    );
+    fetchFeedPageMock.mockResolvedValue([product(2)]);
+    renderFeedViewModel();
+    await waitFor(() => {
+      expect(fetchMixPageMock).toHaveBeenCalledTimes(1);
+    });
+    scrollToBottom();
+    await waitFor(() => {
+      expect(fetchFeedPageMock).toHaveBeenCalled();
+    });
+    const after = fetchFeedPageMock.mock.calls[0]?.[1];
+    // 무작위 커서는 상품번호(정수)이거나 null이다 — 해시 문자열이 오면 안 된다.
+    expect(typeof after).not.toBe("string");
   });
 });
