@@ -53,7 +53,13 @@ LEAKY_FUNCTIONS = [
         "c_log_events",
         "c_log_events(uuid, jsonb)",
     ),
-    ("20260814120000_c_img_vecs.sql", "c_similar_page", "c_similar_page(bigint, int)"),
+    # 성별 인자가 붙어 시그니처가 바뀌었다(20260822100000_gender_exact_filter.sql).
+    # 정의가 있는 파일도 그쪽으로 옮겨야 이 테스트가 실제 배포본을 본다.
+    (
+        "20260822100000_gender_exact_filter.sql",
+        "c_similar_page",
+        "c_similar_page(bigint, int, text)",
+    ),
 ]
 
 
