@@ -3,7 +3,7 @@
 import type { ReactNode } from "react";
 
 import { GenderChoiceScreen } from "@/features/gender/presentation/components/gender-choice-screen";
-import { useGenderReady } from "@/shared/gender/use-gender-setting";
+import { useGenderGateState } from "@/shared/gender/use-gender-setting";
 
 /**
  * 성별이 정해지기 전에는 자식을 **마운트하지 않는다**.
@@ -16,7 +16,10 @@ import { useGenderReady } from "@/shared/gender/use-gender-setting";
  * 삭제·처리방침 링크를 막으면 안 된다(로그인 화면 설계 2026-08-19).
  */
 export function GenderGate({ children }: { children: ReactNode }) {
-  const ready = useGenderReady();
-  if (!ready) return <GenderChoiceScreen />;
+  const state = useGenderGateState();
+  // 아직 모르는 동안에는 **묻지도, 그리지도 않는다.** 로그인 사용자의 계정 조회가
+  // 끝나기 전에 선택 화면을 띄우면, 계정에 값이 있는 사람이 새 기기에서 다시 고르게 된다.
+  if (state === "pending") return null;
+  if (state === "ask") return <GenderChoiceScreen />;
   return <>{children}</>;
 }
