@@ -9,6 +9,7 @@ import {
 import { isIdentityTransition, markerFor } from "@/shared/identity/identity-marker";
 import { clearIdentityScopedData } from "@/shared/identity/identity-reset";
 import { carryWishes, shouldCarryWishes } from "@/shared/identity/wish-carry";
+import { endSessionNow } from "@/shared/signals/signals";
 
 /**
  * 이 탭이 마지막으로 처리한 신원.
@@ -67,6 +68,12 @@ export function useIdentityReconcile(): void {
           // 사라진 뒤다. 익명 → 사용자 전환에서만 일어난다 — 사용자 A → B에서
           // 옮기면 A의 찜이 B 계정으로 들어간다(설계 §4).
           if (shouldCarryWishes(previous, current)) carryWishes(localStorage);
+
+          // **지우기 전에** 지금 세션을 끝낸다. 아래 정리가 세션 키를 지우므로,
+          // 여기서 끝내지 않으면 직전 세션은 종료 줄 없이 사라진다 — 그 세션의
+          // 끝을 알 수 없어 길이도, 로그인 전 구간의 경계도 못 잡는다.
+          // 종료 줄은 미전송 큐에 들어가고, 그 큐는 전환 정리에서 살아남는다.
+          endSessionNow();
 
           // 순서: 지우고 → 표식을 확정하고 → 다시 불러온다.
           // 표식을 먼저 쓰면 다시 불러오기 전에 탭이 죽었을 때 정리가 끝난

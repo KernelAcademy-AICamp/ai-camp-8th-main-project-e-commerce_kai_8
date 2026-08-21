@@ -24,7 +24,7 @@ import {
   rememberImpression,
 } from "./impression-memory";
 import { SignalQueue } from "./queue";
-import { advanceSession, type SessionState } from "./session";
+import { advanceSession, markSessionHidden, type SessionState } from "./session";
 import {
   type FeedPolicy,
   MODEL_VER,
@@ -41,7 +41,7 @@ const FLUSH_INTERVAL_MS = 5_000;
 
 let queue: SignalQueue | null = null;
 let flushTimer: ReturnType<typeof setInterval> | null = null;
-let pageHideHooked = false;
+let lifecycleHooked = false;
 
 /**
  * 세션 내 상품별 최근 노출 ID — 행동 이벤트의 노출 귀속(설계 §4).
@@ -160,11 +160,19 @@ function startPump(): void {
     if (getQueue().size() === 0) return;
     void getQueue().flush();
   }, FLUSH_INTERVAL_MS);
-  if (!pageHideHooked) {
-    pageHideHooked = true;
+  if (!lifecycleHooked) {
+    lifecycleHooked = true;
     // 이탈 직전 마지막 전송 — rpcPost keepalive라 페이지가 닫혀도 이어진다
     window.addEventListener("pagehide", () => {
       void getQueue().flush();
+    });
+    // 백그라운드에 들어간 시각을 적어 둔다. 5분 이상 비웠다 돌아오면 새 세션이
+    // 된다(설계 §1) — 적어 두지 않으면 자리를 비운 시간이 세션 길이에 통째로
+    // 들어가, 세션 길이를 몰입도로 읽을 수 없다.
+    document.addEventListener("visibilitychange", () => {
+      if (document.visibilityState !== "hidden") return;
+      const hidden = markSessionHidden(readSession(), Date.now());
+      if (hidden !== null) writeSession(hidden);
     });
   }
 }
@@ -191,6 +199,29 @@ export function touchSession(): string {
     enqueue(baseEvent("session_start", result.state.id, now, "random"));
   }
   return result.state.id;
+}
+
+/**
+ * 지금 세션을 끝낸다 — **신원이 바뀔 때** 부른다 (설계 §1).
+ *
+ * 신원 전환 정리가 세션 키를 지우는데, 그냥 지우면 **직전 세션의 종료 줄이
+ * 영영 남지 않는다.** 종료 줄이 없으면 그 세션의 끝을 알 수 없어 길이도,
+ * 로그인 전 구간의 경계도 못 잡는다.
+ *
+ * 종료 시각은 마지막 활동 시각이다 — 만료로 끝나는 세션과 같은 규칙이다.
+ * 미전송 큐는 신원 전환에도 살아남으므로, 여기서 넣어 두면 다시 불러온 뒤에
+ * 전송된다.
+ */
+export function endSessionNow(): void {
+  if (!isBrowser()) return;
+  const current = readSession();
+  if (current === null) return;
+  enqueue(baseEvent("session_end", current.id, current.lastActivityMs, "random"));
+  try {
+    localStorage.removeItem(SESSION_KEY);
+  } catch {
+    // 저장소 접근 불가 — 다음 활동이 만료 판정으로 새 세션을 연다
+  }
 }
 
 export interface ImpressionInput {
