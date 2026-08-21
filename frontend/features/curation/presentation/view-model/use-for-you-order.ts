@@ -1,6 +1,6 @@
 "use client";
 
-import { type RefObject, useEffect, useRef, useState } from "react";
+import { type RefObject, useEffect, useMemo, useRef, useState } from "react";
 
 import curationRules from "@/features/curation/data/curation-rules.json";
 import { type Curation, FOR_YOU_VISIBLE } from "@/features/curation/domain/curation";
@@ -9,6 +9,7 @@ import {
   type CurationRule,
   orderByTaste,
 } from "@/features/curation/domain/curation-match";
+import { useGenderSetting } from "@/shared/gender/use-gender-setting";
 import {
   cachedAnchorTitles,
   fetchMissingAnchorTitles,
@@ -39,28 +40,45 @@ export function useForYouOrder(
   curations: Curation[],
   paneRef: RefObject<HTMLElement | null>,
 ): Curation[] {
-  const [ordered, setOrdered] = useState(curations);
+  // **성별은 설정에서 온다.** 예전에는 취향 프로필의 행동 판정(#63)을 읽었는데,
+  // 사람이 고른 값이 진실이 된 뒤로는 그것을 읽으면 한 앱 안에 성별이 둘이 된다.
+  const gender = useGenderSetting();
+  // **성별 필터는 앵커와 무관하게 항상 건다.** 예전에는 앵커가 없으면 곧바로 되돌아가
+  // 성별 필터까지 함께 건너뛰었다 — 방금 가입해 아무것도 안 한 사람에게 반대 성별이
+  // 그대로 보였다는 뜻이다. 취향 정렬만 앵커가 있을 때의 일이다.
+  //
+  // 렌더에서 계산한다(효과에서 setState하지 않는다). `useGenderSetting`은 서버 스냅숏이
+  // 늘 미확정이라, 하이드레이션 렌더는 거르지 않은 목록으로 서버와 같게 그려진다.
+  const mine = useMemo(() => filterByGender(curations, gender), [curations, gender]);
+  // 취향 정렬 결과. 아직 못 정했으면 null이고 그때는 성별만 거른 목록을 보여준다.
+  const [tasteOrdered, setTasteOrdered] = useState<Curation[] | null>(null);
   // 노출을 적을 때 화면에 선 순서를 봐야 한다 — 렌더와 무관하므로 ref로 둔다
   const shownRef = useRef(curations);
   // 개인화가 실제로 걸린 방문인가. 아래 노출 기록의 조건이다.
   const personalizedRef = useRef(false);
 
   useEffect(() => {
-    // 요약이 null = 비회원(O-37) 또는 저장 불가 환경 → 기본 순서
+    // 목록이나 성별이 바뀌면 예전 정렬은 버린다 — 남겨 두면 반대 성별 순서가 한 프레임
+    // 비친다.
+    const showBase = () => {
+      shownRef.current = mine;
+      setTasteOrdered(null);
+    };
+    showBase();
+
+    // 요약이 null = 비회원(O-37) 또는 저장 불가 환경 → 성별만 거른 기본 순서
     const summary = getFeedProfileSummary();
     if (!summary) return;
     const anchors = [...summary.longAnchors, ...summary.sessionAnchors];
     if (anchors.length === 0) return;
 
     personalizedRef.current = true;
-    // 성별을 먼저 거른다 — 남는 게 적어 빠진 큐레이션이 6장 자리를 차지하지 않게.
-    const mine = filterByGender(curations, summary.gender);
     // 노출 횟수는 이번 마운트 동안 고정한다 — 아래에서 적어도 순서가 흔들리지 않는다
     const views = readCurationViews();
     const reorder = () => {
       const next = orderByTaste(mine, rules, cachedAnchorTitles(anchors), views);
       shownRef.current = next;
-      setOrdered(next);
+      setTasteOrdered(next);
     };
     reorder(); // 캐시에 있는 것만으로 먼저
     void fetchMissingAnchorTitles(anchors)
@@ -70,7 +88,7 @@ export function useForYouOrder(
       .catch(() => {
         // 제목을 못 받으면 지금 순서 그대로 둔다 — 다음 방문에 다시 시도된다
       });
-  }, [curations]);
+  }, [mine]);
 
   /**
    * 칸이 **실제로 보였을 때** 첫 화면 몫을 한 번 노출로 적는다.
@@ -97,5 +115,5 @@ export function useForYouOrder(
     };
   }, [paneRef]);
 
-  return ordered;
+  return tasteOrdered ?? mine;
 }
