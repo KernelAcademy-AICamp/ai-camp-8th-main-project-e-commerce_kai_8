@@ -28,7 +28,8 @@ export function SaveSheet({
   onSubmitCreate,
 }: {
   folders: WishFolder[];
-  entries: WishlistEntry[];
+  /** 폴더별 개수·썸네일을 세는 목록. 보관함 화면과 같은 **화면용** 목록이다 */
+  entries: readonly WishlistEntry[];
   onPick: (folderId: string | null) => void;
   onClose: () => void;
   creating: boolean;
