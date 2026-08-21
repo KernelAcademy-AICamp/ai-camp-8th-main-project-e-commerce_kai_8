@@ -113,4 +113,42 @@ describe("useCurationScreen", () => {
     goTo(withEntryValue(ROUTER_STATE, "aTeeCuration", { 이상한: "값" }));
     expect(result.current.openKey).toBeNull();
   });
+
+  it("처음에는 접혀 있고, 더보기를 누르면 펴진다", () => {
+    const { result } = renderHook(() => useCurationScreen(documentAnchor));
+    expect(result.current.showAll).toBe(false);
+
+    act(() => {
+      result.current.showMore();
+    });
+
+    expect(result.current.showAll).toBe(true);
+  });
+
+  it("더보기는 히스토리를 쌓지 않는다", () => {
+    // 쌓으면 시스템 뒤로가기가 목록을 도로 접는다 — 화면을 떠난 것처럼 보인다.
+    const { result } = renderHook(() => useCurationScreen(documentAnchor));
+    const before = window.history.length;
+
+    act(() => {
+      result.current.showMore();
+    });
+
+    expect(window.history.length).toBe(before);
+  });
+
+  it("편 뒤에 큐레이션을 열었다 돌아와도 펴진 채로 남는다", () => {
+    const { result } = renderHook(() => useCurationScreen(documentAnchor));
+    act(() => {
+      result.current.showMore();
+    });
+    act(() => {
+      result.current.open("여름-반팔");
+    });
+
+    goTo(ROUTER_STATE);
+
+    expect(result.current.openKey).toBeNull();
+    expect(result.current.showAll).toBe(true);
+  });
 });

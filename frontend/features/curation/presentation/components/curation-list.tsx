@@ -15,9 +15,14 @@ const FALLBACK_HEIGHT = 600;
 export function CurationList({
   curations,
   onOpen,
+  moreCount,
+  onShowMore,
 }: {
   curations: Curation[];
   onOpen: (key: string) => void;
+  /** 접혀 있는 큐레이션 수. 0이면 더보기를 그리지 않는다. */
+  moreCount: number;
+  onShowMore: () => void;
 }) {
   const sized = curations
     .filter((curation) => curation.items.length > 0)
@@ -32,45 +37,59 @@ export function CurationList({
     });
 
   return (
-    <div className="flex items-start gap-2 px-3 pt-3">
-      {distributeToColumns(sized, 2).map((column, columnIndex) => (
-        <div
-          key={`curation-col-${String(columnIndex)}`}
-          className="flex min-w-0 flex-1 flex-col gap-2"
-        >
-          {column.map(({ curation, cover, width, height }) => (
-            <button
-              key={curation.key}
-              type="button"
-              className="relative block w-full cursor-pointer overflow-hidden rounded-xl bg-neutral-900 text-left"
-              onClick={() => {
-                onOpen(curation.key);
-              }}
-            >
-              <Image
-                src={cover.img}
-                alt={curation.title}
-                width={width}
-                height={height}
-                sizes="50vw"
-                className="h-auto w-full"
-              />
-              {/* 어두워지는 건 카드 아래 1/3까지만 — 위 2/3는 사진 그대로 둔다. */}
-              <span className="absolute inset-x-0 top-2/3 bottom-0 bg-gradient-to-t from-black/95 from-30% via-black/80 via-65% to-transparent" />
-              <span className="absolute inset-x-0 bottom-0 px-3 pb-3">
-                {/* 칸이 좁아 24자짜리 제목은 세 줄까지 늘어진다. 두 줄에서 자른다 —
+    <>
+      <div className="flex items-start gap-2 px-3 pt-3">
+        {distributeToColumns(sized, 2).map((column, columnIndex) => (
+          <div
+            key={`curation-col-${String(columnIndex)}`}
+            className="flex min-w-0 flex-1 flex-col gap-2"
+          >
+            {column.map(({ curation, cover, width, height }) => (
+              <button
+                key={curation.key}
+                type="button"
+                className="relative block w-full cursor-pointer overflow-hidden rounded-xl bg-neutral-900 text-left"
+                onClick={() => {
+                  onOpen(curation.key);
+                }}
+              >
+                <Image
+                  src={cover.img}
+                  alt={curation.title}
+                  width={width}
+                  height={height}
+                  sizes="50vw"
+                  className="h-auto w-full"
+                />
+                {/* 어두워지는 건 카드 아래 1/3까지만 — 위 2/3는 사진 그대로 둔다. */}
+                <span className="absolute inset-x-0 top-2/3 bottom-0 bg-gradient-to-t from-black/95 from-30% via-black/80 via-65% to-transparent" />
+                <span className="absolute inset-x-0 bottom-0 px-3 pb-3">
+                  {/* 칸이 좁아 24자짜리 제목은 세 줄까지 늘어진다. 두 줄에서 자른다 —
                     사진을 덮는 것보다 뒤가 잘리는 게 낫고, 앞 두 줄이면 무슨 축인지는 읽힌다. */}
-                <span className="line-clamp-2 block text-[16px] leading-[1.25] font-bold tracking-[-0.03em] break-keep text-white">
-                  {curation.title}
+                  <span className="line-clamp-2 block text-[16px] leading-[1.25] font-bold tracking-[-0.03em] break-keep text-white">
+                    {curation.title}
+                  </span>
+                  <span className="mt-1.5 block text-[11px] text-neutral-400">
+                    {curation.items.length}개
+                  </span>
                 </span>
-                <span className="mt-1.5 block text-[11px] text-neutral-400">
-                  {curation.items.length}개
-                </span>
-              </span>
-            </button>
-          ))}
+              </button>
+            ))}
+          </div>
+        ))}
+      </div>
+
+      {moreCount > 0 && (
+        <div className="px-3 pt-2">
+          <button
+            type="button"
+            onClick={onShowMore}
+            className="w-full cursor-pointer rounded-xl bg-neutral-900 py-4 text-center text-[13px] tracking-[0.02em] text-neutral-400"
+          >
+            더보기 {moreCount}개
+          </button>
         </div>
-      ))}
-    </div>
+      )}
+    </>
   );
 }

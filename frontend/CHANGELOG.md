@@ -1,3 +1,8 @@
+## [0.1.17](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/compare/v0.1.16...v0.1.17) (2026-08-21)
+
+### Features
+
+* FOR YOU를 6장으로 줄이고 그 사람 취향으로 채운다 ([#73](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/issues/73)) ([e656443](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/commit/e6564439fe368efddc7bf1c2f4b4376272d1aa9b))
 ## [0.1.16](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/compare/v0.1.15...v0.1.16) (2026-08-21)
 
 ### Features
