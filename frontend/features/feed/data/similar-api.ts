@@ -1,6 +1,7 @@
 import { type FeedProductDto, mapFeedDto } from "@/features/feed/data/feed-api";
 import type { Product } from "@/features/feed/domain/product";
 import { slotImageUrl } from "@/features/feed/domain/similar";
+import type { GenderChoice } from "@/shared/gender/gender-setting";
 import { rpcPost } from "@/shared/supabase-rpc";
 
 // c_similar_page RPC 응답 행 — 피드 행 + 매칭 슬롯.
@@ -24,10 +25,12 @@ export function mapSimilarDto(dto: SimilarProductDto): Product {
 export async function fetchSimilarPage(
   goodsNo: number,
   size: number,
+  gender: GenderChoice,
 ): Promise<Product[]> {
   const dtos = await rpcPost<SimilarProductDto[]>("c_similar_page", {
     p_goods: goodsNo,
     p_size: size,
+    p_gender: gender,
   });
   return dtos.map(mapSimilarDto);
 }

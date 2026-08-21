@@ -1,7 +1,7 @@
 import { type FeedProductDto, mapFeedDto } from "@/features/feed/data/feed-api";
 import type { Product } from "@/features/feed/domain/product";
 import { slotImageUrl } from "@/features/feed/domain/similar";
-import type { DominantGender } from "@/shared/profile/profile-rules";
+import type { GenderChoice } from "@/shared/gender/gender-setting";
 import { rpcPost } from "@/shared/supabase-rpc";
 
 // c_mix_page RPC 응답 행 — 피드 행 + 매칭 슬롯 + 포트폴리오 유형 + 신선도
@@ -34,7 +34,8 @@ export interface MixPageRequest {
   size: number;
   boost: boolean;
   /** 우세 성별 하드 필터 — null이면 서버가 무시해 기존과 같은 동작 */
-  gender: DominantGender;
+  /** 사람이 고른 성별. 필수 — 서버가 등식으로 거른다. */
+  gender: GenderChoice;
 }
 
 /** 5유형 포트폴리오 믹스 한 페이지 (개인화 피드) */

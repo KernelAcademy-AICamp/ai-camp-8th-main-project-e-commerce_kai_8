@@ -65,15 +65,18 @@ describe("fetchMixPage — 성별 하드 필터 (설계: 성별 피드 하드 �
     );
   });
 
-  it("성별이 null이면 p_gender도 null 그대로 싣는다 — 서버가 무시해 기존과 같은 동작", async () => {
+  it("여성도 대칭으로 싣는다", async () => {
     rpcPostMock.mockResolvedValue([]);
-    await fetchMixPage({ ...baseRequest, gender: null });
+    await fetchMixPage({ ...baseRequest, gender: "여성" });
     expect(rpcPostMock).toHaveBeenCalledWith(
       "c_mix_page",
-      expect.objectContaining({ p_gender: null }),
+      expect.objectContaining({ p_gender: "여성" }),
       { timeoutMs: 5_000 },
     );
   });
+
+  // null을 싣는 경우는 **타입에서 막힌다**(gender가 필수다). 서버도 널을 오류로
+  // 거부한다 — 정화해서 필터를 끄면 반대 성별과 공용이 다시 노출되기 때문이다.
 
   it("나머지 페이로드는 기존과 동일하다", async () => {
     rpcPostMock.mockResolvedValue([]);

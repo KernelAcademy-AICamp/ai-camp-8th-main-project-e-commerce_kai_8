@@ -16,6 +16,7 @@ import { useSlideIndex } from "@/features/feed/detail/presentation/view-model/us
 import { formatPrice } from "@/features/feed/domain/format-price";
 import type { Product } from "@/features/feed/domain/product";
 import { initialSlideIndex } from "@/features/feed/domain/similar";
+import { FeedError } from "@/features/feed/presentation/components/feed-error";
 import { FeedGrid } from "@/features/feed/presentation/components/feed-grid";
 import { FeedSkeleton } from "@/features/feed/presentation/components/feed-skeleton";
 import {
@@ -231,6 +232,7 @@ export function ProductDetail({
 
           <div className="px-2 pb-10">
             {explore.showSkeleton && <FeedSkeleton />}
+            {explore.failed && <FeedError onRetry={explore.retry} />}
             <FeedGrid
               columns={explore.columns}
               sentinelRef={explore.sentinelRef}
