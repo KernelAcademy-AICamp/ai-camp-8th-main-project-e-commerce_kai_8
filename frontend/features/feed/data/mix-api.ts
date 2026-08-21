@@ -66,6 +66,15 @@ export interface MixPageRequest {
   gender: GenderChoice;
   /** 지난 응답의 커서. 첫 페이지면 null. */
   after: MixCursor | null;
+  /**
+   * 앵커 묶음 번호. 0이면 개정 전과 같다.
+   *
+   * 벡터 버킷(세션·장기)은 가중치 상위 5개 앵커만 쓰는데, 그게 매 페이지 같아서
+   * 22페이지부터 새 상품이 안 나왔다. 페이지마다 이 번호를 올려 다른 앵커 묶음을
+   * 쓰게 한다. **성공적으로 적용한 뒤에만 올린다** — 재시도가 묶음을 태우면
+   * 같은 페이지의 결과가 매번 달라진다.
+   */
+  rotation: number;
 }
 
 /** 5유형 포트폴리오 믹스 한 페이지 (개인화 피드) */
@@ -89,6 +98,7 @@ export async function fetchMixPage(request: MixPageRequest): Promise<MixPage> {
       p_gender: request.gender,
       p_after_hk: request.after?.hk ?? null,
       p_after_no: request.after?.no ?? null,
+      p_rotation: request.rotation,
     },
     // 서버가 느려질 때(콜드) 스켈레톤을 오래 잡고 있지 않도록 —
     // 초과 시 호출부가 무작위 피드로 폴백한다 (설계 §9)
