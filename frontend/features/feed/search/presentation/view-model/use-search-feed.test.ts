@@ -12,6 +12,7 @@ import {
   type SearchFeedOptions,
   useSearchFeed,
 } from "@/features/feed/search/presentation/view-model/use-search-feed";
+import { clearGenderSetting, setGenderSetting } from "@/shared/gender/gender-setting";
 
 // 첫 페이지는 래퍼를 타므로 둘 다 세운다. 래퍼는 원문 호출로 위임해 기존
 // 단언(호출 인자·경합·오류 처리)이 그대로 의미를 갖게 한다.
@@ -73,6 +74,10 @@ class ObserverStub {
 }
 
 beforeEach(() => {
+  // 성별이 정해져 있어야 검색이 나간다 — 미확정이면 멈추는 것이 계약이다.
+  localStorage.clear();
+  clearGenderSetting();
+  setGenderSetting("여성");
   vi.stubGlobal("IntersectionObserver", ObserverStub);
   fetchSearchPageMock.mockReset();
 });
@@ -152,6 +157,9 @@ describe("useSearchFeed", () => {
         "나이키",
         { score: 4.5, goodsNo: 2 },
         30,
+        // 성별도 **모든 페이지에** 같은 값으로 실린다 — 별도 인자라 1페이지에만
+        // 실으면 2페이지부터 반대 성별이 샌다.
+        "여성",
         { exclude: [], exclude_colors: [], expand: [], fit: [] },
       );
       expect(goodsNos(result)).toEqual([1, 2, 3]);

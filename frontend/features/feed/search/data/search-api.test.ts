@@ -33,7 +33,7 @@ describe("경로 전환", () => {
   it("기본은 구 경로다 — v2는 명시적 opt-in", async () => {
     vi.unstubAllEnvs();
     rpcPostMock.mockResolvedValue([]);
-    await fetchSearchPage("나이키", null, 30);
+    await fetchSearchPage("나이키", null, 30, "여성");
     expect(rpcPostMock.mock.calls[0][0]).toBe("c_search_page");
   });
 
@@ -42,7 +42,7 @@ describe("경로 전환", () => {
       vi.stubEnv("NEXT_PUBLIC_SEARCH_V2", v);
       rpcPostMock.mockReset();
       rpcPostMock.mockResolvedValue([]);
-      await fetchSearchPage("나이키", null, 30);
+      await fetchSearchPage("나이키", null, 30, "여성");
       expect(rpcPostMock.mock.calls[0][0]).toBe("c_search_page");
     }
   });
@@ -50,7 +50,7 @@ describe("경로 전환", () => {
   it("구 경로도 같은 SearchPage 계약을 돌려준다", async () => {
     vi.unstubAllEnvs();
     rpcPostMock.mockResolvedValue([{ ...dto, goods_no: 7 }]);
-    const page = await fetchSearchPage("나이키", null, 30);
+    const page = await fetchSearchPage("나이키", null, 30, "여성");
     expect(page.products).toHaveLength(1);
     expect(page.nextCursor).toEqual({ score: 0, goodsNo: 7 });
   });
@@ -59,7 +59,7 @@ describe("경로 전환", () => {
 describe("fetchSearchPage", () => {
   it("v2 RPC를 (점수, 번호) 커서로 호출한다 — 관련도 정렬의 keyset", async () => {
     rpcPostMock.mockResolvedValue([]);
-    await fetchSearchPage("나이키 반팔", { score: 1.5, goodsNo: 456 }, 30);
+    await fetchSearchPage("나이키 반팔", { score: 1.5, goodsNo: 456 }, 30, "여성");
     expect(rpcPostMock).toHaveBeenCalledWith(
       "c_search_page_v2",
       {
@@ -71,6 +71,8 @@ describe("fetchSearchPage", () => {
         // 빈 배열을 보내면 "아무것도 제외하지 않는 조건"이 생겨 계획이 달라진다.
         p_exclude: null,
         p_exclude_colors: null,
+        // 성별은 모든 페이지에 실린다 — 질의문이 아니라 별도 인자라서다.
+        p_gender: "여성",
       },
       { timeoutMs: 10_000 },
     );
@@ -78,7 +80,7 @@ describe("fetchSearchPage", () => {
 
   it("첫 페이지는 커서 두 값을 모두 null로 보낸다 — 서버가 쌍이 아니면 거부한다", async () => {
     rpcPostMock.mockResolvedValue([]);
-    await fetchSearchPage("나이키", null, 30);
+    await fetchSearchPage("나이키", null, 30, "여성");
     const params = rpcPostMock.mock.calls[0][1];
     expect(params.p_after_score).toBeNull();
     expect(params.p_after).toBeNull();
@@ -86,7 +88,7 @@ describe("fetchSearchPage", () => {
 
   it("응답을 기존 피드와 같은 매핑으로 Product로 바꾼다 (CDN 접두 포함)", async () => {
     rpcPostMock.mockResolvedValue([{ ...dto, score: 2.5 }]);
-    const page = await fetchSearchPage("나이키", null, 30);
+    const page = await fetchSearchPage("나이키", null, 30, "여성");
     expect(page.products).toHaveLength(1);
     expect(page.products[0].goodsNo).toBe(123);
     expect(page.products[0].brandName).toBe("나이키");
@@ -100,13 +102,13 @@ describe("fetchSearchPage", () => {
       { ...dto, goods_no: 1, score: 9 },
       { ...dto, goods_no: 2, score: 3 },
     ]);
-    const page = await fetchSearchPage("나이키", null, 30);
+    const page = await fetchSearchPage("나이키", null, 30, "여성");
     expect(page.nextCursor).toEqual({ score: 3, goodsNo: 2 });
   });
 
   it("결과가 없으면 다음 커서가 null이다", async () => {
     rpcPostMock.mockResolvedValue([]);
-    const page = await fetchSearchPage("없는검색어", null, 30);
+    const page = await fetchSearchPage("없는검색어", null, 30, "여성");
     expect(page.nextCursor).toBeNull();
   });
 });

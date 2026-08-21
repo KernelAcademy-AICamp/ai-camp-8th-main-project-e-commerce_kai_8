@@ -92,3 +92,30 @@ export function subscribeGender(listener: () => void): () => void {
     listeners.delete(listener);
   };
 }
+
+/**
+ * 다른 탭에서 바꾼 값을 이 탭에도 반영한다.
+ *
+ * 안 하면 한 탭에서 성별을 바꿔도 다른 탭은 옛 성별로 계속 요청한다 — 같은 브라우저
+ * 안에서 두 성별이 동시에 도는 셈이다. `storage` 이벤트는 **다른 탭의 변경에만** 오므로
+ * 이 탭이 스스로 바꾼 것과 섞이지 않는다.
+ *
+ * 구독은 첫 호출에서 한 번만 건다(`useSyncExternalStore`가 여러 번 부를 수 있다).
+ */
+let crossTabBound = false;
+export function bindCrossTabGender(): void {
+  if (crossTabBound) return;
+  crossTabBound = true;
+  try {
+    window.addEventListener("storage", (event) => {
+      if (event.key !== GENDER_SETTING_KEY) return;
+      const next = isGenderChoice(event.newValue) ? event.newValue : null;
+      if (next === current) return;
+      current = next;
+      loaded = true;
+      notify();
+    });
+  } catch {
+    // 이벤트를 못 걸면 이 탭은 다음 새로고침에 맞춰진다 — 화면이 깨지지는 않는다.
+  }
+}

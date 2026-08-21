@@ -270,3 +270,51 @@ describe("성별 미확정 (계획 2단계 — 고르기 전에는 아무 요청
     });
   });
 });
+
+describe("성별 변경 (계획 4단계 — 세대를 갈아엎는다)", () => {
+  it("성별을 바꾸면 이전 결과를 버리고 새 성별로 처음부터 받는다", async () => {
+    setGenderSetting("여성");
+    fetchFeedPageMock.mockResolvedValue([product(1), product(2)]);
+    const { result: view } = renderFeedViewModel();
+    await waitFor(() => {
+      expect(fetchFeedPageMock).toHaveBeenCalledWith(1000, null, 30, "여성");
+    });
+
+    fetchFeedPageMock.mockResolvedValue([product(9)]);
+    setGenderSetting("남성");
+    await waitFor(() => {
+      // 커서 없이(null) 다시 시작한다 — 이어받으면 옛 성별의 자리에서 이어진다
+      expect(fetchFeedPageMock).toHaveBeenCalledWith(1000, null, 30, "남성");
+    });
+    await waitFor(() => {
+      const shown = view.current.columns.flat().map((c) => c.product.goodsNo);
+      expect(shown).toEqual([9]); // 이전 성별 상품이 남아 있지 않다
+    });
+  });
+
+  it("성별을 바꾼 뒤 늦게 도착한 이전 성별 응답은 목록에 섞이지 않는다", async () => {
+    setGenderSetting("여성");
+    let releaseOld: (v: Product[]) => void = () => undefined;
+    fetchFeedPageMock.mockReturnValueOnce(
+      new Promise<Product[]>((resolve) => {
+        releaseOld = resolve;
+      }),
+    );
+    const { result: view } = renderFeedViewModel();
+    await waitFor(() => {
+      expect(fetchFeedPageMock).toHaveBeenCalledWith(1000, null, 30, "여성");
+    });
+
+    fetchFeedPageMock.mockResolvedValue([product(7)]);
+    setGenderSetting("남성");
+    await waitFor(() => {
+      expect(fetchFeedPageMock).toHaveBeenCalledWith(1000, null, 30, "남성");
+    });
+
+    releaseOld([product(100), product(101)]); // 옛 성별 응답이 이제 도착
+    await new Promise((r) => setTimeout(r, 30));
+    const shown = view.current.columns.flat().map((c) => c.product.goodsNo);
+    expect(shown).not.toContain(100);
+    expect(shown).not.toContain(101);
+  });
+});

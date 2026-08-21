@@ -101,6 +101,32 @@ export function useFeedViewModel(options?: FeedOptions) {
   const policyRef = useRef<FeedPolicy>("random");
   // 이미 받은 상품 — 개인화 페이지의 같은 세션 중복 방지 요청에 실어 보낸다
   const loadedGoodsRef = useRef<number[]>([]);
+  // **늦은 응답 폐기의 기준.** 검색 훅에는 제출 단위 세대가 있었지만 여기엔 없어서,
+  // 성별을 바꾸면 이전 성별의 늦은 응답이 새 목록에 그대로 붙었다.
+  //
+  // 세대 번호는 아래 성별 변경 effect에서만 올린다. (렌더 중 ref 대입은 금지라
+  // 값을 직접 견주는 방식은 쓸 수 없다.)
+  const generationRef = useRef(0);
+
+  // 성별이 바뀌면 새 세대 — 결과·커서·소진 표시·제외 목록을 모두 버리고 처음부터 받는다.
+  // (아래 로드 재개 효과보다 먼저 선언해 같은 커밋에서 세대가 먼저 오른다)
+  const firstGenderRef = useRef(true);
+  useEffect(() => {
+    if (firstGenderRef.current) {
+      firstGenderRef.current = false;
+      return; // 첫 확정은 세대 교체가 아니다 — 그냥 시작이다
+    }
+    generationRef.current += 1;
+    afterRef.current = null;
+    exhaustedRef.current = false;
+    // **진행 중 표시도 푼다.** 안 풀면 떠 있던 요청이 끝날 때까지 새 성별 요청이
+    // 막힌다(loadMore가 곧바로 되돌아간다). 떠 있던 응답은 어차피 성별이 달라 버려진다.
+    loadingRef.current = false;
+    loadedGoodsRef.current = [];
+    similarPendingRef.current = options?.similarFirst === true && exploreFrom != null;
+    setReady(false);
+    setItems([]);
+  }, [gender, exploreFrom, options?.similarFirst]);
 
   const loadMore = useCallback(() => {
     if (pausedRef.current || loadingRef.current || exhaustedRef.current) return;
@@ -118,7 +144,10 @@ export function useFeedViewModel(options?: FeedOptions) {
     const summary = getFeedProfileSummary();
     const genderFilter: GenderChoice = gender;
 
+    const generation = generationRef.current;
     const applyPage = (products: Product[], advanceCursor: boolean) => {
+      // 이 요청을 보낸 뒤 성별이 바뀌었으면 버린다 — 안 버리면 옛 성별 상품이 섞인다.
+      if (generation !== generationRef.current) return;
       setReady(true);
       setItems((prev) => {
         const page = appendFeedPage(prev, products, exploreFrom);

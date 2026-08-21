@@ -21,6 +21,7 @@ import {
 } from "@/features/feed/search/data/search-log-api";
 import { emptyPlan, type QueryPlan } from "@/features/feed/search/domain/query-plan";
 import type { SearchSubmission } from "@/features/feed/search/presentation/view-model/use-search-state";
+import { useGenderSetting } from "@/shared/gender/use-gender-setting";
 import { nearestScrollRoot } from "@/shared/scroll/nearest-scroll-root";
 
 const PAGE_SIZE = 30;
@@ -80,6 +81,9 @@ interface Progress {
  * 실패는 자동 재시도 없이 오류 상태로 두고 retry()로만 다시 요청한다 (설계 §4).
  */
 export function useSearchFeed({ query, submission, paused }: SearchFeedOptions) {
+  // **성별이 정해지기 전에는 검색도 내보내지 않는다.** 피드 훅과 같은 이유이고,
+  // 여기서 막지 않으면 게이트 밖 화면(예: 딥링크)에서 검색이 먼저 나갈 수 있다.
+  const gender = useGenderSetting();
   const [result, setResult] = useState<ResultState>({
     query: null,
     usedQuery: null,
@@ -97,10 +101,10 @@ export function useSearchFeed({ query, submission, paused }: SearchFeedOptions) 
     loading: false,
     error: false,
   });
-  const pausedRef = useRef(paused === true);
+  const pausedRef = useRef(paused === true || gender === null);
   useEffect(() => {
-    pausedRef.current = paused === true;
-  }, [paused]);
+    pausedRef.current = paused === true || gender === null;
+  }, [paused, gender]);
   // 계측 입력은 렌더와 무관해 ref로 미러링 (로드 콜백이 최신 값을 보게)
   const submissionRef = useRef(submission);
   useEffect(() => {
@@ -141,12 +145,18 @@ export function useSearchFeed({ query, submission, paused }: SearchFeedOptions) 
 
   // 검색어가 바뀌거나 해제될 때마다 새 세대 — 이전 요청·오류·커서를 무효화한다.
   // (아래 로드 재개 효과보다 먼저 선언해 같은 커밋에서 세대가 먼저 오른다)
+  //
+  // **성별도 세대 키다.** 설정이 바뀌면 결과 집합이 통째로 달라지므로 커서를 이어가면
+  // 누락·중복이 생긴다. 세대를 올려 커서·usedQuery·부정 조건·진행 중 응답을 모두 버린다.
   useEffect(() => {
     generationRef.current += 1;
-  }, [query, submission?.seq]);
+  }, [query, submission?.seq, gender]);
 
   const loadMore = useCallback(() => {
     if (query == null) return;
+    // 미확정이면 보내지 않는다(pausedRef와 같은 이유). 여기서 한 번 더 좁혀야
+    // 아래에서 성별이 반드시 있는 값이 된다.
+    if (gender === null) return;
     const generation = generationRef.current;
     if (progressRef.current.generation !== generation) {
       // 새 세대의 첫 로드: 진행 상태를 통째로 교체
@@ -208,6 +218,7 @@ export function useSearchFeed({ query, submission, paused }: SearchFeedOptions) 
           return fetchSearchPageWithFallback(
             applyExpansion(query, plan),
             PAGE_SIZE,
+            gender,
             plan,
           );
         })
@@ -215,6 +226,7 @@ export function useSearchFeed({ query, submission, paused }: SearchFeedOptions) 
           usedQueryRef.current ?? query,
           progress.cursor,
           PAGE_SIZE,
+          gender,
           planRef.current,
         );
     request
@@ -260,7 +272,7 @@ export function useSearchFeed({ query, submission, paused }: SearchFeedOptions) 
       .finally(() => {
         if (generation === generationRef.current) progress.loading = false;
       });
-  }, [query]);
+  }, [query, gender]);
 
   // 첫 페이지는 검색어 제출 즉시, 일시정지가 풀릴 때도 한 번 찔러 준다
   useEffect(() => {
