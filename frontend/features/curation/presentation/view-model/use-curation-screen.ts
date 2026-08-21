@@ -26,6 +26,12 @@ function readCurationKey(state: unknown): string | null {
  */
 export function useCurationScreen(anchorRef: RefObject<HTMLElement | null>) {
   const [openKey, setOpenKey] = useState<string | null>(null);
+  /**
+   * "더보기"를 폈는가. 히스토리에 적지 않는다 — 화면이 바뀌는 것이 아니라 같은
+   * 화면이 길어지는 것이라, 시스템 뒤로가기가 여기서 접히면 오히려 화면을 떠난
+   * 것처럼 보인다. 큐레이션 상세를 열었다 돌아와도 이 훅은 살아 있어 유지된다.
+   */
+  const [showAll, setShowAll] = useState(false);
   /** 목록으로 돌아왔을 때 보던 자리로 — 굴리는 것은 이 화면이 놓인 칸이다(shared/scroll) */
   const listScrollY = useRef(0);
 
@@ -76,5 +82,9 @@ export function useCurationScreen(anchorRef: RefObject<HTMLElement | null>) {
     host.moveTo(0);
   }, [openKey, anchorRef]);
 
-  return { openKey, open, back };
+  const showMore = useCallback(() => {
+    setShowAll(true);
+  }, []);
+
+  return { openKey, open, back, showAll, showMore };
 }

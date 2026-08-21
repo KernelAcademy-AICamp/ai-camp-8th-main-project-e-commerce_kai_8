@@ -12,3 +12,6 @@ CHANGELOG.md
 
 # 큐레이션 생성 스크립트(curation/backend/scripts/gen_curation_page.py)가 자동 생성 — 포맷 검사 제외
 features/curation/data/curations.json
+
+# 같은 이유 — backend/scripts/gen_curation_rules.py가 자동 생성
+features/curation/data/curation-rules.json
