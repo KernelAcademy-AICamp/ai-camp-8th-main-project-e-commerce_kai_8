@@ -27,6 +27,7 @@ import { SignalQueue } from "./queue";
 import { advanceSession, markSessionHidden, type SessionState } from "./session";
 import {
   type FeedPolicy,
+  INSTRUMENTATION_VER,
   MODEL_VER,
   type SignalEvent,
   type SignalEventType,
@@ -143,6 +144,9 @@ function baseEvent(
     session_id: sessionId,
     event_type: type,
     occurred_at: new Date(occurredAtMs).toISOString(),
+    // **여기서 박는다.** 이벤트를 만드는 순간이 곧 발생 시점이다.
+    signed_in: isSignedInNow(),
+    instr_ver: INSTRUMENTATION_VER,
     policy,
     model_ver: MODEL_VER,
     profile_ver: PROFILE_SCHEMA_VERSION,
@@ -269,6 +273,12 @@ export function logImpression(input: ImpressionInput): string | null {
   // 취향 프로필의 자기강화 보정·최근 노출 목록 갱신 (설계 §6)
   recordProfileImpression(input.goodsNo, sessionId, Date.now());
   return event.event_id;
+}
+
+/** 큐에 쌓인 것을 지금 보낸다. 주기 전송을 기다리지 않는 경로(테스트·이탈 직전). */
+export async function flushSignalsNow(): Promise<void> {
+  if (!isBrowser()) return;
+  await getQueue().flush();
 }
 
 export type ActionType = Exclude<

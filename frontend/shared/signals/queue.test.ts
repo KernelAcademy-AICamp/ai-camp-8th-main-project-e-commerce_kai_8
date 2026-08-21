@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from "vitest";
 
 import { FLUSH_SIZE, MAX_PENDING, SignalQueue } from "./queue";
-import type { SignalEvent } from "./types";
+import { INSTRUMENTATION_VER, type SignalEvent } from "./types";
 
 function makeEvent(id: string): SignalEvent {
   return {
@@ -9,6 +9,8 @@ function makeEvent(id: string): SignalEvent {
     session_id: "s",
     event_type: "impression",
     occurred_at: "2026-08-16T00:00:00Z",
+    signed_in: true,
+    instr_ver: INSTRUMENTATION_VER,
     policy: "random",
     model_ver: "siglip2-base",
     profile_ver: 0,
