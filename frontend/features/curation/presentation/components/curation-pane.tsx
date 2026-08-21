@@ -31,10 +31,12 @@ export function CurationPane() {
     showAll,
     showMore,
   } = useCurationScreen(rootRef);
-  const open = curations.find((c) => c.key === openKey) ?? null;
-  // 내가 반응한 상품이 걸리는 큐레이션을 앞으로 — 첫 화면 6장이 그 사람 것이 된다.
-  // 걸린 것이 없으면(콜드스타트·비회원) 기본 순서 그대로다.
-  const ranked = useForYouOrder(curations);
+  // 내 성별 상품만 남기고, 내가 반응한 상품이 걸리는 큐레이션을 앞으로 — 첫 화면
+  // 6장이 그 사람 것이 된다. 걸린 것이 없으면(콜드스타트·비회원) 기본 순서 그대로다.
+  const ranked = useForYouOrder(curations, rootRef);
+  // 상세도 **거른 목록에서** 찾는다 — 전체에서 찾으면 슬라이드에 다른 성별이 되살아난다.
+  // 접힌 큐레이션도 여기 들어 있어 더보기 전에 연 것도 그대로 열린다.
+  const open = ranked.find((c) => c.key === openKey) ?? null;
   // 첫 화면은 앞의 몇 장만. 상세는 접힌 것도 열려야 해서 `curations` 전체에서 찾는다.
   const visible = showAll ? ranked : ranked.slice(0, FOR_YOU_VISIBLE);
 
