@@ -53,14 +53,13 @@ LEAKY_FUNCTIONS = [
         "c_log_events",
         "c_log_events(uuid, jsonb)",
     ),
+    # ⚠️ **일부러 옛 정의(성별 인자 없음)를 쓴다.** 이 테스트가 재현하는 것은
+    # "권한 회수 마이그레이션을 얹기 직전의 배포 상태"이고, 그 시점의 시그니처가
+    # 이것이다. 2026-08-22에 성별 인자가 붙었지만 여기서 새 시그니처를 쓰면
+    # 회수 마이그레이션이 없는 함수를 가리켜 픽스처가 깨진다.
+    # 새 시그니처의 권한은 test_gender_migration_grants.py가 따로 본다.
+    ("20260814120000_c_img_vecs.sql", "c_similar_page", "c_similar_page(bigint, int)"),
 ]
-
-# c_similar_page는 이 목록에서 뺐다 (2026-08-22).
-# 성별 인자가 붙으며 정의가 20260822100000_gender_exact_filter.sql로 옮겨졌고, **그 파일이
-# 스스로 public·anon·authenticated에서 회수한 뒤 다시 부여**한다. 즉 더 이상 "권한 회수가
-# 빠진 기존 함수"가 아니다. 대신 그 회수가 실제로 파일에 있는지는 아래 정적 검사가 본다.
-# (이 목록의 추출 방식은 "정의 바로 뒤에 grant가 온다"는 파일 구조를 전제하는데,
-#  생성된 마이그레이션은 grant를 파일 끝에 모아 두어 맞지 않는다.)
 
 
 def migration_text(name: str) -> str:
