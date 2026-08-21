@@ -14,11 +14,16 @@
 -- ⚠️ 이 마이그레이션은 **적용 즉시 배포된 클라이언트를 깨뜨린다**(성별을 안 싣는 호출이 거부된다).
 --    클라이언트 변경과 **함께 병합·배포**한다. 계획 "배포 단위" 절 참고.
 --
--- 지우고 다시 만드는 것과 덮어쓰는 것
---   · 무작위 피드·개인화 믹스 — 성별 인자가 이미 있어(#63) **인자 목록이 그대로**다 → 덮어쓰기.
---     단 무작위 피드는 language sql이라 오류를 낼 수 없어 plpgsql로 바꾼다.
---   · 유사·검색 v1·검색 v2 — 인자를 새로 추가하므로 **기존 시그니처를 지우고** 다시 만든다.
---     소유자·권한·함수 설정을 반드시 다시 부여한다(설정은 조용히 사라진다).
+-- 다섯 함수를 **모두 지우고 다시 만든다.**
+--   · 유사·검색 v1·검색 v2 — 인자를 새로 추가하므로 시그니처가 바뀐다.
+--   · 무작위 피드·개인화 믹스 — 인자 목록은 그대로지만 **기본값을 없애야** 한다. 그런데
+--     PostgreSQL은 `create or replace`로 **기존 함수의 기본값을 제거하지 못한다**
+--     ("cannot remove parameter defaults from existing function"). 그래서 이 둘도 지운다.
+--     ⚠️ 이 제약은 그림자 함수(새 이름) 검증으로는 드러나지 않았다 — 새로 만드는 것과
+--     기존 것을 덮어쓰는 것은 규칙이 다르다. 실제 적용에서 처음 걸렸다.
+--   소유자·권한·함수 설정을 반드시 다시 부여한다(설정은 조용히 사라진다).
+--
+-- 전체를 한 트랜잭션으로 감싼다 — 중간에 실패하면 함수가 사라진 채로 남으면 안 된다.
 --
 -- 의존 객체: 2026-08-22 pg_depend 조회 결과 **다섯 함수 모두 의존 객체 없음**(빈 결과도 기록한다).
 --
@@ -31,8 +36,14 @@
 -- 이 파일은 손으로 옮겨 쓰지 않았다 — 프로덕션의 현재 정의를 pg_get_functiondef로 뜬 뒤
 -- 성별 조건과 헤더만 치환해 생성했다(생성 스크립트가 치환 횟수를 단언한다). 본문 주석은 원본 그대로다.
 
--- ① 무작위 피드 — 인자 목록이 그대로라 덮어쓰기로 충분하다(기존 정의를 지우지 않는다).
---    language sql은 오류를 낼 수 없어 plpgsql로 바꾼다 — 잘못된 값을 거부해야 하기 때문이다.
+begin;
+
+-- 기본값 제거는 덮어쓰기로 안 된다 — 둘도 지우고 다시 만든다.
+drop function if exists c_feed_page(bigint, bigint, int, text);
+drop function if exists c_mix_page(jsonb, jsonb, bigint[], bigint, int, boolean, text);
+
+-- ① 무작위 피드 — language sql은 오류를 낼 수 없어 plpgsql로 바꾼다
+--    (잘못된 값을 거부해야 하기 때문이다).
 create or replace function c_feed_page(
   p_seed bigint, p_after bigint, p_size integer, p_gender text
 )
@@ -68,7 +79,7 @@ begin
 end
 $function$;
 
--- ② 개인화 믹스 — 인자 목록 그대로라 덮어쓰기. 성별 등식 3곳 + 후보 배수 10.
+-- ② 개인화 믹스 — 성별 등식 3곳 + 후보 배수 10.
 CREATE OR REPLACE FUNCTION public.c_mix_page(p_session jsonb, p_long jsonb, p_exclude bigint[], p_seed bigint, p_size integer, p_boost boolean, p_gender text)
  RETURNS TABLE(goods_no bigint, title text, brand_name text, price_final integer, gender text, slot smallint, width integer, height integer, thumbnail text, gallery text[], source_bucket text, is_fresh boolean)
  LANGUAGE plpgsql
@@ -784,3 +795,5 @@ comment on function c_feed_page(bigint, bigint, int, text) is
   '무작위(콜드스타트·폴백) 피드 페이지. p_gender는 필수이며 ''남성''/''여성''만 받는다 — 그 성별만 반환(공용·미상 제외).';
 comment on function c_mix_page(jsonb, jsonb, bigint[], bigint, int, boolean, text) is
   '개인화 믹스 피드 페이지. p_gender는 필수이며 ''남성''/''여성''만 받는다 — 전 버킷에서 그 성별만 반환(공용·미상 제외).';
+
+commit;

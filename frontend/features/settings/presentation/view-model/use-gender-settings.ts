@@ -2,7 +2,10 @@
 
 import { useCallback, useState } from "react";
 
-import { putAccountGender } from "@/shared/gender/account-gender-api";
+import {
+  fetchAccountGender,
+  putAccountGender,
+} from "@/shared/gender/account-gender-api";
 import {
   getKnownUpdatedAt,
   installFromServer,
@@ -42,7 +45,18 @@ export function useGenderSettings() {
       }
 
       setStatus({ kind: "saving" });
-      putAccountGender(next, getKnownUpdatedAt())
+      // **저장 직전에 기준 시각을 확보한다.** 계정 동기화가 아직 안 돌았으면(세션
+      // 하이드레이션 타이밍) 기준 시각이 비어 있는데, 그대로 보내면 "값이 없을 때만
+      // 저장"으로 나가 행이 이미 있는 한 **항상 충돌**이 된다. 다른 기기가 없는데도
+      // 충돌이라고 알리는 거짓 신호였다(브라우저 확인에서 잡혔다).
+      const known = getKnownUpdatedAt();
+      const baseline =
+        known !== null
+          ? Promise.resolve(known)
+          : fetchAccountGender().then((row) => row?.updatedAt ?? null);
+
+      baseline
+        .then((expected) => putAccountGender(next, expected))
         .then((result) => {
           if (result.applied) {
             installFromServer(result);
