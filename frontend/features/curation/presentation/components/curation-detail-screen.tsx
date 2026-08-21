@@ -6,10 +6,12 @@
 import Image from "next/image";
 import type { CSSProperties } from "react";
 
-import type { Curation, CurationItem } from "@/features/curation/domain/curation";
+import type { Curation } from "@/features/curation/domain/curation";
+import { curationGoodsNo } from "@/features/curation/domain/curation-product";
 import { useCurationSlides } from "@/features/curation/presentation/view-model/use-curation-slides";
 import { formatPrice } from "@/features/feed/domain/format-price";
-import { BackIcon } from "@/shared/icons";
+import { BackIcon, CloseIcon, PlusIcon } from "@/shared/icons";
+import { logAction } from "@/shared/signals/signals";
 
 /** pos가 없거나 짝이 안 맞는 상품의 버튼 자리 */
 const DEFAULT_X = 50;
@@ -18,11 +20,9 @@ const DEFAULT_Y = 52;
 export function CurationDetailScreen({
   curation,
   onBack,
-  onSelectItem,
 }: {
   curation: Curation;
   onBack: () => void;
-  onSelectItem: (item: CurationItem, thumb: DOMRect) => void;
 }) {
   const { trackRef, index, openInfo, onScroll, step, toggleInfo } = useCurationSlides();
 
@@ -75,12 +75,6 @@ export function CurationDetailScreen({
             const y = item.pos?.[1] ?? DEFAULT_Y;
             return (
               <div key={item.u} className="w-full flex-none snap-center px-9">
-                {item.head && (
-                  <h3 className="pb-3.5 text-center text-xl leading-tight font-bold tracking-tight text-(--accent)">
-                    {item.head}
-                  </h3>
-                )}
-
                 <div className="relative">
                   <button
                     type="button"
@@ -100,19 +94,51 @@ export function CurationDetailScreen({
                       className="h-auto w-full rounded-xl bg-neutral-900"
                     />
                     <span
-                      className="absolute flex size-6 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-white/95 text-sm leading-none text-neutral-950 shadow"
+                      className="absolute flex size-6 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-white/95 text-neutral-950 shadow"
                       style={{ left: `${String(x)}%`, top: `${String(y)}%` }}
                     >
-                      {openInfo === i ? "×" : "+"}
+                      {openInfo === i ? <CloseIcon /> : <PlusIcon />}
                     </span>
                   </button>
 
+                  {/* 제목과 한마디를 사진 안에 얹는다 — 사진과 말이 한 장이 된다.
+                      상품 사진은 대개 흰 배경이라 그냥 얹으면 흰 글씨가 사라진다.
+                      목록 카드와 같은 방식으로 글이 놓인 쪽만 어둡게 깐다.
+
+                      **아래에만 모은다.** 위에도 깔면 모델컷에서 그늘이 얼굴을
+                      가로지르는데, 사진 아래쪽은 대개 여백이거나 다리라서 덜 아깝다.
+                      탭은 사진이 받아야 하므로 글은 포인터를 먹지 않는다.
+
+                      정보 카드가 열리면 같은 자리를 카드가 쓴다 — 고른 이유 대신 상품 정보. */}
+                  {openInfo !== i && (item.head ?? item.note) && (
+                    <span className="pointer-events-none absolute inset-x-0 bottom-0 rounded-b-xl bg-gradient-to-t from-black/92 from-10% via-black/55 via-45% to-transparent px-4 pt-10 pb-4 text-center">
+                      {item.head && (
+                        <span className="block text-xl leading-tight font-bold tracking-tight text-(--accent)">
+                          {item.head}
+                        </span>
+                      )}
+                      {item.note && (
+                        <span className="mt-1.5 block text-[14.5px] leading-relaxed text-white">
+                          {item.note}
+                        </span>
+                      )}
+                    </span>
+                  )}
+
                   {openInfo === i && (
-                    <button
-                      type="button"
+                    /* 정보 카드를 누르면 **판매처(무신사)로 곧장 나간다.** 앱 안 상세를
+                       한 겹 더 거치면, 큐레이션이 골라 준 한마디를 읽고 마음을 정한
+                       사람이 같은 상품을 처음부터 다시 보게 된다. */
+                    <a
+                      href={item.u}
+                      target="_blank"
+                      rel="noopener noreferrer"
                       className="absolute inset-x-2.5 bottom-2.5 flex cursor-pointer items-center gap-2.5 rounded-lg bg-neutral-50 p-2.5 text-left shadow-lg"
-                      onClick={(event) => {
-                        onSelectItem(item, event.currentTarget.getBoundingClientRect());
+                      onClick={() => {
+                        // 나가는 것도 취향 신호다. 앱 안 상세를 거치지 않게 되면서
+                        // 여기가 큐레이션에서 상품에 대한 행동을 잡는 유일한 지점이다.
+                        const goodsNo = curationGoodsNo(item.u);
+                        if (goodsNo !== null) logAction("outbound", goodsNo);
                       }}
                     >
                       {/* size-auto 계열을 쓰면 next/image의 width·height 속성이 무시돼
@@ -135,7 +161,7 @@ export function CurationDetailScreen({
                           {formatPrice(item.p)}
                         </span>
                       </span>
-                    </button>
+                    </a>
                   )}
 
                   {i === index && i > 0 && (
@@ -163,22 +189,6 @@ export function CurationDetailScreen({
                     </button>
                   )}
                 </div>
-
-                {item.note && (
-                  <p className="pt-4 text-center text-[16.5px] leading-relaxed text-white">
-                    {item.note}
-                  </p>
-                )}
-                {item.con && (
-                  <div className="mt-4 border-t border-neutral-800 pt-3.5 text-center">
-                    <span className="block text-[10px] tracking-[0.14em] text-neutral-600">
-                      {item.conLabel ?? "아쉬운 점"}
-                    </span>
-                    <span className="mt-1.5 block text-[13px] leading-relaxed text-neutral-500">
-                      {item.con}
-                    </span>
-                  </div>
-                )}
               </div>
             );
           })}
