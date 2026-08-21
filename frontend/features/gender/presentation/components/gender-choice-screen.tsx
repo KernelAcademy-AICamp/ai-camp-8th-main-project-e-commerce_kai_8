@@ -22,13 +22,15 @@ export function GenderChoiceScreen() {
           고른 쪽 상품만 보여드립니다. 설정에서 언제든 바꿀 수 있습니다.
         </p>
 
-        <div role="radiogroup" aria-label="볼 상품의 성별" className="mt-10 flex gap-3">
+        {/* 라디오가 아니라 **버튼**이다 — 고르는 즉시 실행되고 화면이 사라지므로
+            "선택됨" 상태가 존재하지 않는다. role="radio"로 두면 aria-checked가 영영
+            false여서 보조기술에 거짓말을 한다(브라우저 확인에서 잡혔다).
+            현재 값을 보여주는 설정 화면(8단계)은 그때 라디오가 맞다. */}
+        <div role="group" aria-label="볼 상품의 성별" className="mt-10 flex gap-3">
           {choices.map((gender) => (
             <button
               key={gender}
               type="button"
-              role="radio"
-              aria-checked={false}
               onClick={() => {
                 choose(gender);
               }}

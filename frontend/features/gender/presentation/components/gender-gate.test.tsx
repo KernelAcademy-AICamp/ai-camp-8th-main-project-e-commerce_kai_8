@@ -23,7 +23,7 @@ describe("성별 게이트", () => {
       </GenderGate>,
     );
     expect(screen.queryByText("홈 내용")).toBeNull();
-    expect(screen.getByRole("radiogroup", { name: "볼 상품의 성별" })).toBeTruthy();
+    expect(screen.getByRole("group", { name: "볼 상품의 성별" })).toBeTruthy();
   });
 
   it("고르면 자식을 그린다", () => {
@@ -34,7 +34,7 @@ describe("성별 게이트", () => {
       </GenderGate>,
     );
     expect(screen.getByText("홈 내용")).toBeTruthy();
-    expect(screen.queryByRole("radiogroup")).toBeNull();
+    expect(screen.queryByRole("group")).toBeNull();
   });
 
   it("이미 저장돼 있으면 선택 화면이 다시 뜨지 않는다", () => {
