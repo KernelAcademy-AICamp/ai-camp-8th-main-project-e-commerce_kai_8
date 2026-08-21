@@ -2,8 +2,9 @@
 import { renderHook, waitFor } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-import type { Curation } from "@/features/curation/domain/curation";
+import { type Curation, FOR_YOU_VISIBLE } from "@/features/curation/domain/curation";
 import { useForYouOrder } from "@/features/curation/presentation/view-model/use-for-you-order";
+import { readCurationViews } from "@/shared/profile/curation-views";
 
 const summary = vi.hoisted(() => vi.fn());
 const restSelect = vi.hoisted(() => vi.fn());
@@ -24,7 +25,45 @@ const curations = [
 
 const keys = (list: Curation[]) => list.map((c) => c.key);
 
+// jsdom에는 IntersectionObserver가 없다 — 관찰 즉시 보인 것으로 알리는 스텁
+/* eslint-disable @typescript-eslint/no-empty-function --
+   IntersectionObserver 인터페이스를 흉내내는 테스트 더블이라 본문이 필요 없다
+   (use-search-feed.test.ts와 같은 스텁) */
+
+/** 칸이 끝내 보이지 않은 방문 (BROWSE만 쓰다 끝난 경우) */
+class HiddenObserverStub {
+  observe(): void {}
+  disconnect(): void {}
+  unobserve(): void {}
+}
+
+class ObserverStub {
+  private readonly callback: IntersectionObserverCallback;
+  constructor(callback: IntersectionObserverCallback) {
+    this.callback = callback;
+  }
+  observe(): void {
+    this.callback(
+      [{ isIntersecting: true } as IntersectionObserverEntry],
+      this as unknown as IntersectionObserver,
+    );
+  }
+  // IntersectionObserver 인터페이스를 흉내내는 테스트 더블이라 본문이 필요 없다
+  disconnect(): void {}
+  unobserve(): void {}
+}
+/* eslint-enable @typescript-eslint/no-empty-function */
+
+/** 칸이 화면에 있는 상태로 훅을 건다 */
+function render(list: Curation[] = curations) {
+  // 테스트에서만 ref를 직접 채운다 (실제로는 React가 칸의 div를 붙인다)
+  const paneRef = { current: document.createElement("div") };
+  return renderHook(() => useForYouOrder(list, paneRef));
+}
+const g = (gender: string) => ({ g: gender });
+
 beforeEach(() => {
+  vi.stubGlobal("IntersectionObserver", ObserverStub);
   localStorage.clear();
   summary.mockReset();
   restSelect.mockReset();
@@ -33,14 +72,14 @@ beforeEach(() => {
 describe("useForYouOrder", () => {
   it("비회원(요약 없음)은 기본 순서 그대로다 — 개인화인 척하지 않는다", () => {
     summary.mockReturnValue(null);
-    const { result } = renderHook(() => useForYouOrder(curations));
+    const { result } = render();
     expect(keys(result.current)).toEqual(keys(curations));
     expect(restSelect).not.toHaveBeenCalled();
   });
 
   it("앵커가 없으면(콜드스타트) 기본 순서 그대로다", () => {
     summary.mockReturnValue({ longAnchors: [], sessionAnchors: [] });
-    const { result } = renderHook(() => useForYouOrder(curations));
+    const { result } = render();
     expect(keys(result.current)).toEqual(keys(curations));
     expect(restSelect).not.toHaveBeenCalled();
   });
@@ -51,7 +90,7 @@ describe("useForYouOrder", () => {
       sessionAnchors: [],
     });
     restSelect.mockResolvedValue([{ goods_no: 111, title: "고양이 티셔츠" }]);
-    const { result } = renderHook(() => useForYouOrder(curations));
+    const { result } = render();
     await waitFor(() => {
       expect(result.current[0].key).toBe("cat_print");
     });
@@ -65,12 +104,12 @@ describe("useForYouOrder", () => {
       sessionAnchors: [],
     });
     restSelect.mockResolvedValue([{ goods_no: 111, title: "고양이 티셔츠" }]);
-    const first = renderHook(() => useForYouOrder(curations));
+    const first = render();
     await waitFor(() => {
       expect(first.result.current[0].key).toBe("cat_print");
     });
 
-    const second = renderHook(() => useForYouOrder(curations));
+    const second = render();
     expect(second.result.current[0].key).toBe("cat_print");
     expect(restSelect).toHaveBeenCalledTimes(1);
   });
@@ -81,10 +120,67 @@ describe("useForYouOrder", () => {
       sessionAnchors: [],
     });
     restSelect.mockRejectedValue(new Error("서버 실패"));
-    const { result } = renderHook(() => useForYouOrder(curations));
+    const { result } = render();
     await waitFor(() => {
       expect(restSelect).toHaveBeenCalled();
     });
     expect(keys(result.current)).toEqual(keys(curations));
+  });
+
+  it("성별이 잡히면 내 성별 상품만 남고, 얇아진 큐레이션은 빠진다", async () => {
+    const withItems = [
+      {
+        key: "cat_print",
+        n: 1151,
+        items: [g("남성"), g("남성"), g("남성"), g("여성")],
+      },
+      { key: "running", n: 900, items: [g("여성"), g("여성"), g("공용")] },
+    ] as unknown as Curation[];
+    summary.mockReturnValue({
+      longAnchors: [{ goodsNo: 111, weight: 4 }],
+      sessionAnchors: [],
+      gender: "남성",
+    });
+    restSelect.mockResolvedValue([{ goods_no: 111, title: "고양이 티셔츠" }]);
+    const { result } = render(withItems);
+    await waitFor(() => {
+      expect(keys(result.current)).toEqual(["cat_print"]);
+    });
+    expect(result.current[0].items).toHaveLength(3);
+  });
+
+  it("칸이 보이면 첫 화면 몫을 노출로 적는다 — 다음 방문에 점수가 깎일 재료", async () => {
+    summary.mockReturnValue({
+      longAnchors: [{ goodsNo: 111, weight: 4 }],
+      sessionAnchors: [],
+    });
+    restSelect.mockResolvedValue([{ goods_no: 111, title: "고양이 티셔츠" }]);
+    render();
+    await waitFor(() => {
+      expect(Object.keys(readCurationViews())).toHaveLength(FOR_YOU_VISIBLE);
+    });
+    expect(readCurationViews().cat_print).toBe(1);
+  });
+
+  it("비회원은 노출도 적지 않는다 — 취향을 쌓지 않는다(O-37)", async () => {
+    summary.mockReturnValue(null);
+    render();
+    await waitFor(() => {
+      expect(readCurationViews()).toEqual({});
+    });
+  });
+
+  it("BROWSE만 쓰다 끝난 방문은 세지 않는다 — 본 적 없는 큐레이션이 깎이면 안 된다", async () => {
+    vi.stubGlobal("IntersectionObserver", HiddenObserverStub);
+    summary.mockReturnValue({
+      longAnchors: [{ goodsNo: 111, weight: 4 }],
+      sessionAnchors: [],
+    });
+    restSelect.mockResolvedValue([{ goods_no: 111, title: "고양이 티셔츠" }]);
+    const { result } = render();
+    await waitFor(() => {
+      expect(result.current[0].key).toBe("cat_print");
+    });
+    expect(readCurationViews()).toEqual({});
   });
 });
