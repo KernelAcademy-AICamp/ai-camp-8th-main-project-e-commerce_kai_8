@@ -1,3 +1,8 @@
+## [0.1.19](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/compare/v0.1.18...v0.1.19) (2026-08-21)
+
+### Features
+
+* FOR YOU를 내 성별 것만 남기고, 본 큐레이션은 뒤로 미룬다 ([#76](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/issues/76)) ([a302d9c](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/commit/a302d9c67de6c716312298e3d6079b6a473fce88))
 ## [0.1.18](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/compare/v0.1.17...v0.1.18) (2026-08-21)
 
 ### Features
