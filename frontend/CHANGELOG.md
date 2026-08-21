@@ -1,3 +1,8 @@
+## [0.1.18](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/compare/v0.1.17...v0.1.18) (2026-08-21)
+
+### Features
+
+* 큐레이션 상품에 성별을 싣고 내 성별만 남기는 규칙을 둔다 ([#75](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/issues/75)) ([788d130](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/commit/788d130f06503a1a1ad158022ade537e54302056))
 ## [0.1.17](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/compare/v0.1.16...v0.1.17) (2026-08-21)
 
 ### Features
