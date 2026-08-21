@@ -90,3 +90,47 @@ export function GearIcon({ size = 20 }: IconProps) {
     </svg>
   );
 }
+
+/**
+ * 더하기 — 사진 위 "상품 정보 열기".
+ *
+ * 글자 `+`를 쓰지 않는 이유: 글립은 em 박스 안에서 위아래가 비대칭이라(SF Pro는
+ * 위 14 : 아래 3) 원 한가운데 놓으면 **1.5px 아래로 처진다.** 24px 원에서는 눈에
+ * 띈다. 밀어 올리는 보정은 폰트마다 값이 달라 안드로이드에서 다시 어긋난다.
+ */
+export function PlusIcon({ size = 13 }: IconProps) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      width={size}
+      height={size}
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2.2"
+      strokeLinecap="round"
+      aria-hidden="true"
+    >
+      <path d="M12 5v14" />
+      <path d="M5 12h14" />
+    </svg>
+  );
+}
+
+/** 가위표 — 열린 것을 닫는다. `×` 글자를 안 쓰는 이유는 PlusIcon과 같다 */
+export function CloseIcon({ size = 13 }: IconProps) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      width={size}
+      height={size}
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2.2"
+      strokeLinecap="round"
+      aria-hidden="true"
+    >
+      <path d="M6 6l12 12" />
+      <path d="M18 6 6 18" />
+    </svg>
+  );
+}
