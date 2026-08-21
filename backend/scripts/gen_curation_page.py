@@ -681,7 +681,7 @@ NOTES = {
 
 
 CARD_COLS = ("goods_no, title, brand_name, brand, price_final, thumbnail, "
-             "review_count, review_score, purchase_total, tags, similar_no")
+             "review_count, review_score, purchase_total, tags, similar_no, gender")
 
 
 def connect():
@@ -759,10 +759,13 @@ def build(cur, curations):
                         and purchase_total >= {min_buy} and review_count >= {min_rev}
                         order by {order} limit {TOP_N * 5}""", params)
         rows = dedupe_variants(cur.fetchall(), TOP_N, appear)
+        # g(성별)는 화면에서 "내 성별 것만" 거르는 데 쓴다
+        # (계획 2026-08-21-curation-gender-filter). 빈 값은 안 싣는다 — 미상은 안 거른다.
         items = [{"t": r[1], "b": r[2] or r[3], "p": r[4], "img": r[5],
                   "rc": r[6] or 0, "rs": r[7], "buy": r[8] or 0,
                   "u": f"https://www.musinsa.com/products/{r[0]}",
                   "tg": [t for t in (r[9] or []) if 1 < len(t) <= 7][:3],
+                  **({"g": r[11]} if r[11] else {}),
                   "note": NOTES.get(str(r[0]), "")} for r in rows]
         # 목록 카드는 첫 상품 이미지를 쓴다. 앞선 큐레이션이 이미 쓴 상품이면 뺀다
         # (9개를 채우려고 다음 순위를 끌어오지 않는다 — 사람 결정 2026-08-20).
@@ -935,7 +938,7 @@ def demo():
     """자체 점검: 규칙이 의도한 SQL로 번역되는지."""
     # 색만 다른 옷은 similar_no가 0이어도 한 옷으로 묶인다 (r = CARD_COLS 순서)
     def row(no, title, brand, sim=0):
-        return (no, title, brand, brand, 0, "", 0, 0, 0, [], sim)
+        return (no, title, brand, brand, 0, "", 0, 0, 0, [], sim, "남성")
     picked = dedupe_variants([row(1, "포켓 티셔츠 (그레이)", "노이어"),
                               row(2, "포켓 티셔츠 (블루)", "노이어"),
                               row(3, "포켓 티셔츠 [블랙]", "다른브랜드"),

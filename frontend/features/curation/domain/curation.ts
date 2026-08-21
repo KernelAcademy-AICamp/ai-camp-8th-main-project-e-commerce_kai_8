@@ -11,6 +11,9 @@ export interface CurationItem {
   /** 누적 구매 수 */ buy: number;
   /** 무신사 상품 페이지 */ u: string;
   /** 짧은 태그 최대 3개 */ tg: string[];
+  /** 카탈로그 성별 — 남성·여성·공용. 내 성별 것만 보이게 거르는 데 쓴다
+   *  (계획 2026-08-21-curation-gender-filter). 미상이면 없다. */
+  g?: string;
   /** 이 상품을 왜 넣었는지 한마디 — 리뷰 AI 요약(sentimentSummary.positive)에서 고른 문장 (없으면 "") */
   note: string;
   /** 슬라이드 한 장의 제목. 사람이 쓴다 (없으면 안 그린다) */ head?: string;
