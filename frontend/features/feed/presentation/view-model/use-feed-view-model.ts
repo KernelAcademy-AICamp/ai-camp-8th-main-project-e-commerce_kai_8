@@ -19,6 +19,7 @@ import type {
 import type { GenderChoice } from "@/shared/gender/gender-setting";
 import { useGenderSetting } from "@/shared/gender/use-gender-setting";
 import type { ProfileSummary } from "@/shared/profile/profile-store";
+import { isFallbackable, isRetryable } from "@/shared/rpc-error";
 import { nearestScrollRoot } from "@/shared/scroll/nearest-scroll-root";
 import { getFeedProfileSummary, logImpression } from "@/shared/signals/signals";
 import type { FeedPolicy, SourceBucket, Surface } from "@/shared/signals/types";
@@ -31,6 +32,8 @@ const PAGE_SIZE = 30;
 // 상세 하단은 이 수만큼 이미지도 즉시 프리로드한다 (스크롤 전에 준비).
 export const SIMILAR_PAGE_SIZE = 16;
 const COLUMN_COUNT = 2;
+/** 자동 재시도 상한. 관찰로 조정한다(계획 시작값 3회). */
+const MAX_RETRIES = 3;
 const RETRY_DELAY_MS = 2000;
 
 // 카드 표시 계약은 card-view-data로 분리 (검색 피드와 공유) — 기존 import 경로 유지용 재노출
@@ -97,6 +100,11 @@ export function useFeedViewModel(options?: FeedOptions) {
   );
   // 로드 실패 시 잠시 뒤 옵저버를 다시 걸어 재시도하게 하는 신호
   const [retryTick, setRetryTick] = useState(0);
+  // **재시도 상한.** 예전에는 상한이 없어, 고쳐지지 않는 오류를 만나면 2초마다 영원히
+  // 다시 부르며 스켈레톤에서 벗어나지 못했다 (계획 6단계).
+  const retriesRef = useRef(0);
+  // 상한을 다 쓰거나 다시 시도해도 소용없는 오류면 화면에 드러낸다.
+  const [failed, setFailed] = useState(false);
   // 노출 이벤트에 기록할 현재 피드 정책 (개인화/무작위/폴백 — 설계 §4)
   const policyRef = useRef<FeedPolicy>("random");
   // 이미 받은 상품 — 개인화 페이지의 같은 세션 중복 방지 요청에 실어 보낸다
@@ -122,6 +130,8 @@ export function useFeedViewModel(options?: FeedOptions) {
     // **진행 중 표시도 푼다.** 안 풀면 떠 있던 요청이 끝날 때까지 새 성별 요청이
     // 막힌다(loadMore가 곧바로 되돌아간다). 떠 있던 응답은 어차피 성별이 달라 버려진다.
     loadingRef.current = false;
+    retriesRef.current = 0;
+    setFailed(false);
     loadedGoodsRef.current = [];
     similarPendingRef.current = options?.similarFirst === true && exploreFrom != null;
     setReady(false);
@@ -206,6 +216,8 @@ export function useFeedViewModel(options?: FeedOptions) {
     if (similarPendingRef.current) {
       similarPendingRef.current = false;
       first = loadSimilarFirst().catch((error: unknown) => {
+        // **계약·권한 오류는 폴백하지 않는다** — 무작위도 같은 인자로 거부된다.
+        if (!isFallbackable(error)) throw error;
         console.error("유사 상품 로드 실패 — 무작위 탐색으로 폴백", error);
         return loadRandom();
       });
@@ -218,6 +230,8 @@ export function useFeedViewModel(options?: FeedOptions) {
       first =
         summary !== null && hasAnchors
           ? loadPersonalized(summary).catch((error: unknown) => {
+              // 계약·권한 오류면 폴백해도 같은 이유로 실패한다 — 그냥 드러낸다.
+              if (!isFallbackable(error)) throw error;
               console.error("개인화 피드 로드 실패 — 무작위 폴백", error);
               return loadRandom("fallback");
             })
@@ -229,16 +243,37 @@ export function useFeedViewModel(options?: FeedOptions) {
     }
 
     first
+      .then(() => {
+        retriesRef.current = 0; // 한 번이라도 성공하면 상한을 되돌린다
+      })
       .catch((error: unknown) => {
+        if (!isRetryable(error) || retriesRef.current >= MAX_RETRIES) {
+          // 다시 해도 같거나, 상한을 다 썼다 — 스켈레톤을 붙잡지 않고 드러낸다.
+          console.error("피드 로드 실패 — 재시도하지 않는다", error);
+          setFailed(true);
+          return;
+        }
+        retriesRef.current += 1;
         console.error("피드 로드 실패 — 잠시 후 재시도", error);
-        setTimeout(() => {
-          setRetryTick((tick) => tick + 1);
-        }, RETRY_DELAY_MS);
+        setTimeout(
+          () => {
+            setRetryTick((tick) => tick + 1);
+          },
+          // 일시 제한(429 등)은 간격을 늘려 다시 시도한다 — 바로 두드리면 같은 답이다.
+          RETRY_DELAY_MS * retriesRef.current,
+        );
       })
       .finally(() => {
         loadingRef.current = false;
       });
   }, [seed, exploreFrom, gender]);
+
+  /** 사람이 다시 시도한다 — 상한을 되돌리고 한 번 더 부른다. */
+  const retry = useCallback(() => {
+    retriesRef.current = 0;
+    setFailed(false);
+    setRetryTick((tick) => tick + 1);
+  }, []);
 
   // 성별 없는 장기 앵커 1회 보강 (설계: 성별 피드 하드 필터 3단계) — 회원일
   // 때만 시도하고, 대상이 없거나 실패해도 조용히 넘어간다(backfillAnchorGenders가
@@ -318,5 +353,13 @@ export function useFeedViewModel(options?: FeedOptions) {
     [seed],
   );
 
-  return { columns, sentinelRef, onImpress, showSkeleton: !ready };
+  return {
+    columns,
+    sentinelRef,
+    onImpress,
+    // 실패를 드러내는 동안에는 스켈레톤을 접는다 — 둘을 같이 보이면 아직 오는 줄 안다.
+    showSkeleton: !ready && !failed,
+    failed,
+    retry,
+  };
 }

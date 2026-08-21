@@ -14,6 +14,7 @@ import {
 } from "@/features/feed/presentation/view-model/use-feed-view-model";
 import { clearGenderSetting, setGenderSetting } from "@/shared/gender/gender-setting";
 import type { ProfileSummary } from "@/shared/profile/profile-store";
+import { RpcError } from "@/shared/rpc-error";
 import { getFeedProfileSummary } from "@/shared/signals/signals";
 
 vi.mock("@/features/feed/data/feed-api", () => ({ fetchFeedPage: vi.fn() }));
@@ -316,5 +317,76 @@ describe("성별 변경 (계획 4단계 — 세대를 갈아엎는다)", () => {
     const shown = view.current.columns.flat().map((c) => c.product.goodsNo);
     expect(shown).not.toContain(100);
     expect(shown).not.toContain(101);
+  });
+});
+
+describe("오류 분류 (계획 6단계 — 무한 재시도와 헛된 폴백을 막는다)", () => {
+  it("계약 오류(400)면 무작위 폴백도 하지 않고 실패를 드러낸다", async () => {
+    setGenderSetting("여성");
+    getFeedProfileSummaryMock.mockReturnValue({
+      schemaVersion: 2,
+      longAnchors: [{ goodsNo: 1, weight: 5 }],
+      sessionAnchors: [],
+      recentImpressions: [],
+      boostActive: false,
+      gender: null,
+    });
+    fetchMixPageMock.mockRejectedValue(new RpcError("잘못된 인자", 400));
+    const { result: view } = renderFeedViewModel();
+
+    await waitFor(() => {
+      expect(view.current.failed).toBe(true);
+    });
+    // 폴백을 안 해야 한다 — 무작위도 같은 인자로 거부된다
+    expect(fetchFeedPageMock).not.toHaveBeenCalled();
+    expect(view.current.showSkeleton).toBe(false); // 스켈레톤을 붙잡지 않는다
+  });
+
+  it("서버 오류(500)면 무작위로 폴백한다", async () => {
+    setGenderSetting("여성");
+    getFeedProfileSummaryMock.mockReturnValue({
+      schemaVersion: 2,
+      longAnchors: [{ goodsNo: 1, weight: 5 }],
+      sessionAnchors: [],
+      recentImpressions: [],
+      boostActive: false,
+      gender: null,
+    });
+    fetchMixPageMock.mockRejectedValue(new RpcError("서버 오류", 500));
+    fetchFeedPageMock.mockResolvedValue([product(1)]);
+    renderFeedViewModel();
+
+    await waitFor(() => {
+      expect(fetchFeedPageMock).toHaveBeenCalledWith(1000, null, 30, "여성");
+    });
+  });
+
+  it("계약 오류를 만나면 자동 재시도를 하지 않는다", async () => {
+    setGenderSetting("남성");
+    fetchFeedPageMock.mockRejectedValue(new RpcError("잘못된 인자", 400));
+    const { result: view } = renderFeedViewModel();
+
+    await waitFor(() => {
+      expect(view.current.failed).toBe(true);
+    });
+    const callsAfterFail = fetchFeedPageMock.mock.calls.length;
+    await new Promise((r) => setTimeout(r, 80));
+    expect(fetchFeedPageMock.mock.calls.length).toBe(callsAfterFail);
+  });
+
+  it("다시 시도를 누르면 한 번 더 부른다", async () => {
+    setGenderSetting("남성");
+    fetchFeedPageMock.mockRejectedValue(new RpcError("잘못된 인자", 400));
+    const { result: view } = renderFeedViewModel();
+    await waitFor(() => {
+      expect(view.current.failed).toBe(true);
+    });
+
+    fetchFeedPageMock.mockResolvedValue([product(3)]);
+    view.current.retry();
+    await waitFor(() => {
+      expect(view.current.failed).toBe(false);
+      expect(view.current.columns.flat().map((c) => c.product.goodsNo)).toEqual([3]);
+    });
   });
 });
