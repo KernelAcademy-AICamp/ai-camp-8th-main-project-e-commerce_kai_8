@@ -9,6 +9,7 @@
     color-scheme: dark;
     --page:     #0a0a0a;
     --surface:  #121212;
+    --raised:   #1a1a1a;
     --border:   rgba(255,255,255,0.10);
     --ink:      #ffffff;
     --ink-2:    #c3c2b7;
@@ -18,10 +19,11 @@
 
     --series:   #3987e5;
 
-    --ord-1:    #86b6ef;   /* 가장 큼 */
-    --ord-2:    #5598e7;
-    --ord-3:    #2a78d6;
-    --ord-4:    #184f95;   /* 가장 작음 — 배경 대비 2.31:1로 검증됨 */
+    /* 순서형 4단 — 검증기 통과, 가장 어두운 단계도 배경 대비 4.24:1 */
+    --ord-1:    #b7d3f6;
+    --ord-2:    #86b6ef;
+    --ord-3:    #5598e7;
+    --ord-4:    #2a78d6;
 
     --good:     #0ca30c;
     --warning:  #fab219;
@@ -33,52 +35,77 @@
     font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
     font-size: 14px; line-height: 1.55;
   }
-  .wrap { max-width: 960px; margin: 0 auto; padding: 40px 20px 80px; }
+  .wrap { max-width: 1040px; margin: 0 auto; padding: 32px 20px 80px; }
   h1 { font-size: 20px; font-weight: 600; margin: 0; }
   .sub { color: var(--muted); font-size: 13px; margin-top: 4px; }
 
   .warn {
-    margin: 22px 0 20px; border: 1px solid rgba(250,178,25,0.35);
+    margin: 20px 0; border: 1px solid rgba(250,178,25,0.35);
     background: rgba(250,178,25,0.06); border-radius: 8px;
-    padding: 14px 16px; font-size: 13px; color: var(--ink-2);
+    padding: 13px 15px; font-size: 13px; color: var(--ink-2);
   }
   .warn b { color: var(--warning); }
 
-  /* ── 필터 줄 ── */
+  /* ── 탭 ── */
+  .tabs { display: flex; gap: 4px; border-bottom: 1px solid var(--border); margin: 22px 0 0; flex-wrap: wrap; }
+  .tab {
+    appearance: none; background: none; border: 0; border-bottom: 2px solid transparent;
+    color: var(--muted); font: inherit; font-size: 14px; padding: 10px 16px;
+    min-height: 44px; cursor: pointer;
+  }
+  .tab:hover { color: var(--ink-2); }
+  .tab[aria-selected="true"] { color: var(--ink); border-bottom-color: var(--series); font-weight: 500; }
+  .tab:focus-visible { outline: 2px solid var(--series); outline-offset: -2px; border-radius: 4px; }
+  .panel { padding-top: 22px; }
+  .panel[hidden] { display: none; }
+
+  /* ── 필터 ── */
   .filters {
     display: flex; flex-wrap: wrap; gap: 8px; align-items: center;
-    padding: 12px 14px; margin-bottom: 22px;
+    padding: 10px 12px; margin-bottom: 20px;
     background: var(--surface); border: 1px solid var(--border); border-radius: 10px;
   }
   .filters .flabel { font-size: 11.5px; color: var(--muted); margin-right: 2px; }
   .ctl {
-    display: inline-flex; align-items: center; gap: 6px;
-    background: var(--page); border: 1px solid var(--border); border-radius: 6px;
-    padding: 5px 10px; font-size: 12.5px; color: var(--ink-2);
+    appearance: none; background: var(--page); border: 1px solid var(--border);
+    border-radius: 6px; color: var(--ink-2); font: inherit; font-size: 13px;
+    padding: 0 30px 0 11px; min-height: 44px; cursor: pointer;
+    background-image: linear-gradient(45deg, transparent 50%, var(--muted) 50%),
+                      linear-gradient(135deg, var(--muted) 50%, transparent 50%);
+    background-position: right 13px center, right 8px center;
+    background-size: 5px 5px, 5px 5px; background-repeat: no-repeat;
   }
-  .ctl b { color: var(--ink); font-weight: 500; }
-  .ctl::after { content: "▾"; color: var(--muted); font-size: 10px; }
+  .ctl:focus-visible { outline: 2px solid var(--series); outline-offset: 1px; }
+  .ctl.on { color: var(--ink); border-color: rgba(57,135,229,.45); background-color: rgba(57,135,229,.08); }
+  .btn-reset {
+    appearance: none; background: none; border: 1px solid var(--border); border-radius: 6px;
+    color: var(--muted); font: inherit; font-size: 13px; padding: 0 12px; min-height: 44px; cursor: pointer;
+  }
+  .btn-reset:hover { color: var(--ink-2); }
+  .btn-reset:focus-visible { outline: 2px solid var(--series); outline-offset: 1px; }
   .filters .hint { margin-left: auto; font-size: 11.5px; color: var(--muted); }
 
   .card {
     background: var(--surface); border: 1px solid var(--border);
-    border-radius: 10px; padding: 20px; margin-bottom: 20px;
+    border-radius: 10px; padding: 18px; margin-bottom: 16px;
   }
+  .card.lead { padding: 22px; }
   .card > h2 { font-size: 15px; font-weight: 600; margin: 0; }
   .card > .why { font-size: 12.5px; color: var(--muted); margin: 4px 0 0; }
-  .body { margin-top: 18px; }
-  .sec { font-size: 11.5px; color: var(--muted); margin: 22px 0 8px; }
+  .body { margin-top: 16px; }
+  .two { display: grid; grid-template-columns: 1.9fr 1fr; gap: 16px; align-items: start; }
+  @media (max-width: 760px) { .two { grid-template-columns: 1fr; } }
 
-  /* ── stat tiles ── */
-  .tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(148px, 1fr)); gap: 2px; }
-  .tile { background: var(--page); padding: 12px 14px; border-radius: 6px; }
-  .tile .label { font-size: 11.5px; color: var(--muted); }
-  .tile .value { font-size: 26px; font-weight: 600; margin-top: 2px; letter-spacing: -0.02em; }
-  .tile .value.hero { font-size: 40px; }
-  .tile .value .u { font-size: 15px; color: var(--muted); font-weight: 400; }
-  .tile .note { font-size: 11.5px; color: var(--muted); margin-top: 1px; }
-  .tile .note.warnq { color: var(--warning); }
-  .status { display: inline-flex; align-items: center; gap: 5px; font-size: 12px; font-weight: 500; }
+  /* ── 스탯 타일 ── */
+  .tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 2px; }
+  .tile { background: var(--page); padding: 13px 15px; border-radius: 6px; }
+  .tile .label { font-size: 12px; color: var(--muted); }
+  .tile .value { font-size: 30px; font-weight: 600; margin-top: 2px; letter-spacing: -0.02em; }
+  .tile .value.hero { font-size: 44px; }
+  .tile .value .u { font-size: 16px; color: var(--muted); font-weight: 400; }
+  .tile .note { font-size: 12px; color: var(--muted); margin-top: 2px; }
+  .tile .note.bad { color: var(--warning); }
+  .status { display: inline-flex; align-items: center; gap: 5px; font-size: 12.5px; font-weight: 500; }
   .status .dot { width: 8px; height: 8px; border-radius: 999px; display: inline-block; }
   .status.ok { color: var(--good); } .status.ok .dot { background: var(--good); }
 
@@ -87,460 +114,748 @@
   .val-label  { fill: var(--ink-2); font-size: 11.5px; font-variant-numeric: tabular-nums; }
 
   /* ── 가로 막대 ── */
-  .hrow { display: grid; grid-template-columns: 118px 1fr 150px; align-items: center; gap: 10px; margin-bottom: 8px; }
+  .hrow { display: grid; grid-template-columns: 132px 1fr 156px; align-items: center; gap: 10px; margin-bottom: 8px; }
   .hrow .name { font-size: 12.5px; color: var(--ink-2); text-align: right; }
   .track { height: 18px; }
   .bar { height: 18px; border-radius: 0 4px 4px 0; }
   .hrow .num { font-size: 12.5px; color: var(--ink-2); font-variant-numeric: tabular-nums; }
   .hrow .num em { font-style: normal; color: var(--muted); }
+  /* 모바일: 이름·값 한 줄 / 막대 전체 폭 한 줄 */
+  @media (max-width: 620px) {
+    .hrow { grid-template-columns: 1fr auto; gap: 4px 10px; margin-bottom: 14px; }
+    .hrow .name { text-align: left; }
+    .hrow .num { text-align: right; }
+    .hrow .track { grid-column: 1 / -1; }
+  }
   .branch { margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--grid); }
-  .branch-note { font-size: 11.5px; color: var(--muted); margin: 0 0 12px 128px; }
+  .branch-note { font-size: 11.5px; color: var(--muted); margin: 0 0 12px 142px; }
+  @media (max-width: 620px) { .branch-note { margin-left: 0; } }
 
   /* ── 표 ── */
+  .scroll { overflow-x: auto; position: relative; }
+  .scroll-hint {
+    display: none; font-size: 11.5px; color: var(--muted); margin-top: 8px;
+    align-items: center; gap: 5px;
+  }
+  .scroll-hint.show { display: flex; }
   table { width: 100%; border-collapse: collapse; font-size: 12.5px; }
   th { text-align: left; font-weight: 500; color: var(--muted); border-bottom: 1px solid var(--baseline);
-       padding: 7px 8px; white-space: nowrap; font-size: 11.5px; }
-  td { padding: 7px 8px; border-bottom: 1px solid var(--grid); color: var(--ink-2);
+       padding: 8px; white-space: nowrap; font-size: 12px; }
+  td { padding: 8px; border-bottom: 1px solid var(--grid); color: var(--ink-2);
        white-space: nowrap; font-variant-numeric: tabular-nums; }
   tbody tr:nth-child(odd) { background: rgba(255,255,255,0.015); }
   .cellbar { display: inline-block; height: 7px; border-radius: 0 2px 2px 0;
              background: var(--series); vertical-align: 1px; margin-left: 6px; }
-  .pill { font-size: 10.5px; padding: 1px 6px; border-radius: 999px; border: 1px solid var(--border); color: var(--muted); }
-  .pill.obs { color: var(--ord-1); border-color: rgba(134,182,239,.35); }
+  .id { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 12px; }
+  .pill { font-size: 11px; padding: 2px 7px; border-radius: 999px; border: 1px solid var(--border); color: var(--muted); }
+  .pill.obs { color: var(--ord-1); border-color: rgba(183,211,246,.35); }
   .none { color: var(--muted); }
-  .scroll { overflow-x: auto; }
 
   details { margin-top: 14px; }
-  summary { font-size: 12px; color: var(--muted); cursor: pointer; }
+  summary { font-size: 12.5px; color: var(--muted); cursor: pointer; min-height: 24px; }
   summary:hover { color: var(--ink-2); }
+  summary:focus-visible { outline: 2px solid var(--series); outline-offset: 2px; border-radius: 4px; }
   details[open] summary { margin-bottom: 10px; }
 
   .legend { display: flex; gap: 14px; flex-wrap: wrap; font-size: 11.5px; color: var(--muted); margin-top: 12px; align-items: center; }
   .legend span { display: inline-flex; align-items: center; gap: 5px; }
   .legend i { width: 11px; height: 11px; border-radius: 2px; display: inline-block; }
 
+  .badge {
+    display: inline-block; font-size: 11.5px; padding: 2px 9px; border-radius: 999px;
+    border: 1px solid rgba(57,135,229,.4); color: var(--series); margin-left: 8px; vertical-align: 2px;
+  }
+
   #tip {
     position: fixed; pointer-events: none; opacity: 0; transition: opacity .08s;
-    background: #1f1f1f; border: 1px solid var(--border); border-radius: 6px;
-    padding: 7px 10px; font-size: 12px; color: var(--ink); white-space: nowrap;
+    background: #242424; border: 1px solid var(--border); border-radius: 6px;
+    padding: 7px 10px; font-size: 12.5px; color: var(--ink); white-space: nowrap;
     box-shadow: 0 6px 20px rgba(0,0,0,.5); z-index: 50;
   }
-  #tip .t-sub { color: var(--muted); font-size: 11px; }
+  #tip .t-sub { color: var(--muted); font-size: 11.5px; }
+  [data-tip]:focus-visible { outline: 2px solid var(--series); outline-offset: 2px; }
 
-  .note-inline { font-size: 11.5px; color: var(--muted); margin-top: 12px; }
+  .note-inline { font-size: 12px; color: var(--muted); margin-top: 12px; }
   .note-inline b { color: var(--ink-2); font-weight: 500; }
-  .tag { display: inline-block; font-size: 11px; padding: 1px 7px; border-radius: 999px;
-         border: 1px solid var(--border); color: var(--muted); margin-left: 8px; vertical-align: 2px; }
+  .defs summary { font-size: 12.5px; }
+  .defs p { font-size: 12px; color: var(--muted); margin: 8px 0; }
+  .defs b { color: var(--ink-2); font-weight: 500; }
 </style>
 </head>
 <body>
-<div id="tip"></div>
+<div id="tip" role="status" aria-live="polite"></div>
 <div class="wrap">
 
   <h1>aTee 관리자 화면 목업</h1>
-  <p class="sub">확정 설계(2026-08-21) 기준 · 정의: docs/atee/living/session-metrics.md §8</p>
+  <p class="sub">확정 설계(2026-08-21) 기준 · 정의: docs/atee/living/session-metrics.md §7·§8</p>
 
   <div class="warn">
-    <b>⚠ 숫자는 전부 가짜다.</b> 모양을 정하기 위한 목업이고 실제 데이터가 아니다.
-    <b>계정 ID·비회원 구간·관찰/자발 구분은 아직 계측되지 않는다</b> — 설계 §9-1·§9-3·§9-4가 만들어져야 이 화면이 실제로 채워진다.
-    카드마다 아래 “표로 보기”로 숫자를 직접 확인할 수 있다.
+    <b>⚠ 숫자는 전부 가짜다.</b> 다만 <b>요약 숫자를 손으로 적지 않고 원본 배열에서 계산</b>한다 —
+    앞 목업은 손으로 적은 요약이 원본과 어긋나 검토에서 5건이 잡혔다.
+    계정 ID·비회원 구간·관찰/자발 구분은 아직 계측되지 않는다(설계 §9).
   </div>
 
-  <!-- ── 필터 줄 (설계 §8) ── -->
-  <div class="filters">
-    <span class="flabel">필터</span>
-    <span class="ctl">기간 <b>최근 7일</b></span>
-    <span class="ctl">계정·기기 <b>전체</b></span>
-    <span class="ctl">세션 구분 <b>전체</b></span>
-    <span class="ctl">계측 버전 <b>전체</b></span>
-    <span class="hint">모든 시각은 KST</span>
+  <div class="tabs" role="tablist" aria-label="대시보드 화면">
+    <button class="tab" role="tab" id="tab-overview" aria-controls="p-overview" aria-selected="true">개요</button>
+    <button class="tab" role="tab" id="tab-sessions" aria-controls="p-sessions" aria-selected="false">세션</button>
+    <button class="tab" role="tab" id="tab-habit"    aria-controls="p-habit"    aria-selected="false">습관</button>
+    <button class="tab" role="tab" id="tab-raw"      aria-controls="p-raw"      aria-selected="false">원본</button>
   </div>
 
-  <!-- ─────────── 1. 이벤트 유입 ─────────── -->
-  <section class="card">
-    <h2>1. 이벤트 유입</h2>
-    <p class="why">행동 신호가 지금도 들어오고 있는가 — 끊겼으면 아래 지표는 전부 낡은 값이다</p>
-    <div class="body">
-      <div class="tiles">
-        <div class="tile">
-          <div class="label">최근 24시간</div>
-          <div class="value hero">1,203</div>
-          <div class="note">7일 8,847 · 전체 12,418</div>
+  <!-- ═══════════ 개요 ═══════════ -->
+  <section class="panel" id="p-overview" role="tabpanel" aria-labelledby="tab-overview">
+    <div class="filters" id="f-overview"></div>
+
+    <!-- 계측 상태 -->
+    <section class="card">
+      <h2>계측 상태</h2>
+      <p class="why">기록이 저장되고 있는가 — <b>사용자 활동량과 다른 질문이다</b></p>
+      <div class="body">
+        <div class="tiles">
+          <div class="tile">
+            <div class="label">마지막 저장 성공</div>
+            <div class="value">4분 전</div>
+            <div class="note"><span class="status ok"><i class="dot"></i>정상</span></div>
+          </div>
+          <div class="tile">
+            <div class="label">저장 오류 (24시간)</div>
+            <div class="value">0<span class="u">건</span></div>
+            <div class="note">버려진 배치 없음</div>
+          </div>
+          <div class="tile">
+            <div class="label">계측 버전</div>
+            <div class="value" style="font-size:19px">v2 <span class="u">(현재)</span></div>
+            <div class="note">v1 데이터는 정의가 달라 섞지 않는다</div>
+          </div>
         </div>
-        <div class="tile">
-          <div class="label">마지막 기록</div>
-          <div class="value">4분 전</div>
-          <div class="note"><span class="status ok"><i class="dot"></i>들어오는 중</span></div>
+        <p class="note-inline">
+          <b>이벤트 0건은 계측 장애가 아니다.</b> 그날 아무도 안 왔다는 뜻일 수 있다.
+          그래서 활동량(아래 일별 막대)과 계측 상태(이 카드)를 따로 둔다.
+        </p>
+      </div>
+    </section>
+
+    <!-- 핵심 지표 -->
+    <section class="card lead">
+      <h2>핵심 지표 <span class="badge" id="scope-badge">자발 세션</span></h2>
+      <p class="why">대표값은 중앙값, 평균은 참고값이다. 비율의 분모는 상품 수가 아니라 세션 수다</p>
+      <div class="body"><div class="tiles" id="kpi"></div></div>
+    </section>
+
+    <div class="two">
+      <!-- 일별 추세 -->
+      <section class="card">
+        <h2>일별 활동량</h2>
+        <p class="why">언제 활동이 끊겼는가 — 막대 하나 = 하루(KST 00:00~24:00)</p>
+        <div class="body">
+          <div id="daily"></div>
+          <p class="note-inline">
+            오늘(<span id="today-label"></span>) 막대는 <b>KST 00:00부터 지금까지</b>라 아직 덜 찼다.
+            단색이다 — 날짜는 순서일 뿐 서로 다른 종류가 아니라 색으로 나눌 게 없다.
+          </p>
+          <details><summary>표로 보기</summary><div class="scroll"><table id="daily-table"></table></div></details>
         </div>
-        <div class="tile">
-          <div class="label">계정 / 기기</div>
-          <div class="value">6 <span class="u">/ 9</span></div>
-          <div class="note">비회원 기기 3대</div>
+      </section>
+
+      <!-- 행동 흐름 -->
+      <section class="card">
+        <h2>행동 흐름</h2>
+        <p class="why">세션 몇 개가 다음 단계로 넘어갔나</p>
+        <div class="body">
+          <div id="flow"></div>
+          <p class="note-inline">
+            <b>직선 깔때기를 쓰지 않는다.</b> 상세에서 둘로 갈라지고, 한 세션이 찜과 이동을
+            <b>둘 다</b> 할 수 있다 — 아래 둘을 더해도 위가 되지 않는다.
+          </p>
+          <details><summary>표로 보기</summary><div class="scroll"><table id="flow-table"></table></div></details>
         </div>
-      </div>
-
-      <div class="sec">일별 유입</div>
-      <div id="daily"></div>
-
-      <p class="note-inline">
-        <b>8/16이 0건</b>인 게 한눈에 보인다 — “7일 8,847”이라는 숫자에는 묻히는 값이다.
-        막대는 단색이다. 날짜는 순서일 뿐 서로 다른 <b>종류</b>가 아니라 색으로 나눌 게 없다.
-        상태색(초록·노랑·빨강)은 <b>이 카드에만</b> 쓴다. 다른 데 쓰면 진짜 경고가 묻힌다.
-      </p>
-      <details><summary>표로 보기</summary><div class="scroll"><table id="daily-table"></table></div></details>
+      </section>
     </div>
-  </section>
 
-  <!-- ─────────── 2. 세션 요약 ─────────── -->
-  <section class="card">
-    <h2>2. 세션 요약</h2>
-    <p class="why">한 번 들어와서 몇 개를 보고 몇 번 눌렀나 — 대표값은 중앙값, 평균은 참고값이다(§7)</p>
-    <div class="body">
-      <div class="tiles">
-        <div class="tile"><div class="label">세션 수</div><div class="value">34</div><div class="note">계정 6 · 기기 9</div></div>
-        <div class="tile"><div class="label">본 상품 수</div><div class="value">26<span class="u">개</span></div><div class="note">사분위 18–41 · 평균 41.2</div></div>
-        <div class="tile"><div class="label">상세를 본 상품 수</div><div class="value">4<span class="u">개</span></div><div class="note">사분위 2–8 · 평균 5.5</div></div>
-        <div class="tile"><div class="label">찜 시도</div><div class="value">0<span class="u">회</span></div><div class="note">사분위 0–1 · 평균 1.3</div></div>
-        <div class="tile"><div class="label">아웃바운드</div><div class="value">0<span class="u">회</span></div><div class="note">사분위 0–1 · 평균 0.6</div></div>
-        <div class="tile"><div class="label">찜 저장 실패</div><div class="value">2<span class="u">회</span></div><div class="note warnq">시도 44회 중</div></div>
-      </div>
-
-      <div class="sec">세션별 본 상품 수 — 점 하나 = 세션 하나</div>
-      <div id="strip"></div>
-
-      <p class="note-inline">
-        큰 숫자는 <b>중앙값</b>이고 평균은 아래 작은 글씨다. 오른쪽 끝에 혼자 떨어진 점(210개) 하나가
-        평균을 26 → 41.2로 밀어 올렸다 — <b>34세션 규모에서 평균은 한 사람이 정한다.</b>
-        가운데 옅은 띠가 <b>사분위 범위(18–41)</b>로, 가운데 절반이 어디 모여 있는지를 보여준다.
-      </p>
-      <p class="note-inline">
-        <b>단위가 지표마다 다르다.</b> 본 상품 수·상세는 <b>고유 상품 수(개)</b>, 찜·아웃바운드는 <b>횟수(회)</b>다(§3).
-        찜 저장이 실패해도 시도는 그대로 남고 실패가 따로 세어진다 — 실패를 시도에서 빼면
-        “찜하려 했는데 안 됐다”가 통째로 사라진다.
-      </p>
-      <details><summary>표로 보기</summary><div class="scroll"><table id="strip-table"></table></div></details>
-    </div>
-  </section>
-
-  <!-- ─────────── 3. 행동 흐름 ─────────── -->
-  <section class="card">
-    <h2>3. 행동 흐름</h2>
-    <p class="why">세션 몇 개가 다음 단계로 넘어갔나 — 상품 수가 아니라 세션 수로 센다(§7)</p>
-    <div class="body">
-      <div class="hrow">
-        <div class="name">노출이 있는 세션</div>
-        <div class="track"><div class="bar barhit" data-t="노출이 있는 세션 34개" style="width:100%;background:var(--ord-1)"></div></div>
-        <div class="num">34<em> 세션</em></div>
-      </div>
-      <div class="hrow">
-        <div class="name">상세를 연 세션</div>
-        <div class="track"><div class="bar barhit" data-t="상세를 연 세션 23개 · 상세 세션률 67.6%" style="width:67.6%;background:var(--ord-2)"></div></div>
-        <div class="num">23<em> 세션 · 67.6%</em></div>
-      </div>
-
-      <div class="branch">
-        <p class="branch-note">↳ 여기서 <b style="color:var(--ink-2)">갈라진다</b>. 아래 둘의 분모는 <b style="color:var(--ink-2)">상세를 연 세션 23개</b>다 — 위 막대와 자 눈금이 다르다.</p>
-        <div class="hrow">
-          <div class="name">찜을 시도한 세션</div>
-          <div class="track"><div class="bar barhit" data-t="찜을 시도한 세션 9개 · 찜 세션률 39.1%" style="width:39.1%;background:var(--ord-3)"></div></div>
-          <div class="num">9<em> 세션 · 39.1%</em></div>
+    <div class="two">
+      <!-- 분포 -->
+      <section class="card">
+        <h2>세션별 본 상품 수</h2>
+        <p class="why">점 하나 = 세션 하나. 가운데 띠가 사분위 범위</p>
+        <div class="body">
+          <div id="strip"></div>
+          <p class="note-inline" id="strip-note"></p>
+          <details><summary>표로 보기</summary><div class="scroll"><table id="strip-table"></table></div></details>
         </div>
-        <div class="hrow">
-          <div class="name">판매처로 나간 세션</div>
-          <div class="track"><div class="bar barhit" data-t="판매처 이동이 있는 세션 5개 · 아웃바운드 세션률 21.7%" style="width:21.7%;background:var(--ord-4)"></div></div>
-          <div class="num">5<em> 세션 · 21.7%</em></div>
+      </section>
+
+      <!-- 추천 유형별 -->
+      <section class="card">
+        <h2>추천 유형별 성과</h2>
+        <p class="why">상세를 연 (상품, 세션) 쌍 ÷ 노출된 (상품, 세션) 쌍</p>
+        <div class="body">
+          <div id="bucket"></div>
+          <p class="note-inline">
+            여섯이 <b>전부 같은 색</b>이다. 재는 값이 하나뿐이라 색으로 나눌 게 없고,
+            막대 길이가 이미 값을 말한다. 값순 정렬로 순위를 <b>배치</b>가 말하게 한다.
+          </p>
+          <details><summary>표로 보기</summary><div class="scroll"><table id="bucket-table"></table></div></details>
         </div>
+      </section>
+    </div>
+
+    <details class="defs card">
+      <summary>지표 정의</summary>
+      <p><b>본 상품 수 · 상세를 본 상품 수</b> — 고유 상품 수(개). <b>찜 · 아웃바운드</b> — 횟수(회). 질문이 달라 단위가 다르다.</p>
+      <p><b>세션률</b> — 분모가 상품 수가 아니라 세션 수다. 표본이 작을 때 한 세션의 폭주가 비율을 지배하는 것을 막는다.</p>
+      <p><b>사분위</b> — 연속 백분위수(Postgres <code>percentile_cont</code>). 방식을 정하지 않으면 같은 표본에서 서로 다른 답이 나온다.</p>
+      <p><b>찜 저장 실패</b> — 시도를 취소하지 않는다. 시도 1회 + 실패 1회로 따로 센다.</p>
+      <p><b>기본 구분</b> — 자발 세션만. 관찰 세션을 섞으면 우리가 시켜 만든 행동이 들어가 실제보다 좋아 보인다.</p>
+    </details>
+  </section>
+
+  <!-- ═══════════ 세션 ═══════════ -->
+  <section class="panel" id="p-sessions" role="tabpanel" aria-labelledby="tab-sessions" hidden>
+    <div class="filters" id="f-sessions"></div>
+    <section class="card">
+      <h2>세션 목록</h2>
+      <p class="why">세션 하나 = 한 행. 실기기에서 손으로 센 숫자와 대조하는 표</p>
+      <div class="body">
+        <div class="scroll"><table id="sessions"></table></div>
+        <p class="scroll-hint"><span aria-hidden="true">→</span> 옆으로 밀어 더 보기</p>
+        <p class="note-inline">
+          <b>차트로 바꾸지 않는다.</b> 의미를 가진 열이 일곱을 넘으면 표가 맞다.
+          <b>계정이 빈 행은 비회원</b>이고, 로그인하면 그 자리에서 새 세션이 시작돼 한 행에 로그인 전후가 섞이지 않는다.
+        </p>
+        <p class="note-inline">
+          식별자는 <b>가명으로만</b> 보여준다. 이메일·이름은 별도 권한이 있는 상세 화면의 몫이다.
+        </p>
       </div>
-
-      <p class="note-inline">
-        <b>직선 깔때기를 쓰지 않는다.</b> 노출→상세→찜→이동을 한 줄로 세우면 그림이
-        <b>“찜한 다음 판매처로 간다”</b>는 없는 흐름을 주장한다. 실제로는 상세에서 둘로 갈라지고,
-        한 세션이 찜과 이동을 <b>둘 다</b> 할 수 있다. 그래서 아래 두 막대를 더해도 위가 되지 않는다.
-      </p>
-      <p class="note-inline">
-        <b>분모가 세션이라 한 사람의 폭주가 비율을 지배하지 못한다.</b> 상품 수로 세면 200장 훑은 세션 하나가
-        전체 비율을 끌어내린다.
-      </p>
-      <details><summary>표로 보기</summary><div class="scroll"><table>
-        <thead><tr><th>단계</th><th>세션</th><th>분모</th><th>세션률</th></tr></thead>
-        <tbody>
-          <tr><td>노출이 있는 세션</td><td>34</td><td>—</td><td>—</td></tr>
-          <tr><td>상세를 연 세션</td><td>23</td><td>노출이 있는 세션 34</td><td>67.6%</td></tr>
-          <tr><td>찜을 시도한 세션</td><td>9</td><td>상세를 연 세션 23</td><td>39.1%</td></tr>
-          <tr><td>판매처로 나간 세션</td><td>5</td><td>상세를 연 세션 23</td><td>21.7%</td></tr>
-        </tbody>
-      </table></div></details>
-    </div>
+    </section>
   </section>
 
-  <!-- ─────────── 4. 세션 목록 ─────────── -->
-  <section class="card">
-    <h2>4. 세션 목록 <span class="tag">표 유지</span></h2>
-    <p class="why">세션 하나 = 한 행. 실기기에서 손으로 센 숫자와 대조하는 표</p>
-    <div class="body">
-      <div class="scroll"><table id="sessions"></table></div>
-      <p class="note-inline">
-        <b>차트로 바꾸지 않는다.</b> 열이 열 개를 넘는다 — 의미를 가진 항목이 일곱을 넘으면 표가 맞다.
-        대신 <b>본 상품 수</b>와 <b>상세</b> 칸에 얇은 막대를 붙여, 어느 세션이 유난했는지가 숫자를 읽지 않아도 보이게 한다.
-      </p>
-      <p class="note-inline">
-        <b>계정이 빈 행은 비회원 세션</b>이다(§4). 로그인하면 <b>그 자리에서 새 세션이 시작</b>되므로
-        한 행 안에 로그인 전후가 섞이지 않는다. 길이 칸은 <b>자리를 비운 시간이 포함</b>된 값이라 머리글에 적어 둔다.
-      </p>
+  <!-- ═══════════ 습관 ═══════════ -->
+  <section class="panel" id="p-habit" role="tabpanel" aria-labelledby="tab-habit" hidden>
+    <div class="warn" style="border-color:var(--border);background:rgba(255,255,255,.03)">
+      이 화면은 <b>전역 기간 필터를 받지 않는다.</b> 참가자마다 <b>자기 첫 경험일부터 3주</b>를 보는
+      독립 코호트다 — 달력 기간으로 자르면 시작 요일이 다른 사람을 같은 기준으로 잴 수 없다.
+      <b>자발 세션만</b> 센다.
     </div>
-  </section>
-
-  <!-- ─────────── 5. 습관 지표 ─────────── -->
-  <section class="card">
-    <h2>5. 습관 지표</h2>
-    <p class="why">참가자 × 연속 7일 구간의 유효 탐색 일수 — 측정 계획의 습관 3단계가 여기서 판정된다</p>
-    <div class="body">
-      <div id="habit"></div>
-      <div class="legend">
-        <span>0일 <i style="background:transparent;border:1px solid var(--grid)"></i></span>
-        <span><i style="background:var(--ord-4)"></i> 1일</span>
-        <span><i style="background:var(--ord-3)"></i> 2일</span>
-        <span><i style="background:var(--ord-2)"></i> 3–4일</span>
-        <span><i style="background:var(--ord-1)"></i> 5일+</span>
-        <span style="margin-left:auto">칸 = 그 7일 구간의 <b style="color:var(--ink-2)">유효 탐색 일수</b></span>
+    <section class="card">
+      <h2>습관 지표 <span class="badge">자발 세션 고정</span></h2>
+      <p class="why">참가자 × 연속 7일 구간의 유효 탐색 일수</p>
+      <div class="body">
+        <div class="scroll"><div id="habit"></div></div>
+        <div class="legend" id="habit-legend"></div>
+        <p class="note-inline">
+          <b>유효 탐색</b> = 상품을 1개 이상 연 날. 스크롤만 한 방문은 세지 않는다.
+          <b>판정선은 주 2일</b>이고, 2일 이상인 칸에 테두리를 둘러 <b>색만으로 판정이 갈리지 않게</b> 했다.
+        </p>
+        <details><summary>표로 보기</summary><div class="scroll"><table id="habit-table"></table></div></details>
       </div>
-
-      <p class="note-inline">
-        <b>유효 탐색</b> = 상품을 1개 이상 연 날. 스크롤만 한 방문은 세지 않는다.
-        <b>7일 구간</b>은 달력 주가 아니라 <b>각 참가자의 첫 경험일부터</b> 7일씩 끊은 것이다 —
-        시작 요일이 사람마다 달라서, 달력 주를 쓰면 금요일에 시작한 사람의 첫 주가 이틀뿐이 된다.
-      </p>
-      <p class="note-inline">
-        <b>판정선은 주 2일</b>이다. 2일 이상인 칸에 테두리를 둘러 <b>색만으로 판정이 갈리지 않게</b> 했다 —
-        색으로만 구분하면 색약인 사람에게 판정선이 사라진다. 오른쪽 <b>단계</b> 칸이 최종 판정이다.
-      </p>
-      <details><summary>표로 보기</summary><div class="scroll"><table id="habit-table"></table></div></details>
-    </div>
+    </section>
   </section>
 
-  <!-- ─────────── 6. 추천 유형별 성과 ─────────── -->
-  <section class="card">
-    <h2>6. 추천 유형별 성과</h2>
-    <p class="why">어떤 종류의 추천이 실제로 눌렸는가 — 특히 “반대 제안”이 발견인지 노이즈인지</p>
-    <div class="body">
-      <div id="bucket"></div>
-      <p class="note-inline">
-        여섯 개가 <b>전부 같은 색</b>이다. 재는 값이 하나(상세 열기율)뿐이라 색으로 나눌 게 없다.
-        막대 길이가 이미 값을 말하는데 색까지 값에 따라 진하게 하면 <b>같은 정보를 두 번 칠하는 것</b>이다.
-        값순으로 정렬해 순위를 색이 아니라 <b>배치</b>가 말하게 한다.
-      </p>
-      <details><summary>표로 보기</summary><div class="scroll"><table id="bucket-table"></table></div></details>
-    </div>
-  </section>
-
-  <!-- ─────────── 7. 원본 이벤트 ─────────── -->
-  <section class="card">
-    <h2>7. 원본 이벤트 <span class="tag">표 유지 · 그대로</span></h2>
-    <p class="why">위 집계가 맞는지 사람이 직접 대조하는 근거</p>
-    <div class="body">
-      <div class="scroll"><table id="raw"></table></div>
-      <p class="note-inline">
-        <b>손대지 않는다.</b> 이건 지표가 아니라 <b>증거</b>다. 요약하거나 그림으로 바꾸는 순간 대조 근거로서의 값을 잃는다.
-        <b>로그인 상태 칸은 발생 시점의 값</b>이다(§5) — 로그인 전에 대기열에 들어간 이벤트가 로그인 후 전송돼도
-        비회원으로 남아야 하고, 이 칸이 그걸 확인하는 자리다.
-      </p>
-    </div>
+  <!-- ═══════════ 원본 ═══════════ -->
+  <section class="panel" id="p-raw" role="tabpanel" aria-labelledby="tab-raw" hidden>
+    <div class="filters" id="f-raw"></div>
+    <section class="card">
+      <h2>원본 이벤트</h2>
+      <p class="why">위 집계가 맞는지 사람이 직접 대조하는 근거</p>
+      <div class="body">
+        <div class="scroll"><table id="raw"></table></div>
+        <p class="scroll-hint"><span aria-hidden="true">→</span> 옆으로 밀어 더 보기</p>
+        <p class="note-inline">
+          <b>손대지 않는다.</b> 이건 지표가 아니라 <b>증거</b>다.
+          <b>상태 칸은 발생 시점의 값</b>이다 — 로그인 전에 대기열에 들어간 이벤트가 로그인 후 전송돼도 비회원으로 남아야 한다.
+        </p>
+      </div>
+    </section>
   </section>
 
 </div>
 
 <script>
-const tip = document.getElementById('tip');
-function bindTip(el, text, sub) {
-  el.addEventListener('mousemove', (e) => {
-    tip.innerHTML = text + (sub ? '<div class="t-sub">' + sub + '</div>' : '');
-    tip.style.opacity = '1';
-    const pad = 14;
-    let x = e.clientX + pad, y = e.clientY + pad;
-    const r = tip.getBoundingClientRect();
-    if (x + r.width > window.innerWidth - 8) x = e.clientX - r.width - pad;
-    if (y + r.height > window.innerHeight - 8) y = e.clientY - r.height - pad;
-    tip.style.left = x + 'px'; tip.style.top = y + 'px';
-  });
-  el.addEventListener('mouseleave', () => { tip.style.opacity = '0'; });
-}
-document.querySelectorAll('.barhit').forEach(b => bindTip(b, b.dataset.t));
+/* ══════════ 원본 데이터 — 요약 숫자는 여기서만 계산한다 ══════════ */
+const RAW = {
+  today: "08-21",
+  // 일별 이벤트 수 (KST 기준). 마지막 날은 진행 중이라 덜 찼다.
+  daily: [
+    ["08-15", 1560], ["08-16", 0], ["08-17", 2210], ["08-18", 1870],
+    ["08-19", 2094], ["08-20", 949], ["08-21", 1203],
+  ],
+  lastSaveAgo: "4분 전",
+  // 세션 하나 = 한 줄. 요약·비율·분포가 전부 여기서 나온다.
+  // impressions=고유 상품 수, details=고유 상품 수, wishes=시도 횟수, outbound=클릭 횟수
+  sessions: [
+    { acct: "a91c04d2", dev: "3f2a8c1e", kind: "organic", start: "08-21 21:14", len: "0:18:42", impressions: 210, details: 12, wishes: 3, wishFails: 1, outbound: 2 },
+    { acct: null,       dev: "c7e12a55", kind: "organic", start: "08-21 20:02", len: "0:06:11", impressions: 34,  details: 5,  wishes: 0, wishFails: 0, outbound: 0 },
+    { acct: "2f0a91ce", dev: "91bd004f", kind: "observed",start: "08-21 13:47", len: "0:41:09", impressions: 26,  details: 4,  wishes: 2, wishFails: 0, outbound: 1 },
+    { acct: null,       dev: "7b20ef58", kind: "organic", start: "08-20 23:31", len: "0:03:55", impressions: 11,  details: 1,  wishes: 0, wishFails: 0, outbound: 0 },
+    { acct: "a91c04d2", dev: "3f2a8c1e", kind: "organic", start: "08-20 09:12", len: "0:12:20", impressions: 47,  details: 8,  wishes: 2, wishFails: 1, outbound: 1 },
+    { acct: "5b7e2200", dev: "ac33b1d0", kind: "organic", start: "08-19 22:58", len: "0:01:04", impressions: 8,   details: 0,  wishes: 0, wishFails: 0, outbound: 0 },
+    { acct: "5b7e2200", dev: "ac33b1d0", kind: "organic", start: "08-19 20:30", len: "0:09:41", impressions: 63,  details: 6,  wishes: 1, wishFails: 0, outbound: 0 },
+    { acct: "2f0a91ce", dev: "91bd004f", kind: "organic", start: "08-19 08:15", len: "0:05:02", impressions: 25,  details: 3,  wishes: 0, wishFails: 0, outbound: 0 },
+    { acct: null,       dev: "0ab93d71", kind: "organic", start: "08-18 22:11", len: "0:02:30", impressions: 17,  details: 0,  wishes: 0, wishFails: 0, outbound: 0 },
+    { acct: "a91c04d2", dev: "3f2a8c1e", kind: "organic", start: "08-18 12:40", len: "0:15:55", impressions: 88,  details: 9,  wishes: 4, wishFails: 0, outbound: 3 },
+    { acct: "d41c99a3", dev: "5e6f2210", kind: "organic", start: "08-18 07:55", len: "0:04:12", impressions: 22,  details: 2,  wishes: 0, wishFails: 0, outbound: 0 },
+    { acct: "2f0a91ce", dev: "91bd004f", kind: "organic", start: "08-17 21:03", len: "0:11:38", impressions: 52,  details: 7,  wishes: 1, wishFails: 0, outbound: 1 },
+    { acct: null,       dev: "12ff8e64", kind: "organic", start: "08-17 19:20", len: "0:01:48", impressions: 12,  details: 1,  wishes: 0, wishFails: 0, outbound: 0 },
+    { acct: "d41c99a3", dev: "5e6f2210", kind: "organic", start: "08-17 13:12", len: "0:07:26", impressions: 38,  details: 4,  wishes: 1, wishFails: 0, outbound: 0 },
+    { acct: "5b7e2200", dev: "ac33b1d0", kind: "observed",start: "08-16 15:00", len: "0:22:04", impressions: 104, details: 11, wishes: 2, wishFails: 0, outbound: 1 },
+    { acct: "a91c04d2", dev: "3f2a8c1e", kind: "organic", start: "08-16 09:31", len: "0:03:19", impressions: 15,  details: 1,  wishes: 0, wishFails: 0, outbound: 0 },
+    { acct: null,       dev: "7b20ef58", kind: "organic", start: "08-15 23:47", len: "0:06:55", impressions: 29,  details: 3,  wishes: 0, wishFails: 0, outbound: 0 },
+    { acct: "d41c99a3", dev: "5e6f2210", kind: "organic", start: "08-15 18:02", len: "0:09:10", impressions: 41,  details: 5,  wishes: 1, wishFails: 0, outbound: 1 },
+  ],
+  // 추천 유형별 — 노출된 (상품, 세션) 쌍과 그중 상세를 연 쌍
+  buckets: [
+    { name: "장기 취향", shown: 246, opened: 45 },
+    { name: "현재 관심", shown: 311, opened: 48 },
+    { name: "유사",      shown: 178, opened: 23 },
+    { name: "부분 일치", shown: 264, opened: 26 },
+    { name: "다양성",    shown: 205, opened: 15 },
+    { name: "반대 제안", shown: 198, opened: 9 },
+  ],
+  // 참가자별 7일 구간의 유효 탐색 일수 (자발 세션만)
+  habit: [
+    { id: "P01", weeks: [3, 2, 2] }, { id: "P02", weeks: [2, 1, 2] },
+    { id: "P03", weeks: [2, 0, 0] }, { id: "P04", weeks: [1, 1, 0] },
+    { id: "P05", weeks: [0, 0, 0] }, { id: "P06", weeks: [4, 3, 5] },
+    { id: "P07", weeks: [2, 2, 1] }, { id: "P08", weeks: [1, 0, 1] },
+  ],
+  raw: [
+    ["08-21 21:32:11", "회원",  "a91c04d2", "3f2a8c1e", "a91c04d2", "outbound",           "1120448", "longterm", "organic"],
+    ["08-21 21:31:58", "회원",  "a91c04d2", "3f2a8c1e", "a91c04d2", "wish",               "1120448", "longterm", "organic"],
+    ["08-21 21:31:58", "회원",  "a91c04d2", "3f2a8c1e", "a91c04d2", "wish_failed",        "1120448", "longterm", "organic"],
+    ["08-21 21:31:40", "회원",  "a91c04d2", "3f2a8c1e", "a91c04d2", "tap",                "1120448", "longterm", "organic"],
+    ["08-21 20:04:02", "비회원", null,       "c7e12a55", "7710bb03", "login_prompt_shown", null,      null,       "organic"],
+    ["08-21 20:03:55", "비회원", null,       "c7e12a55", "7710bb03", "tap",                "3390812", "opposite", "organic"],
+    ["08-21 20:03:54", "비회원", null,       "c7e12a55", "7710bb03", "impression",         "3390812", "opposite", "organic"],
+  ],
+};
 
-const SVG = 'http://www.w3.org/2000/svg';
+/* ══════════ 계산 — 손으로 적는 숫자는 없다 ══════════ */
+const fmt = (n) => n.toLocaleString("ko-KR");
+const pct1 = (a, b) => (b === 0 ? "—" : (100 * a / b).toFixed(1) + "%");
+
+/** 연속 백분위수 (Postgres percentile_cont와 같은 방식) */
+function percentileCont(values, p) {
+  const d = [...values].sort((a, b) => a - b);
+  if (d.length === 0) return NaN;
+  const k = (d.length - 1) * p;
+  const f = Math.floor(k);
+  return f + 1 >= d.length ? d[f] : d[f] + (d[f + 1] - d[f]) * (k - f);
+}
+const round2 = (n) => Math.round(n * 100) / 100;
+
+function summarize(sessions) {
+  const imp = sessions.map((s) => s.impressions);
+  const withImpressions = sessions.filter((s) => s.impressions > 0);
+  const withDetails = sessions.filter((s) => s.details > 0);
+  const withWishes = withDetails.filter((s) => s.wishes > 0);
+  const withOutbound = withDetails.filter((s) => s.outbound > 0);
+  const wishTries = sessions.reduce((a, s) => a + s.wishes, 0);
+  const wishFails = sessions.reduce((a, s) => a + s.wishFails, 0);
+  return {
+    sessions: sessions.length,
+    accounts: new Set(sessions.map((s) => s.acct).filter(Boolean)).size,
+    devices: new Set(sessions.map((s) => s.dev)).size,
+    impressions: imp,
+    impMedian: round2(percentileCont(imp, 0.5)),
+    impQ1: round2(percentileCont(imp, 0.25)),
+    impQ3: round2(percentileCont(imp, 0.75)),
+    impMean: round2(imp.reduce((a, b) => a + b, 0) / (imp.length || 1)),
+    detailMedian: round2(percentileCont(sessions.map((s) => s.details), 0.5)),
+    nImpressions: withImpressions.length,
+    nDetails: withDetails.length,
+    nWishes: withWishes.length,
+    nOutbound: withOutbound.length,
+    wishTries, wishFails,
+  };
+}
+
+/* ══════════ 상태 ══════════ */
+const state = { kind: "organic", version: "current", range: "7d" };
+const scoped = () =>
+  RAW.sessions.filter((s) => (state.kind === "all" ? true : s.kind === state.kind));
+
+/* ══════════ 도구 ══════════ */
+const SVG = "http://www.w3.org/2000/svg";
 const mk = (n, a) => { const e = document.createElementNS(SVG, n); for (const k in a) e.setAttribute(k, a[k]); return e; };
-const fmt = (n) => n.toLocaleString('ko-KR');
+const tip = document.getElementById("tip");
+
+function showTip(el, text, sub, x, y) {
+  tip.innerHTML = text + (sub ? '<div class="t-sub">' + sub + "</div>" : "");
+  tip.style.opacity = "1";
+  const r = tip.getBoundingClientRect();
+  let left = x + 14, top = y + 14;
+  if (left + r.width > window.innerWidth - 8) left = x - r.width - 14;
+  if (top + r.height > window.innerHeight - 8) top = y - r.height - 14;
+  tip.style.left = left + "px"; tip.style.top = top + "px";
+}
+const hideTip = () => { tip.style.opacity = "0"; };
+
+/** 마우스와 키보드 둘 다로 열리는 툴팁. 라벨은 스크린리더에도 그대로 전달된다. */
+function bindTip(el, text, sub) {
+  const label = sub ? text + ". " + sub : text;
+  el.setAttribute("data-tip", "");
+  el.setAttribute("tabindex", "0");
+  el.setAttribute("role", "img");
+  el.setAttribute("aria-label", label);
+  el.addEventListener("mousemove", (e) => { showTip(el, text, sub, e.clientX, e.clientY); });
+  el.addEventListener("mouseleave", hideTip);
+  el.addEventListener("focus", () => {
+    const b = el.getBoundingClientRect();
+    showTip(el, text, sub, b.left + b.width / 2, b.bottom);
+  });
+  el.addEventListener("blur", hideTip);
+}
+
 function tableFrom(id, cols, rows) {
   document.getElementById(id).innerHTML =
-    '<thead><tr>' + cols.map(c => '<th>' + c + '</th>').join('') + '</tr></thead><tbody>' +
-    rows.map(r => '<tr>' + r.map(c => '<td>' + c + '</td>').join('') + '</tr>').join('') + '</tbody>';
+    "<thead><tr>" + cols.map((c) => "<th>" + c + "</th>").join("") + "</tr></thead><tbody>" +
+    rows.map((r) => "<tr>" + r.map((c) => "<td>" + c + "</td>").join("") + "</tr>").join("") + "</tbody>";
 }
 
-/* ── 1. 일별 유입 ── */
-const daily = [['08-15',1560],['08-16',0],['08-17',2210],['08-18',1870],['08-19',2094],['08-20',949],['08-21',1203]];
-(function () {
-  const W = 880, H = 180, padL = 46, padB = 26, padT = 12;
-  const max = 2400, plotH = H - padB - padT, plotW = W - padL - 8;
-  const svg = mk('svg', { viewBox: '0 0 ' + W + ' ' + H, width: '100%', height: H });
-  [0, 800, 1600, 2400].forEach(v => {
-    const y = padT + plotH - (v / max) * plotH;
-    svg.appendChild(mk('line', { x1: padL, x2: W - 8, y1: y, y2: y, stroke: v === 0 ? 'var(--baseline)' : 'var(--grid)' }));
-    const t = mk('text', { x: padL - 8, y: y + 4, 'text-anchor': 'end', class: 'axis-label' });
-    t.textContent = fmt(v); svg.appendChild(t);
+/* ══════════ 탭 ══════════ */
+const tabs = [...document.querySelectorAll('[role="tab"]')];
+function selectTab(id) {
+  tabs.forEach((t) => {
+    const on = t.id === id;
+    t.setAttribute("aria-selected", String(on));
+    document.getElementById(t.getAttribute("aria-controls")).hidden = !on;
   });
-  const step = plotW / daily.length, bw = Math.min(46, step - 10);
-  daily.forEach(([d, v], i) => {
+  requestAnimationFrame(markScrollHints);
+}
+tabs.forEach((t) => {
+  t.addEventListener("click", () => { selectTab(t.id); });
+  t.addEventListener("keydown", (e) => {
+    const i = tabs.indexOf(t);
+    if (e.key === "ArrowRight") { e.preventDefault(); tabs[(i + 1) % tabs.length].focus(); }
+    if (e.key === "ArrowLeft")  { e.preventDefault(); tabs[(i - 1 + tabs.length) % tabs.length].focus(); }
+    if (e.key === "Enter" || e.key === " ") { e.preventDefault(); selectTab(t.id); }
+  });
+});
+
+/* ══════════ 필터 ══════════ */
+const RANGES = [["7d", "최근 7일"], ["30d", "최근 30일"], ["all", "전체 기간"]];
+const KINDS = [["organic", "자발 세션"], ["observed", "관찰 세션"], ["all", "전체"]];
+const VERSIONS = [["current", "v2 (현재)"], ["all", "전체 버전"]];
+const DEFAULTS = { range: "7d", kind: "organic", version: "current" };
+
+function select(key, options) {
+  const el = document.createElement("select");
+  el.className = "ctl";
+  el.setAttribute("aria-label", { range: "기간", kind: "세션 구분", version: "계측 버전" }[key]);
+  options.forEach(([v, label]) => {
+    const o = document.createElement("option");
+    o.value = v; o.textContent = label; el.appendChild(o);
+  });
+  el.value = state[key];
+  if (state[key] !== DEFAULTS[key]) el.classList.add("on");
+  el.addEventListener("change", () => { state[key] = el.value; render(); });
+  return el;
+}
+
+function renderFilters(hostId) {
+  const host = document.getElementById(hostId);
+  host.innerHTML = "";
+  const label = document.createElement("span");
+  label.className = "flabel"; label.textContent = "필터";
+  host.appendChild(label);
+  host.appendChild(select("range", RANGES));
+  host.appendChild(select("kind", KINDS));
+  host.appendChild(select("version", VERSIONS));
+  const reset = document.createElement("button");
+  reset.className = "btn-reset"; reset.textContent = "기본값으로";
+  reset.addEventListener("click", () => { Object.assign(state, DEFAULTS); render(); });
+  host.appendChild(reset);
+  const hint = document.createElement("span");
+  hint.className = "hint"; hint.textContent = "모든 시각은 KST";
+  host.appendChild(hint);
+}
+
+/* ══════════ 개요 ══════════ */
+function renderKpi(sum) {
+  const label = KINDS.find(([v]) => v === state.kind)[1];
+  document.getElementById("scope-badge").textContent = label;
+  document.getElementById("kpi").innerHTML = `
+    <div class="tile"><div class="label">세션 수</div>
+      <div class="value hero">${sum.sessions}</div>
+      <div class="note">계정 ${sum.accounts} · 기기 ${sum.devices}</div></div>
+    <div class="tile"><div class="label">본 상품 수 (중앙값)</div>
+      <div class="value">${sum.impMedian}<span class="u">개</span></div>
+      <div class="note">사분위 ${sum.impQ1}–${sum.impQ3} · 평균 ${sum.impMean}</div></div>
+    <div class="tile"><div class="label">상세를 연 세션</div>
+      <div class="value">${sum.nDetails}<span class="u">/${sum.nImpressions}</span></div>
+      <div class="note">${pct1(sum.nDetails, sum.nImpressions)}</div></div>
+    <div class="tile"><div class="label">찜을 시도한 세션</div>
+      <div class="value">${sum.nWishes}<span class="u">/${sum.nDetails}</span></div>
+      <div class="note">${pct1(sum.nWishes, sum.nDetails)}</div></div>
+    <div class="tile"><div class="label">판매처로 나간 세션</div>
+      <div class="value">${sum.nOutbound}<span class="u">/${sum.nDetails}</span></div>
+      <div class="note">${pct1(sum.nOutbound, sum.nDetails)}</div></div>
+    <div class="tile"><div class="label">찜 저장 실패율</div>
+      <div class="value">${pct1(sum.wishFails, sum.wishTries)}</div>
+      <div class="note bad">${sum.wishFails} / ${sum.wishTries}회 시도</div></div>`;
+}
+
+function renderDaily() {
+  const host = document.getElementById("daily");
+  host.innerHTML = "";
+  document.getElementById("today-label").textContent = RAW.today;
+  const W = 560, H = 176, padL = 46, padB = 26, padT = 12;
+  const max = Math.ceil(Math.max(...RAW.daily.map((d) => d[1])) / 800) * 800 || 800;
+  const plotH = H - padB - padT, plotW = W - padL - 8;
+  const svg = mk("svg", { viewBox: `0 0 ${W} ${H}`, width: "100%", height: H });
+  for (let v = 0; v <= max; v += max / 3) {
+    const y = padT + plotH - (v / max) * plotH;
+    svg.appendChild(mk("line", { x1: padL, x2: W - 8, y1: y, y2: y, stroke: v === 0 ? "var(--baseline)" : "var(--grid)" }));
+    const t = mk("text", { x: padL - 8, y: y + 4, "text-anchor": "end", class: "axis-label" });
+    t.textContent = fmt(Math.round(v)); svg.appendChild(t);
+  }
+  const step = plotW / RAW.daily.length, bw = Math.min(46, step - 10);
+  RAW.daily.forEach(([d, v], i) => {
     const x = padL + i * step + (step - bw) / 2, base = padT + plotH;
+    const isToday = d === RAW.today;
     if (v > 0) {
       const h = (v / max) * plotH, y = base - h;
-      const r = mk('path', { d: 'M' + x + ',' + base + ' L' + x + ',' + (y + 4) + ' Q' + x + ',' + y + ' ' + (x + 4) + ',' + y +
-        ' L' + (x + bw - 4) + ',' + y + ' Q' + (x + bw) + ',' + y + ' ' + (x + bw) + ',' + (y + 4) + ' L' + (x + bw) + ',' + base + ' Z',
-        fill: 'var(--series)' });
-      bindTip(r, d + ' — ' + fmt(v) + '건'); svg.appendChild(r);
+      const r = mk("path", {
+        d: `M${x},${base} L${x},${y + 4} Q${x},${y} ${x + 4},${y} L${x + bw - 4},${y} Q${x + bw},${y} ${x + bw},${y + 4} L${x + bw},${base} Z`,
+        fill: "var(--series)", "fill-opacity": isToday ? 0.55 : 1,
+      });
+      bindTip(r, `${d} — ${fmt(v)}건`, isToday ? "오늘 00:00부터 지금까지 (진행 중)" : "");
+      svg.appendChild(r);
     } else {
-      const r = mk('rect', { x: x, y: base - 3, width: bw, height: 3, fill: 'var(--critical)' });
-      bindTip(r, d + ' — 0건', '들어온 기록이 없다'); svg.appendChild(r);
-      const l = mk('text', { x: x + bw / 2, y: base - 10, 'text-anchor': 'middle', class: 'val-label', fill: 'var(--critical)' });
-      l.textContent = '0'; svg.appendChild(l);
+      const r = mk("rect", { x, y: base - 3, width: bw, height: 3, fill: "var(--muted)" });
+      bindTip(r, `${d} — 0건`, "그날 활동이 없었다 (계측 상태는 위 카드에서 본다)");
+      svg.appendChild(r);
+      const l = mk("text", { x: x + bw / 2, y: base - 10, "text-anchor": "middle", class: "val-label" });
+      l.textContent = "0"; svg.appendChild(l);
     }
-    const t = mk('text', { x: x + bw / 2, y: H - 8, 'text-anchor': 'middle', class: 'axis-label' });
+    const t = mk("text", { x: x + bw / 2, y: H - 8, "text-anchor": "middle", class: "axis-label" });
     t.textContent = d.slice(3); svg.appendChild(t);
   });
-  document.getElementById('daily').appendChild(svg);
-  tableFrom('daily-table', ['날짜(KST)', '이벤트'], daily.map(([d, v]) => [d, fmt(v)]));
-})();
+  host.appendChild(svg);
+  tableFrom("daily-table", ["날짜(KST)", "이벤트"],
+    RAW.daily.map(([d, v]) => [d + (d === RAW.today ? " (진행 중)" : ""), fmt(v)]));
+}
 
-/* ── 2. 점 분포 + 사분위 ── */
-const strip = [8,11,12,14,15,17,18,19,21,22,23,24,25,25,26,26,27,28,29,31,33,35,36,38,41,44,47,52,58,63,71,88,104,210];
-(function () {
-  const W = 880, H = 96, padL = 8, padR = 8, padT = 26, max = 220;
-  const plotW = W - padL - padR, X = v => padL + (v / max) * plotW;
-  const svg = mk('svg', { viewBox: '0 0 ' + W + ' ' + H, width: '100%', height: H });
+function renderFlow(sum) {
+  const host = document.getElementById("flow");
+  host.innerHTML = "";
+  const row = (name, n, denom, color, note) => {
+    const el = document.createElement("div");
+    el.className = "hrow";
+    const width = denom === 0 ? 0 : (100 * n) / denom;
+    el.innerHTML =
+      `<div class="name">${name}</div>` +
+      `<div class="track"><div class="bar" style="width:${width}%;background:${color}"></div></div>` +
+      `<div class="num">${n}<em> 세션${denom === n ? "" : " · " + pct1(n, denom)}</em></div>`;
+    bindTip(el.querySelector(".bar"), `${name} ${n}개`, note);
+    host.appendChild(el);
+    return el;
+  };
+  row("노출이 있는 세션", sum.nImpressions, sum.nImpressions, "var(--ord-1)", "분모");
+  row("상세를 연 세션", sum.nDetails, sum.nImpressions, "var(--ord-2)", `노출이 있는 세션 ${sum.nImpressions}개 기준`);
+  const branch = document.createElement("div");
+  branch.className = "branch";
+  branch.innerHTML = `<p class="branch-note">↳ 여기서 <b style="color:var(--ink-2)">갈라진다</b>. 아래 둘의 분모는 <b style="color:var(--ink-2)">상세를 연 세션 ${sum.nDetails}개</b>다.</p>`;
+  host.appendChild(branch);
+  const hostSave = host.appendChild.bind(host);
+  [["찜을 시도한 세션", sum.nWishes, "var(--ord-3)"], ["판매처로 나간 세션", sum.nOutbound, "var(--ord-4)"]]
+    .forEach(([name, n, color]) => {
+      const el = row(name, n, sum.nDetails, color, `상세를 연 세션 ${sum.nDetails}개 기준`);
+      branch.appendChild(el);
+    });
+  void hostSave;
+  tableFrom("flow-table", ["단계", "세션", "분모", "세션률"], [
+    ["노출이 있는 세션", sum.nImpressions, "—", "—"],
+    ["상세를 연 세션", sum.nDetails, `노출이 있는 세션 ${sum.nImpressions}`, pct1(sum.nDetails, sum.nImpressions)],
+    ["찜을 시도한 세션", sum.nWishes, `상세를 연 세션 ${sum.nDetails}`, pct1(sum.nWishes, sum.nDetails)],
+    ["판매처로 나간 세션", sum.nOutbound, `상세를 연 세션 ${sum.nDetails}`, pct1(sum.nOutbound, sum.nDetails)],
+  ]);
+}
+
+function renderStrip(sum) {
+  const host = document.getElementById("strip");
+  host.innerHTML = "";
+  const values = sum.impressions;
+  const W = 560, H = 104, padL = 10, padR = 10, padT = 30;
+  const max = Math.ceil(Math.max(...values) / 50) * 50 || 50;
+  const plotW = W - padL - padR, X = (v) => padL + (v / max) * plotW;
+  const svg = mk("svg", { viewBox: `0 0 ${W} ${H}`, width: "100%", height: H });
   const yb = padT + 28;
-  const q1 = 18, q3 = 41, med = 26, avg = 41.2;
-  const box = mk('rect', { x: X(q1), y: padT - 6, width: X(q3) - X(q1), height: yb - padT + 6,
-    fill: 'var(--series)', 'fill-opacity': 0.10, rx: 3 });
-  bindTip(box, '사분위 범위 18–41개', '세션의 가운데 절반이 여기 모여 있다'); svg.appendChild(box);
-  svg.appendChild(mk('line', { x1: padL, x2: W - padR, y1: yb, y2: yb, stroke: 'var(--baseline)' }));
-  [0, 50, 100, 150, 200].forEach(v => {
-    svg.appendChild(mk('line', { x1: X(v), x2: X(v), y1: yb, y2: yb + 5, stroke: 'var(--baseline)' }));
-    const t = mk('text', { x: X(v), y: yb + 19, 'text-anchor': 'middle', class: 'axis-label' });
-    t.textContent = v; svg.appendChild(t);
-  });
-  svg.appendChild(mk('line', { x1: X(med), x2: X(med), y1: padT - 12, y2: yb, stroke: 'var(--ink-2)' }));
-  const ml = mk('text', { x: X(med) + 6, y: padT - 14, class: 'val-label' }); ml.textContent = '중앙값 26'; svg.appendChild(ml);
-  svg.appendChild(mk('line', { x1: X(avg), x2: X(avg), y1: padT - 2, y2: yb, stroke: 'var(--muted)', 'stroke-dasharray': '1 3' }));
-  const al = mk('text', { x: X(avg) + 6, y: padT + 2, class: 'axis-label' }); al.textContent = '평균 41.2 (참고값)'; svg.appendChild(al);
-  strip.forEach((v, i) => {
-    const c = mk('circle', { cx: X(v), cy: yb - 13, r: 5,
-      fill: v === 210 ? 'var(--warning)' : 'var(--series)', 'fill-opacity': .85,
-      stroke: 'var(--surface)', 'stroke-width': 2 });
-    bindTip(c, '세션 ' + (i + 1) + ' — 본 상품 ' + v + '개',
-      v === 210 ? '이 한 점이 평균을 26 → 41.2로 밀어 올린다' : '');
+  const box = mk("rect", { x: X(sum.impQ1), y: padT - 8, width: X(sum.impQ3) - X(sum.impQ1),
+    height: yb - padT + 8, fill: "var(--series)", "fill-opacity": 0.12, rx: 3 });
+  bindTip(box, `사분위 범위 ${sum.impQ1}–${sum.impQ3}개`, "세션의 가운데 절반이 여기 모여 있다");
+  svg.appendChild(box);
+  svg.appendChild(mk("line", { x1: padL, x2: W - padR, y1: yb, y2: yb, stroke: "var(--baseline)" }));
+  for (let v = 0; v <= max; v += max / 4) {
+    svg.appendChild(mk("line", { x1: X(v), x2: X(v), y1: yb, y2: yb + 5, stroke: "var(--baseline)" }));
+    const t = mk("text", { x: X(v), y: yb + 19, "text-anchor": "middle", class: "axis-label" });
+    t.textContent = Math.round(v); svg.appendChild(t);
+  }
+  svg.appendChild(mk("line", { x1: X(sum.impMedian), x2: X(sum.impMedian), y1: padT - 14, y2: yb, stroke: "var(--ink-2)" }));
+  const ml = mk("text", { x: X(sum.impMedian) + 6, y: padT - 16, class: "val-label" });
+  ml.textContent = `중앙값 ${sum.impMedian}`; svg.appendChild(ml);
+  svg.appendChild(mk("line", { x1: X(sum.impMean), x2: X(sum.impMean), y1: padT - 2, y2: yb,
+    stroke: "var(--muted)", "stroke-dasharray": "1 3" }));
+  const al = mk("text", { x: X(sum.impMean) + 6, y: padT + 2, class: "axis-label" });
+  al.textContent = `평균 ${sum.impMean} (참고값)`; svg.appendChild(al);
+  const top = Math.max(...values);
+  values.forEach((v, i) => {
+    const c = mk("circle", { cx: X(v), cy: yb - 13, r: 5,
+      fill: v === top ? "var(--warning)" : "var(--series)", "fill-opacity": 0.85,
+      stroke: "var(--surface)", "stroke-width": 2 });
+    bindTip(c, `세션 ${i + 1} — 본 상품 ${v}개`, v === top ? "이 표본의 최댓값" : "");
     svg.appendChild(c);
   });
-  document.getElementById('strip').appendChild(svg);
-  tableFrom('strip-table', ['통계', '값'],
-    [['세션 수','34'],['최솟값','8개'],['1사분위','18개'],['중앙값','26개'],['3사분위','41개'],['평균(참고값)','41.2개'],['최댓값','210개']]);
-})();
+  host.appendChild(svg);
 
-/* ── 5. 습관 격자 ── */
-const habit = [
-  ['P1 김민수', [3, 2, 2]],
-  ['P2 이지은', [2, 1, 2]],
-  ['P3 박현우', [2, 0, 0]],
-  ['P4 최서연', [1, 1, 0]],
-  ['P5 정도윤', [0, 0, 0]],
-  ['P6 강예린', [4, 3, 5]],
-  ['P7 윤태호', [2, 2, 1]],
-  ['P8 임하늘', [1, 0, 1]],
-];
-(function () {
-  const step = (d) => d === 0 ? null : d === 1 ? 'var(--ord-4)' : d === 2 ? 'var(--ord-3)' : d <= 4 ? 'var(--ord-2)' : 'var(--ord-1)';
-  const stage = (w) => { const n = w.filter(d => d >= 2).length;
-    return n >= 3 ? '③ 강화' : n === 2 ? '② 형성 중' : n === 1 ? '① 시작' : '—'; };
-  const cell = 46, gap = 3, padL = 104, padT = 24, cols = 3;
-  const W = padL + cols * (cell + gap) + 90, H = padT + habit.length * (cell + gap) + 4;
-  const svg = mk('svg', { viewBox: '0 0 ' + W + ' ' + H, width: '100%', height: 'auto', style: 'max-width:' + W + 'px' });
-  ['1주차', '2주차', '3주차'].forEach((w, j) => {
-    const t = mk('text', { x: padL + j * (cell + gap) + cell / 2, y: padT - 8, 'text-anchor': 'middle', class: 'axis-label' });
+  // 이상치 설명도 계산해서 쓴다 — 손으로 적으면 원본과 어긋난다
+  const without = values.filter((v) => v !== top);
+  const meanWithout = round2(without.reduce((a, b) => a + b, 0) / (without.length || 1));
+  document.getElementById("strip-note").innerHTML =
+    `큰 숫자는 <b>중앙값</b>이고 평균은 참고값이다. 가장 큰 세션(${top}개)을 빼면 ` +
+    `평균이 <b>${sum.impMean} → ${meanWithout}</b>으로 내려간다 — ` +
+    `표본이 ${values.length}개뿐이라 <b>평균은 한 세션이 흔든다.</b>`;
+
+  tableFrom("strip-table", ["통계", "값"], [
+    ["세션 수", String(sum.sessions)],
+    ["최솟값", Math.min(...values) + "개"],
+    ["1사분위", sum.impQ1 + "개"],
+    ["중앙값", sum.impMedian + "개"],
+    ["3사분위", sum.impQ3 + "개"],
+    ["평균 (참고값)", sum.impMean + "개"],
+    ["최댓값", top + "개"],
+  ]);
+}
+
+function renderBuckets() {
+  const host = document.getElementById("bucket");
+  host.innerHTML = "";
+  const rows = [...RAW.buckets]
+    .map((b) => ({ ...b, rate: (100 * b.opened) / b.shown }))
+    .sort((a, b) => b.rate - a.rate);
+  const max = Math.ceil(Math.max(...rows.map((r) => r.rate)) / 5) * 5;
+  rows.forEach((b) => {
+    const el = document.createElement("div");
+    el.className = "hrow";
+    el.innerHTML =
+      `<div class="name">${b.name}</div>` +
+      `<div class="track"><div class="bar" style="width:${(b.rate / max) * 100}%;background:var(--series)"></div></div>` +
+      `<div class="num">${b.rate.toFixed(1)}%<em> · ${b.opened}/${b.shown}</em></div>`;
+    bindTip(el.querySelector(".bar"), `${b.name} — ${b.rate.toFixed(1)}%`,
+      `상세를 연 쌍 ${b.opened} ÷ 노출된 쌍 ${b.shown}`);
+    host.appendChild(el);
+  });
+  tableFrom("bucket-table", ["추천 유형", "노출된 (상품,세션) 쌍", "상세를 연 쌍", "비율"],
+    rows.map((b) => [b.name, String(b.shown), String(b.opened), b.rate.toFixed(1) + "%"]));
+}
+
+/* ══════════ 세션 목록 ══════════ */
+function renderSessions() {
+  const rows = scoped();
+  const maxImp = Math.max(...rows.map((s) => s.impressions), 1);
+  const maxDet = Math.max(...rows.map((s) => s.details), 1);
+  const bar = (v, max) => `<span class="cellbar" style="width:${Math.max(3, (v / max) * 46)}px"></span>`;
+  tableFrom("sessions",
+    ["계정", "기기", "구분", "시작(KST)", "길이(자리 비운 시간 포함)", "본 상품(개)", "상세(개)", "찜 시도(회)", "찜 실패(회)", "아웃바운드(회)"],
+    rows.map((s) => [
+      s.acct ? `<span class="id">acct_${s.acct.slice(0, 4)}…</span>` : '<span class="none">비회원</span>',
+      `<span class="id">dev_${s.dev.slice(0, 4)}…</span>`,
+      `<span class="pill${s.kind === "observed" ? " obs" : ""}">${s.kind === "observed" ? "관찰" : "자발"}</span>`,
+      s.start, s.len,
+      s.impressions + bar(s.impressions, maxImp),
+      s.details + bar(s.details, maxDet),
+      String(s.wishes), String(s.wishFails), String(s.outbound),
+    ]));
+}
+
+/* ══════════ 습관 ══════════ */
+function renderHabit() {
+  const host = document.getElementById("habit");
+  host.innerHTML = "";
+  const step = (d) => (d === 0 ? null : d === 1 ? "var(--ord-4)" : d === 2 ? "var(--ord-3)" : d <= 4 ? "var(--ord-2)" : "var(--ord-1)");
+  const stage = (w) => { const n = w.filter((d) => d >= 2).length;
+    return n >= 3 ? "③ 강화" : n === 2 ? "② 형성 중" : n === 1 ? "① 시작" : "—"; };
+  const cell = 46, gap = 3, padL = 62, padT = 24, cols = 3;
+  const W = padL + cols * (cell + gap) + 92, H = padT + RAW.habit.length * (cell + gap) + 4;
+  const svg = mk("svg", { viewBox: `0 0 ${W} ${H}`, width: W, height: H, style: `max-width:${W}px` });
+  ["1주차", "2주차", "3주차"].forEach((w, j) => {
+    const t = mk("text", { x: padL + j * (cell + gap) + cell / 2, y: padT - 8, "text-anchor": "middle", class: "axis-label" });
     t.textContent = w; svg.appendChild(t);
   });
-  const sh = mk('text', { x: padL + cols * (cell + gap) + 10, y: padT - 8, class: 'axis-label' });
-  sh.textContent = '단계'; svg.appendChild(sh);
-  habit.forEach(([name, weeks], i) => {
+  const sh = mk("text", { x: padL + cols * (cell + gap) + 10, y: padT - 8, class: "axis-label" });
+  sh.textContent = "단계"; svg.appendChild(sh);
+  RAW.habit.forEach((p, i) => {
     const y = padT + i * (cell + gap);
-    const nm = mk('text', { x: padL - 12, y: y + cell / 2 + 4, 'text-anchor': 'end', class: 'axis-label' });
-    nm.textContent = name; svg.appendChild(nm);
-    weeks.forEach((d, j) => {
+    const nm = mk("text", { x: padL - 12, y: y + cell / 2 + 4, "text-anchor": "end", class: "axis-label" });
+    nm.textContent = p.id; svg.appendChild(nm);
+    p.weeks.forEach((d, j) => {
       const x = padL + j * (cell + gap), c = step(d);
-      const r = mk('rect', { x: x, y: y, width: cell, height: cell, rx: 4,
-        fill: c ?? 'transparent',
-        stroke: d >= 2 ? 'var(--ink)' : (c ? 'none' : 'var(--grid)'),
-        'stroke-width': d >= 2 ? 1.5 : 1 });
-      bindTip(r, name + ' · ' + (j + 1) + '주차 — 유효 탐색 ' + d + '일',
-        d >= 2 ? '판정선(주 2일) 통과' : d === 0 ? '방문 없음' : '판정선 미달');
+      const r = mk("rect", { x, y, width: cell, height: cell, rx: 4,
+        fill: c ?? "transparent",
+        stroke: d >= 2 ? "var(--ink)" : c ? "none" : "var(--grid)",
+        "stroke-width": d >= 2 ? 1.5 : 1 });
+      bindTip(r, `${p.id} · ${j + 1}주차 — 유효 탐색 ${d}일`,
+        d >= 2 ? "판정선(주 2일) 통과" : d === 0 ? "방문 없음" : "판정선 미달");
       svg.appendChild(r);
-      const t = mk('text', { x: x + cell / 2, y: y + cell / 2 + 5, 'text-anchor': 'middle',
-        class: 'val-label', fill: d >= 3 ? '#0a0a0a' : 'var(--ink)' });
+      const t = mk("text", { x: x + cell / 2, y: y + cell / 2 + 5, "text-anchor": "middle",
+        class: "val-label", fill: d >= 3 ? "#0a0a0a" : "var(--ink)" });
       t.textContent = d; svg.appendChild(t);
     });
-    const st = mk('text', { x: padL + cols * (cell + gap) + 10, y: y + cell / 2 + 4, class: 'val-label',
-      fill: stage(weeks) === '—' ? 'var(--muted)' : 'var(--ink-2)' });
-    st.textContent = stage(weeks); svg.appendChild(st);
+    const st = mk("text", { x: padL + cols * (cell + gap) + 10, y: y + cell / 2 + 4, class: "val-label",
+      fill: stage(p.weeks) === "—" ? "var(--muted)" : "var(--ink-2)" });
+    st.textContent = stage(p.weeks); svg.appendChild(st);
   });
-  document.getElementById('habit').appendChild(svg);
-  tableFrom('habit-table', ['참가자', '1주차', '2주차', '3주차', '주 2일 이상인 주', '단계'],
-    habit.map(([n, w]) => [n, ...w.map(d => d + '일'), String(w.filter(d => d >= 2).length), stage(w)]));
-})();
+  host.appendChild(svg);
+  document.getElementById("habit-legend").innerHTML =
+    `<span>0일 <i style="background:transparent;border:1px solid var(--grid)"></i></span>` +
+    `<span><i style="background:var(--ord-4)"></i> 1일</span>` +
+    `<span><i style="background:var(--ord-3)"></i> 2일</span>` +
+    `<span><i style="background:var(--ord-2)"></i> 3–4일</span>` +
+    `<span><i style="background:var(--ord-1)"></i> 5일+</span>` +
+    `<span style="margin-left:auto">테두리 = 판정선(주 2일) 통과</span>`;
+  tableFrom("habit-table", ["참가자", "1주차", "2주차", "3주차", "주 2일 이상인 주", "단계"],
+    RAW.habit.map((p) => [p.id, ...p.weeks.map((d) => d + "일"), String(p.weeks.filter((d) => d >= 2).length), stage(p.weeks)]));
+}
 
-/* ── 6. 추천 유형별 ── */
-const buckets = [['장기 취향',18.2,246],['현재 관심',15.4,311],['유사',12.9,178],['부분 일치',9.8,264],['다양성',7.1,205],['반대 제안',4.3,198]];
-(function () {
-  const host = document.getElementById('bucket'), max = 20;
-  buckets.forEach(([name, pct, n]) => {
-    const row = document.createElement('div'); row.className = 'hrow';
-    row.innerHTML = '<div class="name">' + name + '</div>' +
-      '<div class="track"><div class="bar" style="width:' + (pct / max * 100) + '%;background:var(--series)"></div></div>' +
-      '<div class="num">' + pct.toFixed(1) + '%<em> · 노출 ' + n + '개</em></div>';
-    host.appendChild(row);
-    bindTip(row.querySelector('.bar'), name + ' — 상세 열기율 ' + pct.toFixed(1) + '%', '노출 ' + n + '개 기준');
+/* ══════════ 원본 ══════════ */
+function renderRaw() {
+  tableFrom("raw",
+    ["발생(KST)", "발생 시점 상태", "계정", "기기", "세션", "이벤트", "상품", "추천 유형", "구분"],
+    RAW.raw.map((r) => [
+      r[0], r[1],
+      r[2] ? `<span class="id">acct_${r[2].slice(0, 4)}…</span>` : '<span class="none">—</span>',
+      `<span class="id">dev_${r[3].slice(0, 4)}…</span>`,
+      `<span class="id">${r[4].slice(0, 6)}…</span>`,
+      r[5], r[6] ?? "—", r[7] ?? "—",
+      `<span class="pill">${r[8] === "observed" ? "관찰" : "자발"}</span>`,
+    ]));
+}
+
+/* ══════════ 가로 스크롤 단서 ══════════ */
+function markScrollHints() {
+  document.querySelectorAll(".scroll").forEach((box) => {
+    const hint = box.parentElement.querySelector(".scroll-hint");
+    if (!hint) return;
+    hint.classList.toggle("show", box.scrollWidth > box.clientWidth + 4);
   });
-  tableFrom('bucket-table', ['추천 유형', '노출(개)', '상세 열기율'],
-    buckets.map(([n, p, c]) => [n, String(c), p.toFixed(1) + '%']));
-})();
+}
+window.addEventListener("resize", markScrollHints);
 
-/* ── 4. 세션 목록 ── */
-const sessions = [
-  ['ka***@naver.com','3f2a8c1e','organic','08-21 21:14','0:18:42',210,12,3,2],
-  ['—',              'c7e12a55','organic','08-21 20:02','0:06:11', 34, 5,0,0],
-  ['ji***@gmail.com','91bd004f','observed','08-21 13:47','0:41:09',26, 4,2,1],
-  ['—',              '7b20ef58','organic','08-20 23:31','0:03:55', 11, 1,0,0],
-  ['ka***@naver.com','3f2a8c1e','organic','08-20 09:12','0:12:20', 47, 8,2,1],
-  ['—',              'ac33b1d0','organic','08-19 22:58','0:01:04',  8, 0,0,0],
-];
-(function () {
-  const cols = ['계정','기기','구분','시작(KST)','길이(자리 비운 시간 포함)','본 상품(개)','상세(개)','찜 시도(회)','아웃바운드(회)'];
-  const rows = sessions.map(r => r.map((c, i) => {
-    if (i === 0) return c === '—' ? '<span class="none">비회원</span>' : c;
-    if (i === 2) return '<span class="pill' + (c === 'observed' ? ' obs' : '') + '">' + (c === 'observed' ? '관찰' : '자발') + '</span>';
-    if (i === 5) return c + '<span class="cellbar" style="width:' + Math.max(3, (c / 210) * 46) + 'px"></span>';
-    if (i === 6) return c + '<span class="cellbar" style="width:' + Math.max(3, (c / 12) * 46) + 'px"></span>';
-    return String(c);
-  }));
-  tableFrom('sessions', cols, rows);
-})();
-
-/* ── 7. 원본 이벤트 ── */
-const raws = [
-  ['08-21 21:32:11','회원','ka***','3f2a8c1e','a91c04d2','outbound','1120448','longterm','organic'],
-  ['08-21 21:31:58','회원','ka***','3f2a8c1e','a91c04d2','wish','1120448','longterm','organic'],
-  ['08-21 21:31:58','회원','ka***','3f2a8c1e','a91c04d2','wish_failed','1120448','longterm','organic'],
-  ['08-21 21:31:40','회원','ka***','3f2a8c1e','a91c04d2','tap','1120448','longterm','organic'],
-  ['08-21 20:04:02','비회원','—','c7e12a55','7710bb03','login_prompt_shown','—','—','organic'],
-  ['08-21 20:03:55','비회원','—','c7e12a55','7710bb03','tap','3390812','opposite','organic'],
-  ['08-21 20:03:54','비회원','—','c7e12a55','7710bb03','impression','3390812','opposite','organic'],
-];
-tableFrom('raw', ['발생(KST)','발생 시점 상태','계정','기기','세션','이벤트','상품','추천 유형','구분'], raws);
+/* ══════════ 렌더 ══════════ */
+function render() {
+  ["f-overview", "f-sessions", "f-raw"].forEach(renderFilters);
+  const sum = summarize(scoped());
+  renderKpi(sum);
+  renderDaily();
+  renderFlow(sum);
+  renderStrip(sum);
+  renderBuckets();
+  renderSessions();
+  renderHabit();
+  renderRaw();
+  requestAnimationFrame(markScrollHints);
+}
+render();
 </script>
 </body>
 </html>
