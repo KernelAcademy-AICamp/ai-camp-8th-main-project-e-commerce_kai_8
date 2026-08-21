@@ -1,7 +1,7 @@
 // @vitest-environment jsdom
-import { render, waitFor } from "@testing-library/react";
+import { cleanup, render, waitFor } from "@testing-library/react";
 import { createElement } from "react";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { fetchFeedPage } from "@/features/feed/data/feed-api";
 import { fetchMixPage } from "@/features/feed/data/mix-api";
@@ -12,6 +12,7 @@ import {
   type FeedOptions,
   useFeedViewModel,
 } from "@/features/feed/presentation/view-model/use-feed-view-model";
+import { clearGenderSetting, setGenderSetting } from "@/shared/gender/gender-setting";
 import type { ProfileSummary } from "@/shared/profile/profile-store";
 import { getFeedProfileSummary } from "@/shared/signals/signals";
 
@@ -62,8 +63,15 @@ const fetchMixPageMock = vi.mocked(fetchMixPage);
 const fetchSimilarPageMock = vi.mocked(fetchSimilarPage);
 const getFeedProfileSummaryMock = vi.mocked(getFeedProfileSummary);
 
+afterEach(cleanup);
+
 beforeEach(() => {
   vi.stubGlobal("IntersectionObserver", ObserverStub);
+  // 성별이 정해져 있어야 훅이 요청을 보낸다 — 미확정이면 멈춰 있는 것이 계약이다.
+  // 그 계약 자체는 아래 "성별 미확정" describe에서 따로 검증한다.
+  localStorage.clear();
+  clearGenderSetting();
+  setGenderSetting("여성");
   fetchFeedPageMock.mockReset();
   fetchMixPageMock.mockReset();
   fetchSimilarPageMock.mockReset();
@@ -94,7 +102,7 @@ describe("useFeedViewModel", () => {
     fetchFeedPageMock.mockResolvedValue([]);
     renderFeedViewModel();
     await waitFor(() => {
-      expect(fetchFeedPageMock).toHaveBeenCalledWith(1000, null, 30, null);
+      expect(fetchFeedPageMock).toHaveBeenCalledWith(1000, null, 30, "여성");
     });
   });
 
@@ -105,7 +113,7 @@ describe("useFeedViewModel", () => {
       .mockResolvedValue([]);
     const { result } = renderFeedViewModel({ exploreFrom: 7, similarFirst: true });
     await waitFor(() => {
-      expect(fetchSimilarPageMock).toHaveBeenCalledWith(7, 16);
+      expect(fetchSimilarPageMock).toHaveBeenCalledWith(7, 16, "여성");
     });
     // 이어지는 무작위 페이지는 커서 처음(null)부터, 이미 보인 22는 중복 제거
     await waitFor(() => {
@@ -113,7 +121,7 @@ describe("useFeedViewModel", () => {
         deriveSeed(1000, 7),
         null,
         30,
-        null,
+        "여성",
       );
       const goodsNos = result.current.columns
         .flat()
@@ -145,7 +153,7 @@ describe("useFeedViewModel", () => {
         deriveSeed(1000, 7),
         null,
         30,
-        null,
+        "여성",
       );
     });
     await waitFor(() => {
@@ -168,8 +176,11 @@ describe("useFeedViewModel — 우세 성별 하드 필터 (설계: 성별 피�
     ...overrides,
   });
 
-  it("개인화 요청에 우세 성별을 함께 보낸다", async () => {
-    getFeedProfileSummaryMock.mockReturnValue(summary({ gender: "남성" }));
+  it("개인화 요청에 **설정** 성별을 보낸다 — 프로필의 옛 판정이 아니라", async () => {
+    // #63은 행동으로 성별을 추론했다. 이제 진실은 사람이 고른 설정 하나다.
+    // 프로필에 반대 성별이 남아 있어도 설정이 이겨야 한다.
+    setGenderSetting("남성");
+    getFeedProfileSummaryMock.mockReturnValue(summary({ gender: "여성" }));
     fetchMixPageMock.mockResolvedValue([]);
     renderFeedViewModel();
     await waitFor(() => {
@@ -179,8 +190,8 @@ describe("useFeedViewModel — 우세 성별 하드 필터 (설계: 성별 피�
     });
   });
 
-  it("개인화 실패 시 폴백 요청에도 같은 우세 성별이 실린다 — 핵심 요구사항", async () => {
-    getFeedProfileSummaryMock.mockReturnValue(summary({ gender: "여성" }));
+  it("개인화 실패 시 폴백 요청에도 같은 설정 성별이 실린다", async () => {
+    setGenderSetting("여성");
     fetchMixPageMock.mockRejectedValue(new Error("RPC 오류"));
     fetchFeedPageMock.mockResolvedValue([]);
     renderFeedViewModel();
@@ -189,23 +200,22 @@ describe("useFeedViewModel — 우세 성별 하드 필터 (설계: 성별 피�
     });
   });
 
-  it("앵커가 없는 콜드스타트(요약은 있으나 gender=null)는 성별 없이 무작위 요청한다", async () => {
+  it("앵커가 없는 콜드스타트도 설정 성별로 무작위 요청한다", async () => {
+    // 예전에는 여기서 성별 없이(널) 나갔다 — 첫 페이지에 반대 성별이 섞이던 자리다.
+    setGenderSetting("남성");
     getFeedProfileSummaryMock.mockReturnValue(
-      summary({ longAnchors: [], sessionAnchors: [], gender: null }),
+      summary({ longAnchors: [], sessionAnchors: [] }),
     );
     fetchFeedPageMock.mockResolvedValue([]);
     renderFeedViewModel();
     await waitFor(() => {
       expect(fetchMixPageMock).not.toHaveBeenCalled();
-      expect(fetchFeedPageMock).toHaveBeenCalledWith(1000, null, 30, null);
+      expect(fetchFeedPageMock).toHaveBeenCalledWith(1000, null, 30, "남성");
     });
   });
 
-  it("explore 이어받기(2페이지 이후)에도 우세 성별이 실린다 — 회귀", async () => {
-    // 결함: 예전엔 explore 모드의 무작위 이어받기가 인자 없이 loadRandom을
-    // 호출해 gender가 항상 null이었다 (상세 하단 탐색 2페이지부터 반대
-    // 성별이 샜다).
-    getFeedProfileSummaryMock.mockReturnValue(summary({ gender: "남성" }));
+  it("explore 이어받기(2페이지 이후)에도 설정 성별이 실린다 — 회귀", async () => {
+    setGenderSetting("남성");
     fetchFeedPageMock.mockResolvedValue([]);
     renderFeedViewModel({ exploreFrom: 7 });
     await waitFor(() => {
@@ -218,20 +228,45 @@ describe("useFeedViewModel — 우세 성별 하드 필터 (설계: 성별 피�
     });
   });
 
-  it("유사 상품 0건 폴백에도 우세 성별이 실린다 — 회귀", async () => {
-    // 결함: loadSimilarFirst 내부의 0건 폴백도 인자 없이 loadRandom을
-    // 호출해 gender가 항상 null이었다.
-    getFeedProfileSummaryMock.mockReturnValue(summary({ gender: "여성" }));
+  it("유사 첫 요청과 0건 폴백 모두에 설정 성별이 실린다 — 회귀", async () => {
+    setGenderSetting("여성");
     fetchSimilarPageMock.mockResolvedValue([]);
     fetchFeedPageMock.mockResolvedValue([]);
     renderFeedViewModel({ exploreFrom: 7, similarFirst: true });
     await waitFor(() => {
+      expect(fetchSimilarPageMock).toHaveBeenCalledWith(7, 16, "여성");
       expect(fetchFeedPageMock).toHaveBeenCalledWith(
         deriveSeed(1000, 7),
         null,
         30,
         "여성",
       );
+    });
+  });
+});
+
+describe("성별 미확정 (계획 2단계 — 고르기 전에는 아무 요청도 안 나간다)", () => {
+  it("성별이 없으면 첫 페이지를 부르지 않는다", async () => {
+    clearGenderSetting();
+    localStorage.clear();
+    renderFeedViewModel();
+    // 마운트 즉시 도는 로드가 있으므로, 잠깐 기다렸다가 호출이 없음을 본다
+    await new Promise((r) => setTimeout(r, 30));
+    expect(fetchFeedPageMock).not.toHaveBeenCalled();
+    expect(fetchMixPageMock).not.toHaveBeenCalled();
+  });
+
+  it("성별이 정해지면 그때 첫 페이지를 부른다", async () => {
+    clearGenderSetting();
+    localStorage.clear();
+    fetchFeedPageMock.mockResolvedValue([product(1)]);
+    renderFeedViewModel();
+    await new Promise((r) => setTimeout(r, 30));
+    expect(fetchFeedPageMock).not.toHaveBeenCalled();
+
+    setGenderSetting("남성");
+    await waitFor(() => {
+      expect(fetchFeedPageMock).toHaveBeenCalledWith(1000, null, 30, "남성");
     });
   });
 });

@@ -16,7 +16,8 @@ import type {
   FeedCardViewData,
   ImpressionDomInfo,
 } from "@/features/feed/presentation/view-model/card-view-data";
-import type { DominantGender } from "@/shared/profile/profile-rules";
+import type { GenderChoice } from "@/shared/gender/gender-setting";
+import { useGenderSetting } from "@/shared/gender/use-gender-setting";
 import type { ProfileSummary } from "@/shared/profile/profile-store";
 import { nearestScrollRoot } from "@/shared/scroll/nearest-scroll-root";
 import { getFeedProfileSummary, logImpression } from "@/shared/signals/signals";
@@ -63,7 +64,11 @@ export interface FeedOptions {
 
 export function useFeedViewModel(options?: FeedOptions) {
   const exploreFrom = options?.exploreFrom;
-  const paused = options?.paused === true;
+  // **성별이 정해지기 전에는 어떤 요청도 내보내지 않는다.** 호출부(메인 피드·검색 대체
+  // 피드·상세 하단 유사)마다 일시정지 조건이 달라, 각자 앞에 붙이게 하면 한 곳을
+  // 빠뜨리는 순간 선택 전에 요청이 새어 나간다. 그래서 훅 안에서 막는다 (계획 2단계).
+  const gender = useGenderSetting();
+  const paused = options?.paused === true || gender === null;
   const surface = options?.surface;
   // 콜백(loadMore·onImpress)이 호출 시점의 최신 값을 보게 ref로 미러링
   const pausedRef = useRef(paused);
@@ -99,16 +104,19 @@ export function useFeedViewModel(options?: FeedOptions) {
 
   const loadMore = useCallback(() => {
     if (pausedRef.current || loadingRef.current || exhaustedRef.current) return;
+    // 미확정이면 보내지 않는다. 위 paused와 같은 이유이고, 여기서 한 번 더 좁혀야
+    // 아래에서 성별이 반드시 있는 값이 된다.
+    if (gender === null) return;
     loadingRef.current = true;
 
-    // 요청 시점 프로필 요약을 한 번만 읽는다(비회원이면 null) — 메인 피드
-    // 개인화 판단과 무작위 경로 성별 필터가 같은 값을 보게 한다. 요약이
-    // 있으면(회원) 그 우세 성별을, 없으면(비회원·콜드스타트) null을 모든
-    // loadRandom 호출(메인·폴백·explore 이어받기·유사 0건 폴백)에 함께
-    // 싣는다 — 폴백이 "개인화인 척" 안 해도 성별 하드 필터는 유지되는 것이
-    // 핵심 요구사항 (설계: 성별 피드 하드 필터 3단계).
+    // 요청 시점 프로필 요약을 한 번만 읽는다(비회원이면 null) — 개인화를 걸지
+    // 말지 판단하는 데만 쓴다.
+    //
+    // **성별은 여기서 판정하지 않는다.** 사람이 설정에서 고른 값이 유일한 진실이다
+    // (계획 4단계 — #63의 행동 기반 판정은 더 이상 호출하지 않는다). 위에서 미확정이면
+    // 이미 멈췄으므로 여기서는 반드시 값이 있다.
     const summary = getFeedProfileSummary();
-    const genderFilter: DominantGender = summary?.gender ?? null;
+    const genderFilter: GenderChoice = gender;
 
     const applyPage = (products: Product[], advanceCursor: boolean) => {
       setReady(true);
@@ -127,7 +135,7 @@ export function useFeedViewModel(options?: FeedOptions) {
     // 기존과 같은 동작이다.
     const loadRandom = (
       policy: FeedPolicy = "random",
-      gender: DominantGender = genderFilter,
+      gender: GenderChoice = genderFilter,
     ) =>
       fetchFeedPage(seed, afterRef.current, PAGE_SIZE, gender).then((products) => {
         policyRef.current = policy;
@@ -147,7 +155,7 @@ export function useFeedViewModel(options?: FeedOptions) {
         seed,
         size: PAGE_SIZE,
         boost: summary.boostActive,
-        gender: summary.gender,
+        gender: genderFilter,
       }).then((products) => {
         policyRef.current = "personalized";
         applyPage(products, false);
@@ -155,13 +163,15 @@ export function useFeedViewModel(options?: FeedOptions) {
     };
 
     const loadSimilarFirst = () =>
-      fetchSimilarPage(exploreFrom ?? 0, SIMILAR_PAGE_SIZE).then((products) => {
-        if (products.length === 0) return loadRandom();
-        // 유사 결과는 커서와 무관하다 — items에만 붙이고 afterRef는 건드리지 않아
-        // 다음 로드부터 무작위 피드가 처음 커서에서 이어진다.
-        policyRef.current = "random";
-        applyPage(products, false);
-      });
+      fetchSimilarPage(exploreFrom ?? 0, SIMILAR_PAGE_SIZE, genderFilter).then(
+        (products) => {
+          if (products.length === 0) return loadRandom();
+          // 유사 결과는 커서와 무관하다 — items에만 붙이고 afterRef는 건드리지 않아
+          // 다음 로드부터 무작위 피드가 처음 커서에서 이어진다.
+          policyRef.current = "random";
+          applyPage(products, false);
+        },
+      );
 
     let first: Promise<void>;
     if (similarPendingRef.current) {
@@ -199,7 +209,7 @@ export function useFeedViewModel(options?: FeedOptions) {
       .finally(() => {
         loadingRef.current = false;
       });
-  }, [seed, exploreFrom]);
+  }, [seed, exploreFrom, gender]);
 
   // 성별 없는 장기 앵커 1회 보강 (설계: 성별 피드 하드 필터 3단계) — 회원일
   // 때만 시도하고, 대상이 없거나 실패해도 조용히 넘어간다(backfillAnchorGenders가
