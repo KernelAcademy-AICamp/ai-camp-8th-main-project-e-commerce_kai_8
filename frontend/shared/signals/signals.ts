@@ -18,6 +18,11 @@ import { isSignedInNow } from "@/shared/supabase/session-state";
 import { rpcPost } from "@/shared/supabase-rpc";
 
 import { getDeviceId } from "./device-id";
+import {
+  impressionIdFor,
+  type ImpressionMemory,
+  rememberImpression,
+} from "./impression-memory";
 import { SignalQueue } from "./queue";
 import { advanceSession, type SessionState } from "./session";
 import {
@@ -31,14 +36,39 @@ import {
 
 const SESSION_KEY = "atee-session";
 const QUEUE_KEY = "atee-signal-queue";
+const IMPRESSIONS_KEY = "atee-impressions";
 const FLUSH_INTERVAL_MS = 5_000;
 
 let queue: SignalQueue | null = null;
 let flushTimer: ReturnType<typeof setInterval> | null = null;
 let pageHideHooked = false;
 
-/** 세션 내 상품별 최근 노출 ID — 행동 이벤트의 노출 귀속(설계 §4) */
-const impressionByGoods = new Map<number, string>();
+/**
+ * 세션 내 상품별 최근 노출 ID — 행동 이벤트의 노출 귀속(설계 §4).
+ *
+ * **기기에 저장한다.** 메모리에만 두면 새로고침하는 순간 지워져, 그 뒤의 클릭이
+ * 어느 추천 때문인지 알 수 없게 된다 (계획 2026-08-21 A-1). 키가 `atee-`로
+ * 시작하므로 신원이 바뀌면 함께 지워진다 — 그래야 앞사람의 노출이 뒷사람의
+ * 클릭에 붙지 않는다.
+ */
+function readImpressions(): ImpressionMemory {
+  try {
+    const raw = localStorage.getItem(IMPRESSIONS_KEY);
+    if (!raw) return [];
+    const parsed: unknown = JSON.parse(raw);
+    return Array.isArray(parsed) ? (parsed as ImpressionMemory) : [];
+  } catch {
+    return [];
+  }
+}
+
+function writeImpressions(memory: ImpressionMemory): void {
+  try {
+    localStorage.setItem(IMPRESSIONS_KEY, JSON.stringify(memory));
+  } catch {
+    // 저장 불가 — 귀속 없이 동작한다 (기록 자체는 계속된다)
+  }
+}
 
 function isBrowser(): boolean {
   return typeof window !== "undefined";
@@ -201,7 +231,9 @@ export function logImpression(input: ImpressionInput): string | null {
     seed: input.seed,
     surface: input.surface,
   };
-  impressionByGoods.set(input.goodsNo, event.event_id);
+  writeImpressions(
+    rememberImpression(readImpressions(), input.goodsNo, event.event_id, sessionId),
+  );
   enqueue(event);
   // 취향 프로필의 자기강화 보정·최근 노출 목록 갱신 (설계 §6)
   recordProfileImpression(input.goodsNo, sessionId, Date.now());
@@ -231,7 +263,7 @@ export function logAction(
   enqueue({
     ...baseEvent(type, sessionId, Date.now(), options?.policy ?? "random"),
     goods_no: goodsNo,
-    impression_id: impressionByGoods.get(goodsNo),
+    impression_id: impressionIdFor(readImpressions(), goodsNo, sessionId),
   });
   // 행동은 취향 프로필의 세션 앵커에도 반영된다 (설계 §6 가중 서열)
   recordProfileAction(type, goodsNo, sessionId, Date.now(), options?.gender);
@@ -305,10 +337,11 @@ export async function clearSignals(): Promise<number | null> {
     localStorage.removeItem("atee-device-id");
     localStorage.removeItem(SESSION_KEY);
     localStorage.removeItem(QUEUE_KEY);
+    localStorage.removeItem(IMPRESSIONS_KEY);
   } catch {
     // 저장소 접근 불가면 지울 것도 없다
   }
   queue = null;
-  impressionByGoods.clear();
+
   return deleted;
 }
