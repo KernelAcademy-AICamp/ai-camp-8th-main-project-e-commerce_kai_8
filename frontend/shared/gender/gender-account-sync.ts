@@ -60,7 +60,8 @@ export function getKnownUpdatedAt(): string | null {
   return knownUpdatedAt;
 }
 
-function installFromServer(result: GenderPutResult): void {
+/** 서버가 준 최종 값을 이 기기에 설치한다 — 조건부 쓰기의 기준 시각도 함께 갱신한다. */
+export function installFromServer(result: GenderPutResult): void {
   knownUpdatedAt = result.updatedAt;
   setGenderSetting(result.gender);
 }
