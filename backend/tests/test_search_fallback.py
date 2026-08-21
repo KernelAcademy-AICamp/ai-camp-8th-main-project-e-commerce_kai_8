@@ -3,10 +3,17 @@
 이 케이스들은 원래 프론트엔드 vitest(`hangul-keyboard.test.ts`)에 있었다. 로직을
 서버로 옮기면서 함께 옮겼다 — 구현이 한 벌이면 테스트도 한 벌이어야 한다.
 
-이 파일은 **카탈로그가 실린 실 DB**를 상대로 검색 경로 전체를 확인한다. CI에는
+이 파일은 **카탈로그가 실린 실 DB**를 상대로 검색 경로 전체를 확인한다. PR CI에는
 그런 DB가 없어 통째로 건너뛴다. 자판·오타 규칙을 고칠 때는 손으로 돌린다:
 
   SEARCH_TEST_DSN="$SUPABASE_DB_URL" venv/bin/python -m pytest tests/test_search_fallback.py -v
+
+**하루 1회 예약 실행이 이 파일을 운영 카탈로그로 돌린다**
+(`.github/workflows/search-drift.yml`, 2026-08-22). 여기서 잡는 것의 상당수는
+PR과 무관한 **운영 데이터 낡음**이라 PR 게이트로는 못 잡기 때문이다 — 재수집 뒤
+파생 표를 다시 안 만들면 아무도 코드를 안 고쳐도 깨진다. 그래도 **배포 전에
+직접 돌리는 것을 대신하지는 않는다**: 성별 작업에서 이 파일을 크게 고쳐 놓고
+배포 뒤에야 처음 돌려 15건 실패를 봤다(docs/plans/2026-08-22-search-test-drift.md).
 
 CI가 검증하는 몫은 `test_search_functions.py`가 맡는다 — 카탈로그가 필요 없는
 순수 함수(자판 상태기계·자모 분해·LIKE 이스케이프)를 빈 Postgres에 올려 돌린다.
@@ -806,14 +813,27 @@ def test_brand_is_split_out_of_the_text_query(cur, query, brand, rest):
 
 @pytest.mark.parametrize(
     "query,brand",
-    [("데상트 민소매", "데상트"), ("커버낫 후드", "커버낫"), ("트립션 반팔", "트립션")],
+    [("무신사 스탠다드 민소매", "무신사 스탠다드"),
+     ("아스트랄 프로젝션 후드", "아스트랄 프로젝션"),
+     ("트립션 반팔", "트립션")],
 )
 def test_brand_plus_attribute_no_longer_returns_zero(cur, query, brand):
-    """이 조각의 이유. 세 질의 모두 0건이었다 — 데상트에 민소매가 74개 있는데
-    제목에 `민소매`가 든 것이 0개라서다.
+    """이 조각의 이유. 세 질의 모두 0건이었다 — 브랜드에 그 카테고리 상품이
+    수십~수백 개 있는데 **제목에 그 낱말이 든 것이 0개**라서다.
 
     1단계에서는 파서만 만들고 이 테스트가 **여전히 0건임을 고정**했다.
     2단계에서 후보 자격을 바꿔 실제로 풀렸다.
+
+    ⚠️ **표본이 원래 `데상트 민소매`·`커버낫 후드`였다** (2026-08-22 교체).
+    카탈로그에서 사라져서가 아니다 — 그 조합은 지금도 74개·150개 있다.
+    성별 토글(#77)이 성별 조건을 등식으로 바꾸면서 **공용이 빠졌고**, 두 브랜드는
+    카탈로그가 거의 공용이라 남성 쪽 후보가 말랐다(데상트 민소매: 공용 72·남성 0).
+    아래 `test_unisex_exclusion_can_empty_a_brand`가 그 상태를 따로 고정한다.
+
+    표본을 고른 기준은 **남성 라벨 20건 이상 + 제목 커버리지 0**이다. 제목에 낱말이
+    있으면 "카테고리를 정본으로 쓴다"는 검사가 텍스트 매칭으로도 통과해 뜻을 잃는다.
+    실측(2026-08-22): 무신사 스탠다드+민소매 95개/제목 0, 아스트랄 프로젝션+후드
+    376개/제목 0.
     """
     cur.execute("select brand from c_search_brand_parse(c_search_split(%s))", (query,))
     assert cur.fetchone()[0] == brand
@@ -827,6 +847,39 @@ def test_brand_plus_attribute_no_longer_returns_zero(cur, query, brand):
     assert same == total, "브랜드는 하드 조건이라 상위가 전부 그 브랜드여야 한다"
 
 
+def test_unisex_exclusion_can_empty_a_brand(cur):
+    """공용 제외의 **대가**를 고정한다 — 상품은 카탈로그에 있는데 검색엔 안 나온다.
+
+    성별 토글(#77, 20260822100000)이 성별 조건을 "해당 성별 또는 공용"에서
+    **등식**으로 바꿨다. 카탈로그의 18.2%(4.1만)가 공용이고 0.8%가 미상이라,
+    그 19%는 어느 성별 설정에서도 안 보인다. 사람이 알고 고른 대가다.
+
+    그 대가가 브랜드 단위로 얼마나 커질 수 있는지를 여기서 눈에 보이게 둔다.
+    `데상트 민소매`는 카탈로그에 74개 있지만 남성 설정에서는 **0건**이다 —
+    72개가 공용이라서다. 2026-08-22에 이것을 "카탈로그 드리프트"로 오진했다.
+    다시 오진하지 않도록 놀람이 아니라 **설명된 사실**로 만든다.
+
+    ⚠️ 단언은 특정 숫자가 아니라 **규칙**을 본다. 라벨이 교정되면
+    (docs/plans/2026-08-22-gender-label-correction.md) 숫자는 바뀌어도 규칙은
+    남는다 — 검색은 공용을 빼고 요청한 성별 라벨만 센다.
+    """
+    cur.execute(
+        "select count(*) filter (where gender = '공용'),"
+        "       count(*) filter (where gender = '남성')"
+        " from c_search_docs where brand = '데상트' and cat_rank = 3"
+    )
+    unisex, male = cur.fetchone()
+    assert unisex > 0, "공용 상품이 없으면 이 표본으로는 대가를 보일 수 없다"
+
+    cur.execute(
+        "select count(*) from c_search_page_v2("
+        "  '데상트 민소매', null, null, 20, null, null, '남성')"
+    )
+    assert cur.fetchone()[0] == min(male, 20), (
+        f"검색은 공용({unisex}개)을 빼고 남성 라벨({male}개)만 센다"
+    )
+
+
 # ── 카테고리 말을 하드 조건으로 (소프트 텍스트 4단계) ──────────────────────
 #
 # `반팔`·`민소매`는 제목 단어가 아니라 카탈로그의 정본 값이다. 제목만 보면
@@ -837,7 +890,9 @@ def test_brand_plus_attribute_no_longer_returns_zero(cur, query, brand):
     "query,category",
     [("민소매", "001011"), ("반팔", "001001"), ("긴팔", "001010"),
      ("피케", "001003"), ("후드", "001004"),
-     ("데상트 민소매", "001011"), ("검정 민소매", "001011"), ("커버낫 후드", "001004")],
+     # 브랜드가 함께 걸린 형태. 표본 교체 사유는 위 브랜드 테스트의 주석 참고
+     ("무신사 스탠다드 민소매", "001011"), ("검정 민소매", "001011"),
+     ("아스트랄 프로젝션 후드", "001004")],
 )
 def test_category_word_becomes_a_hard_condition(cur, query, category):
     cur.execute(
