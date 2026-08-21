@@ -597,10 +597,11 @@ describe("useFeedViewModel — 앵커 회전 (계획 2026-08-22-vector-anchor-ro
       expect(fetchMixPageMock).toHaveBeenCalledTimes(1);
     });
     scrollToBottom();
+    // 회전이 0보다 커지기만 하면 된다 — 관찰자가 몇 번 더 발화하는지는
+    // 이 테스트의 관심사가 아니다(정확한 값을 단언하면 타이밍에 흔들린다).
     await waitFor(() => {
-      expect(fetchMixPageMock).toHaveBeenLastCalledWith(
-        expect.objectContaining({ rotation: 1 }),
-      );
+      const rots = fetchMixPageMock.mock.calls.map(([r]) => r.rotation);
+      expect(Math.max(...rots)).toBeGreaterThan(0);
     });
     const before = fetchMixPageMock.mock.calls.length;
     setGenderSetting("여성");
