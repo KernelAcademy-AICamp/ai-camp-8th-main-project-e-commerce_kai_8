@@ -53,14 +53,14 @@ LEAKY_FUNCTIONS = [
         "c_log_events",
         "c_log_events(uuid, jsonb)",
     ),
-    # 성별 인자가 붙어 시그니처가 바뀌었다(20260822100000_gender_exact_filter.sql).
-    # 정의가 있는 파일도 그쪽으로 옮겨야 이 테스트가 실제 배포본을 본다.
-    (
-        "20260822100000_gender_exact_filter.sql",
-        "c_similar_page",
-        "c_similar_page(bigint, int, text)",
-    ),
 ]
+
+# c_similar_page는 이 목록에서 뺐다 (2026-08-22).
+# 성별 인자가 붙으며 정의가 20260822100000_gender_exact_filter.sql로 옮겨졌고, **그 파일이
+# 스스로 public·anon·authenticated에서 회수한 뒤 다시 부여**한다. 즉 더 이상 "권한 회수가
+# 빠진 기존 함수"가 아니다. 대신 그 회수가 실제로 파일에 있는지는 아래 정적 검사가 본다.
+# (이 목록의 추출 방식은 "정의 바로 뒤에 grant가 온다"는 파일 구조를 전제하는데,
+#  생성된 마이그레이션은 grant를 파일 끝에 모아 두어 맞지 않는다.)
 
 
 def migration_text(name: str) -> str:
