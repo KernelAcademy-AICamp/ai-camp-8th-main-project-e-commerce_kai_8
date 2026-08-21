@@ -133,7 +133,8 @@ describe("fetchMixPage — 후보풀 커서", () => {
     await fetchMixPage({ ...baseRequest, after: { hk: BIG_NEG, no: "6393200" } });
     const body = rpcPostMock.mock.calls[0]?.[1];
     expect(body.p_after_hk).toBe(BIG_NEG);
-    // 숫자로 바꿔 보내면 여기서 깨진다 — 정밀도가 죽는 것을 눈으로 고정한다.
+    // 숫자로 바꾸면 값이 달라진다는 사실 자체를 고정한다. (지금 데이터에서는 그
+    // 차이가 상품을 바꾸지 않는다 — mix-api.ts 주석 참고. 계약을 정확히 둘 뿐이다.)
     expect(String(Number(body.p_after_hk))).not.toBe(BIG_NEG);
   });
 
