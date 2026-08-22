@@ -18,7 +18,7 @@ const LIMIT = 20;
 export interface RecentProduct {
   goodsNo: number;
   thumbnail: string;
-  /** 본 시각(ms). "이번 주 발견"을 세는 데 쓴다. 옛 기록에는 없어 0으로 읽힌다 */
+  /** 본 시각(ms). 옛 기록에는 없어 0으로 읽힌다 */
   at: number;
 }
 
@@ -66,14 +66,4 @@ export function recordRecentProduct(entry: Omit<RecentProduct, "at">): void {
   } catch {
     // 저장소를 못 쓰는 환경 — 기억하지 않는다. 화면은 빈 띠로 나온다.
   }
-}
-
-/** 이번 주에 열어본 제품 수 — 시안 통계의 "이번 주 발견" */
-export function countRecentSince(sinceMs: number): number {
-  return read().filter((item) => item.at >= sinceMs).length;
-}
-
-/** 지난 7일의 시작 시각 */
-export function weekAgo(nowMs: number): number {
-  return nowMs - 7 * 24 * 60 * 60 * 1000;
 }

@@ -15,7 +15,8 @@ import { useTasteSummary } from "../view-model/use-taste-summary";
 import { TasteCardSkeleton } from "./taste-card-skeleton";
 
 /** 색 칩과 브랜드는 몇 개 넘으면 읽히지 않는다. 서버는 더 보내도 화면이 줄인다. */
-const MAX_COLORS = 5;
+// 시안 `TASTE_MAX_COLORS` — 자주 본 색은 일곱까지 보인다
+const MAX_COLORS = 7;
 const MAX_BRANDS = 3;
 
 function percent(share: number): string {
@@ -68,8 +69,8 @@ function AxisBar({ axis }: { axis: TasteAxis }) {
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <section className="mt-10 first:mt-8">
-      <h3 className="text-xs font-medium text-ink-soft">{title}</h3>
-      <div className="mt-3">{children}</div>
+      <h3 className="text-[11px] font-bold text-ink-muted">{title}</h3>
+      <div className="mt-4">{children}</div>
     </section>
   );
 }
@@ -111,19 +112,18 @@ function TasteBody({ summary }: { summary: TasteSummary }) {
 
       {colors.length > 0 && (
         <Section title="자주 본 색">
-          <ul className="flex flex-wrap gap-2">
+          {/* 시안 `.tc-colors` — 알약 없이 동그란 색 아래 비율만. 이름은 적지 않는다. */}
+          <ul className="flex flex-wrap gap-[18px]">
             {colors.map((color) => (
-              <li
-                key={color.group}
-                className="flex items-center gap-2 rounded-full border border-line py-1.5 pr-3 pl-1.5"
-              >
+              <li key={color.group} className="text-center">
                 <span
-                  aria-hidden
-                  className="h-5 w-5 rounded-full border border-ink/10"
+                  aria-label={color.chip?.label}
+                  className="mx-auto mb-1.5 block h-6 w-6 rounded-full border border-ink/10"
                   style={{ backgroundColor: color.chip?.hex }}
                 />
-                <span className="text-sm text-ink-soft">{color.chip?.label}</span>
-                <span className="text-xs text-ink-muted">{percent(color.share)}</span>
+                <span className="text-[10px] font-bold text-ink-soft tabular-nums">
+                  {percent(color.share)}
+                </span>
               </li>
             ))}
           </ul>
@@ -132,8 +132,14 @@ function TasteBody({ summary }: { summary: TasteSummary }) {
 
       {brands.length > 0 && (
         <Section title="자주 본 브랜드">
-          <p className="text-sm text-ink-soft">
-            {brands.map((b) => b.name).join(" · ")}
+          {/* 시안 `.tc-brands` — 이름은 진하게, 사이의 가운뎃점만 연하게 */}
+          <p className="text-[12.5px] font-bold text-ink">
+            {brands.map((b, i) => (
+              <span key={b.name}>
+                {i > 0 && <i className="mx-[7px] not-italic text-ink-muted">·</i>}
+                {b.name}
+              </span>
+            ))}
           </p>
         </Section>
       )}

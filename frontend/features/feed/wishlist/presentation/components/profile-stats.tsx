@@ -3,28 +3,34 @@
 import { useEffect, useState } from "react";
 
 import { useWishlistFolders } from "@/features/feed/wishlist/presentation/view-model/use-wishlist-folders";
-import { countRecentSince, weekAgo } from "@/shared/history/recent-products";
+
+/** 지난 7일의 시작 시각 */
+function weekAgo(nowMs: number): number {
+  return nowMs - 7 * 24 * 60 * 60 * 1000;
+}
 
 /**
  * 활동 요약 3칸 — 시안 `.prof-stats` (저장한 핀 · 폴더 · 이번 주 발견).
  *
- * **"이번 주 발견"은 이번 주에 열어본 제품 수다.** 찜에는 저장 시각이 없어 "이번 주
- * 저장"은 셀 수 없다. 최근 본 제품 기록에 시각을 함께 적으므로 그것으로 센다 —
- * 훑어보다 열어본 것이 곧 발견이라, 뜻도 어긋나지 않는다.
+ * **"이번 주 발견"은 이번 주에 폴더에 담은 제품 수다.** 열어보기만 한 것은 세지
+ * 않는다(2026-08-22 제품 책임자) — 담아야 발견으로 친다. 찜에 저장 시각이 함께
+ * 적히므로 그것으로 센다.
  */
 export function ProfileStats() {
   const view = useWishlistFolders();
   const [week, setWeek] = useState(0);
+  const savedAtMs = view.savedAtMs;
 
+  // 지금 시각을 렌더 중에 읽지 않는다 — 같은 입력에 같은 결과를 내야 한다.
   useEffect(() => {
-    // 기기에만 있는 기록이라 화면에 붙은 뒤 읽는다(서버 렌더와 어긋나지 않게).
     const frame = requestAnimationFrame(() => {
-      setWeek(countRecentSince(weekAgo(Date.now())));
+      const since = weekAgo(Date.now());
+      setWeek(savedAtMs.filter((at) => at >= since).length);
     });
     return () => {
       cancelAnimationFrame(frame);
     };
-  }, []);
+  }, [savedAtMs]);
 
   const cells: { value: string; label: string }[] = [
     { value: String(view.totalCount), label: "저장한 핀" },

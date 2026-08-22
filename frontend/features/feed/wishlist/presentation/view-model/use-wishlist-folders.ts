@@ -77,6 +77,8 @@ export function useWishlistFolders() {
     notice,
     summaries,
     totalCount: visible.entries.length,
+    /** 보이는 찜의 저장 시각들 — 활동 요약이 "이번 주 발견"을 셀 때 쓴다 */
+    savedAtMs: visible.entries.map((entry) => entry.addedAtMs),
     creating,
     startCreating,
     cancelCreating,

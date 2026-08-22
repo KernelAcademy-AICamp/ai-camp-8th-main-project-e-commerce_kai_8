@@ -134,12 +134,16 @@ describe("내 취향 카드", () => {
     expect(screen.queryByRole("img", { name: /두루에서 확고 사이/ })).toBeNull();
   });
 
-  it("색 칩과 브랜드가 그대로 남는다", async () => {
+  /*
+   * 시안은 색 이름을 글씨로 적지 않는다 — 동그란 색 아래에 비율만 둔다.
+   * 이름은 보조기기용 설명으로만 남으므로 글씨가 아니라 그 이름으로 찾는다.
+   */
+  it("색과 브랜드가 그대로 남는다", async () => {
     givenServerSends(FULL);
     render(<TasteCard />);
 
     expect(await screen.findByRole("heading", { name: "자주 본 색" })).toBeTruthy();
-    expect(screen.getByText("블랙")).toBeTruthy();
+    expect(screen.getByLabelText("블랙")).toBeTruthy();
     expect(screen.getByRole("heading", { name: "자주 본 브랜드" })).toBeTruthy();
     expect(screen.getByText("커버낫")).toBeTruthy();
   });
