@@ -2,11 +2,13 @@
 
 import { type RefObject, useEffect, useMemo, useRef, useState } from "react";
 
+import { fetchCurationRank } from "@/features/curation/data/curation-rank-api";
 import curationRules from "@/features/curation/data/curation-rules.json";
 import { type Curation, FOR_YOU_VISIBLE } from "@/features/curation/domain/curation";
 import { filterByGender } from "@/features/curation/domain/curation-gender";
 import {
   type CurationRule,
+  type CurationVectors,
   orderByTaste,
 } from "@/features/curation/domain/curation-match";
 import { useGenderSetting } from "@/shared/gender/use-gender-setting";
@@ -78,9 +80,18 @@ export function useForYouOrder(
     personalizedRef.current = true;
     // 노출 횟수는 이번 마운트 동안 고정한다 — 아래에서 적어도 순서가 흔들리지 않는다
     const views = readCurationViews();
+    // 벡터 점수는 조회로만 온다(캐시 없음) — 도착하면 채워지고, 못 오면 빈 채로 남아
+    // 키워드 점수만으로 순서가 난다.
+    let vectors: CurationVectors = {};
     const reorder = () => {
       if (!live) return; // 성별·목록이 바뀐 뒤 도착한 응답은 버린다
-      const next = orderByTaste(mine, rules, cachedAnchorTitles(anchors), views);
+      const next = orderByTaste(
+        mine,
+        rules,
+        cachedAnchorTitles(anchors),
+        views,
+        vectors,
+      );
       shownRef.current = next;
       setTasteOrdered(next);
     };
@@ -91,6 +102,17 @@ export function useForYouOrder(
       })
       .catch(() => {
         // 제목을 못 받으면 지금 순서 그대로 둔다 — 다음 방문에 다시 시도된다
+      });
+    // 벡터 점수. BROWSE 피드와 **같은 앵커**를 그대로 보낸다 — 두 화면이 같은 취향을
+    // 다른 자로 재지 않게 하는 것이 이 조각의 목적이다.
+    void fetchCurationRank(summary.sessionAnchors, summary.longAnchors)
+      .then((scores) => {
+        if (Object.keys(scores).length === 0) return; // 앵커를 못 푼 경우 — 0행
+        vectors = scores;
+        reorder();
+      })
+      .catch(() => {
+        // 조회 실패·시간 초과 — 키워드 순서가 그대로 남는다
       });
 
     return () => {

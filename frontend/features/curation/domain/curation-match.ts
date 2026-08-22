@@ -57,30 +57,68 @@ export interface ScoredCuration {
   score: number;
 }
 
+/** 큐레이션 키 → 앵커와의 코사인 (c_curation_rank). 없는 키는 벡터 몫이 0이다. */
+export type CurationVectors = Record<string, number | undefined>;
+
 /**
- * 앵커 제목으로 큐레이션 점수를 매긴다. **0점(걸린 앵커가 없는)은 빼고** 점수 높은 순.
+ * 합친 점수에서 **벡터가 갖는 몫**. 나머지가 키워드 몫이다.
+ *
+ * 둘을 남긴 이유 — 벡터는 제목에 낱말이 없어도 닮은 것을 잡지만 "왜 이게 1등인지"를
+ * 설명하지 못하고, 키워드는 설명은 되지만 제목에 낱말이 없으면 아무것도 못 잡는다.
+ * 벡터 조회가 실패하면 키워드 몫만 남아 예전 순서가 그대로 나온다.
+ */
+export const VECTOR_WEIGHT = 0.5;
+
+/**
+ * 앵커로 큐레이션 점수를 매긴다 — 키워드 몫과 벡터 몫을 섞어 **0점은 빼고** 높은 순.
  * 동점은 원래 순서(기본 정렬)를 지킨다 — 흔들리는 화면보다 예측 가능한 쪽이 낫다.
+ *
+ * 두 몫은 **각자의 최댓값으로 나눠 0~1로 맞춘 뒤** 섞는다. 키워드 점수는 앵커 가중치의
+ * 합이라 수십~수백이고 코사인은 0.7~0.9라, 그냥 더하면 키워드가 벡터를 덮는다.
+ * 같은 수로 나누는 것이라 **한쪽만 있을 때의 순서는 나누기 전과 같다.**
  */
 export function scoreCurations(
   curations: { key: string; n: number }[],
   rules: Record<string, CurationRule | undefined>,
   anchors: AnchorTitle[],
   views: CurationViews = {},
+  vectors: CurationVectors = {},
 ): ScoredCuration[] {
-  return curations
-    .map(({ key, n }, index) => {
-      const rule = rules[key];
-      if (!rule) return { key, score: 0, index };
-      const hit = anchors.reduce(
-        (sum, a) => (matches(a.title, rule) ? sum + a.weight : sum),
-        0,
-      );
-      return {
-        key,
-        score: hit * rarityBonus(n) * viewDamping(views[key] ?? 0),
-        index,
-      };
-    })
+  // 코사인은 0.70~0.88의 좁은 띠다 — 절대값을 그대로 쓰면 어느 큐레이션이든 높은 점수를
+  // 받아 순위가 거의 안 갈린다. 가장 낮은 것을 0으로 내려 **차이만** 남긴다.
+  const cosines = curations
+    .map((c) => vectors[c.key])
+    .filter((v): v is number => v !== undefined);
+  const floor = cosines.length > 0 ? Math.min(...cosines) : 0;
+
+  const raw = curations.map(({ key, n }, index) => {
+    const rule = rules[key];
+    const hit = rule
+      ? anchors.reduce((sum, a) => (matches(a.title, rule) ? sum + a.weight : sum), 0)
+      : 0;
+    const cos = vectors[key];
+    return {
+      key,
+      index,
+      kw: hit * rarityBonus(n),
+      // 희소도는 벡터에도 건다. 넓은 큐레이션의 대표 벡터는 "평균적인 티셔츠"에 가까워
+      // 누구에게나 어중간하게 높다 — 안 걸면 인기순으로 되돌아간다.
+      vec: cos === undefined ? 0 : (cos - floor) * rarityBonus(n),
+    };
+  });
+
+  const maxKw = Math.max(0, ...raw.map((r) => r.kw));
+  const maxVec = Math.max(0, ...raw.map((r) => r.vec));
+
+  return raw
+    .map((r) => ({
+      key: r.key,
+      index: r.index,
+      score:
+        ((maxKw > 0 ? (r.kw / maxKw) * (1 - VECTOR_WEIGHT) : 0) +
+          (maxVec > 0 ? (r.vec / maxVec) * VECTOR_WEIGHT : 0)) *
+        viewDamping(views[r.key] ?? 0),
+    }))
     .filter((c) => c.score > 0)
     .sort((a, b) => b.score - a.score || a.index - b.index)
     .map(({ key, score }) => ({ key, score }));
@@ -97,9 +135,11 @@ export function orderByTaste<T extends { key: string; n: number }>(
   rules: Record<string, CurationRule | undefined>,
   anchors: AnchorTitle[],
   views: CurationViews = {},
+  vectors: CurationVectors = {},
 ): T[] {
-  if (anchors.length === 0) return curations;
-  const scored = scoreCurations(curations, rules, anchors, views);
+  // 제목을 못 받아도 벡터만으로 정렬한다 — 둘 다 없을 때만 기본 순서다.
+  if (anchors.length === 0 && Object.keys(vectors).length === 0) return curations;
+  const scored = scoreCurations(curations, rules, anchors, views, vectors);
   if (scored.length === 0) return curations;
   const picked = new Set(scored.map((s) => s.key));
   const byKey = new Map(curations.map((c) => [c.key, c]));
