@@ -11,6 +11,10 @@ import { BackIcon } from "@/shared/icons";
  * 이 창이 맡는 것은 **떠나기 전까지**다 — 왜 로그인이 필요한지 알리고, 떠나기
  * 전에 돌아올 자리를 적어 둔다.
  *
+ * **화살표는 직전 화면으로 되돌아간다.** 팝업만 닫는 것이 아니라 팝업이 뜬
+ * 화면까지 닫는다 — 시안 `loginPopBack`("팝업이 뜬 화면을 닫고 메인으로").
+ * 무엇이 직전 화면인지는 부르는 쪽이 정한다.
+ *
  * **화면 한가운데에 둔다.** 시안은 폰 틀 안 40% 높이였지만, 실제 화면에서는
  * 위로 치우쳐 보였다(2026-08-22 제품 책임자). 자리는 `inset-0` 위의 가운데
  * 정렬로 잡는다 — 좌표를 절반씩 옮기는 방식은 **변형이 걸린 조상**이 하나만
@@ -21,12 +25,9 @@ export function LoginPopup({ onClose }: { onClose: () => void }) {
 
   return (
     <div className="fixed inset-0 z-[48] flex items-center justify-center">
-      <button
-        type="button"
-        aria-label="닫기"
-        onClick={onClose}
-        className="absolute inset-0 cursor-pointer bg-[rgb(23_21_15/0.25)]"
-      />
+      {/* 어두운 바탕은 **손잡이가 아니다.** 시안도 여기에 아무 동작을 달지 않는다 —
+          바깥을 잘못 눌러 보던 화면에서 튕겨 나가지 않게. 나가는 길은 화살표다. */}
+      <span aria-hidden className="absolute inset-0 bg-[rgb(23_21_15/0.25)]" />
       <div
         role="dialog"
         aria-label="로그인 안내"
