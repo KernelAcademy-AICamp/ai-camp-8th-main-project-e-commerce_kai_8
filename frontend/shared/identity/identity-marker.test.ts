@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import { ANONYMOUS, isIdentityTransition, markerFor } from "./identity-marker";
-import { identityScopedKeys } from "./identity-scoped-keys";
+import { identityScopedKeys, personalizationScopedKeys } from "./identity-scoped-keys";
 
 describe("markerFor", () => {
   it("로그인하지 않았으면 익명 표식", () => {
@@ -83,5 +83,41 @@ describe("identityScopedKeys", () => {
 
   it("앞으로 생길 개인화 키는 기본으로 지운다 — 빠뜨리면 취향이 샌다", () => {
     expect(identityScopedKeys(["atee-something-new"])).toEqual(["atee-something-new"]);
+  });
+});
+
+describe("점으로 이어붙인 키도 그물에 걸린다", () => {
+  // 하이픈만 보던 시절 최근 본 제품이 빠져나가, 로그아웃해도 앞사람이 본 상품이
+  // 다음 사람에게 그대로 보였다 (2026-08-22)
+  it("atee.으로 시작하는 키를 지운다", () => {
+    expect(identityScopedKeys(["atee.recent-products.v2", "atee.after-login"])).toEqual(
+      ["atee.recent-products.v2", "atee.after-login"],
+    );
+  });
+
+  it("남의 키는 건드리지 않는다", () => {
+    expect(identityScopedKeys(["other.thing", "ateex"])).toEqual([]);
+  });
+});
+
+describe("personalizationScopedKeys", () => {
+  it("탐색 흔적을 지운다 — 취향 프로필만이 아니다", () => {
+    const keys = [
+      "atee-profile",
+      "atee-anchor-titles",
+      "atee-feed-seed",
+      "atee.recent-products.v2",
+    ];
+    expect(personalizationScopedKeys(keys).sort()).toEqual(keys.sort());
+  });
+
+  it("성별과 찜은 남긴다 — 방침 문구가 그렇게 약속한다", () => {
+    expect(personalizationScopedKeys(["atee-gender", "atee-wishlist"])).toEqual([]);
+  });
+
+  it("삭제 재시도 표식은 남긴다 — 지우면 삭제 약속이 깨진다", () => {
+    expect(
+      personalizationScopedKeys(["atee-pending-forget", "atee-pending-taste-forget"]),
+    ).toEqual([]);
   });
 });

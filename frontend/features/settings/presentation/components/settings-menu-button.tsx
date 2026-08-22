@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 
+import { DataClearPopup } from "@/features/settings/presentation/components/data-clear-popup";
 import { useGenderSettings } from "@/features/settings/presentation/view-model/use-gender-settings";
 import { usePrivacySettings } from "@/features/settings/presentation/view-model/use-privacy-settings";
 import type { GenderChoice } from "@/shared/gender/gender-setting";
@@ -41,12 +42,13 @@ export function SettingsMenuButton() {
     confirmClear,
   } = usePrivacySettings();
 
-  const confirming = clearStatus.kind === "confirming";
+  // 묻는 중이든 지우는 중이든 끝난 뒤든, 창이 떠 있으면 판단은 그 창이 가져간다
+  const dialogOpen = clearStatus.kind !== "idle";
 
   // 바깥을 누르거나 Esc를 누르면 닫는다 — 메뉴가 화면을 붙잡지 않게.
   // 경고창이 떠 있는 동안에는 그 창이 판단을 가져간다.
   useEffect(() => {
-    if (!open || confirming) return;
+    if (!open || dialogOpen) return;
     const onDown = (event: MouseEvent) => {
       if (boxRef.current !== null && !boxRef.current.contains(event.target as Node)) {
         setOpen(false);
@@ -61,7 +63,7 @@ export function SettingsMenuButton() {
       document.removeEventListener("mousedown", onDown);
       document.removeEventListener("keydown", onKey);
     };
-  }, [open, confirming]);
+  }, [open, dialogOpen]);
 
   const close = () => {
     setOpen(false);
@@ -148,45 +150,12 @@ export function SettingsMenuButton() {
         </div>
       )}
 
-      {/* 경고창 — 시안 `.del-pop`. 지우는 것은 되돌릴 수 없어 한 단계 세운다. */}
-      {confirming && (
-        <>
-          <button
-            type="button"
-            aria-label="취소"
-            onClick={cancelClear}
-            className="fixed inset-0 z-[48] cursor-pointer bg-dim"
-          />
-          <div
-            role="alertdialog"
-            aria-label="데이터 삭제"
-            className="fixed top-[40%] left-1/2 z-[49] w-[250px] -translate-x-1/2 -translate-y-1/2 rounded-[20px] bg-app px-[22px] pt-[26px] pb-5 text-center shadow-[0_4px_16px_rgb(30_38_55/0.24)]"
-          >
-            <strong className="text-[15.5px] font-extrabold text-ink">
-              데이터를 지울까요?
-            </strong>
-            <p className="mt-2 text-xs leading-relaxed font-[650] text-ink-soft">
-              지금까지의 탐색 기록과 취향이 사라집니다. 되돌릴 수 없어요.
-            </p>
-            <div className="mt-[18px] flex gap-2.5">
-              <button
-                type="button"
-                onClick={cancelClear}
-                className="h-[42px] flex-1 cursor-pointer rounded-full border border-line text-sm font-extrabold text-ink-soft"
-              >
-                아니오
-              </button>
-              <button
-                type="button"
-                onClick={confirmClear}
-                className="h-[42px] flex-1 cursor-pointer rounded-full bg-danger text-sm font-extrabold text-on-slate shadow-[0_1px_4px_rgb(30_38_55/0.28)]"
-              >
-                지우기
-              </button>
-            </div>
-          </div>
-        </>
-      )}
+      {/* 묻고 → 지우는 동안 알리고 → 결과까지 보여준다. 셋 다 같은 창 안이다. */}
+      <DataClearPopup
+        status={clearStatus}
+        onCancel={cancelClear}
+        onConfirm={confirmClear}
+      />
     </div>
   );
 }

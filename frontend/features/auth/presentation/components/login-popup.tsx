@@ -15,14 +15,24 @@ import { CenterPopup, PopupButton, PopupMessage, PopupTitle } from "@/shared/ui/
  * 화면까지 닫는다 — 시안 `loginPopBack`("팝업이 뜬 화면을 닫고 메인으로").
  * 무엇이 직전 화면인지는 부르는 쪽이 정한다.
  *
- * 그래서 **어두운 바탕에는 손잡이를 두지 않는다** — 바깥을 잘못 눌러 보던
- * 화면에서 튕겨 나가지 않게. 시안도 여기에만 아무 동작을 달지 않는다.
+ * **어두운 바탕은 부르는 쪽이 정한다.** 기본은 손잡이가 없다 — 바깥을 잘못 눌러
+ * 보던 화면에서 튕겨 나가면 안 되기 때문이고, 시안도 여기에는 아무 동작을 달지
+ * 않는다. 다만 바깥 누르기가 **그 자리에 머문 채 창만 접는 것**이라면 위험하지
+ * 않으므로, 그때는 `onDismiss`를 준다.
  */
-export function LoginPopup({ onClose }: { onClose: () => void }) {
+export function LoginPopup({
+  onClose,
+  onDismiss,
+}: {
+  /** 화살표 — 팝업이 뜬 화면까지 닫는다 */
+  onClose: () => void;
+  /** 어두운 바탕 누르기 — 주면 그 자리에서 창만 접는다 */
+  onDismiss?: () => void;
+}) {
   const { busy, failed, signIn } = useGoogleSignIn();
 
   return (
-    <CenterPopup label="로그인 안내" onBack={onClose}>
+    <CenterPopup label="로그인 안내" onBack={onClose} onDismiss={onDismiss}>
       <PopupTitle>로그인이 필요해요</PopupTitle>
       <PopupMessage>
         취향 키워드와 저장한 핀은

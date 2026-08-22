@@ -4,7 +4,10 @@
 // 자동으로 지워지는 쪽이 안전하다 — 빠뜨리면 앞사람의 취향이 새지만,
 // 반대로 실수하면 편의가 줄 뿐이다.
 
-const PREFIX = "atee-";
+// ⚠️ **두 가지 이름꼴이 섞여 있다.** 대부분 `atee-`지만 뒤에 붙은 몇몇은 `atee.`다.
+// 하이픈만 보면 `atee.recent-products` 같은 것이 그물에 걸리지 않아, 로그아웃해도
+// 앞사람이 본 상품이 다음 사람에게 그대로 보인다 — 실제로 그랬다(2026-08-22).
+const PREFIXES = ["atee-", "atee."];
 
 /** 기기에 매인 것 — 신원이 바뀌어도 유지한다 (설계 §2: 기기 ID를 회전하지 않는다) */
 const KEEP_EXACT = new Set([
@@ -37,8 +40,31 @@ const KEEP_PREFIX = [
 export function identityScopedKeys(allKeys: readonly string[]): string[] {
   return allKeys.filter(
     (key) =>
-      key.startsWith(PREFIX) &&
+      PREFIXES.some((prefix) => key.startsWith(prefix)) &&
       !KEEP_EXACT.has(key) &&
       !KEEP_PREFIX.some((prefix) => key.startsWith(prefix)),
   );
+}
+
+/**
+ * 개인화 초기화에서 남길 것 — **취향이 아니라 설정과 소유물이다.**
+ *
+ * 방침 문구와 짝이다: "보여줄 상품의 성별은 초기화로 지워지지 않습니다",
+ * "계정과 계정에 담긴 찜은 남습니다". 문구를 바꾸지 않고 여기만 바꾸면 거짓말이
+ * 된다.
+ */
+const KEEP_ON_RESET = new Set(["atee-gender", "atee-wishlist"]);
+
+/**
+ * 개인화 데이터 초기화에서 지울 키.
+ *
+ * 신원 전환과 **같은 그물**을 쓴다 — 새로 생기는 개인화 키를 두 곳에 각각 적으면
+ * 한쪽이 반드시 낡는다. 실제로 그랬다: 초기화는 키 셋만 지우고 있어서 최근 본
+ * 제품·앵커 제목·피드 씨앗이 그대로 남았다(2026-08-22 제품 책임자).
+ *
+ * 기기 ID와 미전송 큐는 신원 전환에서는 남지만 초기화에서는 지운다 — 새 익명
+ * ID로 처음부터 시작하기 때문이다. 그 둘은 부르는 쪽이 따로 지운다.
+ */
+export function personalizationScopedKeys(allKeys: readonly string[]): string[] {
+  return identityScopedKeys(allKeys).filter((key) => !KEEP_ON_RESET.has(key));
 }
