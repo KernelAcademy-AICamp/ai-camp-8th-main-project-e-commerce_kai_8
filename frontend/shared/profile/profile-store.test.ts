@@ -1,14 +1,8 @@
 // @vitest-environment jsdom
 import { beforeEach, describe, expect, it } from "vitest";
 
-import { type AnchorGender, emptySession, type SessionProfile } from "./profile-rules";
-import {
-  applyAnchorGenders,
-  foldSessionProfileNow,
-  getProfileSummary,
-  longAnchorsMissingGender,
-  readLongTerm,
-} from "./profile-store";
+import { emptySession, type SessionProfile } from "./profile-rules";
+import { foldSessionProfileNow, readLongTerm } from "./profile-store";
 
 const SESSION_KEY = "atee-session-profile";
 const LONG_KEY = "atee-profile";
@@ -123,118 +117,5 @@ describe("foldSessionProfileNow — 마이페이지 새로고침의 즉시 접�
 
     expect(foldSessionProfileNow(1000)).toBe(true);
     expect(readLongTerm().anchors).toEqual([]);
-  });
-});
-
-describe("getProfileSummary — 성별 판정(설계: 성별 피드 하드 필터 2단계)", () => {
-  it("장기+세션 앵커를 합쳐 우세 성별을 판정한다 (모수 충족 = 잠금)", () => {
-    localStorage.setItem(
-      LONG_KEY,
-      JSON.stringify({
-        schemaVersion: 2,
-        anchors: [
-          { goodsNo: 1, weight: 3, lastMs: 10, gender: "여성" },
-          { goodsNo: 2, weight: 3, lastMs: 10, gender: "여성" },
-        ],
-        updatedAtMs: 10,
-      }),
-    );
-    sessionStorage.setItem(
-      SESSION_KEY,
-      JSON.stringify({
-        sessionId: "s-1",
-        anchors: [{ goodsNo: 3, weight: 3, lastMs: 10, gender: "여성" }],
-        impressionCounts: {},
-        recentImpressions: [],
-        removed: [],
-        boostRemaining: 0,
-      }),
-    );
-
-    expect(getProfileSummary("s-1", 20).gender).toBe("여성");
-  });
-
-  it("성별 있는 앵커가 모수(GENDER_MIN_ANCHORS)에 못 미치면 null (미달)", () => {
-    localStorage.setItem(
-      LONG_KEY,
-      JSON.stringify({
-        schemaVersion: 2,
-        anchors: [{ goodsNo: 1, weight: 3, lastMs: 10, gender: "여성" }],
-        updatedAtMs: 10,
-      }),
-    );
-
-    expect(getProfileSummary("s-1", 20).gender).toBeNull();
-  });
-});
-
-describe("longAnchorsMissingGender / applyAnchorGenders — 기존 장기 앵커 성별 1회 보강(3단계)", () => {
-  it("성별 없는 장기 앵커의 goods_no만 돌려준다", () => {
-    localStorage.setItem(
-      LONG_KEY,
-      JSON.stringify({
-        schemaVersion: 2,
-        anchors: [
-          { goodsNo: 1, weight: 1, lastMs: 10, gender: "남성" },
-          { goodsNo: 2, weight: 1, lastMs: 10 },
-          { goodsNo: 3, weight: 1, lastMs: 10 },
-        ],
-        updatedAtMs: 10,
-      }),
-    );
-
-    expect(longAnchorsMissingGender().sort((a, b) => a - b)).toEqual([2, 3]);
-  });
-
-  it("성별 없는 앵커가 없으면 빈 배열", () => {
-    localStorage.setItem(
-      LONG_KEY,
-      JSON.stringify({
-        schemaVersion: 2,
-        anchors: [{ goodsNo: 1, weight: 1, lastMs: 10, gender: "남성" }],
-        updatedAtMs: 10,
-      }),
-    );
-
-    expect(longAnchorsMissingGender()).toEqual([]);
-  });
-
-  it("응답을 성별 없는 앵커에만 반영한다 — 이미 있는 성별은 덮지 않는다", () => {
-    localStorage.setItem(
-      LONG_KEY,
-      JSON.stringify({
-        schemaVersion: 2,
-        anchors: [
-          { goodsNo: 1, weight: 1, lastMs: 10, gender: "남성" },
-          { goodsNo: 2, weight: 1, lastMs: 10 },
-        ],
-        updatedAtMs: 10,
-      }),
-    );
-
-    const genders = new Map<number, AnchorGender>([
-      [1, "여성"],
-      [2, "여성"],
-    ]);
-    applyAnchorGenders(genders);
-
-    const anchors = readLongTerm().anchors;
-    expect(anchors.find((a) => a.goodsNo === 1)?.gender).toBe("남성");
-    expect(anchors.find((a) => a.goodsNo === 2)?.gender).toBe("여성");
-  });
-
-  it("응답에 없는 goods_no(뷰에 없거나 빈 문자열)는 미상으로 남는다", () => {
-    localStorage.setItem(
-      LONG_KEY,
-      JSON.stringify({
-        schemaVersion: 2,
-        anchors: [{ goodsNo: 5, weight: 1, lastMs: 10 }],
-        updatedAtMs: 10,
-      }),
-    );
-
-    applyAnchorGenders(new Map());
-
-    expect(readLongTerm().anchors[0].gender).toBeUndefined();
   });
 });

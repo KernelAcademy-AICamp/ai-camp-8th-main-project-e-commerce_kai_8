@@ -1,7 +1,7 @@
 # #63 죽은 코드 정리 — 행동 기반 성별 추론 (2026-08-22)
 
-> 상태: **계획.** 착수 대기 — 열린 PR #74가 `shared/signals/**`를 편집 중이라
-> 그 부분은 병합 뒤에 손댄다.
+> 상태: **완료 (2026-08-22).** PR #74가 병합돼 `signals.ts` 충돌이 풀렸다.
+> 다만 `Anchor.gender` 기록 자체는 이번에도 남겼다 — 아래 "이번에 손대지 않는 것".
 
 ## 무엇을 지우나
 
@@ -67,6 +67,40 @@
 
 - 지운 줄 수, 사라진 요청, 남은 참조 0 확인, 테스트 결과를 적는다.
 - **안 돌려본 것은 미검증으로 명시**한다.
+
+## 결과 (2026-08-22)
+
+| 항목 | 값 |
+|---|---|
+| 지운 줄 | **447줄** (더한 줄 10) |
+| 지운 파일 | `gender-backfill.ts`(54) · `gender-backfill.test.ts`(118) |
+| 남은 참조 | **0개** — 아래 검색을 다시 돌려 확인 |
+
+```
+deriveDominantGender: 0   GENDER_SHARE_THRESHOLD: 0   GENDER_MIN_ANCHORS: 0
+backfillAnchorGenders: 0  fetchAnchorGenders: 0
+longAnchorsMissingGender: 0   applyAnchorGenders: 0
+```
+
+**REST 왕복이 실제로 사라진 것을 브라우저에서 확인했다.** 성별이 **없는** 장기 앵커
+11개를 일부러 심고(예전 보강 코드가 노리던 바로 그 상태) 피드를 띄웠을 때
+`/rest/v1/c_feed_products` 조회가 **한 건도 나가지 않았다**. RPC는
+`c_feed_page`·`c_taste_get`·`c_gender_get` 셋뿐이다.
+
+`npm run check` 통과, 테스트 **548개** 통과.
+
+### 3단계 결정 — 이미 저장된 성별 필드는 읽되 무시한다
+
+스키마 버전을 올리지 않았다. 기기·계정에 저장된 앵커의 `gender` 필드는 남아 있지만
+아무도 읽지 않는다. 버전을 올리면 기존 프로필을 마이그레이션하거나 버려야 하는데,
+필드가 남아 있어도 해가 없다.
+
+### 이번에도 손대지 않은 것
+
+`Anchor.gender` **기록** 경로(`logAction(..., { gender })` → `recordProfileAction` →
+앵커 병합)는 남겼다. 저장 공간뿐이고 해가 없으며, 지우면 `signals.ts`·`profile-rules.ts`의
+병합 로직까지 건드려 이 조각의 가설("죽은 판정을 걷어내면 요청이 하나 준다")과
+검증 대상이 섞인다. **후속 조각**으로 남긴다.
 
 ## 이 계획이 스스로 경계하는 것
 
