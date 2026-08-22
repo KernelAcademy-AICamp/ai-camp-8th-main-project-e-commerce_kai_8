@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 
 import { startGoogleSignIn } from "@/features/auth/data/auth-repository";
+import { rememberAfterLogin } from "@/shared/history/after-login";
 import { useBackTo } from "@/shared/history/use-nav-history";
 import { useSignedIn } from "@/shared/supabase/use-signed-in";
 
@@ -31,6 +32,9 @@ export function useLoginScreen(): LoginScreenViewModel {
   const signIn = useCallback(() => {
     setBusy(true);
     setFailed(false);
+    // 떠나기 전에 돌아올 자리를 적어 둔다. 콜백 주소에는 못 싣는다 — 그 주소는
+    // 허용 목록에 등록된 것과 **정확히 같아야** 한다.
+    rememberAfterLogin(window.location.pathname + window.location.search);
     // 허용 목록에 등록된 주소와 정확히 같아야 한다 (구글 로그인 설계 §3)
     const callbackUrl = `${window.location.origin}/auth/callback`;
     void startGoogleSignIn(callbackUrl).catch(() => {

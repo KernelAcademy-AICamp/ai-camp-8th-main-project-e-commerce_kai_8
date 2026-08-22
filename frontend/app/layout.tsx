@@ -35,16 +35,16 @@ export const viewport: Viewport = {
 };
 
 /**
- * `profile`은 홈 위에 프로필을 겹쳐 띄우기 위한 자리다(`app/@profile`). 앱 안에서
- * `/my`로 넘어올 때만 채워지고, 주소로 직접 들어오면 비어 있다 — 그때는 `children`
- * 쪽이 단독 화면을 그린다.
+ * `overlay`는 지금 화면 **위에 겹쳐** 띄우는 자리다(`app/@overlay`). 앱 안에서
+ * `/my`·`/login`으로 넘어올 때만 채워지고, 주소로 직접 들어오면 비어 있다 —
+ * 그때는 `children` 쪽이 단독 화면을 그린다.
  */
 export default function RootLayout({
   children,
-  profile,
+  overlay,
 }: {
   children: React.ReactNode;
-  profile: React.ReactNode;
+  overlay: React.ReactNode;
 }) {
   return (
     <html lang="ko">
@@ -54,7 +54,7 @@ export default function RootLayout({
         <AccountProfileGuard />
         <GenderAccountGuard />
         {children}
-        {profile}
+        {overlay}
       </body>
     </html>
   );

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 
 import { readAuthNotice } from "@/features/auth/domain/auth-session";
+import { AfterLoginReturn } from "@/features/auth/presentation/components/after-login-return";
 import { MyPage } from "@/features/auth/presentation/components/my-page";
 import { RecentStrip } from "@/features/feed/presentation/components/recent-strip";
 import { ProfileStats } from "@/features/feed/wishlist/presentation/components/profile-stats";
@@ -19,6 +20,7 @@ export default async function MyPageRoute({
   const auth = params.auth;
   return (
     <MyPage notice={readAuthNotice(typeof auth === "string" ? auth : null)}>
+      <AfterLoginReturn />
       <TasteCard />
       <RecentStrip />
       <ProfileStats />
