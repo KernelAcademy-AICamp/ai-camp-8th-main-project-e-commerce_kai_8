@@ -16,8 +16,9 @@ import { TasteCardSkeleton } from "./taste-card-skeleton";
 import { TasteGuestSkeleton } from "./taste-guest-skeleton";
 
 /** 색 칩과 브랜드는 몇 개 넘으면 읽히지 않는다. 서버는 더 보내도 화면이 줄인다. */
-// 시안 `TASTE_MAX_COLORS` — 자주 본 색은 일곱까지 보인다
-const MAX_COLORS = 7;
+// 자주 본 색은 **여섯까지** 보인다 (2026-08-22 제품 책임자). 시안은 일곱이지만
+// 한 줄에 여섯이 들어가, 일곱째부터 혼자 다음 줄로 내려가 꼬리처럼 남았다.
+const MAX_COLORS = 6;
 const MAX_BRANDS = 3;
 
 function percent(share: number): string {
