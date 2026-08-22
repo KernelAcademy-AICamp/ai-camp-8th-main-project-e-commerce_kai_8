@@ -7,10 +7,10 @@ function AxisRowSkeleton() {
   return (
     <li>
       <div className="flex items-center justify-between">
-        <div className="h-3 w-10 rounded bg-neutral-800" />
-        <div className="h-3 w-10 rounded bg-neutral-800" />
+        <div className="h-3 w-10 rounded bg-skel-1" />
+        <div className="h-3 w-10 rounded bg-skel-1" />
       </div>
-      <div className="mt-1.5 h-1 rounded-full bg-neutral-800" />
+      <div className="mt-1.5 h-1 rounded-full bg-skel-1" />
     </li>
   );
 }
@@ -36,27 +36,27 @@ function AxisRowSkeleton() {
  */
 export function TasteCardSkeleton() {
   return (
-    <section className="mt-10 rounded-2xl border border-neutral-800 p-5">
+    <section className="mt-10 rounded-2xl border border-line p-5">
       <div className="flex items-center justify-between">
-        <h2 className="text-base font-semibold text-white">내 취향</h2>
+        <h2 className="text-base font-semibold text-ink">내 취향</h2>
         <button
           type="button"
           aria-label="지금까지 본 것까지 반영해 새로고침"
           disabled
-          className="-m-2 flex h-9 w-9 cursor-pointer items-center justify-center rounded-full text-neutral-400 disabled:opacity-50"
+          className="-m-2 flex h-9 w-9 cursor-pointer items-center justify-center rounded-full text-ink-soft disabled:opacity-50"
         >
           <RefreshIcon size={17} />
         </button>
       </div>
 
       <div aria-label="불러오는 중" className="animate-pulse">
-        <div className="mt-1 h-5 w-32 rounded bg-neutral-800" />
+        <div className="mt-1 h-5 w-32 rounded bg-skel-1" />
         <ul className="mt-7">
           <AxisRowSkeleton />
         </ul>
         {GROUPS_IN_ORDER.map((group) => (
           <div key={group.key} className="mt-10">
-            <div className="h-3 w-12 rounded bg-neutral-800" />
+            <div className="h-3 w-12 rounded bg-skel-1" />
             <ul className="mt-3 space-y-6">
               {group.axes.map((axis) => (
                 <AxisRowSkeleton key={axis.key} />
@@ -65,16 +65,16 @@ export function TasteCardSkeleton() {
           </div>
         ))}
         <div className="mt-10">
-          <div className="h-3 w-12 rounded bg-neutral-800" />
+          <div className="h-3 w-12 rounded bg-skel-1" />
           <div className="mt-3 flex flex-wrap gap-2">
-            <div className="h-[34px] w-24 rounded-full bg-neutral-800" />
-            <div className="h-[34px] w-20 rounded-full bg-neutral-800" />
-            <div className="h-[34px] w-24 rounded-full bg-neutral-800" />
+            <div className="h-[34px] w-24 rounded-full bg-skel-1" />
+            <div className="h-[34px] w-20 rounded-full bg-skel-1" />
+            <div className="h-[34px] w-24 rounded-full bg-skel-1" />
           </div>
         </div>
         <div className="mt-10">
-          <div className="h-3 w-16 rounded bg-neutral-800" />
-          <div className="mt-3 h-5 w-48 rounded bg-neutral-800" />
+          <div className="h-3 w-16 rounded bg-skel-1" />
+          <div className="mt-3 h-5 w-48 rounded bg-skel-1" />
         </div>
       </div>
     </section>

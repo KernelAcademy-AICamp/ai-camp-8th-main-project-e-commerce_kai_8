@@ -82,6 +82,10 @@ export function useFeedViewModel(options?: FeedOptions) {
   const [items, setItems] = useState<FeedItem[]>([]);
   // 첫 페이지가 도착하기 전 = 스켈레톤 표시 구간 (실패 재시도 중에도 유지)
   const [ready, setReady] = useState(false);
+  // 다음 배치를 받아오는 중 = 피드 끝에 뼈대 카드를 이어 붙이는 구간.
+  // 시안은 배치마다 뼈대를 놓고 그 자리에서 실제 카드로 바꾼다(`.card.skel`).
+  // loadingRef와 값이 같지만 그쪽은 렌더와 무관한 중복 가드라 ref로 남긴다.
+  const [loadingMore, setLoadingMore] = useState(false);
   // 커서·중복 로드 방지는 렌더링과 무관한 진행 상태라 ref로 둔다
   const afterRef = useRef<number | null>(null);
   const exhaustedRef = useRef(false);
@@ -100,6 +104,7 @@ export function useFeedViewModel(options?: FeedOptions) {
   const loadMore = useCallback(() => {
     if (pausedRef.current || loadingRef.current || exhaustedRef.current) return;
     loadingRef.current = true;
+    setLoadingMore(true);
 
     // 요청 시점 프로필 요약을 한 번만 읽는다(비회원이면 null) — 메인 피드
     // 개인화 판단과 무작위 경로 성별 필터가 같은 값을 보게 한다. 요약이
@@ -198,6 +203,7 @@ export function useFeedViewModel(options?: FeedOptions) {
       })
       .finally(() => {
         loadingRef.current = false;
+        setLoadingMore(false);
       });
   }, [seed, exploreFrom]);
 
@@ -279,5 +285,5 @@ export function useFeedViewModel(options?: FeedOptions) {
     [seed],
   );
 
-  return { columns, sentinelRef, onImpress, showSkeleton: !ready };
+  return { columns, sentinelRef, onImpress, showSkeleton: !ready, loadingMore };
 }

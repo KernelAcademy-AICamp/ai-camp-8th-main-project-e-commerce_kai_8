@@ -32,20 +32,20 @@ export function MyPageShell({
   const close = useBackTo("/");
 
   return (
-    <main className="mx-auto max-w-md px-6 pb-10 text-neutral-200">
+    <main className="mx-auto max-w-md px-6 pb-10 text-ink">
       <header className="-mx-2 flex items-center justify-between py-2">
         <button
           type="button"
           aria-label="뒤로"
           onClick={close}
-          className="flex h-10 w-10 cursor-pointer items-center justify-center rounded-full text-neutral-400"
+          className="flex h-10 w-10 cursor-pointer items-center justify-center rounded-full text-ink-soft"
         >
           <BackIcon />
         </button>
         <Link
           href="/settings"
           aria-label="설정"
-          className="flex h-10 w-10 items-center justify-center rounded-full text-neutral-400"
+          className="flex h-10 w-10 items-center justify-center rounded-full text-ink-soft"
         >
           <GearIcon />
         </Link>
@@ -53,14 +53,14 @@ export function MyPageShell({
 
       <div className="mt-6 flex items-center gap-4">
         {/* 회색 원. 사진에 시선이 가야 하므로 화려한 아바타를 쓰지 않는다 */}
-        <div aria-hidden className="h-20 w-20 shrink-0 rounded-full bg-neutral-800" />
+        <div aria-hidden className="h-20 w-20 shrink-0 rounded-full bg-skel-1" />
         <div className="min-w-0">{identity}</div>
       </div>
 
       <div className="mt-8">{action}</div>
 
       {failure && (
-        <p role="status" className="mt-4 text-sm text-red-400">
+        <p role="status" className="mt-4 text-sm text-danger">
           로그인에 실패했습니다. 다시 시도해 주세요.
         </p>
       )}
@@ -74,8 +74,8 @@ export function MyPageShell({
 export function IdentitySkeleton() {
   return (
     <div aria-label="확인 중" className="animate-pulse space-y-2">
-      <div className="h-5 w-44 rounded bg-neutral-800" />
-      <div className="h-4 w-56 rounded bg-neutral-800" />
+      <div className="h-5 w-44 rounded bg-skel-1" />
+      <div className="h-4 w-56 rounded bg-skel-1" />
     </div>
   );
 }
@@ -83,9 +83,6 @@ export function IdentitySkeleton() {
 /** 버튼 자리의 뼈대 — 판정이 끝나면 같은 크기의 버튼이 들어와 화면이 튀지 않는다 */
 export function ActionSkeleton() {
   return (
-    <div
-      aria-hidden
-      className="h-[52px] w-full animate-pulse rounded-full bg-neutral-800"
-    />
+    <div aria-hidden className="h-[52px] w-full animate-pulse rounded-full bg-skel-1" />
   );
 }

@@ -26,17 +26,17 @@ export function FolderGridView() {
         <BackLink
           href="/"
           label="피드로 돌아가기"
-          className="flex h-10 w-10 items-center justify-center rounded-full text-neutral-400"
+          className="flex h-10 w-10 items-center justify-center rounded-full text-ink-soft"
         >
           <BackIcon />
         </BackLink>
-        <h1 className="text-lg font-semibold text-white">
+        <h1 className="text-lg font-semibold text-ink">
           보관함{view.totalCount > 0 && ` ${String(view.totalCount)}`}
         </h1>
       </header>
 
       {message !== null && (
-        <p role="status" className="mb-2 text-sm text-amber-400">
+        <p role="status" className="mb-2 text-sm text-star">
           {message}
         </p>
       )}
@@ -49,9 +49,9 @@ export function FolderGridView() {
         >
           {[0, 1, 2, 3].map((i) => (
             <div key={i}>
-              <div className="aspect-square w-full rounded-lg bg-neutral-800" />
-              <div className="mt-2 h-4 w-20 rounded bg-neutral-800" />
-              <div className="mt-1 h-3 w-10 rounded bg-neutral-800" />
+              <div className="aspect-square w-full rounded-lg bg-skel-1" />
+              <div className="mt-2 h-4 w-20 rounded bg-skel-1" />
+              <div className="mt-1 h-3 w-10 rounded bg-skel-1" />
             </div>
           ))}
         </div>
@@ -63,10 +63,10 @@ export function FolderGridView() {
             <li key={folder.id ?? "default"}>
               <Link href={`/wishlist/${folder.id ?? "default"}`} className="block">
                 <FolderThumbs thumbs={folder.thumbs} />
-                <span className="mt-2 block truncate font-medium text-white">
+                <span className="mt-2 block truncate font-medium text-ink">
                   {folder.name}
                 </span>
-                <span className="block text-sm text-neutral-500">{folder.count}개</span>
+                <span className="block text-sm text-ink-muted">{folder.count}개</span>
               </Link>
             </li>
           ))}
@@ -79,7 +79,7 @@ export function FolderGridView() {
                   void view.submitCreate();
                 }}
               >
-                <div className="flex aspect-square w-full scale-95 flex-col items-center justify-center gap-3 rounded-lg border border-dashed border-neutral-700 px-3">
+                <div className="flex aspect-square w-full scale-95 flex-col items-center justify-center gap-3 rounded-lg border border-dashed border-line px-3">
                   <input
                     autoFocus
                     value={view.draftName}
@@ -89,27 +89,27 @@ export function FolderGridView() {
                     maxLength={MAX_FOLDER_NAME}
                     placeholder="새 폴더 이름"
                     aria-label="새 폴더 이름"
-                    className="w-full border-b border-neutral-600 bg-transparent pb-1 text-center text-white outline-none placeholder:text-neutral-600"
+                    className="w-full border-b border-line bg-transparent pb-1 text-center text-ink outline-none placeholder:text-ink-muted"
                   />
                   <div className="flex gap-2">
                     <button
                       type="button"
                       onClick={view.cancelCreating}
-                      className="cursor-pointer rounded-full border border-neutral-700 px-3.5 py-1.5 text-sm text-neutral-300"
+                      className="cursor-pointer rounded-full border border-line px-3.5 py-1.5 text-sm text-ink-soft"
                     >
                       취소
                     </button>
                     <button
                       type="submit"
                       disabled={view.saving}
-                      className="cursor-pointer rounded-full bg-white px-3.5 py-1.5 text-sm font-medium text-[#1f1f1f] disabled:opacity-60"
+                      className="cursor-pointer rounded-full bg-slate neo-drop px-3.5 py-1.5 text-sm font-medium text-on-slate disabled:opacity-60"
                     >
                       만들기
                     </button>
                   </div>
                 </div>
                 {view.createError !== null && (
-                  <p role="status" className="mt-2 text-xs text-amber-400">
+                  <p role="status" className="mt-2 text-xs text-star">
                     {view.createError}
                   </p>
                 )}
@@ -121,10 +121,10 @@ export function FolderGridView() {
                 className="block w-full cursor-pointer text-left"
               >
                 {/* 폴더 타일과 같은 틀, 사진 대신 + */}
-                <span className="flex aspect-square w-full scale-95 items-center justify-center rounded-lg border border-dashed border-neutral-700 text-3xl font-light text-neutral-500">
+                <span className="flex aspect-square w-full scale-95 items-center justify-center rounded-lg border border-dashed border-line text-3xl font-light text-ink-muted">
                   +
                 </span>
-                <span className="mt-2 block font-medium text-neutral-400">새 폴더</span>
+                <span className="mt-2 block font-medium text-ink-soft">새 폴더</span>
               </button>
             )}
           </li>

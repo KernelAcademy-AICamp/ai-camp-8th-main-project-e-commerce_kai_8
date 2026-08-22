@@ -42,7 +42,7 @@ export function CurationList({
             <button
               key={curation.key}
               type="button"
-              className="relative block w-full cursor-pointer overflow-hidden rounded-xl bg-neutral-900 text-left"
+              className="relative block w-full cursor-pointer overflow-hidden rounded-xl bg-surface text-left"
               onClick={() => {
                 onOpen(curation.key);
               }}
@@ -63,7 +63,7 @@ export function CurationList({
                 <span className="line-clamp-2 block text-[16px] leading-[1.25] font-bold tracking-[-0.03em] break-keep text-white">
                   {curation.title}
                 </span>
-                <span className="mt-1.5 block text-[11px] text-neutral-400">
+                <span className="mt-1.5 block text-[11px] text-ink/70">
                   {curation.items.length}개
                 </span>
               </span>

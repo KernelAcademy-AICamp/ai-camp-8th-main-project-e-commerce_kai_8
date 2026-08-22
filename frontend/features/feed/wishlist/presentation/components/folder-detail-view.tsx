@@ -22,7 +22,7 @@ export function FolderDetailView({ folderParam }: { folderParam: string }) {
         <BackLink
           href="/wishlist"
           label="보관함으로 돌아가기"
-          className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-neutral-400"
+          className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-ink-soft"
         >
           <BackIcon />
         </BackLink>
@@ -43,30 +43,28 @@ export function FolderDetailView({ folderParam }: { folderParam: string }) {
               }}
               maxLength={MAX_FOLDER_NAME}
               aria-label="폴더 이름"
-              className="min-w-0 flex-1 border-b border-neutral-600 bg-transparent pb-0.5 text-lg font-semibold text-white outline-none"
+              className="min-w-0 flex-1 border-b border-line bg-transparent pb-0.5 text-lg font-semibold text-ink outline-none"
             />
             <button
               type="button"
               onClick={view.cancel}
-              className="shrink-0 cursor-pointer rounded-full border border-neutral-700 px-3 py-1.5 text-sm text-neutral-300"
+              className="shrink-0 cursor-pointer rounded-full border border-line px-3 py-1.5 text-sm text-ink-soft"
             >
               취소
             </button>
             <button
               type="submit"
               disabled={view.busy}
-              className="shrink-0 cursor-pointer rounded-full bg-white px-3 py-1.5 text-sm font-medium text-[#1f1f1f] disabled:opacity-60"
+              className="shrink-0 cursor-pointer rounded-full bg-slate neo-drop px-3 py-1.5 text-sm font-medium text-on-slate disabled:opacity-60"
             >
               저장
             </button>
           </form>
         ) : (
           <>
-            <h1 className="min-w-0 flex-1 truncate text-lg font-semibold text-white">
+            <h1 className="min-w-0 flex-1 truncate text-lg font-semibold text-ink">
               {view.name}
-              {view.count > 0 && (
-                <span className="text-neutral-500"> {view.count}</span>
-              )}
+              {view.count > 0 && <span className="text-ink-muted"> {view.count}</span>}
             </h1>
             {!view.isDefault && (
               <button
@@ -74,7 +72,7 @@ export function FolderDetailView({ folderParam }: { folderParam: string }) {
                 aria-label="폴더 관리"
                 aria-expanded={view.mode === "menu"}
                 onClick={view.openMenu}
-                className="flex h-10 w-10 shrink-0 cursor-pointer items-center justify-center rounded-full text-xl text-neutral-400"
+                className="flex h-10 w-10 shrink-0 cursor-pointer items-center justify-center rounded-full text-xl text-ink-soft"
               >
                 ⋯
               </button>
@@ -88,14 +86,14 @@ export function FolderDetailView({ folderParam }: { folderParam: string }) {
           <button
             type="button"
             onClick={view.startRename}
-            className="flex-1 cursor-pointer rounded-xl bg-neutral-800 py-2.5 text-sm font-medium text-white"
+            className="flex-1 cursor-pointer rounded-xl bg-well neo py-2.5 text-sm font-medium text-ink"
           >
             이름 바꾸기
           </button>
           <button
             type="button"
             onClick={view.startDelete}
-            className="flex-1 cursor-pointer rounded-xl bg-neutral-800 py-2.5 text-sm font-medium text-red-400"
+            className="flex-1 cursor-pointer rounded-xl bg-well neo py-2.5 text-sm font-medium text-danger"
           >
             폴더 삭제
           </button>
@@ -103,15 +101,15 @@ export function FolderDetailView({ folderParam }: { folderParam: string }) {
       )}
 
       {view.mode === "confirmDelete" && (
-        <div className="mx-1 mb-3 space-y-3 rounded-xl bg-neutral-900 p-4">
-          <p className="text-sm text-neutral-300">
+        <div className="mx-1 mb-3 space-y-3 rounded-xl bg-surface p-4">
+          <p className="text-sm text-ink-soft">
             이 폴더를 지울까요? 담긴 찜 {view.count}개는 기본 폴더로 이동해요.
           </p>
           <div className="flex gap-2">
             <button
               type="button"
               onClick={view.cancel}
-              className="flex-1 cursor-pointer rounded-xl bg-neutral-800 py-2.5 text-sm font-medium text-white"
+              className="flex-1 cursor-pointer rounded-xl bg-well neo py-2.5 text-sm font-medium text-ink"
             >
               취소
             </button>
@@ -121,7 +119,7 @@ export function FolderDetailView({ folderParam }: { folderParam: string }) {
                 void view.submitDelete();
               }}
               disabled={view.busy}
-              className="flex-1 cursor-pointer rounded-xl bg-red-900/80 py-2.5 text-sm font-medium text-white disabled:opacity-60"
+              className="flex-1 cursor-pointer rounded-xl bg-danger py-2.5 text-sm font-medium text-ink disabled:opacity-60"
             >
               지우기
             </button>
@@ -130,13 +128,13 @@ export function FolderDetailView({ folderParam }: { folderParam: string }) {
       )}
 
       {view.error !== null && (
-        <p role="status" className="mx-1 mb-2 text-sm text-amber-400">
+        <p role="status" className="mx-1 mb-2 text-sm text-star">
           {view.error}
         </p>
       )}
 
       {message !== null && (
-        <p role="status" className="mx-1 mb-2 text-sm text-amber-400">
+        <p role="status" className="mx-1 mb-2 text-sm text-star">
           {message}
         </p>
       )}
@@ -145,9 +143,9 @@ export function FolderDetailView({ folderParam }: { folderParam: string }) {
       {view.access !== "in" && <div className="py-24" aria-label="불러오는 중" />}
 
       {view.access === "in" && !view.hasEntries && (
-        <div className="flex flex-col items-center gap-3 py-24 text-neutral-400">
+        <div className="flex flex-col items-center gap-3 py-24 text-ink-soft">
           <p>이 폴더는 아직 비어 있어요.</p>
-          <Link href="/" className="rounded-xl bg-neutral-800 px-4 py-2 text-white">
+          <Link href="/" className="rounded-xl bg-well neo px-4 py-2 text-ink">
             피드 둘러보기
           </Link>
         </div>

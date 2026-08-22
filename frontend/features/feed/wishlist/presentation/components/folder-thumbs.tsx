@@ -31,7 +31,7 @@ export function FolderThumbs({
           alt=""
           fill
           sizes={sizes}
-          className="scale-[0.82] rotate-6 rounded-lg border border-neutral-800 object-cover opacity-60"
+          className="scale-[0.82] rotate-6 rounded-lg border border-line object-cover opacity-60"
           style={{ transformOrigin: "50% 100%", translate: "9% -4%" }}
         />
       )}
@@ -41,7 +41,7 @@ export function FolderThumbs({
           alt=""
           fill
           sizes={sizes}
-          className="scale-[0.88] -rotate-3 rounded-lg border border-neutral-800 object-cover opacity-80"
+          className="scale-[0.88] -rotate-3 rounded-lg border border-line object-cover opacity-80"
           style={{ transformOrigin: "50% 100%", translate: "-7% -2%" }}
         />
       )}
@@ -51,11 +51,11 @@ export function FolderThumbs({
           alt=""
           fill
           sizes={sizes}
-          className="scale-95 rounded-lg border border-neutral-700 object-cover"
+          className="scale-95 rounded-lg border border-line object-cover"
         />
       ) : (
         // 빈 폴더 — 아무것도 안 쌓인 판
-        <div className="absolute inset-0 scale-95 rounded-lg border border-neutral-800 bg-neutral-900" />
+        <div className="absolute inset-0 scale-95 rounded-lg border border-line bg-skel-1" />
       )}
     </div>
   );

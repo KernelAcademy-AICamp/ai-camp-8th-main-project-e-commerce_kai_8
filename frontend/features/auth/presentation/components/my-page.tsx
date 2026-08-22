@@ -43,18 +43,18 @@ export function MyPage({
           {state.kind === "loading" && <IdentitySkeleton />}
           {state.kind === "signedOut" && (
             <>
-              <h1 className="text-xl font-semibold text-white">로그인이 필요해요</h1>
-              <p className="mt-1 text-sm text-neutral-400">
+              <h1 className="text-xl font-semibold text-ink">로그인이 필요해요</h1>
+              <p className="mt-1 text-sm text-ink-soft">
                 로그인하면 찜한 상품을 계정에 저장할 수 있어요
               </p>
             </>
           )}
           {state.kind === "signedIn" && (
             <>
-              <h1 className="truncate text-lg font-semibold text-white">
+              <h1 className="truncate text-lg font-semibold text-ink">
                 {state.user.email ?? "구글 계정으로 로그인됨"}
               </h1>
-              <p className="mt-1 text-sm text-neutral-400">
+              <p className="mt-1 text-sm text-ink-soft">
                 찜한 상품이 이 계정에 저장돼요
               </p>
             </>
@@ -67,7 +67,7 @@ export function MyPage({
           {state.kind === "signedOut" && (
             <Link
               href="/login"
-              className="block w-full rounded-full bg-white py-3.5 text-center font-medium text-[#1f1f1f]"
+              className="block w-full rounded-full bg-slate neo-drop py-3.5 text-center font-medium text-on-slate"
             >
               로그인하기
             </Link>
@@ -77,7 +77,7 @@ export function MyPage({
               type="button"
               onClick={signOut}
               disabled={busy}
-              className="w-full cursor-pointer rounded-full border border-neutral-800 py-3.5 font-medium text-neutral-300 disabled:opacity-60"
+              className="w-full cursor-pointer rounded-full border border-line py-3.5 font-medium text-ink-soft disabled:opacity-60"
             >
               로그아웃
             </button>

@@ -14,7 +14,7 @@ export default async function SettingsPage({
   const notice = readAuthNotice(typeof auth === "string" ? auth : null);
 
   return (
-    <main className="mx-auto max-w-md px-4 pb-6 text-neutral-200">
+    <main className="mx-auto max-w-md px-4 pb-6 text-ink">
       <SettingsHeader />
       <PrivacySettings />
       <AccountDeleteSection notice={notice} />

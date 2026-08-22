@@ -29,11 +29,11 @@ export function FeedGrid({
 }: FeedGridProps) {
   return (
     <>
-      <div className="flex items-start gap-2">
+      <div className="flex items-start gap-3">
         {columns.map((column, columnIndex) => (
           <div
             key={`column-${String(columnIndex)}`}
-            className="flex min-w-0 flex-1 flex-col gap-2"
+            className="flex min-w-0 flex-1 flex-col gap-3.5"
           >
             {column.map((card) => (
               <ProductCard

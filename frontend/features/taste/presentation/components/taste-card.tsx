@@ -40,18 +40,18 @@ function AxisBar({ axis }: { axis: TasteAxis }) {
 
   return (
     <li>
-      <div className="flex items-center justify-between text-xs text-neutral-500">
+      <div className="flex items-center justify-between text-xs text-ink-muted">
         <span>{label.left}</span>
         <span>{label.right}</span>
       </div>
       <div
         role="img"
         aria-label={`${label.left}에서 ${label.right} 사이 ${percent(axis.value)} 지점, 상품 ${String(axis.measured)}개로 잼`}
-        className="relative mt-1.5 h-1 rounded-full bg-neutral-800"
+        className="relative mt-1.5 h-1 rounded-full bg-line"
       >
         <span
           aria-hidden
-          className="absolute top-1/2 h-3 w-3 -translate-x-1/2 -translate-y-1/2 rounded-full bg-white"
+          className="absolute top-1/2 h-3 w-3 -translate-x-1/2 -translate-y-1/2 rounded-full bg-slate"
           style={{ left: `${String(axis.value * 100)}%` }}
         />
       </div>
@@ -68,7 +68,7 @@ function AxisBar({ axis }: { axis: TasteAxis }) {
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <section className="mt-10 first:mt-8">
-      <h3 className="text-xs font-medium text-neutral-400">{title}</h3>
+      <h3 className="text-xs font-medium text-ink-soft">{title}</h3>
       <div className="mt-3">{children}</div>
     </section>
   );
@@ -86,7 +86,7 @@ function TasteBody({ summary }: { summary: TasteSummary }) {
     <>
       {/* 무엇으로 잰 값인지 먼저 밝힌다. 축마다 잰 개수가 다르므로(색은 거의 다
           잡히고 실측 치수는 절반뿐이다) 이 수는 축별 숫자의 상한으로 읽힌다. */}
-      <p className="mt-1 text-sm text-neutral-500">
+      <p className="mt-1 text-sm text-ink-muted">
         상품 {summary.matchedCount}개로 쟀어요
       </p>
 
@@ -115,15 +115,15 @@ function TasteBody({ summary }: { summary: TasteSummary }) {
             {colors.map((color) => (
               <li
                 key={color.group}
-                className="flex items-center gap-2 rounded-full border border-neutral-800 py-1.5 pr-3 pl-1.5"
+                className="flex items-center gap-2 rounded-full border border-line py-1.5 pr-3 pl-1.5"
               >
                 <span
                   aria-hidden
-                  className="h-5 w-5 rounded-full border border-white/10"
+                  className="h-5 w-5 rounded-full border border-ink/10"
                   style={{ backgroundColor: color.chip?.hex }}
                 />
-                <span className="text-sm text-neutral-300">{color.chip?.label}</span>
-                <span className="text-xs text-neutral-500">{percent(color.share)}</span>
+                <span className="text-sm text-ink-soft">{color.chip?.label}</span>
+                <span className="text-xs text-ink-muted">{percent(color.share)}</span>
               </li>
             ))}
           </ul>
@@ -132,7 +132,7 @@ function TasteBody({ summary }: { summary: TasteSummary }) {
 
       {brands.length > 0 && (
         <Section title="자주 본 브랜드">
-          <p className="text-sm text-neutral-300">
+          <p className="text-sm text-ink-soft">
             {brands.map((b) => b.name).join(" · ")}
           </p>
         </Section>
@@ -157,9 +157,9 @@ export function TasteCard() {
   if (state.kind === "loading") return <TasteCardSkeleton />;
 
   return (
-    <section className="mt-10 rounded-2xl border border-neutral-800 p-5">
+    <section className="mt-10 rounded-2xl border border-line p-5">
       <div className="flex items-center justify-between">
-        <h2 className="text-base font-semibold text-white">내 취향</h2>
+        <h2 className="text-base font-semibold text-ink">내 취향</h2>
         {/* 세션 취향은 30분 쉬어야 반영되므로, "지금까지 본 것까지"를 원하면 이 버튼.
             불러오는 중 잠그는 일은 뼈대(TasteCardSkeleton)가 맡는다 — 여기까지 왔으면 끝났다 */}
         <button
@@ -167,7 +167,7 @@ export function TasteCard() {
           aria-label="지금까지 본 것까지 반영해 새로고침"
           onClick={refresh}
           disabled={refreshing}
-          className={`-m-2 flex h-9 w-9 cursor-pointer items-center justify-center rounded-full text-neutral-400 disabled:opacity-50 ${
+          className={`-m-2 flex h-9 w-9 cursor-pointer items-center justify-center rounded-full text-ink-soft disabled:opacity-50 ${
             refreshing ? "animate-spin" : ""
           }`}
         >
@@ -176,14 +176,14 @@ export function TasteCard() {
       </div>
 
       {state.kind === "failed" && (
-        <p role="status" className="mt-1 text-sm text-neutral-500">
+        <p role="status" className="mt-1 text-sm text-ink-muted">
           지금은 취향을 불러오지 못했어요
         </p>
       )}
 
       {/* 없는 것을 있는 척하지 않는다 */}
       {state.kind === "ready" && isStillCollecting(state.summary) && (
-        <p className="mt-1 text-sm text-neutral-500">
+        <p className="mt-1 text-sm text-ink-muted">
           아직 모으는 중이에요. 마음에 드는 티셔츠를 눌러 보세요
         </p>
       )}
