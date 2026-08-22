@@ -20,6 +20,11 @@ const KEEP_EXACT = new Set([
   // 계정으로 옮길 찜 보관함. 정리 **직전에** 여기로 빼두므로, 같이 지우면
   // 옮길 것이 사라진다 (shared/identity/wish-carry.ts).
   "atee-wishlist-migrate",
+  // 계정으로 옮길 성별 보관함. 찜과 같은 이유다 — 정리 직전에 빼두므로 같이 지우면
+  // 비회원이 고른 성별이 사라져 로그인 직후 다시 묻게 된다
+  // (shared/identity/gender-carry.ts). **설정 본체(atee-gender)는 여기 넣지 않는다**
+  // — 앞 사용자의 성별이 다음 사용자에게 새면 안 되므로 지워지는 것이 맞다.
+  "atee-gender-migrate",
 ]);
 
 /** 버전이 붙는 키들 */

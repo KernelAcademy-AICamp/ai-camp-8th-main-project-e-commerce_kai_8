@@ -1,5 +1,10 @@
 // Supabase RPC 호출 공통부 — 피드·유사 검색·신호 기록이 공유한다.
 // (feed-api에 있던 것을 여러 feature가 쓰게 되어 shared로 승격)
+//
+// 실패는 **상태 코드를 실은 구조화 오류**로 던진다. 문자열에 섞어 두면 부르는 쪽이
+// "다시 시도해서 될 일인가"를 판정할 수 없다 (계획 6단계).
+
+import { RpcError } from "./rpc-error";
 
 function supabaseEnv(): { url: string; key: string } {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -23,18 +28,24 @@ export async function rpcPost<T>(
   },
 ): Promise<T> {
   const { url, key } = supabaseEnv();
-  const res = await fetch(`${url}/rest/v1/rpc/${fn}`, {
-    method: "POST",
-    headers: { apikey: key, "Content-Type": "application/json" },
-    body: JSON.stringify(body),
-    keepalive: options?.keepalive ?? false,
-    signal:
-      options?.timeoutMs !== undefined && typeof AbortSignal !== "undefined"
-        ? AbortSignal.timeout(options.timeoutMs)
-        : undefined,
-  });
+  let res: Response;
+  try {
+    res = await fetch(`${url}/rest/v1/rpc/${fn}`, {
+      method: "POST",
+      headers: { apikey: key, "Content-Type": "application/json" },
+      body: JSON.stringify(body),
+      keepalive: options?.keepalive ?? false,
+      signal:
+        options?.timeoutMs !== undefined && typeof AbortSignal !== "undefined"
+          ? AbortSignal.timeout(options.timeoutMs)
+          : undefined,
+    });
+  } catch {
+    // 네트워크 실패·시간 초과 — 응답 자체가 없다. 상태 코드가 없으므로 일시적 실패로 본다.
+    throw new RpcError(`${fn} 실패: 응답 없음`, null);
+  }
   if (!res.ok) {
-    throw new Error(`${fn} 실패: HTTP ${String(res.status)}`);
+    throw new RpcError(`${fn} 실패: HTTP ${String(res.status)}`, res.status);
   }
   return (await res.json()) as T;
 }
@@ -44,7 +55,7 @@ export async function restSelect<T>(query: string): Promise<T> {
   const { url, key } = supabaseEnv();
   const res = await fetch(`${url}/rest/v1/${query}`, { headers: { apikey: key } });
   if (!res.ok) {
-    throw new Error(`${query} 조회 실패: HTTP ${String(res.status)}`);
+    throw new RpcError(`${query} 조회 실패: HTTP ${String(res.status)}`, res.status);
   }
   return (await res.json()) as T;
 }

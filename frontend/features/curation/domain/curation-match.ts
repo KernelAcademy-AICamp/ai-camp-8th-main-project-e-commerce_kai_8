@@ -1,6 +1,9 @@
 // FOR YOU 개인화 — 내가 반응한 상품이 어느 큐레이션에 걸리는지 판정하고 점수를 매긴다.
 // 계획: docs/plans/2026-08-20-foryou-curation-personalization.md 3단계
 
+import type { CurationViews } from "@/shared/profile/curation-views";
+import { IMPRESSION_DAMPING } from "@/shared/profile/profile-rules";
+
 /** 큐레이션 규칙 중 제목으로 판정 가능한 부분 (backend/scripts/gen_curation_rules.py 산출) */
 export interface CurationRule {
   /** 하나라도 제목에 있으면 걸린다 */ kw: string[];
@@ -37,6 +40,18 @@ export function rarityBonus(n: number): number {
   return Math.log(CATALOG_SIZE / Math.max(n, 1));
 }
 
+/**
+ * 여러 번 보여준 큐레이션은 점수를 깎는다 — BROWSE 피드의 자기강화 보정과 **같은 식**
+ * (profile-rules의 IMPRESSION_DAMPING).
+ *
+ * 이게 없으면 취향이 굳은 사람에게 매번 똑같은 6장이 나온다. 한 번 보여줄 때마다
+ * 0.77배 → 0.63배로 줄어, 1등과 7등의 차이가 크면 자리를 지키고 근소하면 돌아간다.
+ * 0으로 만들지는 않는다 — 좋아하는 것이 영영 사라지면 그것도 개인화가 아니다.
+ */
+export function viewDamping(seen: number): number {
+  return 1 / (1 + IMPRESSION_DAMPING * seen);
+}
+
 export interface ScoredCuration {
   key: string;
   score: number;
@@ -50,6 +65,7 @@ export function scoreCurations(
   curations: { key: string; n: number }[],
   rules: Record<string, CurationRule | undefined>,
   anchors: AnchorTitle[],
+  views: CurationViews = {},
 ): ScoredCuration[] {
   return curations
     .map(({ key, n }, index) => {
@@ -59,7 +75,11 @@ export function scoreCurations(
         (sum, a) => (matches(a.title, rule) ? sum + a.weight : sum),
         0,
       );
-      return { key, score: hit * rarityBonus(n), index };
+      return {
+        key,
+        score: hit * rarityBonus(n) * viewDamping(views[key] ?? 0),
+        index,
+      };
     })
     .filter((c) => c.score > 0)
     .sort((a, b) => b.score - a.score || a.index - b.index)
@@ -76,9 +96,10 @@ export function orderByTaste<T extends { key: string; n: number }>(
   curations: T[],
   rules: Record<string, CurationRule | undefined>,
   anchors: AnchorTitle[],
+  views: CurationViews = {},
 ): T[] {
   if (anchors.length === 0) return curations;
-  const scored = scoreCurations(curations, rules, anchors);
+  const scored = scoreCurations(curations, rules, anchors, views);
   if (scored.length === 0) return curations;
   const picked = new Set(scored.map((s) => s.key));
   const byKey = new Map(curations.map((c) => [c.key, c]));

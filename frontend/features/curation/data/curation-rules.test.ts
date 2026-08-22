@@ -27,3 +27,23 @@ describe("큐레이션 규칙 파일", () => {
     expect(empty).toEqual([]);
   });
 });
+
+/**
+ * 성별은 `backfill_item_gender.py`가 뒤늦게 채운 것이라, `gen_curation_page.py`를 다시
+ * 돌리면(그쪽도 이제 성별을 싣지만) 빠질 여지가 있다. 빠지면 **거르기가 조용히 멈춘다**
+ * — 남성에게 여성복이 다시 보이는데 화면은 멀쩡해 보인다.
+ */
+describe("큐레이션 상품 성별", () => {
+  const items = curationData.flatMap((c) => c.items);
+
+  it("모든 상품에 성별이 실려 있다", () => {
+    expect(items.filter((i) => !("g" in i))).toEqual([]);
+  });
+
+  it("성별 값은 남성·여성·공용뿐이다", () => {
+    const odd = [...new Set(items.map((i) => ("g" in i ? i.g : null)))].filter(
+      (g) => g !== "남성" && g !== "여성" && g !== "공용",
+    );
+    expect(odd).toEqual([]);
+  });
+});

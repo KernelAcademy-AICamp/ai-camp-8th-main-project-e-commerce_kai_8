@@ -5,6 +5,7 @@ import {
   orderByTaste,
   rarityBonus,
   scoreCurations,
+  viewDamping,
 } from "@/features/curation/domain/curation-match";
 
 const CURATIONS = [
@@ -62,6 +63,33 @@ describe("scoreCurations", () => {
       { title: "블랙 무지 티", weight: 4 },
     ]);
     expect(scored).toEqual([]);
+  });
+});
+
+describe("viewDamping — 여러 번 보여준 것은 깎인다", () => {
+  it("보여줄수록 작아지지만 0이 되지는 않는다", () => {
+    expect(viewDamping(0)).toBe(1);
+    expect(viewDamping(3)).toBeLessThan(viewDamping(1));
+    expect(viewDamping(100)).toBeGreaterThan(0);
+  });
+
+  it("근소하게 앞선 큐레이션은 몇 번 보여주면 자리를 내준다", () => {
+    const anchors = [
+      { title: "고양이 티", weight: 1 },
+      { title: "여름 반팔", weight: 2.1 }, // summer가 근소하게 앞선다
+    ];
+    expect(scoreCurations(CURATIONS, RULES, anchors)[0].key).toBe("summer");
+    const after = scoreCurations(CURATIONS, RULES, anchors, { summer: 3 });
+    expect(after[0].key).toBe("cat");
+  });
+
+  it("확실히 앞선 큐레이션은 몇 번 보여줘도 자리를 지킨다 — 좋아하는 것이 사라지지 않는다", () => {
+    const anchors = [
+      { title: "고양이 티", weight: 6 },
+      { title: "여름 반팔", weight: 1 },
+    ];
+    const after = scoreCurations(CURATIONS, RULES, anchors, { cat: 3 });
+    expect(after[0].key).toBe("cat");
   });
 });
 

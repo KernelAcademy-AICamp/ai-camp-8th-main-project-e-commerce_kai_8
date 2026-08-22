@@ -8,13 +8,14 @@
 // 했으므로(2026-08-19 결정), 확실해지기 전에 기록하는 쪽보다 몇 건 놓치는 쪽이
 // 약속에 맞다.
 
-import type { SupabaseClient } from "@supabase/supabase-js";
+import type { SupabaseClient, User } from "@supabase/supabase-js";
 
 import { getBrowserSupabase } from "@/shared/supabase/browser-client";
 
 export type SignedInState = "unknown" | "in" | "out";
 
 let state: SignedInState = "unknown";
+let name: string | null = null;
 let started = false;
 const listeners = new Set<() => void>();
 
@@ -48,9 +49,13 @@ function start(): void {
   function refresh(): void {
     void supabase.auth.getSession().then(
       ({ data }) => {
+        // 상태보다 **먼저** 채운다 — 화면은 상태가 바뀔 때 다시 그리면서 이름을
+        // 함께 읽는다. 뒤에 채우면 이름 없는 화면이 한 번 그려진다.
+        name = nameOf(data.session?.user);
         apply(data.session === null ? "out" : "in");
       },
       () => {
+        name = null;
         apply("out");
       },
     );
@@ -61,6 +66,15 @@ function start(): void {
   supabase.auth.onAuthStateChange(() => {
     refresh();
   });
+}
+
+/**
+ * 구글이 준 표시 이름. 빈 값은 없는 것으로 본다 — 빈 이름으로 "님"을 붙이면
+ * "님을 위해 골랐어요"가 된다.
+ */
+function nameOf(user: User | undefined): string | null {
+  const raw: unknown = user?.user_metadata.full_name ?? user?.user_metadata.name;
+  return typeof raw === "string" && raw.trim() !== "" ? raw.trim() : null;
 }
 
 export function subscribeSession(listener: () => void): () => void {
@@ -74,6 +88,17 @@ export function subscribeSession(listener: () => void): () => void {
 export function getSignedInSnapshot(): SignedInState {
   start();
   return state;
+}
+
+/**
+ * 화면에 부르는 이름. 로그인하지 않았거나 이름을 못 받았으면 null.
+ *
+ * 구독은 `useSignedIn` 것을 그대로 쓴다 — 이름은 세션과 **함께** 바뀌므로 상태가
+ * 바뀔 때 다시 그려지면 같이 읽힌다. 여기에 구독을 하나 더 만들면 같은 질문에
+ * 서로 다른 답이 나올 수 있다.
+ */
+export function getDisplayName(): string | null {
+  return name;
 }
 
 /** 서버 렌더에는 세션이 없다 */

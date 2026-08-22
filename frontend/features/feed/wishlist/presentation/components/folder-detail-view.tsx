@@ -105,7 +105,8 @@ export function FolderDetailView({ folderParam }: { folderParam: string }) {
       {view.mode === "confirmDelete" && (
         <div className="mx-1 mb-3 space-y-3 rounded-xl bg-neutral-900 p-4">
           <p className="text-sm text-neutral-300">
-            이 폴더를 지울까요? 담긴 찜 {view.count}개는 기본 폴더로 이동해요.
+            {/* 숨은 찜도 함께 옮겨진다 — 여기만 원본 개수를 쓴다 */}이 폴더를 지울까요?
+            담긴 찜 {view.originalCount}개는 기본 폴더로 이동해요.
           </p>
           <div className="flex gap-2">
             <button
@@ -144,7 +145,15 @@ export function FolderDetailView({ folderParam }: { folderParam: string }) {
       {/* 로그인 판정이 끝나기 전에는 비어 보이는 화면을 그리지 않는다 */}
       {view.access !== "in" && <div className="py-24" aria-label="불러오는 중" />}
 
-      {view.access === "in" && !view.hasEntries && (
+      {/* 성별 설정 때문에 가린 것이 있으면 알린다 — 찜이 사라진 것이 아니다.
+          전부 가려진 폴더에서는 아래 "비어 있어요" 대신 이 줄만 보인다. */}
+      {view.access === "in" && view.hiddenCount > 0 && (
+        <p role="status" className="mx-1 mb-2 text-sm text-neutral-500">
+          성별 설정에 맞지 않는 {view.hiddenCount}개는 숨겼어요
+        </p>
+      )}
+
+      {view.access === "in" && view.isEmpty && (
         <div className="flex flex-col items-center gap-3 py-24 text-neutral-400">
           <p>이 폴더는 아직 비어 있어요.</p>
           <Link href="/" className="rounded-xl bg-neutral-800 px-4 py-2 text-white">

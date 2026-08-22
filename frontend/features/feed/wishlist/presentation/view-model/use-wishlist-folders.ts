@@ -12,6 +12,7 @@ import {
   normalizeFolderName,
   summarizeFolders,
 } from "@/features/feed/wishlist/domain/wish-folders";
+import { useVisibleWishes } from "@/features/feed/wishlist/presentation/view-model/use-visible-wishes";
 import { useWishlist } from "@/features/feed/wishlist/presentation/view-model/use-wishlist";
 
 /** 보관함 첫 화면(폴더 그리드)의 상태·동작 */
@@ -23,9 +24,12 @@ export function useWishlistFolders() {
     if (access === "out") router.replace("/login");
   }, [access, router]);
 
+  // 타일 개수·썸네일은 화면용이다 — 타일에 적힌 수와 폴더를 열었을 때 보이는
+  // 장 수가 어긋나면 안 된다 (설계 "개수 계약").
+  const visible = useVisibleWishes(entries);
   const summaries = useMemo(
-    () => summarizeFolders(folders, entries),
-    [folders, entries],
+    () => summarizeFolders(folders, visible.entries),
+    [folders, visible.entries],
   );
 
   // + 타일의 인라인 입력
@@ -72,7 +76,7 @@ export function useWishlistFolders() {
     access,
     notice,
     summaries,
-    totalCount: entries.length,
+    totalCount: visible.entries.length,
     creating,
     startCreating,
     cancelCreating,

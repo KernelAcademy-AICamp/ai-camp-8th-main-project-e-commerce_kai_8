@@ -6,6 +6,7 @@ import {
   fetchLocalUserId,
   subscribeAuthChange,
 } from "@/features/auth/data/auth-repository";
+import { carryGender, shouldCarryGender } from "@/shared/identity/gender-carry";
 import { isIdentityTransition, markerFor } from "@/shared/identity/identity-marker";
 import { clearIdentityScopedData } from "@/shared/identity/identity-reset";
 import { carryWishes, shouldCarryWishes } from "@/shared/identity/wish-carry";
@@ -68,6 +69,9 @@ export function useIdentityReconcile(): void {
           // 사라진 뒤다. 익명 → 사용자 전환에서만 일어난다 — 사용자 A → B에서
           // 옮기면 A의 찜이 B 계정으로 들어간다(설계 §4).
           if (shouldCarryWishes(previous, current)) carryWishes(localStorage);
+          // 성별도 같은 자리에서 빼둔다 — 아래 정리가 설정 본체를 지운다.
+          // 안 빼두면 비회원으로 고른 성별이 사라져 로그인 직후 다시 묻게 된다.
+          if (shouldCarryGender(previous, current)) carryGender(localStorage);
 
           // **지우기 전에** 지금 세션을 끝낸다. 아래 정리가 세션 키를 지우므로,
           // 여기서 끝내지 않으면 직전 세션은 종료 줄 없이 사라진다 — 그 세션의
