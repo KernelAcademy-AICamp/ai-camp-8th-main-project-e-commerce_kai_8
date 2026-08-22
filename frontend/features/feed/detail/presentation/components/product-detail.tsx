@@ -29,6 +29,7 @@ import { SaveSheet } from "@/features/feed/wishlist/presentation/components/save
 import { useSaveSheet } from "@/features/feed/wishlist/presentation/view-model/use-save-sheet";
 import { useVisibleWishes } from "@/features/feed/wishlist/presentation/view-model/use-visible-wishes";
 import { useWishlist } from "@/features/feed/wishlist/presentation/view-model/use-wishlist";
+import { recordRecentProduct } from "@/shared/history/recent-products";
 import { BackIcon, ExternalLinkIcon } from "@/shared/icons";
 import { logAction } from "@/shared/signals/signals";
 
@@ -107,6 +108,15 @@ export function ProductDetail({
   };
   const wishlistMessage = wishlistNoticeMessage(notice);
   useBodyScrollLock();
+
+  // 상세를 열면 "최근 본 제품"에 남긴다. 사진 주소를 함께 넣어 나중에 상품번호로
+  // 다시 조회하지 않는다 — 여는 순간 이미 상품을 손에 쥐고 있다.
+  useEffect(() => {
+    recordRecentProduct({
+      goodsNo: product.goodsNo,
+      thumbnail: product.thumbnail,
+    });
+  }, [product.goodsNo, product.thumbnail]);
 
   return (
     <div
