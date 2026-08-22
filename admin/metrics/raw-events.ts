@@ -12,6 +12,11 @@ import type { MetricDefinition } from "@/features/metrics/domain/metric";
  *
  * 상품 번호는 숫자지만 문자열로 둔다 — 천 단위 구분이 붙으면 상품 번호가 아니라
  * 금액처럼 보인다.
+ *
+ * **발생 시점 상태**는 전송 시점이 아니라 이벤트가 만들어진 순간의 로그인 여부다
+ * (정의 §5). 값이 비어 있으면 "비회원"이 아니라 **"알 수 없음"**이다 — 계측 계약
+ * 이전에 쌓였거나, 배포 직전 큐에 남아 있다가 뒤늦게 도착한 줄이다. 비회원으로
+ * 읽으면 배포 직전의 회원 행동이 비회원 통계에 섞인다.
  */
 export const rawEvents: MetricDefinition = {
   id: "raw-events",
@@ -23,6 +28,12 @@ export const rawEvents: MetricDefinition = {
       to_char(occurred_at at time zone 'Asia/Seoul', 'MM-DD HH24:MI:SS') as "발생(KST)",
       left(device_id::text, 8)  as "기기",
       left(session_id::text, 8) as "세션",
+      case
+        when signed_in is null then '알 수 없음'
+        when signed_in         then '회원'
+        else                        '비회원'
+      end                       as "발생 시점 상태",
+      coalesce(instr_ver, '계약 이전') as "계측",
       event_type                as "이벤트",
       goods_no::text            as "상품",
       source_bucket             as "추천 유형",
