@@ -53,40 +53,43 @@ export function MyPageShell({
       {...swipe}
       // 세로 스크롤은 그대로 두고 가로 제스처만 가져간다
       style={{ touchAction: "pan-y" }}
-      // 겹쳐 열릴 때는 자기 배경이 있어야 한다 — 없으면 뒤의 홈이 비친다.
-      // 시안 `.sidebar`도 불투명한 판이다.
-      className="sidebar-in relative mx-auto min-h-dvh max-w-md bg-app text-ink shadow-[-12px_0_28px_rgb(20_26_40/0.25)]"
+      // **화면 끝까지 덮는다.** 시안 `.sidebar`는 폭 100%다 — 폭을 좁히면 열린
+      // 뒤에도 양옆으로 뒤 화면이 비어져 나온다. 배경도 자기가 갖는다(없으면 비친다).
+      className="sidebar-in relative min-h-dvh w-full bg-app text-ink shadow-[-12px_0_28px_rgb(20_26_40/0.25)]"
     >
-      {/* 시안 `.side-rail` — 색을 채운 세로 띠. 바닥에 세로 워드마크가 선다. */}
-      <span aria-hidden className="side-rail" />
+      {/* 판은 끝까지 덮되, 읽는 내용은 폰 폭으로 모은다 */}
+      <div className="relative mx-auto min-h-dvh max-w-md">
+        {/* 시안 `.side-rail` — 색을 채운 세로 띠. 바닥에 세로 워드마크가 선다. */}
+        <span aria-hidden className="side-rail" />
 
-      {/* 레일(46px)을 비켜 안쪽에 내용을 둔다 — 시안 `.side-scroll` 여백 */}
-      <div className="pt-[54px] pr-[22px] pb-[30px] pl-[68px]">
-        {/* 시안 `.side-top` — 닫기 · 인사말 · 설정 · 로그아웃이 한 줄이다 */}
-        <div className="flex items-center gap-2.5">
-          <button
-            type="button"
-            aria-label="마이 페이지 닫기"
-            onClick={close}
-            className={SIDE_BTN}
-          >
-            <BackIcon size={15} />
-          </button>
-          <p className="mr-auto ml-1 min-w-0 truncate text-[15px] font-[650] text-ink-soft">
-            {greeting}
-          </p>
-          {settings}
-          {account}
+        {/* 레일(46px)을 비켜 안쪽에 내용을 둔다 — 시안 `.side-scroll` 여백 */}
+        <div className="pt-[54px] pr-[22px] pb-[30px] pl-[68px]">
+          {/* 시안 `.side-top` — 닫기 · 인사말 · 설정 · 로그아웃이 한 줄이다 */}
+          <div className="flex items-center gap-2.5">
+            <button
+              type="button"
+              aria-label="마이 페이지 닫기"
+              onClick={close}
+              className={SIDE_BTN}
+            >
+              <BackIcon size={15} />
+            </button>
+            <p className="mr-auto ml-1 min-w-0 truncate text-[15px] font-[650] text-ink-soft">
+              {greeting}
+            </p>
+            {settings}
+            {account}
+          </div>
+
+          {failure && (
+            <p role="status" className="mt-4 text-sm text-danger">
+              로그인에 실패했습니다. 다시 시도해 주세요.
+            </p>
+          )}
+
+          {/* 시안 `.prof-below` — 내 취향 카드부터 아래로 */}
+          <div className="mt-8">{children}</div>
         </div>
-
-        {failure && (
-          <p role="status" className="mt-4 text-sm text-danger">
-            로그인에 실패했습니다. 다시 시도해 주세요.
-          </p>
-        )}
-
-        {/* 시안 `.prof-below` — 내 취향 카드부터 아래로 */}
-        <div className="mt-8">{children}</div>
       </div>
     </main>
   );
