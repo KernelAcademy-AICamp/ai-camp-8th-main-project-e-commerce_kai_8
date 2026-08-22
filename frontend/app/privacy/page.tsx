@@ -29,8 +29,8 @@ export default function PrivacyPolicyPage() {
       {/* 뒤로가기 좌표를 마이페이지와 맞춘다 — 왼쪽 16px·위 8px (전 화면 공통) */}
       <header className="mb-4 flex items-center gap-1 py-2">
         <BackLink
-          href="/settings"
-          label="설정으로 돌아가기"
+          href="/my"
+          label="프로필로 돌아가기"
           className="flex h-10 w-10 items-center justify-center rounded-full text-ink-soft"
         >
           <BackIcon />
@@ -182,11 +182,12 @@ export default function PrivacyPolicyPage() {
         </p>
       </section>
 
+      {/* 설정이 프로필 안 팝오버가 되면서 이 화면은 프로필에서 열린다 */}
       <Link
-        href="/settings"
+        href="/my"
         className="mt-4 block rounded-xl bg-well neo py-3 text-center font-medium text-ink"
       >
-        설정으로 돌아가기
+        프로필로 돌아가기
       </Link>
     </main>
   );
