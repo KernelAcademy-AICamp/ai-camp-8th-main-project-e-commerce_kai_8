@@ -59,12 +59,17 @@ export function DetailDock({
   const wasSavedRef = useRef(saved);
 
   // 애니메이션 준비 (이 화면에 있는 동안만)
-  const disposedRef = useRef(false);
+  //
+  // ⚠️ **취소 표시는 이 실행에만 속한 값이어야 한다.** ref에 두면 다음 실행이
+  // 그 값을 되돌려, 이미 취소된 앞 실행의 로드가 살아나 애니메이션이 **둘** 만들어진다.
+  // 개발 모드에서 React가 효과를 두 번 돌릴 때 실제로 그렇게 됐다 — 화면에 보이는
+  // 것은 재생되지 않는 쪽이고, 재생되는 쪽은 뒤에 붙어 크기가 어긋난 채 잘려 보였다.
   useEffect(() => {
-    disposedRef.current = false;
-    // await 사이에 값이 바뀔 수 있다. 직접 읽으면 타입 분석이 "항상 false"로
-    // 좁혀 검사에 걸리므로 함수로 감싸 읽는다.
-    const disposed = () => disposedRef.current;
+    let cancelled = false;
+    // 직접 읽으면 타입 분석이 "항상 false"로 좁혀 검사에 걸린다 — 함수로 감싸 읽는다
+    const isCancelled = () => cancelled;
+    let created: AnimationItem | null = null;
+
     const load = async () => {
       const container = boxRef.current;
       if (!container || prefersReducedMotion()) return;
@@ -72,22 +77,25 @@ export function DetailDock({
         import("lottie-web"),
         fetch("/animations/save.json"),
       ]);
-      if (disposed() || !response.ok) return;
+      if (isCancelled() || !response.ok) return;
       const animationData: unknown = await response.json();
-      if (disposed()) return;
-      animRef.current = lottie.loadAnimation({
+      if (isCancelled()) return;
+      container.replaceChildren(); // 남아 있을 수 있는 앞선 그림을 비운다
+      created = lottie.loadAnimation({
         container,
         renderer: "svg",
         loop: false,
         autoplay: false,
         animationData,
       });
+      animRef.current = created;
     };
     void load();
+
     return () => {
-      disposedRef.current = true;
-      animRef.current?.destroy();
-      animRef.current = null;
+      cancelled = true;
+      created?.destroy();
+      if (animRef.current === created) animRef.current = null;
     };
   }, []);
 
@@ -194,7 +202,7 @@ export function DetailDock({
             <span
               ref={boxRef}
               aria-hidden
-              className={`pointer-events-none absolute inset-0 flex items-center justify-center transition-opacity duration-[320ms] [&_svg]:block [&_svg]:h-full ${
+              className={`pointer-events-none absolute inset-0 transition-opacity duration-[320ms] [&>svg]:block [&>svg]:h-full [&>svg]:w-full ${
                 playing ? "opacity-100" : "opacity-0"
               }`}
             />
