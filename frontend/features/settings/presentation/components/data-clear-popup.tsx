@@ -46,7 +46,7 @@ export function DataClearPopup({
           <PopupMessage>
             탐색 기록·취향·보여줄 성별이
             <br />
-            사라집니다. 되돌릴 수 없어요.
+            사라져요. 찜·폴더는 계정에 남아요.
           </PopupMessage>
           <PopupActions>
             <PopupButton tone="danger" onClick={onConfirm} disabled={working}>
