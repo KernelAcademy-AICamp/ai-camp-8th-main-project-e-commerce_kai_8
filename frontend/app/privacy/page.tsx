@@ -126,7 +126,7 @@ export default function PrivacyPolicyPage() {
           <li>검색어 기록 — 90일 뒤 자동 삭제</li>
           <li>탐색 행동·익명 ID — 지울 때까지</li>
           <li>계정 · 취향 프로필 — 탈퇴할 때까지</li>
-          <li>찜 목록 — 탈퇴하거나 찜을 풀 때까지</li>
+          <li>찜 목록 — 탈퇴하거나, 찜을 풀거나, 개인화 데이터를 지울 때까지</li>
         </ul>
       </section>
 
@@ -134,8 +134,10 @@ export default function PrivacyPolicyPage() {
         <h2 className="text-base font-semibold text-ink">어떻게 지우나요</h2>
         <p>
           <b className="text-ink">개인화 데이터 모두 지우기</b> — 이 기기의 익명 ID·취향
-          프로필과 서버에 기록된 탐색 행동·검색어가 지워지고 새 익명 ID로 처음 상태가
-          됩니다. <b className="text-ink">계정과 계정에 담긴 찜·취향은 남습니다.</b>
+          프로필·최근 본 제품·보여줄 상품의 성별, 서버에 기록된 탐색 행동·검색어, 그리고{" "}
+          <b className="text-ink">계정에 담긴 찜과 폴더</b>가 모두 지워지고 새 익명 ID로
+          처음 상태가 됩니다. <b className="text-ink">계정 자체는 남습니다</b> —
+          계정까지 지우려면 아래 계정 삭제를 쓰세요.
         </p>
         <p>
           <b className="text-ink">계정 삭제</b> — 계정과 연결된 구글 신원, 로그인 세션,{" "}

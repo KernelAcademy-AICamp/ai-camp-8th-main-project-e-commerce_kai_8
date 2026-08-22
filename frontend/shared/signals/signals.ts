@@ -17,6 +17,7 @@ import { rememberPendingForget } from "@/shared/signals/pending-forget";
 import { getCurrentUserId } from "@/shared/supabase/current-user";
 import { isSignedInNow } from "@/shared/supabase/session-state";
 import { rpcPost } from "@/shared/supabase-rpc";
+import { forgetAccountWishes } from "@/shared/wishlist/account-wish-forget";
 
 import { getDeviceId } from "./device-id";
 import { SignalQueue } from "./queue";
@@ -302,6 +303,12 @@ export async function clearSignals(): Promise<number | null> {
   // 기기 기록 삭제가 실패해도 계정 취향은 따로 시도한다 — 한쪽 실패가 다른 쪽
   // 삭제를 막을 이유가 없다. 각자 자기 몫을 재시도 큐에 적는다.
   if (!(await clearAccountTaste())) deleted = null;
+  // 계정에 담긴 찜과 폴더도 지운다 (2026-08-22 제품 책임자) — "처음 이 서비스를
+  // 접하는 사람처럼"에는 보관함도 들어간다.
+  //
+  // **실패하면 삼키지 않고 던진다.** 재시도 큐가 없으므로 조용히 넘기면 남아 있는
+  // 찜을 지웠다고 말하게 된다. 부르는 쪽이 "지우지 못했다"를 띄우고 다시 시도한다.
+  if (isSignedInNow()) await forgetAccountWishes();
   // 이 기기에 쌓인 탐색 흔적을 한 번에 걷어낸다 — 취향 프로필만 지우면 앵커
   // 제목·최근 본 제품·피드 씨앗이 남아 화면이 그대로라 "안 지워졌다"로 읽힌다.
   clearPersonalizationData();

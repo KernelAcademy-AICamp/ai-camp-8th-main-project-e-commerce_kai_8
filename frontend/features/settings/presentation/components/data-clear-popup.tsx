@@ -48,9 +48,9 @@ export function DataClearPopup({
         <>
           <PopupTitle>데이터를 지울까요?</PopupTitle>
           <PopupMessage>
-            탐색 기록·취향·보여줄 성별이
+            탐색 기록·취향·성별에 더해
             <br />
-            사라져요. 찜·폴더는 계정에 남아요.
+            <b className="text-ink">찜과 폴더까지</b> 사라져요.
           </PopupMessage>
           <PopupActions>
             <PopupButton tone="danger" onClick={onConfirm} disabled={working}>
@@ -83,8 +83,9 @@ export function DataClearPopup({
         <>
           <PopupTitle>지우지 못했어요</PopupTitle>
           <PopupMessage>
-            잠시 후 다시 시도해 주세요.
-            <br />이 기기의 기록은 그대로 남아 있어요.
+            일부가 남았을 수 있어요.
+            <br />
+            다시 시도하면 이어서 지워요.
           </PopupMessage>
           <PopupActions>
             <PopupButton tone="danger" onClick={onConfirm}>
