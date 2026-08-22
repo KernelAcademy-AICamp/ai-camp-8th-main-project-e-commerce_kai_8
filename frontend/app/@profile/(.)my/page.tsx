@@ -3,8 +3,8 @@
 import { useEffect } from "react";
 
 import { MyPage } from "@/features/auth/presentation/components/my-page";
+import { RecentStrip } from "@/features/feed/presentation/components/recent-strip";
 import { ProfileStats } from "@/features/feed/wishlist/presentation/components/profile-stats";
-import { RecentStrip } from "@/features/taste/presentation/components/recent-strip";
 import { TasteCard } from "@/features/taste/presentation/components/taste-card";
 
 /**

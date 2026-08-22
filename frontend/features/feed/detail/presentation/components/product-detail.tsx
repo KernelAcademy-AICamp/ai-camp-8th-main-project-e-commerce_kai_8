@@ -109,14 +109,17 @@ export function ProductDetail({
   const wishlistMessage = wishlistNoticeMessage(notice);
   useBodyScrollLock();
 
-  // 상세를 열면 "최근 본 제품"에 남긴다. 사진 주소를 함께 넣어 나중에 상품번호로
-  // 다시 조회하지 않는다 — 여는 순간 이미 상품을 손에 쥐고 있다.
+  // 사진 틀의 비율 — 상품이 들고 있는 실제 크기를 쓴다. 값이 없으면 흔한 세로 비율로.
+  const photoRatio =
+    product.width > 0 && product.height > 0
+      ? `${String(product.width)} / ${String(product.height)}`
+      : "5 / 6";
+
+  // 상세를 열면 "최근 본 제품"에 남긴다. 상품을 통째로 적어 두면 나중에 다시
+  // 조회하지 않고도 그 자리에서 다시 열 수 있다.
   useEffect(() => {
-    recordRecentProduct({
-      goodsNo: product.goodsNo,
-      thumbnail: product.thumbnail,
-    });
-  }, [product.goodsNo, product.thumbnail]);
+    recordRecentProduct(product);
+  }, [product]);
 
   return (
     <div
@@ -170,14 +173,16 @@ export function ProductDetail({
                 <div
                   key={src}
                   className="relative w-full shrink-0 snap-center bg-line"
-                  style={{ aspectRatio: "5 / 6" }}
+                  // 틀을 사진 비율에 맞춘다 — 고정 비율(5:6)에 맞추면 세로가 다른
+                  // 사진에서 위아래로 빈 띠가 생긴다. 시안도 사진이 틀을 꽉 채운다.
+                  style={{ aspectRatio: photoRatio }}
                 >
                   <Image
                     src={src}
                     alt={`${product.title} 이미지 ${String(slideIndex + 1)}`}
                     fill
                     sizes="100vw"
-                    className="object-contain"
+                    className="object-cover"
                     priority={slideIndex === initialSlide}
                   />
                 </div>
