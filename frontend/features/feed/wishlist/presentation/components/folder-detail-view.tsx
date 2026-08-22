@@ -6,6 +6,7 @@ import { ProductDetail } from "@/features/feed/detail/presentation/components/pr
 import { FeedGrid } from "@/features/feed/presentation/components/feed-grid";
 import { MAX_FOLDER_NAME } from "@/features/feed/wishlist/domain/wish-folders";
 import { wishlistNoticeMessage } from "@/features/feed/wishlist/domain/wishlist-notice";
+import { DeleteFolderPopup } from "@/features/feed/wishlist/presentation/components/delete-folder-popup";
 import { useFolderDetail } from "@/features/feed/wishlist/presentation/view-model/use-folder-detail";
 import { BackLink } from "@/shared/history/back-link";
 import { BackIcon } from "@/shared/icons";
@@ -100,32 +101,16 @@ export function FolderDetailView({ folderParam }: { folderParam: string }) {
         </div>
       )}
 
+      {/* 되돌릴 수 없는 일이라 화면 한가운데에서 묻는다 — 시안 `delPop` */}
       {view.mode === "confirmDelete" && (
-        <div className="mx-1 mb-3 space-y-3 rounded-xl bg-surface p-4">
-          <p className="text-sm text-ink-soft">
-            {/* 숨은 찜도 함께 옮겨진다 — 여기만 원본 개수를 쓴다 */}이 폴더를 지울까요?
-            담긴 찜 {view.originalCount}개는 기본 폴더로 이동해요.
-          </p>
-          <div className="flex gap-2">
-            <button
-              type="button"
-              onClick={view.cancel}
-              className="flex-1 cursor-pointer rounded-xl bg-well neo py-2.5 text-sm font-medium text-ink"
-            >
-              취소
-            </button>
-            <button
-              type="button"
-              onClick={() => {
-                void view.submitDelete();
-              }}
-              disabled={view.busy}
-              className="flex-1 cursor-pointer rounded-xl bg-danger py-2.5 text-sm font-medium text-ink disabled:opacity-60"
-            >
-              지우기
-            </button>
-          </div>
-        </div>
+        <DeleteFolderPopup
+          count={view.originalCount}
+          busy={view.busy}
+          onConfirm={() => {
+            void view.submitDelete();
+          }}
+          onCancel={view.cancel}
+        />
       )}
 
       {view.error !== null && (

@@ -1,7 +1,7 @@
 "use client";
 
 import { useGoogleSignIn } from "@/features/auth/presentation/view-model/use-google-sign-in";
-import { BackIcon } from "@/shared/icons";
+import { CenterPopup, PopupButton, PopupMessage, PopupTitle } from "@/shared/ui/popup";
 
 /**
  * 로그인 팝업 — 시안 `.login-pop`. 보던 화면 위에 그대로 뜬다.
@@ -15,55 +15,30 @@ import { BackIcon } from "@/shared/icons";
  * 화면까지 닫는다 — 시안 `loginPopBack`("팝업이 뜬 화면을 닫고 메인으로").
  * 무엇이 직전 화면인지는 부르는 쪽이 정한다.
  *
- * **화면 한가운데에 둔다.** 시안은 폰 틀 안 40% 높이였지만, 실제 화면에서는
- * 위로 치우쳐 보였다(2026-08-22 제품 책임자). 자리는 `inset-0` 위의 가운데
- * 정렬로 잡는다 — 좌표를 절반씩 옮기는 방식은 **변형이 걸린 조상**이 하나만
- * 있어도 그 조상 기준으로 어긋난다.
+ * 그래서 **어두운 바탕에는 손잡이를 두지 않는다** — 바깥을 잘못 눌러 보던
+ * 화면에서 튕겨 나가지 않게. 시안도 여기에만 아무 동작을 달지 않는다.
  */
 export function LoginPopup({ onClose }: { onClose: () => void }) {
   const { busy, failed, signIn } = useGoogleSignIn();
 
   return (
-    <div className="fixed inset-0 z-[48] flex items-center justify-center">
-      {/* 어두운 바탕은 **손잡이가 아니다.** 시안도 여기에 아무 동작을 달지 않는다 —
-          바깥을 잘못 눌러 보던 화면에서 튕겨 나가지 않게. 나가는 길은 화살표다. */}
-      <span aria-hidden className="absolute inset-0 bg-[rgb(23_21_15/0.25)]" />
-      <div
-        role="dialog"
-        aria-label="로그인 안내"
-        className="relative w-[250px] rounded-[20px] bg-app px-[22px] pt-[26px] pb-5 text-center shadow-[0_4px_16px_rgb(30_38_55/0.24)]"
-      >
-        <button
-          type="button"
-          aria-label="뒤로가기"
-          onClick={onClose}
-          className="absolute top-[11px] left-[11px] flex h-[30px] w-[30px] cursor-pointer items-center justify-center rounded-full bg-app text-ink-soft shadow-[0_1px_3px_rgb(30_38_55/0.25)] active:scale-[0.92]"
-        >
-          <BackIcon size={15} />
-        </button>
+    <CenterPopup label="로그인 안내" onBack={onClose}>
+      <PopupTitle>로그인이 필요해요</PopupTitle>
+      <PopupMessage>
+        취향 키워드와 저장한 핀은
+        <br />
+        로그인하면 볼 수 있어요.
+      </PopupMessage>
 
-        <p className="text-[15.5px] font-extrabold text-ink">로그인이 필요해요</p>
-        <p className="mt-2 text-xs leading-relaxed font-[650] text-ink-soft">
-          취향 키워드와 저장한 핀은
-          <br />
-          로그인하면 볼 수 있어요.
+      <PopupButton className="mt-4" onClick={signIn} disabled={busy}>
+        로그인하기
+      </PopupButton>
+
+      {failed && (
+        <p role="status" className="mt-2 text-xs text-danger">
+          로그인을 시작하지 못했어요. 다시 시도해 주세요.
         </p>
-
-        <button
-          type="button"
-          onClick={signIn}
-          disabled={busy}
-          className="mt-4 h-[42px] w-full cursor-pointer rounded-full bg-slate text-sm font-extrabold text-on-slate shadow-[0_1px_4px_rgb(30_38_55/0.28)] disabled:opacity-60"
-        >
-          로그인하기
-        </button>
-
-        {failed && (
-          <p role="status" className="mt-2 text-xs text-danger">
-            로그인을 시작하지 못했어요. 다시 시도해 주세요.
-          </p>
-        )}
-      </div>
-    </div>
+      )}
+    </CenterPopup>
   );
 }

@@ -4,9 +4,9 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef } from "react";
 
-import { MAX_FOLDER_NAME } from "@/features/feed/wishlist/domain/wish-folders";
 import { wishlistNoticeMessage } from "@/features/feed/wishlist/domain/wishlist-notice";
 import { FolderCover } from "@/features/feed/wishlist/presentation/components/folder-cover";
+import { NewFolderPopup } from "@/features/feed/wishlist/presentation/components/new-folder-popup";
 import { useFolderOpen } from "@/features/feed/wishlist/presentation/view-model/use-folder-open";
 import { useWishlistFolders } from "@/features/feed/wishlist/presentation/view-model/use-wishlist-folders";
 import { BackLink } from "@/shared/history/back-link";
@@ -77,66 +77,22 @@ export function FolderGridView() {
         <ul ref={listRef} className="grid grid-cols-2 gap-x-4 gap-y-[22px]">
           {/* 시안은 새 폴더를 맨 앞에 둔다 — 만들기가 늘 같은 자리에 있다 */}
           <li>
-            {view.creating ? (
-              <form
-                onSubmit={(event) => {
-                  event.preventDefault();
-                  void view.submitCreate();
-                }}
-              >
-                <div className="flex aspect-square w-full flex-col items-center justify-center gap-3 rounded-[18px] border-[1.6px] border-dashed border-[#B9C0CF] px-4">
-                  <input
-                    autoFocus
-                    value={view.draftName}
-                    onChange={(event) => {
-                      view.setDraftName(event.target.value);
-                    }}
-                    maxLength={MAX_FOLDER_NAME}
-                    placeholder="새 폴더 이름"
-                    aria-label="새 폴더 이름"
-                    className="w-full border-b border-line bg-transparent pb-1 text-center text-base text-ink outline-none placeholder:text-ink-muted"
-                  />
-                  <div className="flex gap-2">
-                    <button
-                      type="button"
-                      onClick={view.cancelCreating}
-                      className="cursor-pointer rounded-full border border-line px-3.5 py-1.5 text-sm text-ink-soft"
-                    >
-                      취소
-                    </button>
-                    <button
-                      type="submit"
-                      disabled={view.saving}
-                      className="cursor-pointer rounded-full bg-slate px-3.5 py-1.5 text-sm font-medium text-on-slate neo-drop disabled:opacity-60"
-                    >
-                      만들기
-                    </button>
-                  </div>
-                </div>
-                {view.createError !== null && (
-                  <p role="status" className="mt-2 text-xs text-star">
-                    {view.createError}
-                  </p>
-                )}
-              </form>
-            ) : (
-              <button
-                type="button"
-                onClick={view.startCreating}
-                aria-label="새 폴더 만들기"
-                className="relative flex aspect-square w-full cursor-pointer flex-col items-start justify-start rounded-[18px] border-[1.6px] border-dashed border-[#B9C0CF] px-[15px] py-4 text-left"
-              >
-                <strong className="block text-[14px] font-extrabold text-ink-soft">
-                  새 폴더
-                </strong>
-                <span className="mt-1 block text-[11px] font-[650] text-ink-muted">
-                  탭해서 만들기
-                </span>
-                <span className="absolute top-1/2 left-1/2 flex h-10 w-10 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-slate text-on-slate shadow-[0_2px_6px_rgb(30_38_55/0.25)]">
-                  <PlusIcon size={19} />
-                </span>
-              </button>
-            )}
+            <button
+              type="button"
+              onClick={view.startCreating}
+              aria-label="새 폴더 만들기"
+              className="relative flex aspect-square w-full cursor-pointer flex-col items-start justify-start rounded-[18px] border-[1.6px] border-dashed border-[#B9C0CF] px-[15px] py-4 text-left"
+            >
+              <strong className="block text-[14px] font-extrabold text-ink-soft">
+                새 폴더
+              </strong>
+              <span className="mt-1 block text-[11px] font-[650] text-ink-muted">
+                탭해서 만들기
+              </span>
+              <span className="absolute top-1/2 left-1/2 flex h-10 w-10 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-slate text-on-slate shadow-[0_2px_6px_rgb(30_38_55/0.25)]">
+                <PlusIcon size={19} />
+              </span>
+            </button>
           </li>
 
           {view.summaries.map((folder) => (
@@ -157,6 +113,20 @@ export function FolderGridView() {
             </li>
           ))}
         </ul>
+      )}
+
+      {/* 이름은 화면 한가운데 창에서 받는다 — 시안 `nfPop` */}
+      {view.creating && (
+        <NewFolderPopup
+          name={view.draftName}
+          onNameChange={view.setDraftName}
+          onSubmit={() => {
+            void view.submitCreate();
+          }}
+          onClose={view.cancelCreating}
+          busy={view.saving}
+          error={view.createError}
+        />
       )}
     </div>
   );
