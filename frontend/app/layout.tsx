@@ -34,7 +34,18 @@ export const viewport: Viewport = {
   themeColor: "#E4E6EB",
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+/**
+ * `profile`은 홈 위에 프로필을 겹쳐 띄우기 위한 자리다(`app/@profile`). 앱 안에서
+ * `/my`로 넘어올 때만 채워지고, 주소로 직접 들어오면 비어 있다 — 그때는 `children`
+ * 쪽이 단독 화면을 그린다.
+ */
+export default function RootLayout({
+  children,
+  profile,
+}: {
+  children: React.ReactNode;
+  profile: React.ReactNode;
+}) {
   return (
     <html lang="ko">
       <body>
@@ -43,6 +54,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <AccountProfileGuard />
         <GenderAccountGuard />
         {children}
+        {profile}
       </body>
     </html>
   );

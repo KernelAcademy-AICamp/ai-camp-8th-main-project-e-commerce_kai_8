@@ -53,7 +53,9 @@ export function MyPageShell({
       {...swipe}
       // 세로 스크롤은 그대로 두고 가로 제스처만 가져간다
       style={{ touchAction: "pan-y" }}
-      className="sidebar-in relative mx-auto min-h-dvh max-w-md text-ink"
+      // 겹쳐 열릴 때는 자기 배경이 있어야 한다 — 없으면 뒤의 홈이 비친다.
+      // 시안 `.sidebar`도 불투명한 판이다.
+      className="sidebar-in relative mx-auto min-h-dvh max-w-md bg-app text-ink shadow-[-12px_0_28px_rgb(20_26_40/0.25)]"
     >
       {/* 시안 `.side-rail` — 색을 채운 세로 띠. 바닥에 세로 워드마크가 선다. */}
       <span aria-hidden className="side-rail" />

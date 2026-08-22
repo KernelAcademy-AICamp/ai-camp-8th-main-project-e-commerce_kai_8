@@ -32,7 +32,10 @@ export function PersonIcon({ size = 20 }: IconProps) {
   );
 }
 
-/** 왼쪽 화살표 — 뒤로가기 */
+/**
+ * 왼쪽 갈매기 — 뒤로가기. 시안의 뒤로 버튼들과 같은 굵기·꼭짓점이다
+ * (`.side-close`·`.backbtn`·`.fd-back`가 모두 이 모양을 쓴다).
+ */
 export function BackIcon({ size = 20 }: IconProps) {
   return (
     <svg
@@ -41,12 +44,12 @@ export function BackIcon({ size = 20 }: IconProps) {
       height={size}
       fill="none"
       stroke="currentColor"
-      strokeWidth="1.8"
+      strokeWidth="2.2"
       strokeLinecap="round"
       strokeLinejoin="round"
       aria-hidden="true"
     >
-      <path d="M15 5l-7 7 7 7" />
+      <polyline points="14.5 5 7.5 12 14.5 19" />
     </svg>
   );
 }
