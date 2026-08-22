@@ -95,12 +95,23 @@ longAnchorsMissingGender: 0   applyAnchorGenders: 0
 아무도 읽지 않는다. 버전을 올리면 기존 프로필을 마이그레이션하거나 버려야 하는데,
 필드가 남아 있어도 해가 없다.
 
-### 이번에도 손대지 않은 것
+### 후속 조각도 완료 (2026-08-23)
 
-`Anchor.gender` **기록** 경로(`logAction(..., { gender })` → `recordProfileAction` →
-앵커 병합)는 남겼다. 저장 공간뿐이고 해가 없으며, 지우면 `signals.ts`·`profile-rules.ts`의
-병합 로직까지 건드려 이 조각의 가설("죽은 판정을 걷어내면 요청이 하나 준다")과
-검증 대상이 섞인다. **후속 조각**으로 남긴다.
+`Anchor.gender` **기록** 경로를 걷어냈다. 1차에서는 `signals.ts`를 열린 PR #74가
+편집 중이었고 이 조각의 검증 대상("죽은 판정을 걷어내면 요청이 하나 준다")과
+섞이지 않게 미뤘던 부분이다.
+
+지운 것: `logAction`의 `gender` 옵션과 호출부 4곳, `recordProfileAction`의 인자,
+`Anchor.gender`·`ProfileAction.gender` 필드, `applyAction`·`mergeLongTerm`의 성별
+병합 분기, `toAnchorGender`와 `AnchorGender` 타입. **165줄 삭제.**
+
+**계정에 저장된 옛 `gender` 필드는 읽되 무시한다** — `account-profile-api`가 그 값을
+파싱하지 않고 버린다. 스키마 버전은 올리지 않았다(1차의 3단계 결정과 같다).
+그 동작을 테스트로 고정했다.
+
+남은 참조 0개를 지우기 전과 같은 검색으로 확인했다 —
+`toAnchorGender` · `AnchorGender` · `Anchor.gender` · `action.gender` · `anchor.gender`
+전부 0, `logAction`에 성별을 넘기는 곳도 0.
 
 ## 이 계획이 스스로 경계하는 것
 

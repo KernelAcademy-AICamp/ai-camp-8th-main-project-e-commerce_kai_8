@@ -13,7 +13,6 @@ import {
   mergeLongTerm,
   type ProfileActionType,
   type SessionProfile,
-  toAnchorGender,
 } from "./profile-rules";
 
 const LONG_KEY = "atee-profile";
@@ -209,12 +208,9 @@ export function recordProfileAction(
   goodsNo: number,
   sessionId: string,
   nowMs: number,
-  gender?: string | null,
 ): void {
   const session = readSessionProfile(sessionId, nowMs);
-  writeSessionProfile(
-    applyAction(session, { type, goodsNo, nowMs, gender: toAnchorGender(gender) }),
-  );
+  writeSessionProfile(applyAction(session, { type, goodsNo, nowMs }));
 }
 
 export function recordProfileImpression(
