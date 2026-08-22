@@ -65,6 +65,16 @@ export interface FeedOptions {
   surface?: Surface;
 }
 
+/**
+ * 마지막으로 관찰한 배치 로딩 시간(ms).
+ *
+ * 화면이 바뀌어도 남는다. 상세의 관련 상품처럼 **첫 배치라 잴 것이 없는 자리**에서
+ * 같은 서버의 최근 실측을 물려받아, 뼈대의 물이 실제 속도에 맞춰 차오르게 하려는
+ * 것이다. 고정값을 쓰면 빠른 연결에서 물이 3분의 1도 차기 전에 카드가 덮어
+ * "뼈대가 아예 없다"로 보인다.
+ */
+let observedLoadMs: number | undefined;
+
 export function useFeedViewModel(options?: FeedOptions) {
   const exploreFrom = options?.exploreFrom;
   // **성별이 정해지기 전에는 어떤 요청도 내보내지 않는다.** 호출부(메인 피드·검색 대체
@@ -94,6 +104,10 @@ export function useFeedViewModel(options?: FeedOptions) {
   // 시안은 배치마다 뼈대를 놓고 그 자리에서 실제 카드로 바꾼다(`.card.skel`).
   // loadingRef와 값이 같지만 그쪽은 렌더와 무관한 중복 가드라 ref로 남긴다.
   const [loadingMore, setLoadingMore] = useState(false);
+  // 직전 배치가 실제로 걸린 시간(ms). 뼈대의 물이 이 시간에 맞춰 차오르므로
+  // 물이 꼭대기에 닿는 순간 카드가 나타난다 — 시안이 정한 방식이다.
+  // 첫 배치는 잴 것이 없어 비워 두고, 그때만 시안 기본값을 쓴다.
+  const [lastLoadMs, setLastLoadMs] = useState<number | undefined>(observedLoadMs);
   // 커서·중복 로드 방지는 렌더링과 무관한 진행 상태라 ref로 둔다.
   //
   // **커서는 두 벌이고 서로 섞으면 안 된다.**
@@ -163,6 +177,7 @@ export function useFeedViewModel(options?: FeedOptions) {
     // 아래에서 성별이 반드시 있는 값이 된다.
     if (gender === null) return;
     loadingRef.current = true;
+    const startedAt = performance.now();
     // 뼈대 표시는 한 틱 미룬다. loadMore는 마운트 효과에서도 곧바로 불리는데,
     // 효과 안에서 상태를 바로 바꾸면 렌더가 한 번 더 돈다(lint set-state-in-effect).
     queueMicrotask(() => {
@@ -311,6 +326,8 @@ export function useFeedViewModel(options?: FeedOptions) {
         if (generation !== generationRef.current) return;
         loadingRef.current = false;
         setLoadingMore(false);
+        observedLoadMs = Math.round(performance.now() - startedAt);
+        setLastLoadMs(observedLoadMs);
       });
   }, [seed, exploreFrom, gender]);
 
@@ -406,6 +423,7 @@ export function useFeedViewModel(options?: FeedOptions) {
     // 실패를 드러내는 동안에는 스켈레톤을 접는다 — 둘을 같이 보이면 아직 오는 줄 안다.
     showSkeleton: !ready && !failed,
     loadingMore,
+    lastLoadMs,
     failed,
     retry,
   };

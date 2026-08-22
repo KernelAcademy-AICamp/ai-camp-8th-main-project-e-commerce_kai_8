@@ -237,7 +237,7 @@ export function ProductDetail({
           </div>
 
           <div className="px-3 pt-[22px] pb-[120px]">
-            {explore.showSkeleton && <FeedSkeleton />}
+            {explore.showSkeleton && <FeedSkeleton fillMs={explore.lastLoadMs} />}
             {explore.failed && <FeedError onRetry={explore.retry} />}
             <FeedGrid
               columns={explore.columns}
