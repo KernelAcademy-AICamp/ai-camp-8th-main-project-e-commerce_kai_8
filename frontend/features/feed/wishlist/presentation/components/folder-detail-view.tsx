@@ -16,13 +16,13 @@ export function FolderDetailView({ folderParam }: { folderParam: string }) {
   const message = wishlistNoticeMessage(view.notice);
 
   return (
-    <div className="mx-auto max-w-md px-2 pb-10">
-      {/* 뒤로가기 좌표를 마이페이지와 맞춘다 — 왼쪽 16px·위 8px (전 화면 공통) */}
-      <header className="flex items-center gap-1 px-2 py-2">
+    <div className="panel-in mx-auto max-w-md px-[22px] pb-[26px]">
+      {/* 시안 `.save-head` — 솟음 원버튼과 폴더 이름. 목록에서는 이 자리가 비어 있다. */}
+      <header className="flex items-center gap-3 pt-6 pb-5">
         <BackLink
           href="/wishlist"
           label="보관함으로 돌아가기"
-          className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-ink-soft"
+          className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-app text-ink-soft neo active:neo-in"
         >
           <BackIcon />
         </BackLink>
@@ -62,7 +62,7 @@ export function FolderDetailView({ folderParam }: { folderParam: string }) {
           </form>
         ) : (
           <>
-            <h1 className="min-w-0 flex-1 truncate text-lg font-semibold text-ink">
+            <h1 className="min-w-0 flex-1 truncate text-[17px] font-extrabold text-ink">
               {view.name}
               {view.count > 0 && <span className="text-ink-muted"> {view.count}</span>}
             </h1>
@@ -162,6 +162,7 @@ export function FolderDetailView({ folderParam }: { folderParam: string }) {
 
       {view.access === "in" && view.hasEntries && (
         <FeedGrid
+          compact
           columns={view.columns}
           sentinelRef={view.sentinelRef}
           onSelect={(card, originRect) => {

@@ -1,12 +1,13 @@
 "use client";
 
+import Image from "next/image";
+
 import type { WishFolder } from "@/features/feed/wishlist/domain/wish-folders";
 import {
   MAX_FOLDER_NAME,
   summarizeFolders,
 } from "@/features/feed/wishlist/domain/wish-folders";
 import type { WishlistEntry } from "@/features/feed/wishlist/domain/wishlist";
-import { FolderThumbs } from "@/features/feed/wishlist/presentation/components/folder-thumbs";
 
 /**
  * 담기 바텀시트 — 하트를 누르면 올라와 폴더를 고르게 한다.
@@ -53,11 +54,11 @@ export function SaveSheet({
       />
       <div className="absolute right-0 bottom-0 left-0 mx-auto max-w-md rounded-t-[22px] bg-surface shadow-[0_-4px_18px_rgb(30_38_55/0.22)] pb-[max(env(safe-area-inset-bottom),1rem)]">
         <div aria-hidden className="mx-auto mt-2.5 h-1 w-9 rounded-full bg-fill-deep" />
-        <h2 className="px-5 pt-4 pb-1 text-base font-semibold text-ink">
+        <h2 className="px-6 pt-4 pb-2.5 text-[15px] font-extrabold text-ink">
           어디에 담을까요
         </h2>
 
-        <ul className="max-h-[50vh] overflow-y-auto px-2">
+        <ul className="max-h-[50vh] overflow-y-auto px-3.5 pb-4">
           {summaries.map((folder) => (
             <li key={folder.id ?? "default"}>
               <button
@@ -65,14 +66,29 @@ export function SaveSheet({
                 onClick={() => {
                   onPick(folder.id);
                 }}
-                className="flex w-full cursor-pointer items-center gap-3.5 rounded-xl px-3 py-2.5 text-left active:bg-fill-soft"
+                className="flex h-[72px] w-full cursor-pointer items-center gap-3.5 rounded-[14px] px-2.5 text-left active:bg-fill-soft"
               >
-                <FolderThumbs thumbs={folder.thumbs} sizePx={52} />
+                <span
+                  aria-hidden
+                  className="relative h-[52px] w-[52px] shrink-0 overflow-hidden rounded-full bg-fill-soft neo-sm"
+                >
+                  {folder.thumbs.length > 0 && (
+                    <Image
+                      src={folder.thumbs[0]}
+                      alt=""
+                      fill
+                      sizes="52px"
+                      className="object-cover"
+                    />
+                  )}
+                </span>
                 <span className="min-w-0 flex-1">
-                  <span className="block truncate font-medium text-ink">
+                  <span className="block truncate text-[15px] font-[750] text-ink">
                     {folder.name}
                   </span>
-                  <span className="block text-sm text-ink-muted">{folder.count}개</span>
+                  <span className="mt-[3px] block text-xs font-semibold text-ink-muted">
+                    {folder.count}개
+                  </span>
                 </span>
               </button>
             </li>
@@ -90,7 +106,7 @@ export function SaveSheet({
                 {/* + 타일과 같은 틀 — 새 폴더가 이 자리에 생긴다는 예고 */}
                 <span
                   aria-hidden
-                  className="flex h-[52px] w-[52px] shrink-0 items-center justify-center rounded-lg border border-dashed border-line text-xl text-ink-muted"
+                  className="flex h-[52px] w-[52px] shrink-0 items-center justify-center rounded-full border border-dashed border-line text-xl text-ink-muted"
                 >
                   +
                 </span>
