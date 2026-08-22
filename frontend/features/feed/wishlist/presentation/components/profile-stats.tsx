@@ -12,13 +12,6 @@ function weekAgo(nowMs: number): number {
 
 const CELLS = ["저장한 핀", "폴더", "이번 주 발견"];
 
-/** 세 칸의 틀 — 숫자든 뼈대든 같은 자리에 들어간다 */
-function StatsFrame({ children }: { children: React.ReactNode }) {
-  return (
-    <div className="mt-5 grid grid-cols-3 border-t border-line pt-3.5">{children}</div>
-  );
-}
-
 /**
  * 활동 요약 3칸 — 시안 `.prof-stats` (저장한 핀 · 폴더 · 이번 주 발견).
  *
@@ -48,8 +41,9 @@ function StatsCounts() {
     week > 0 ? `+${String(week)}` : "0",
   ];
 
+  // 시안 `.prof-stats` — 윗선 하나에 칸막이 둘
   return (
-    <StatsFrame>
+    <div className="mt-5 grid grid-cols-3 border-t border-line pt-3.5">
       {CELLS.map((label, i) => (
         <div
           key={label}
@@ -61,7 +55,7 @@ function StatsCounts() {
           <span className="text-[10.5px] font-bold text-ink-muted">{label}</span>
         </div>
       ))}
-    </StatsFrame>
+    </div>
   );
 }
 
@@ -81,18 +75,14 @@ export function ProfileStats() {
   const signedIn = useSignedIn();
 
   if (signedIn !== "in") {
+    // 시안 `.gs-stats` — **선이 하나도 없다.** 윗선과 칸막이는 숫자가 있을 때
+    // 세 값을 갈라 주는 것이라, 뼈대에 그대로 두면 막대를 가로질러 그어진다.
     return (
-      <StatsFrame>
-        {CELLS.map((label, i) => (
-          <div key={label} className={i > 0 ? "border-l border-line" : ""}>
-            <div
-              aria-hidden
-              className="mx-auto h-[46px] animate-pulse rounded-lg bg-skel-1"
-              style={{ width: "calc(100% - 10px)" }}
-            />
-          </div>
+      <div aria-hidden className="mt-6 grid grid-cols-3 gap-2.5">
+        {CELLS.map((label) => (
+          <div key={label} className="h-[46px] animate-pulse rounded-lg bg-skel-1" />
         ))}
-      </StatsFrame>
+      </div>
     );
   }
 
