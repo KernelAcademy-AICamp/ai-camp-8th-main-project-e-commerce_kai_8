@@ -1,9 +1,7 @@
 "use client";
 
-import Link from "next/link";
-
 import { useBackTo } from "@/shared/history/use-nav-history";
-import { BackIcon, GearIcon } from "@/shared/icons";
+import { BackIcon } from "@/shared/icons";
 
 /** 사이드바 상단의 작은 원버튼 — 시안 `.side-close`·`.side-logout` (30px, 얕은 솟음) */
 export const SIDE_BTN =
@@ -26,12 +24,15 @@ export const SIDE_BTN =
  */
 export function MyPageShell({
   greeting,
+  settings,
   account,
   failure = false,
   children,
 }: {
   /** 머리줄 가운데 인사말 자리 */
   greeting: React.ReactNode;
+  /** 머리줄의 설정 자리 — 기어와 그 아래 메뉴를 한 부품으로 받는다 */
+  settings: React.ReactNode;
   /** 머리줄 오른쪽 끝 — 로그아웃(회원) 또는 로그인(비회원) */
   account: React.ReactNode;
   /** 로그인 실패 안내를 띄울지 */
@@ -60,9 +61,7 @@ export function MyPageShell({
           <p className="mr-auto ml-1 min-w-0 truncate text-[15px] font-[650] text-ink-soft">
             {greeting}
           </p>
-          <Link href="/settings" aria-label="설정" className={SIDE_BTN}>
-            <GearIcon size={15} />
-          </Link>
+          {settings}
           {account}
         </div>
 

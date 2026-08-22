@@ -10,6 +10,7 @@ import {
   SIDE_BTN,
 } from "@/features/auth/presentation/components/my-page-shell";
 import { useAuthSession } from "@/features/auth/presentation/view-model/use-auth-session";
+import { SettingsMenuButton } from "@/features/settings/presentation/components/settings-menu-button";
 import { LogoutIcon, PersonIcon } from "@/shared/icons";
 
 /** 인사말에 쓸 이름 — 이메일에서 계정 부분만 딴다(시안은 이름을 쓴다) */
@@ -45,6 +46,7 @@ export function MyPage({
 
   return (
     <MyPageShell
+      settings={<SettingsMenuButton />}
       failure={failed || notice === "failed"}
       greeting={
         <>
