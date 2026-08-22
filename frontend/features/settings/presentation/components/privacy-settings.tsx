@@ -9,7 +9,8 @@ import { usePrivacySettings } from "@/features/settings/presentation/view-model/
  * 문구는 제품 책임자 승인 대상 — docs/plans/2026-08-16 계획 1단계.
  */
 export function PrivacySettings() {
-  const { status, requestClear, cancelClear, confirmClear } = usePrivacySettings();
+  const { status, requestClear, cancelClear, confirmClear, finishClear } =
+    usePrivacySettings();
 
   return (
     <div>
@@ -120,13 +121,24 @@ export function PrivacySettings() {
           <p className="text-center text-sm text-ink-soft">지우는 중…</p>
         )}
         {status.kind === "done" && (
-          <p className="text-center text-sm text-ink-soft">
-            삭제했습니다
-            {status.deletedOnServer !== null
-              ? ` (서버 기록 ${String(status.deletedOnServer)}건 포함)`
-              : " (서버 기록 삭제는 다음 접속에서 다시 시도됩니다)"}
-            . 새로운 익명 ID로 처음부터 시작합니다.
-          </p>
+          <div className="space-y-3">
+            <p className="text-center text-sm text-ink-soft">
+              삭제했습니다
+              {status.deletedOnServer !== null
+                ? ` (서버 기록 ${String(status.deletedOnServer)}건 포함)`
+                : " (서버 기록 삭제는 다음 접속에서 다시 시도됩니다)"}
+              . 새로운 익명 ID로 처음부터 시작합니다.
+            </p>
+            {/* 저장소만 비우면 이미 올라온 화면이 그대로 남는다 — 처음 화면부터
+                다시 부른다 (팝오버 쪽 "확인"과 같은 끝맺음) */}
+            <button
+              type="button"
+              onClick={finishClear}
+              className="w-full cursor-pointer rounded-xl bg-well neo py-3 font-medium text-ink"
+            >
+              처음 화면으로
+            </button>
+          </div>
         )}
         {status.kind === "failed" && (
           <p className="text-center text-sm text-danger">

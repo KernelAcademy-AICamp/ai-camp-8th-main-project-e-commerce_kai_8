@@ -40,6 +40,7 @@ export function SettingsMenuButton() {
     requestClear,
     cancelClear,
     confirmClear,
+    finishClear,
   } = usePrivacySettings();
 
   // 묻는 중이든 지우는 중이든 끝난 뒤든, 창이 떠 있으면 판단은 그 창이 가져간다
@@ -155,6 +156,7 @@ export function SettingsMenuButton() {
         status={clearStatus}
         onCancel={cancelClear}
         onConfirm={confirmClear}
+        onFinish={finishClear}
       />
     </div>
   );

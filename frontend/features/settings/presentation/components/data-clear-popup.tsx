@@ -24,21 +24,25 @@ export function DataClearPopup({
   status,
   onCancel,
   onConfirm,
+  onFinish,
 }: {
   status: ClearStatus;
-  /** 창 닫기 — 묻는 중이면 취소, 끝난 뒤면 확인 */
+  /** 묻는 중 취소 */
   onCancel: () => void;
   onConfirm: () => void;
+  /** 다 지운 뒤 닫기 — 처음 화면부터 다시 부른다 */
+  onFinish: () => void;
 }) {
   if (status.kind === "idle") return null;
 
   const working = status.kind === "working";
+  const done = status.kind === "done";
 
   return (
     <CenterPopup
       role="alertdialog"
       label="데이터 삭제"
-      onDismiss={working ? undefined : onCancel}
+      onDismiss={working ? undefined : done ? onFinish : onCancel}
     >
       {(status.kind === "confirming" || working) && (
         <>
@@ -69,7 +73,7 @@ export function DataClearPopup({
             <br />
             처음 온 사람과 같은 상태예요.
           </PopupMessage>
-          <PopupButton className="mt-4" onClick={onCancel}>
+          <PopupButton className="mt-4" onClick={onFinish}>
             확인
           </PopupButton>
         </>
