@@ -8,8 +8,23 @@ import { CurationDetailScreen } from "@/features/curation/presentation/component
 import { CurationList } from "@/features/curation/presentation/components/curation-list";
 import { useCurationScreen } from "@/features/curation/presentation/view-model/use-curation-screen";
 import { useForYouOrder } from "@/features/curation/presentation/view-model/use-for-you-order";
+import { getDisplayName, type SignedInState } from "@/shared/supabase/session-state";
+import { useSignedIn } from "@/shared/supabase/use-signed-in";
 
 const curations: Curation[] = curationData;
+
+/**
+ * 목록 위 한 줄.
+ *
+ * 판정 전(unknown)에는 로그인 여부를 말하지 않는다 — 서버 렌더에는 세션이 없어
+ * 첫 화면은 언제나 이 상태다. 여기서 "로그인하세요"를 그리면 로그인한 사람에게
+ * 그 문구가 한 번 스쳤다 이름으로 바뀐다.
+ */
+function greeting(signedIn: SignedInState, name: string | null): string {
+  if (signedIn === "unknown") return "취향대로 고른 티셔츠";
+  if (signedIn === "out") return "로그인하면 취향대로 골라드려요";
+  return `${name ?? "회원"}님을 위해 골랐어요`;
+}
 
 /**
  * FOR YOU 칸 — 큐레이션 목록과 상세(고른 상품 9개) 두 화면을 갈아 끼운다.
@@ -24,6 +39,7 @@ export function CurationPane() {
   // 이 화면을 굴리는 것은 자신이 놓인 칸이다(home-shell). 목록 자리를 저장·복원하는
   // 훅이 그 칸을 스스로 찾도록 자리만 알려 준다 (shared/scroll).
   const rootRef = useRef<HTMLDivElement>(null);
+  const signedIn = useSignedIn();
   const {
     openKey,
     open: openCuration,
@@ -45,12 +61,17 @@ export function CurationPane() {
       {open ? (
         <CurationDetailScreen curation={open} onBack={back} />
       ) : (
-        <CurationList
-          curations={visible}
-          onOpen={openCuration}
-          moreCount={ranked.length - visible.length}
-          onShowMore={showMore}
-        />
+        <>
+          <p className="px-3 pt-4 text-[15px] font-bold tracking-[-0.02em] text-white">
+            {greeting(signedIn, getDisplayName())}
+          </p>
+          <CurationList
+            curations={visible}
+            onOpen={openCuration}
+            moreCount={ranked.length - visible.length}
+            onShowMore={showMore}
+          />
+        </>
       )}
     </div>
   );
