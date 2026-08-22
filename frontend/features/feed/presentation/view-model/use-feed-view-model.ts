@@ -3,7 +3,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import { fetchFeedPage } from "@/features/feed/data/feed-api";
-import { backfillAnchorGenders } from "@/features/feed/data/gender-backfill";
 import { fetchMixPage, type MixCursor } from "@/features/feed/data/mix-api";
 import { getSessionSeed } from "@/features/feed/data/session-seed";
 import { fetchSimilarPage } from "@/features/feed/data/similar-api";
@@ -23,7 +22,6 @@ import { isFallbackable, isRetryable } from "@/shared/rpc-error";
 import { nearestScrollRoot } from "@/shared/scroll/nearest-scroll-root";
 import { getFeedProfileSummary, logImpression } from "@/shared/signals/signals";
 import type { FeedPolicy, SourceBucket, Surface } from "@/shared/signals/types";
-import { isSignedInNow } from "@/shared/supabase/session-state";
 
 const PAGE_SIZE = 30;
 // 유사 첫 페이지 크기 — 재정렬 후보(×20)가 크기에 비례해 콜드 응답을 좌우한다.
@@ -309,14 +307,6 @@ export function useFeedViewModel(options?: FeedOptions) {
     retriesRef.current = 0;
     setFailed(false);
     setRetryTick((tick) => tick + 1);
-  }, []);
-
-  // 성별 없는 장기 앵커 1회 보강 (설계: 성별 피드 하드 필터 3단계) — 회원일
-  // 때만 시도하고, 대상이 없거나 실패해도 조용히 넘어간다(backfillAnchorGenders가
-  // 이미 그렇게 만든다). 피드 로드와 무관하게 백그라운드로 돈다.
-  useEffect(() => {
-    if (!isSignedInNow()) return;
-    void backfillAnchorGenders();
   }, []);
 
   const sentinelRef = useRef<HTMLDivElement | null>(null);

@@ -9,9 +9,10 @@ import { readCurationViews } from "@/shared/profile/curation-views";
 
 const summary = vi.hoisted(() => vi.fn());
 const restSelect = vi.hoisted(() => vi.fn());
+const rpcPost = vi.hoisted(() => vi.fn());
 
 vi.mock("@/shared/signals/signals", () => ({ getFeedProfileSummary: summary }));
-vi.mock("@/shared/supabase-rpc", () => ({ restSelect }));
+vi.mock("@/shared/supabase-rpc", () => ({ restSelect, rpcPost }));
 
 /** 실제 curations.json에서 키·건수만 흉내 낸 목록 (규칙 파일은 진짜를 쓴다) */
 const curations = [
@@ -73,6 +74,9 @@ beforeEach(() => {
   clearGenderSetting();
   summary.mockReset();
   restSelect.mockReset();
+  rpcPost.mockReset();
+  // 벡터 점수는 기본으로 "앵커를 못 품"(0행) — 벡터를 보는 테스트만 따로 채운다
+  rpcPost.mockResolvedValue([]);
 });
 
 describe("useForYouOrder", () => {
@@ -81,6 +85,7 @@ describe("useForYouOrder", () => {
     const { result } = render();
     expect(keys(result.current)).toEqual(keys(curations));
     expect(restSelect).not.toHaveBeenCalled();
+    expect(rpcPost).not.toHaveBeenCalled();
   });
 
   it("앵커가 없으면(콜드스타트) 기본 순서 그대로다", () => {
@@ -88,6 +93,7 @@ describe("useForYouOrder", () => {
     const { result } = render();
     expect(keys(result.current)).toEqual(keys(curations));
     expect(restSelect).not.toHaveBeenCalled();
+    expect(rpcPost).not.toHaveBeenCalled();
   });
 
   it("고양이 티를 찜한 사람은 고양이 큐레이션이 맨 앞으로 온다", async () => {
@@ -184,6 +190,55 @@ describe("useForYouOrder", () => {
     const { result } = render(withItems);
     await waitFor(() => {
       expect(result.current[0].items).toHaveLength(3);
+    });
+  });
+
+  it("제목을 못 받아도 벡터 점수만으로 순서가 난다", async () => {
+    // 이 조각의 핵심 — 제목에 낱말이 없어도(또는 제목 조회가 실패해도) 이미지로 잡는다
+    summary.mockReturnValue({
+      longAnchors: [{ goodsNo: 111, weight: 4 }],
+      sessionAnchors: [],
+    });
+    restSelect.mockRejectedValue(new Error("제목 조회 실패"));
+    rpcPost.mockResolvedValue([
+      { key: "embroidery", score: 0.9 },
+      { key: "surf", score: 0.8 },
+      { key: "running", score: 0.5 },
+    ]);
+    const { result } = render();
+    await waitFor(() => {
+      expect(result.current[0].key).toBe("embroidery");
+    });
+    expect(rpcPost).toHaveBeenCalledWith(
+      "c_curation_rank",
+      { p_session: [], p_long: [{ g: 111, w: 4 }] },
+      expect.objectContaining({ timeoutMs: expect.any(Number) as number }),
+    );
+  });
+
+  it("벡터 조회가 실패해도 키워드 순서가 그대로 남는다", async () => {
+    summary.mockReturnValue({
+      longAnchors: [{ goodsNo: 111, weight: 4 }],
+      sessionAnchors: [],
+    });
+    restSelect.mockResolvedValue([{ goods_no: 111, title: "고양이 티셔츠" }]);
+    rpcPost.mockRejectedValue(new Error("서버 실패"));
+    const { result } = render();
+    await waitFor(() => {
+      expect(result.current[0].key).toBe("cat_print");
+    });
+  });
+
+  it("벡터가 0행이면(앵커를 못 품) 키워드 순서 그대로다", async () => {
+    summary.mockReturnValue({
+      longAnchors: [{ goodsNo: 111, weight: 4 }],
+      sessionAnchors: [],
+    });
+    restSelect.mockResolvedValue([{ goods_no: 111, title: "고양이 티셔츠" }]);
+    rpcPost.mockResolvedValue([]);
+    const { result } = render();
+    await waitFor(() => {
+      expect(result.current[0].key).toBe("cat_print");
     });
   });
 
