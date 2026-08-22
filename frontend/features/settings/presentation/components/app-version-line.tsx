@@ -10,5 +10,5 @@ export function AppVersionLine() {
   const label = buildVersionLabel(process.env.APP_VERSION, process.env.APP_ENV);
   if (label === null) return null;
 
-  return <p className="mt-10 text-center text-xs text-neutral-500">{label}</p>;
+  return <p className="mt-10 text-center text-xs text-ink-muted">{label}</p>;
 }

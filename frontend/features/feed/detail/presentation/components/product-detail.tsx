@@ -10,6 +10,7 @@ import type {
   OriginRect,
 } from "@/features/feed/detail/domain/detail-stack";
 import { sellerUrl } from "@/features/feed/detail/domain/seller-link";
+import { DetailDock } from "@/features/feed/detail/presentation/components/detail-dock";
 import { useDetailScroll } from "@/features/feed/detail/presentation/view-model/use-detail-scroll";
 import { useExpandTransition } from "@/features/feed/detail/presentation/view-model/use-expand-transition";
 import { useSlideIndex } from "@/features/feed/detail/presentation/view-model/use-slide-index";
@@ -28,7 +29,8 @@ import { SaveSheet } from "@/features/feed/wishlist/presentation/components/save
 import { useSaveSheet } from "@/features/feed/wishlist/presentation/view-model/use-save-sheet";
 import { useVisibleWishes } from "@/features/feed/wishlist/presentation/view-model/use-visible-wishes";
 import { useWishlist } from "@/features/feed/wishlist/presentation/view-model/use-wishlist";
-import { BackIcon } from "@/shared/icons";
+import { recordRecentProduct } from "@/shared/history/recent-products";
+import { BackIcon, ExternalLinkIcon } from "@/shared/icons";
 import { logAction } from "@/shared/signals/signals";
 
 interface ProductDetailProps {
@@ -78,7 +80,7 @@ export function ProductDetail({
     onClosed,
     !entry.revealed,
   );
-  const { scrollRef, heroEndRef, pastHero, scrollToTop } = useDetailScroll(
+  const { scrollRef, heroEndRef, pastHero, nearTop, scrollToTop } = useDetailScroll(
     entry.savedScrollTop,
   );
   const explore = useFeedViewModel({
@@ -94,22 +96,44 @@ export function ProductDetail({
   const visibleWishes = useVisibleWishes(entries);
   const sheet = useSaveSheet(save);
   const isWishedNow = wished(product.goodsNo);
+  // 저장 버튼이 눌렸을 때 — 비회원이면 안내 없이 곧바로 로그인 화면으로
+  // (저장은 동작이므로 설명을 한 단계 끼우지 않는다), 아니면 폴더 고르는 시트
+  // (docs/plans/2026-08-20-wishlist-folders.md)
+  const requestSave = () => {
+    if (access === "out") {
+      router.push("/login");
+      return;
+    }
+    sheet.open(product);
+  };
   const wishlistMessage = wishlistNoticeMessage(notice);
   useBodyScrollLock();
 
+  // 사진 틀의 비율 — 상품이 들고 있는 실제 크기를 쓴다. 값이 없으면 흔한 세로 비율로.
+  const photoRatio =
+    product.width > 0 && product.height > 0
+      ? `${String(product.width)} / ${String(product.height)}`
+      : "5 / 6";
+
+  // 상세를 열면 "최근 본 제품"에 남긴다. 상품을 통째로 적어 두면 나중에 다시
+  // 조회하지 않고도 그 자리에서 다시 열 수 있다.
+  useEffect(() => {
+    recordRecentProduct(product);
+  }, [product]);
+
   return (
     <div
-      className={`fixed inset-0 z-50 bg-[#0a0a0a] transition-opacity duration-200 ${
+      className={`fixed inset-0 z-50 bg-app transition-opacity duration-200 ${
         phase === "closing" ? "opacity-0" : "opacity-100"
       }`}
     >
       <div className="relative mx-auto flex h-full max-w-md flex-col">
         {/* 뒤로가기 좌표를 마이페이지와 맞춘다 — 왼쪽 16px·위 8px (전 화면 공통) */}
-        <header className="relative flex items-center px-4 py-2">
+        <header className="relative flex items-center px-4 pt-4 pb-2">
           <button
             type="button"
             aria-label="뒤로 가기"
-            className="flex h-10 w-10 cursor-pointer items-center justify-center rounded-full text-neutral-400"
+            className="flex h-10 w-10 cursor-pointer items-center justify-center rounded-full bg-app text-ink-soft neo active:neo-in"
             onClick={onRequestClose}
           >
             <BackIcon />
@@ -133,110 +157,102 @@ export function ProductDetail({
         </header>
 
         <div ref={scrollRef} className="min-h-0 flex-1 overflow-y-auto">
-          <div ref={heroRef} className="origin-top-left">
+          {/*
+            시안 `.detail-photo-wrap` — 좌우 16px 안쪽에 놓이고 모서리는 피드
+            카드와 같은 값. 그림자는 주지 않는다("플랫 — 피드 카드와 동일하게
+            입체감 제거"). 넘김 점은 이 틀 안에 겹쳐 놓는다.
+          */}
+          <div ref={heroRef} className="relative mx-4 mt-1.5 origin-top-left">
             <div
               ref={sliderRef}
               onScroll={onScroll}
-              className="flex snap-x snap-mandatory overflow-x-auto"
+              className="flex snap-x snap-mandatory overflow-x-auto rounded-card"
               style={{ scrollbarWidth: "none" }}
             >
               {slides.map((src, slideIndex) => (
                 <div
                   key={src}
-                  className="relative w-full shrink-0 snap-center bg-neutral-900"
-                  style={{ aspectRatio: "5 / 6" }}
+                  className="relative w-full shrink-0 snap-center bg-line"
+                  // 틀을 사진 비율에 맞춘다 — 고정 비율(5:6)에 맞추면 세로가 다른
+                  // 사진에서 위아래로 빈 띠가 생긴다. 시안도 사진이 틀을 꽉 채운다.
+                  style={{ aspectRatio: photoRatio }}
                 >
                   <Image
                     src={src}
                     alt={`${product.title} 이미지 ${String(slideIndex + 1)}`}
                     fill
                     sizes="100vw"
-                    className="object-contain"
+                    className="object-cover"
                     priority={slideIndex === initialSlide}
                   />
                 </div>
               ))}
             </div>
+            {slides.length > 1 && (
+              <span
+                aria-label={`이미지 ${String(index + 1)} / ${String(slides.length)}`}
+                className="pointer-events-none absolute bottom-3 left-1/2 z-[2] flex -translate-x-1/2 rounded-full bg-[rgb(46_52_66/0.45)] px-[7px] py-[5px] backdrop-blur-[6px]"
+              >
+                <span className="relative flex gap-[5px]">
+                  {slides.map((src) => (
+                    <span
+                      key={src}
+                      className="h-[5px] w-[5px] rounded-full bg-white/40"
+                    />
+                  ))}
+                  {/* 지금 보고 있는 점 — 자리를 옮기며 미끄러진다 (점 5px + 사이 5px = 10px) */}
+                  <span
+                    className="absolute top-0 left-0 h-[5px] w-[5px] rounded-full bg-thumb transition-transform duration-[260ms] ease-spring"
+                    style={{ transform: `translateX(${String(index * 10)}px)` }}
+                  />
+                </span>
+              </span>
+            )}
           </div>
           <div ref={heroEndRef} aria-hidden className="h-px" />
 
-          {slides.length > 1 && (
-            <div
-              className="flex items-center justify-center gap-1.5 py-3"
-              aria-label={`이미지 ${String(index + 1)} / ${String(slides.length)}`}
-            >
-              {slides.map((src, dotIndex) => (
-                <span
-                  key={src}
-                  className={`h-1.5 rounded-full transition-all duration-200 ${
-                    dotIndex === index ? "w-4 bg-white" : "w-1.5 bg-neutral-600"
-                  }`}
-                />
-              ))}
-            </div>
-          )}
-
-          <div className="px-4 pt-2 pb-8">
+          <div className="px-5 pt-[18px] pb-8">
             {product.brandName && (
-              <p className="text-sm text-neutral-400">{product.brandName}</p>
+              <p className="text-[12.5px] font-[650] text-ink-muted">
+                {product.brandName}
+              </p>
             )}
-            <h2 className="mt-1 text-lg font-medium text-white">{product.title}</h2>
-            <div className="mt-3 flex items-center justify-between gap-3">
-              <p className="text-xl font-semibold text-white">
+            <h2 className="mt-1.5 text-[19px] font-extrabold tracking-[-0.01em] text-ink">
+              {product.title}
+            </h2>
+            {/* 시안 `.detail-price-row` — 가격 옆에 아이콘이 나란히. 버튼 틀 없이 아이콘만 */}
+            <div className="mt-3 flex items-center gap-4">
+              <p className="text-[18px] font-extrabold text-ink tabular-nums">
                 {formatPrice(product.priceFinal)}
               </p>
+              {/* 시안의 가격줄에는 판매처 링크만 있다 — 저장은 하단 dock이 맡는다 */}
               <div className="flex shrink-0 items-center">
-                <button
-                  type="button"
-                  aria-label={isWishedNow ? "찜 해제" : "찜"}
-                  aria-pressed={isWishedNow}
-                  className={`flex h-11 w-11 cursor-pointer items-center justify-center text-2xl ${
-                    isWishedNow ? "text-red-500" : "text-white"
-                  }`}
-                  onClick={() => {
-                    // 로그인하지 않았으면 안내 없이 곧바로 로그인 화면으로 —
-                    // 하트는 동작이므로 설명을 한 단계 끼우지 않는다
-                    if (access === "out") {
-                      router.push("/login");
-                      return;
-                    }
-                    // 채워진 하트는 즉시 해제, 빈 하트는 폴더 고르는 시트
-                    // (docs/plans/2026-08-20-wishlist-folders.md)
-                    if (isWishedNow) {
-                      remove(product);
-                    } else {
-                      sheet.open(product);
-                    }
-                  }}
-                >
-                  {isWishedNow ? "♥" : "♡"}
-                </button>
                 <a
                   href={sellerUrl(product.goodsNo)}
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label="판매처로 이동"
                   title="판매처로 이동"
-                  className="flex h-11 w-11 items-center justify-center text-2xl font-semibold text-white"
+                  className="relative -top-px flex items-center justify-center p-1.5 text-ink-soft transition-transform active:scale-[0.88] active:text-ink"
                   onClick={() => {
                     logAction("outbound", product.goodsNo, { gender: product.gender });
                   }}
                 >
-                  ↗
+                  <ExternalLinkIcon />
                 </a>
               </div>
             </div>
 
             {/* 하트가 되돌아간 이유를 알린다 — 조용히 어긋난 채로 두지 않는다 */}
             {wishlistMessage !== null && (
-              <p role="status" className="mt-2 text-sm text-amber-400">
+              <p role="status" className="mt-2 text-sm text-star">
                 {wishlistMessage}
               </p>
             )}
           </div>
 
-          <div className="px-2 pb-10">
-            {explore.showSkeleton && <FeedSkeleton />}
+          <div className="px-3 pt-[22px] pb-[120px]">
+            {explore.showSkeleton && <FeedSkeleton fillMs={explore.lastLoadMs} />}
             {explore.failed && <FeedError onRetry={explore.retry} />}
             <FeedGrid
               columns={explore.columns}
@@ -253,16 +269,19 @@ export function ProductDetail({
             />
           </div>
         </div>
-        {pastHero && (
-          <button
-            type="button"
-            aria-label="맨위로"
-            onClick={scrollToTop}
-            className="absolute bottom-6 left-1/2 flex h-12 w-12 -translate-x-1/2 cursor-pointer items-center justify-center rounded-full bg-neutral-800/90 text-xl text-white backdrop-blur-sm"
-          >
-            ↑
-          </button>
-        )}
+        {/*
+          하단 dock — 시안 `.ddock`. 맨 위에서는 저장 알약, 내리면 원버튼(맨 위로).
+          저장 흐름은 가격줄에 있던 찜과 같다 — 비회원이면 로그인, 아니면 폴더 시트.
+        */}
+        <DetailDock
+          saved={isWishedNow}
+          expanded={nearTop}
+          onSave={requestSave}
+          onUnsave={() => {
+            remove(product);
+          }}
+          onToTop={scrollToTop}
+        />
       </div>
 
       {sheet.pending !== null && (

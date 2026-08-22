@@ -17,6 +17,8 @@ interface FeedGridProps {
   onImpress?: (card: FeedCardViewData, info: ImpressionDomInfo) => void;
   /** 이 순위 미만 카드는 화면 밖이어도 이미지를 즉시 내려받는다 (첫 페이지 프리로드) */
   eagerImageRankBelow?: number;
+  /** 폴더 상세처럼 더 촘촘한 배치 — 시안 `.fd-grid`는 사이가 10px다 (홈은 12/14) */
+  compact?: boolean;
 }
 
 /** 2열 모자이크 그리드 + 무한 스크롤 센티널 — 메인 피드와 상세 하단 탐색이 공유한다. */
@@ -26,14 +28,15 @@ export function FeedGrid({
   onSelect,
   onImpress,
   eagerImageRankBelow = 0,
+  compact = false,
 }: FeedGridProps) {
   return (
     <>
-      <div className="flex items-start gap-2">
+      <div className={`flex items-start ${compact ? "gap-2.5" : "gap-3"}`}>
         {columns.map((column, columnIndex) => (
           <div
             key={`column-${String(columnIndex)}`}
-            className="flex min-w-0 flex-1 flex-col gap-2"
+            className={`flex min-w-0 flex-1 flex-col ${compact ? "gap-2.5" : "gap-3.5"}`}
           >
             {column.map((card) => (
               <ProductCard

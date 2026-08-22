@@ -23,18 +23,46 @@ beforeEach(() => {
 });
 
 describe("useSearchCollapse", () => {
-  it("아래로 일정량 넘게 스크롤하면 축소된다", () => {
+  it("원버튼으로 시작한다", () => {
     const suppressUntilRef = { current: 0 };
     const { result } = renderHook(() =>
       useSearchCollapse(suppressUntilRef, documentAnchor),
     );
+    expect(result.current.collapsed).toBe(true);
+  });
+
+  /*
+   * 회귀: "상단이면 무조건 확장"이던 시절엔 맨 위에서 아래로 미는 첫 순간
+   * 임계값 안(y<=80)이라 펴졌다가, 60px을 넘기며 곧바로 접혔다 — 깜빡임.
+   */
+  it("맨 위에서 아래로 내리기 시작해도 펴지지 않는다", () => {
+    const suppressUntilRef = { current: 0 };
+    const { result } = renderHook(() =>
+      useSearchCollapse(suppressUntilRef, documentAnchor),
+    );
+    scrollTo(20);
+    scrollTo(60);
+    expect(result.current.collapsed).toBe(true);
+  });
+
+  it("아래로 일정량 넘게 스크롤하면 축소된 채로 남는다", () => {
+    const suppressUntilRef = { current: 0 };
+    const { result } = renderHook(() =>
+      useSearchCollapse(suppressUntilRef, documentAnchor),
+    );
+    // expand()는 600ms 동안 스크롤 판정을 멈춘다(포커스가 만드는 스크롤 때문).
+    // 여기서 재려는 것은 그 억제가 아니라 방향 판정이라 포커스/블러로 펼친다.
+    act(() => {
+      result.current.onInputFocus();
+      result.current.onInputBlur();
+    });
     expect(result.current.collapsed).toBe(false);
     scrollTo(200);
     scrollTo(400);
     expect(result.current.collapsed).toBe(true);
   });
 
-  it("위로 스크롤하면 다시 펼쳐진다", () => {
+  it("위로 스크롤해도 펼쳐지지 않는다 — 펼치는 것은 사람의 탭뿐이다", () => {
     const suppressUntilRef = { current: 0 };
     const { result } = renderHook(() =>
       useSearchCollapse(suppressUntilRef, documentAnchor),
@@ -42,10 +70,14 @@ describe("useSearchCollapse", () => {
     scrollTo(400);
     expect(result.current.collapsed).toBe(true);
     scrollTo(200);
-    expect(result.current.collapsed).toBe(false);
+    expect(result.current.collapsed).toBe(true);
   });
 
-  it("상단 근처에서는 항상 펼쳐진다", () => {
+  /*
+   * 회귀: 맨 위로 돌아오면 저절로 펼쳐지던 시절, 피드를 내렸다 올리기만 해도
+   * 검색창이 다시 열려 거슬린다는 지적을 받았다(2026-08-22).
+   */
+  it("맨 위로 돌아와도 원버튼 그대로다", () => {
     const suppressUntilRef = { current: 0 };
     const { result } = renderHook(() =>
       useSearchCollapse(suppressUntilRef, documentAnchor),
@@ -53,7 +85,7 @@ describe("useSearchCollapse", () => {
     scrollTo(400);
     expect(result.current.collapsed).toBe(true);
     scrollTo(10);
-    expect(result.current.collapsed).toBe(false);
+    expect(result.current.collapsed).toBe(true);
   });
 
   it("프로그램적 스크롤(복원·상단 이동) 동안은 판정하지 않는다", () => {
@@ -61,20 +93,36 @@ describe("useSearchCollapse", () => {
     const { result } = renderHook(() =>
       useSearchCollapse(suppressUntilRef, documentAnchor),
     );
+    // 시간 억제(expand)가 아니라 suppressUntilRef가 막는 것인지 보려고
+    // 억제 없는 경로로 펼쳐 둔다
+    act(() => {
+      result.current.onInputFocus();
+      result.current.onInputBlur();
+    });
     scrollTo(2000);
     scrollTo(4000);
     expect(result.current.collapsed).toBe(false);
   });
 
-  it("프로그램적 스크롤이라도 상단 도착은 확장시킨다 (검색 제출 → 결과 상단)", () => {
+  it("상단에 도착하면 접힘 누적을 비운다 — 다시 내려야 접힌다", () => {
     const suppressUntilRef = { current: 0 };
     const { result } = renderHook(() =>
       useSearchCollapse(suppressUntilRef, documentAnchor),
     );
+    act(() => {
+      result.current.onInputFocus();
+      result.current.onInputBlur();
+    });
     scrollTo(400);
     expect(result.current.collapsed).toBe(true);
-    suppressUntilRef.current = performance.now() + 10000;
+
+    // 맨 위로 돌아온 뒤 사람이 탭해서 펼치면, 곧바로는 접히지 않는다
     scrollTo(0);
+    act(() => {
+      result.current.onInputFocus();
+      result.current.onInputBlur();
+    });
+    scrollTo(30);
     expect(result.current.collapsed).toBe(false);
   });
 

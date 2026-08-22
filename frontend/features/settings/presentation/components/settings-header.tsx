@@ -14,7 +14,7 @@ export function SettingsHeader() {
       <BackLink
         href="/my"
         label="마이페이지로 돌아가기"
-        className="flex h-10 w-10 items-center justify-center rounded-full text-neutral-400"
+        className="flex h-10 w-10 items-center justify-center rounded-full text-ink-soft"
       >
         <BackIcon />
       </BackLink>

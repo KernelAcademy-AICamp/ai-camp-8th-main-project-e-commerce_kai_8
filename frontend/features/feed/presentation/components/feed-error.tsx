@@ -8,16 +8,16 @@
  */
 export function FeedError({ onRetry }: { onRetry: () => void }) {
   return (
-    <div className="px-4 py-16 text-center text-neutral-400">
+    <div className="px-4 py-16 text-center text-ink-soft">
       <p className="text-[15px]">상품을 불러오지 못했습니다.</p>
       <button
         type="button"
         onClick={onRetry}
-        className="mt-4 cursor-pointer rounded-xl bg-neutral-800 px-5 py-2.5 font-medium text-white"
+        className="mt-4 cursor-pointer rounded-xl bg-well neo px-5 py-2.5 font-medium text-ink"
       >
         다시 시도
       </button>
-      <p className="mt-3 text-sm text-neutral-500">계속 안 되면 새로고침해 주세요.</p>
+      <p className="mt-3 text-sm text-ink-muted">계속 안 되면 새로고침해 주세요.</p>
     </div>
   );
 }
