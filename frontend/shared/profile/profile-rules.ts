@@ -34,10 +34,6 @@ export const STYLE_BOOST_IMPRESSIONS = 60;
 
 export type ProfileActionType = keyof typeof SIGNAL_WEIGHTS | "unwish";
 
-/** 앵커 성별 — 성별 미상은 필드 자체를 두지 않는다(undefined) */
-export type AnchorGender = "남성" | "여성" | "공용";
-
-/** 우세 성별 판정 결과 — 하드 필터로 그대로 실어 보낼 수 있는 형태 */
 /**
  * 사람이 고른 성별 — 큐레이션 필터가 쓰는 값 집합.
  *
@@ -47,23 +43,10 @@ export type AnchorGender = "남성" | "여성" | "공용";
  */
 export type DominantGender = "남성" | "여성" | null;
 
-/**
- * 상품 성별(카탈로그 원문, string|null)을 앵커 성별로 바꾼다.
- * '남성'/'여성'/'공용' 외의 값(빈 문자열 포함 — 카탈로그에 1,911건 있다)은
- * 전부 미상(undefined)으로 취급한다.
- */
-export function toAnchorGender(
-  gender: string | null | undefined,
-): AnchorGender | undefined {
-  if (gender === "남성" || gender === "여성" || gender === "공용") return gender;
-  return undefined;
-}
-
 export interface Anchor {
   goodsNo: number;
   weight: number;
   lastMs: number;
-  gender?: AnchorGender;
 }
 
 export interface SessionProfile {
@@ -109,7 +92,6 @@ export interface ProfileAction {
   type: ProfileActionType;
   goodsNo: number;
   nowMs: number;
-  gender?: AnchorGender;
 }
 
 export function applyAction(
@@ -135,8 +117,6 @@ export function applyAction(
               ...a,
               weight: a.weight + gain,
               lastMs: action.nowMs,
-              // 성별이 있으면 갱신, 없으면 기존 값 유지
-              gender: action.gender ?? a.gender,
             }
           : a,
       )
@@ -146,7 +126,6 @@ export function applyAction(
           goodsNo: action.goodsNo,
           weight: gain,
           lastMs: action.nowMs,
-          gender: action.gender,
         },
       ];
   return {
@@ -214,7 +193,6 @@ export function foldSessionIntoLongTerm(
       weight: (existing?.weight ?? 0) + anchor.weight,
       lastMs: Math.max(existing?.lastMs ?? 0, anchor.lastMs),
       // 한쪽에만 성별이 있으면 있는 쪽 값을 취한다
-      gender: anchor.gender ?? existing?.gender,
     });
   }
   return {
@@ -233,10 +211,7 @@ export function mergeLongTerm(a: LongTermProfile, b: LongTermProfile): LongTermP
       // 가중 최대 쪽을 취하되, 성별은 한쪽에만 있어도 잃지 않는다
       merged.set(anchor.goodsNo, {
         ...anchor,
-        gender: anchor.gender ?? existing?.gender,
       });
-    } else if (!existing.gender && anchor.gender) {
-      merged.set(anchor.goodsNo, { ...existing, gender: anchor.gender });
     }
   }
   return {

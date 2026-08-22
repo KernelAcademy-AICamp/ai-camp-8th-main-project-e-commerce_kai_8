@@ -5,12 +5,7 @@
 
 import { authedRpc } from "@/shared/supabase/authed-rpc";
 
-import {
-  type Anchor,
-  emptyLongTerm,
-  type LongTermProfile,
-  toAnchorGender,
-} from "./profile-rules";
+import { type Anchor, emptyLongTerm, type LongTermProfile } from "./profile-rules";
 
 interface TasteRowDto {
   schema_version: number;
@@ -23,15 +18,15 @@ function toAnchors(raw: unknown): Anchor[] {
   const anchors: Anchor[] = [];
   for (const item of raw) {
     if (typeof item !== "object" || item === null) continue;
-    const { goodsNo, weight, lastMs, gender } = item as Record<string, unknown>;
+    // 계정에 저장된 옛 프로필에는 `gender`가 남아 있을 수 있다 — **읽되 무시한다.**
+    // 그것을 먹던 우세 성별 판정은 성별 토글(O-39)이 대체하며 걷어냈다.
+    const { goodsNo, weight, lastMs } = item as Record<string, unknown>;
     if (typeof goodsNo !== "number" || !Number.isFinite(goodsNo)) continue;
     if (typeof weight !== "number" || !Number.isFinite(weight)) continue;
-    const anchorGender = toAnchorGender(typeof gender === "string" ? gender : null);
     anchors.push({
       goodsNo,
       weight,
       lastMs: typeof lastMs === "number" && Number.isFinite(lastMs) ? lastMs : 0,
-      ...(anchorGender !== undefined ? { gender: anchorGender } : {}),
     });
   }
   return anchors;

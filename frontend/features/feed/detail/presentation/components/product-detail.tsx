@@ -235,7 +235,7 @@ export function ProductDetail({
                   title="판매처로 이동"
                   className="relative -top-px flex items-center justify-center p-1.5 text-ink-soft transition-transform active:scale-[0.88] active:text-ink"
                   onClick={() => {
-                    logAction("outbound", product.goodsNo, { gender: product.gender });
+                    logAction("outbound", product.goodsNo);
                   }}
                 >
                   <ExternalLinkIcon />
