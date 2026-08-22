@@ -111,8 +111,11 @@ describe("personalizationScopedKeys", () => {
     expect(personalizationScopedKeys(keys).sort()).toEqual(keys.sort());
   });
 
-  it("성별과 찜은 남긴다 — 방침 문구가 그렇게 약속한다", () => {
-    expect(personalizationScopedKeys(["atee-gender", "atee-wishlist"])).toEqual([]);
+  it("성별과 기기 찜도 지운다 — 처음 접하는 사람처럼 (2026-08-22)", () => {
+    expect(personalizationScopedKeys(["atee-gender", "atee-wishlist"])).toEqual([
+      "atee-gender",
+      "atee-wishlist",
+    ]);
   });
 
   it("삭제 재시도 표식은 남긴다 — 지우면 삭제 약속이 깨진다", () => {

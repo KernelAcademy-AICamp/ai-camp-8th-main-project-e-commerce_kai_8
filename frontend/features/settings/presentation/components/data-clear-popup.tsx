@@ -44,7 +44,7 @@ export function DataClearPopup({
         <>
           <PopupTitle>데이터를 지울까요?</PopupTitle>
           <PopupMessage>
-            지금까지의 탐색 기록과 취향이
+            탐색 기록·취향·보여줄 성별이
             <br />
             사라집니다. 되돌릴 수 없어요.
           </PopupMessage>
@@ -66,7 +66,8 @@ export function DataClearPopup({
             {status.deletedOnServer !== null
               ? `서버 기록 ${String(status.deletedOnServer)}건까지 지웠어요.`
               : "서버 기록은 다음 접속에서 다시 지웁니다."}
-            <br />새 익명 ID로 처음부터 시작해요.
+            <br />
+            처음 온 사람과 같은 상태예요.
           </PopupMessage>
           <PopupButton className="mt-4" onClick={onCancel}>
             확인
