@@ -12,6 +12,33 @@
 --
 -- ⚠️ 이 파일은 c_search_negation_flags를 **다시 만든다.** 20260818500000이 만든 것을
 -- 지우고 핏 깃발을 더해 새로 만든다. 두 파일을 순서대로 돌리면 결과가 같다.
+--
+-- ══════════════════════════════════════════════════════════════════════════
+-- ⚠️ **이 파일은 한 번 적용하고 끝나는 마이그레이션이 아니라 재실행하는 재생성
+--    절차다.** `c_search_negation_flags`의 정본 빌더이고, backend/README.md의
+--    "갱신 계약" 표 4번 행이 이 파일을 재실행 대상으로 지명한다.
+--
+-- **언제 다시 돌리는가**
+--   · `c_goods` 재수집 뒤 (깃발이 g.sheer·fit·thickness·elasticity에서 온다)
+--   · `c_search_docs` 재생성 뒤 (깃발이 d.doc에서 파생된다 — 이 표가 낡으면
+--     신규 위반 상품이 부정 검색에 그대로 노출된다)
+--   · `c_search_fit_measures` 갱신 뒤 (핏 깃발의 출처)
+--   · **이 파일의 판정 로직을 고쳤을 때**
+--   순서상 `c_search_docs`를 먼저 만들고 이것을 뒤에 돌린다.
+--
+-- **그래서 이 파일을 고치면 운영에 다시 돌려야 반영된다.** 고치기만 하고 안 돌리면
+-- 새로 세우는 환경만 고친 버전을 받아 운영과 갈린다. 이 repo는 마이그레이션 재실행을
+-- 둘러싼 사고를 이미 겪었다(README의 "1번은 20260817200000이 아니다" 경고).
+--
+-- 재실행 안전 장치: `drop constraint if exists` · `on conflict do update` ·
+-- `_next` 그림자 테이블을 만들어 원자적으로 rename · `create or replace`.
+--
+-- **적용 이력**
+--   · 2026-08-22 — 아래 "빈 행은 담지 않는다" 수정과 함께 운영에 재실행.
+--     141,277행 → 134,964행(빈 행 6,313개 제거). 깃발별 개수는 전후 동일.
+--     ⚠️ 그 전 버전을 돌린 채 재실행하지 않은 DB에는 **빈 행 6,313개가 그대로 남아
+--     있다.** 다시 돌려야 사라진다.
+-- ══════════════════════════════════════════════════════════════════════════
 
 set statement_timeout = 0;
 
@@ -33,9 +60,24 @@ insert into c_search_negation_terms (term, kind, note) values
 on conflict (term) do update set kind = excluded.kind, note = excluded.note;
 
 -- ── 2. 깃발을 다시 만든다 (기존 것 + 핏) ───────────────────────────────────
+--
+-- ⚠️ **깃발이 하나도 안 붙은 행은 담지 않는다** (2026-08-22 추가).
+-- 아래 where의 행 선별 조건이 깃발 부착 조건보다 **넓다** — 특히 `m.goods_no is not null`은
+-- 치수 행이 있기만 하면 담는데, 핏 깃발은 치수가 특정 범위일 때만 붙는다. 그래서 "치수는
+-- 있는데 위반은 아닌" 상품이 빈 행으로 남았다. 실측 6,313행(전체의 4.5%)이었고, 그 전부가
+-- 속성 위반 0·핏 위반 0·치수 누락 0이었다 — 찌꺼기가 아니라 술어 불일치다.
+--
+-- 기능은 안 깨진다(빈 배열은 `&&`에 안 걸린다). 그래도 고치는 이유는 "이 표에는 위반하는
+-- 상품만 있다"가 깨지면 그 뒤의 판단이 전부 흔들리기 때문이고, 행만 지우면 다음 재생성 때
+-- 그대로 돌아오기 때문이다(재생성은 재수집 갱신 계약의 필수 단계다).
+--
+-- **where를 좁히지 않고 바깥에서 거른다.** 좁히려면 아래 case들의 조건을 where에 한 벌 더
+-- 적어야 하는데, 그렇게 두 곳에 적어 두면 갈리는 것이 바로 이 버그의 원인이었다.
+-- 바깥 필터는 case가 어떻게 바뀌든 **저절로 따라온다.**
 drop table if exists c_search_negation_flags_next;
 
 create table c_search_negation_flags_next as
+select * from (
 select d.goods_no,
        array_remove(array[
          case when d.doc &@ '로고'   then '로고'   end,
@@ -64,7 +106,9 @@ left join c_search_fit_measures m using (goods_no)
 where d.doc &@| array['로고','프린트','프린팅','그래픽','레터링','자수','브이넥','캡소매','셔링','밴딩']
    or g.sheer ~ '있음|보통' or g.thickness ~ '얇음|두꺼움'
    or g.fit ~ '슬림|스키니|타이트' or g.elasticity ~ '있음'
-   or m.goods_no is not null;
+   or m.goods_no is not null
+) t
+where t.flags <> '{}';
 
 alter table c_search_negation_flags_next add primary key (goods_no);
 create index c_search_negation_flags_next_gin on c_search_negation_flags_next using gin (flags);

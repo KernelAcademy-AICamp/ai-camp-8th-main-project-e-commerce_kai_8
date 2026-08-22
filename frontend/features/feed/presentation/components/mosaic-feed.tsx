@@ -4,6 +4,7 @@ import { useEffect, useRef } from "react";
 
 import { DetailLayers } from "@/features/feed/detail/presentation/components/detail-layers";
 import { useDetailState } from "@/features/feed/detail/presentation/view-model/use-detail-state";
+import { FeedError } from "@/features/feed/presentation/components/feed-error";
 import { FeedGrid } from "@/features/feed/presentation/components/feed-grid";
 import { FeedSkeleton } from "@/features/feed/presentation/components/feed-skeleton";
 import { useFeedViewModel } from "@/features/feed/presentation/view-model/use-feed-view-model";
@@ -45,12 +46,13 @@ export function MosaicFeed({ active = true }: { active?: boolean }) {
   // 훅을 새로 만들지 않고 이것을 쓰는 이유: 개인화·콜드스타트 폴백·실패 폴백·
   // 제외 목록·무한 스크롤이 이미 여기 다 있고, 사용자가 보던 피드가 그대로
   // 이어져 대기 시간도 없다.
-  const { columns, sentinelRef, onImpress, showSkeleton } = useFeedViewModel({
-    paused: detailOpen || (searching && !showReplacement),
-    // 같은 훅이 메인 피드와 대체 피드 양쪽을 맡는다(둘은 동시에 렌더되지 않는다).
-    // 지금 어느 자리인지만 알려 주면 노출 기록이 갈린다 — 훅을 복제하면 두 벌이 갈린다.
-    surface: showReplacement ? "search_replacement" : undefined,
-  });
+  const { columns, sentinelRef, onImpress, showSkeleton, failed, retry } =
+    useFeedViewModel({
+      paused: detailOpen || (searching && !showReplacement),
+      // 같은 훅이 메인 피드와 대체 피드 양쪽을 맡는다(둘은 동시에 렌더되지 않는다).
+      // 지금 어느 자리인지만 알려 주면 노출 기록이 갈린다 — 훅을 복제하면 두 벌이 갈린다.
+      surface: showReplacement ? "search_replacement" : undefined,
+    });
 
   // 대체 피드를 실제로 띄웠다고 검색 로그에 남긴다.
   //
@@ -99,6 +101,7 @@ export function MosaicFeed({ active = true }: { active?: boolean }) {
       ) : (
         <>
           {showSkeleton && <FeedSkeleton />}
+          {failed && <FeedError onRetry={retry} />}
           <FeedGrid
             columns={columns}
             sentinelRef={sentinelRef}

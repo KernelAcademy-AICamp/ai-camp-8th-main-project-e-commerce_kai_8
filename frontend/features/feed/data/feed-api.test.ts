@@ -61,14 +61,18 @@ describe("fetchFeedPage — 성별 하드 필터 (설계: 성별 피드 하드 �
     });
   });
 
-  it("성별을 생략하면 null을 싣는다 — 서버가 무시해 기존과 같은 동작", async () => {
+  it("남성도 대칭으로 싣는다", async () => {
     rpcPostMock.mockResolvedValue([]);
-    await fetchFeedPage(1000, null, 30);
+    await fetchFeedPage(1000, null, 30, "남성");
     expect(rpcPostMock).toHaveBeenCalledWith("c_feed_page", {
       p_seed: 1000,
       p_after: null,
       p_size: 30,
-      p_gender: null,
+      p_gender: "남성",
     });
   });
+
+  // 성별을 생략하는 호출은 **타입에서 막힌다**(인자가 필수다). 예전에는 생략하면
+  // null이 실려 서버가 필터를 껐는데, 공용까지 빼는 정책에서는 그것이 곧 필터가
+  // 조용히 꺼지는 실패다 — 그래서 생략 자체를 없앴다.
 });
