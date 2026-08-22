@@ -129,9 +129,17 @@ export function DetailDock({
       };
     }
 
+    let shown = false;
     let spedUp = false;
     let handed = false;
     const onFrame = () => {
+      // 그림이 실제로 그려지는 첫 프레임에 상자를 켠다. 프레임 콜백은 재생기가
+      // 부르는 것이라 효과 안에서 상태를 바꾸는 것과 다르고, 무엇보다 도입부가
+      // 비어 보이지 않는다 — 미리 켜면 아직 아무것도 안 그린 구간이 보인다.
+      if (!shown) {
+        shown = true;
+        setPlaying(true);
+      }
       if (!spedUp && anim.currentFrame >= SPEED_UP_AT) {
         spedUp = true;
         anim.setSpeed(SPEED_UP_TO);
@@ -152,12 +160,12 @@ export function DetailDock({
     anim.setSpeed(1);
     anim.resetSegments(true); // 절대 프레임 좌표 복원 (점프 방지)
     anim.playSegments([SEGMENT], true);
-    const frame = requestAnimationFrame(() => {
-      setPlaying(true);
-    });
 
     return () => {
-      cancelAnimationFrame(frame);
+      // ⚠️ **파괴된 것에 대고 부르면 던진다.** 정리는 선언 순서대로 돌아서, 화면을
+      // 떠날 때 위쪽 로드 효과가 먼저 애니메이션을 없앤다. 그때 animRef도 비워지므로
+      // 그것으로 살아 있는지 가른다. 파괴가 리스너를 이미 걷어가니 건너뛰어도 된다.
+      if (animRef.current !== anim) return;
       anim.removeEventListener("enterFrame", onFrame);
       anim.removeEventListener("complete", onComplete);
     };

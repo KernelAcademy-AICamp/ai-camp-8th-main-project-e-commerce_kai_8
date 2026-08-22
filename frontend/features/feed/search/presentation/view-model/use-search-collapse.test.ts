@@ -62,7 +62,7 @@ describe("useSearchCollapse", () => {
     expect(result.current.collapsed).toBe(true);
   });
 
-  it("위로 스크롤하면 다시 펼쳐진다", () => {
+  it("위로 스크롤해도 펼쳐지지 않는다 — 펼치는 것은 사람의 탭뿐이다", () => {
     const suppressUntilRef = { current: 0 };
     const { result } = renderHook(() =>
       useSearchCollapse(suppressUntilRef, documentAnchor),
@@ -70,10 +70,14 @@ describe("useSearchCollapse", () => {
     scrollTo(400);
     expect(result.current.collapsed).toBe(true);
     scrollTo(200);
-    expect(result.current.collapsed).toBe(false);
+    expect(result.current.collapsed).toBe(true);
   });
 
-  it("위로 올라와 상단에 닿으면 펼쳐진다", () => {
+  /*
+   * 회귀: 맨 위로 돌아오면 저절로 펼쳐지던 시절, 피드를 내렸다 올리기만 해도
+   * 검색창이 다시 열려 거슬린다는 지적을 받았다(2026-08-22).
+   */
+  it("맨 위로 돌아와도 원버튼 그대로다", () => {
     const suppressUntilRef = { current: 0 };
     const { result } = renderHook(() =>
       useSearchCollapse(suppressUntilRef, documentAnchor),
@@ -81,7 +85,7 @@ describe("useSearchCollapse", () => {
     scrollTo(400);
     expect(result.current.collapsed).toBe(true);
     scrollTo(10);
-    expect(result.current.collapsed).toBe(false);
+    expect(result.current.collapsed).toBe(true);
   });
 
   it("프로그램적 스크롤(복원·상단 이동) 동안은 판정하지 않는다", () => {
@@ -100,15 +104,25 @@ describe("useSearchCollapse", () => {
     expect(result.current.collapsed).toBe(false);
   });
 
-  it("프로그램적 스크롤이라도 상단 도착은 확장시킨다 (검색 제출 → 결과 상단)", () => {
+  it("상단에 도착하면 접힘 누적을 비운다 — 다시 내려야 접힌다", () => {
     const suppressUntilRef = { current: 0 };
     const { result } = renderHook(() =>
       useSearchCollapse(suppressUntilRef, documentAnchor),
     );
+    act(() => {
+      result.current.onInputFocus();
+      result.current.onInputBlur();
+    });
     scrollTo(400);
     expect(result.current.collapsed).toBe(true);
-    suppressUntilRef.current = performance.now() + 10000;
+
+    // 맨 위로 돌아온 뒤 사람이 탭해서 펼치면, 곧바로는 접히지 않는다
     scrollTo(0);
+    act(() => {
+      result.current.onInputFocus();
+      result.current.onInputBlur();
+    });
+    scrollTo(30);
     expect(result.current.collapsed).toBe(false);
   });
 

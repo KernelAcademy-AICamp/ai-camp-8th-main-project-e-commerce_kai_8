@@ -7,17 +7,13 @@ import { scrollHostFor } from "@/shared/scroll/scroll-host";
 /** 같은 방향으로 이만큼 누적되면 전환한다 (짧은 흔들림 무시) */
 const TOGGLE_THRESHOLD_PX = 60;
 /**
- * 이 위쪽으로 **올라와 닿으면** 확장한다.
+ * 이 위쪽에서는 접힘 판정을 하지 않는다(누적을 비운다).
  *
- * 예전에는 "이 위쪽이면 무조건 확장"이었다. 그러면 첫 화면이 언제나 펼친 상태로
- * 시작한다. 제품 책임자 요청(2026-08-21)으로 **원버튼으로 시작**하게 바꾸면서,
- * 내려가는 중에는 손대지 않고 올라와 닿았을 때만 펼치도록 좁혔다. 안 좁히면
- * 맨 위에서 아래로 미는 순간 펴졌다가 곧바로 접히는 깜빡임이 생긴다.
- *
- * 검색 제출로 결과 상단에 도달하는 프로그램적 스크롤도 "올라오는" 이동이라
- * 그대로 확장된다 — 축소 잔상을 막던 기존 장치가 유지된다.
+ * **스크롤은 접기만 하고 펼치지는 않는다.** 펼치는 것은 사람이 원버튼을 누르거나
+ * 입력에 포커스를 줄 때뿐이다. 검색창은 원버튼으로 시작하며, 한 번 접히면
+ * 맨 위로 돌아와도 원버튼 그대로다(2026-08-22 제품 책임자).
  */
-const ALWAYS_EXPANDED_BELOW_Y = 80;
+const TOP_ZONE_Y = 80;
 /**
  * 손으로 펼친 직후 이만큼은 접힘 판정을 멈춘다.
  *
@@ -47,8 +43,6 @@ export function useSearchCollapse(
    * 맨 위라서 펼쳐져 있는 것은 어둡게 하지 않는다 — 그때는 그냥 평상시 화면이다.
    */
   const [pinned, setPinned] = useState(false);
-  // 스크롤 핸들러가 굴리는 주체를 다시 찾지 않도록 붙잡아 둔다(딤 탭 처리에도 쓴다)
-  const hostRef = useRef<ReturnType<typeof scrollHostFor> | null>(null);
   // 손으로 펼친 시각 + 억제 구간. 렌더와 무관한 진행 상태라 ref로 둔다.
   const expandedUntilRef = useRef(0);
   // 입력에 포커스가 있는가 = 키보드가 떠 있는가. 스크롤 핸들러가 최신 값을 봐야
@@ -58,7 +52,6 @@ export function useSearchCollapse(
   useEffect(() => {
     // 굴리는 주체를 놓인 자리에서 찾는다 — 홈에서는 칸이 굴린다 (shared/scroll)
     const host = scrollHostFor(anchorRef.current);
-    hostRef.current = host;
     let lastY = host.top();
     let accumulated = 0;
     const onScroll = () => {
@@ -67,11 +60,9 @@ export function useSearchCollapse(
       lastY = y;
       // "상단 = 항상 확장"은 프로그램적 스크롤에도 적용한다 — 검색 제출로
       // 결과 상단에 왔을 때 축소 잔상이 남지 않게 (브라우저 실측 버그)
-      if (y <= ALWAYS_EXPANDED_BELOW_Y) {
+      if (y <= TOP_ZONE_Y) {
         accumulated = 0;
         setPinned(false); // 맨 위에서는 펼쳐져 있어도 어둡게 하지 않는다
-        // 올라와 닿았을 때만 펼친다 — 내려가는 중에는 그대로 둔다
-        if (delta < 0) setCollapsed(false);
         return;
       }
       // 키보드가 떠 있는 동안은 접지 않는다 — 타이핑 중인 글자가 사라진다.
@@ -92,10 +83,11 @@ export function useSearchCollapse(
       // 방향이 바뀌면 누적을 새로 시작한다
       accumulated =
         Math.sign(delta) === Math.sign(accumulated) ? accumulated + delta : delta;
+      // 내려가면 접는다. 올라가는 것으로는 펼치지 않는다 — 위 상수 설명 참고.
       if (accumulated > TOGGLE_THRESHOLD_PX) {
         setCollapsed(true);
         setPinned(false); // 더 내리면 손으로 편 상태가 풀리며 원버튼으로 돌아간다
-      } else if (accumulated < -TOGGLE_THRESHOLD_PX) setCollapsed(false);
+      }
     };
     return host.subscribe(onScroll);
   }, [suppressUntilRef, anchorRef]);
@@ -110,13 +102,11 @@ export function useSearchCollapse(
   /**
    * 어두워진 배경을 탭했을 때 — 어둠을 걷는다.
    *
-   * 시안은 여기서 접힘 여부를 다시 계산한다: 맨 위라면 펼친 채로 두고, 내려와
-   * 있었다면 원버튼으로 접는다. 같은 규칙을 그대로 쓴다.
+   * 펼치는 것은 사람의 탭뿐이므로, 그 탭을 물리면 원버튼으로 돌아간다.
    */
   const dismiss = useCallback(() => {
     setPinned(false);
-    const top = hostRef.current?.top() ?? 0;
-    if (top > ALWAYS_EXPANDED_BELOW_Y) setCollapsed(true);
+    setCollapsed(true);
   }, []);
 
   /**
