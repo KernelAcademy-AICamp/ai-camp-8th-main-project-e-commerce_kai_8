@@ -327,3 +327,54 @@ html.search-open .veil-band {
     }
   }
 }
+
+/* ── 4단계: 프로필 사이드바 ──────────────────────────────────────────
+   시안 `.sidebar`도 폭 100%에 불투명이라(3단계 패널과 같다) 주소를 가진 화면으로
+   두고 모양과 열리는 방식만 맞춘다. 오른쪽에서 밀려 들어온다. */
+@media (prefers-reduced-motion: no-preference) {
+  .sidebar-in {
+    animation: sidebar-in 340ms cubic-bezier(0.25, 0.9, 0.3, 1);
+  }
+
+  @keyframes sidebar-in {
+    from {
+      transform: translateX(103%);
+    }
+    to {
+      transform: none;
+    }
+  }
+}
+
+/* 왼쪽 색 레일 — 시안 `.side-rail`. 위는 밝게, 아래는 어둡게 얹어 곡면처럼 보이고
+   오른쪽 모서리만 둥글다. 바닥에는 세로로 선 워드마크가 있다. */
+.side-rail {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: 46px;
+  background:
+    linear-gradient(
+      180deg,
+      rgb(255 255 255 / 0.22) 0%,
+      rgb(255 255 255 / 0) 26%,
+      rgb(20 26 40 / 0.18) 100%
+    ),
+    var(--color-slate);
+  border-radius: 0 26px 26px 0;
+  box-shadow: 4px 0 14px rgb(20 26 40 / 0.18);
+}
+
+.side-rail::after {
+  content: "aTee";
+  position: absolute;
+  bottom: 26px;
+  left: 50%;
+  transform: translateX(-50%);
+  writing-mode: vertical-rl;
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 0.22em;
+  color: rgb(255 255 255 / 0.55);
+}
