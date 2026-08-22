@@ -191,7 +191,6 @@ describe("useFeedViewModel — 우세 성별 하드 필터 (설계: 성별 피�
     sessionAnchors: [],
     recentImpressions: [],
     boostActive: false,
-    gender: null,
     ...overrides,
   });
 
@@ -199,7 +198,7 @@ describe("useFeedViewModel — 우세 성별 하드 필터 (설계: 성별 피�
     // #63은 행동으로 성별을 추론했다. 이제 진실은 사람이 고른 설정 하나다.
     // 프로필에 반대 성별이 남아 있어도 설정이 이겨야 한다.
     setGenderSetting("남성");
-    getFeedProfileSummaryMock.mockReturnValue(summary({ gender: "여성" }));
+    getFeedProfileSummaryMock.mockReturnValue(summary());
     fetchMixPageMock.mockResolvedValue(mixPage([]));
     renderFeedViewModel();
     await waitFor(() => {
@@ -347,7 +346,6 @@ describe("오류 분류 (계획 6단계 — 무한 재시도와 헛된 폴백을
       sessionAnchors: [],
       recentImpressions: [],
       boostActive: false,
-      gender: null,
     });
     fetchMixPageMock.mockRejectedValue(new RpcError("잘못된 인자", 400));
     const { result: view } = renderFeedViewModel();
@@ -368,7 +366,6 @@ describe("오류 분류 (계획 6단계 — 무한 재시도와 헛된 폴백을
       sessionAnchors: [],
       recentImpressions: [],
       boostActive: false,
-      gender: null,
     });
     fetchMixPageMock.mockRejectedValue(new RpcError("서버 오류", 500));
     fetchFeedPageMock.mockResolvedValue([product(1)]);
@@ -418,7 +415,6 @@ describe("useFeedViewModel — 후보풀 커서 (계획 2026-08-22-feed-depth-cu
     sessionAnchors: [],
     recentImpressions: [],
     boostActive: false,
-    gender: null,
   });
 
   beforeEach(() => {
@@ -540,7 +536,6 @@ describe("useFeedViewModel — 앵커 회전 (계획 2026-08-22-vector-anchor-ro
     sessionAnchors: [],
     recentImpressions: [],
     boostActive: false,
-    gender: null,
   });
 
   beforeEach(() => {
