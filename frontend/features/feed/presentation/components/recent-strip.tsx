@@ -10,6 +10,7 @@ import {
   readRecentProducts,
   type RecentProduct,
 } from "@/shared/history/recent-products";
+import { useSignedIn } from "@/shared/supabase/use-signed-in";
 
 /** 시안 `.recent-strip img` — 58px 정사각, 모서리 12px */
 const TILE = 58;
@@ -24,8 +25,13 @@ const SHOWN = 8;
  *
  * 기록은 브라우저에만 있어 서버가 그린 것과 다르다. 그래서 처음에는 비워 두고
  * 화면에 붙은 뒤 읽는다. 떠 있는 동안 새로 본 것이 생기면 알림을 받아 다시 읽는다.
+ *
+ * **회원에게만 보인다.** 기록 자체는 기기에 있지만, 프로필의 비회원 모드는 내용을
+ * 통째로 가리고 로그인 안내를 띄우는 화면이다(시안 `guest-skel`). 여기만 실물이면
+ * "로그인하면 볼 수 있어요" 옆에서 혼자 보이는 셈이다 (2026-08-22 제품 책임자).
  */
 export function RecentStrip() {
+  const signedIn = useSignedIn();
   const [items, setItems] = useState<RecentProduct[]>([]);
   const { stack, open, requestClose, finishClose } = useDetailState("recent");
 
@@ -42,6 +48,9 @@ export function RecentStrip() {
       off();
     };
   }, [reload]);
+
+  // 판정 전에도 뼈대다 — 먼저 그렸다가 지우면 깜빡인다
+  if (signedIn !== "in") return <RecentStripGuestSkeleton />;
 
   const shown = items.slice(0, SHOWN);
   const rest = items.length - shown.length;
@@ -100,5 +109,22 @@ export function RecentStrip() {
         onSelectProduct={open}
       />
     </section>
+  );
+}
+
+/**
+ * 비회원에게 보이는 최근 띠 자리 — 시안 `guest-skel`의 가운데 부분
+ * (제목 자리 88×14, 그 아래 58px 타일 다섯 장).
+ */
+function RecentStripGuestSkeleton() {
+  return (
+    <div aria-hidden className="mt-[30px] animate-pulse">
+      <div className="mb-[13px] h-3.5 w-[88px] rounded-lg bg-skel-1" />
+      <div className="flex gap-[9px] overflow-hidden">
+        {[0, 1, 2, 3, 4].map((i) => (
+          <div key={i} className="h-[58px] w-[58px] shrink-0 rounded-xl bg-skel-1" />
+        ))}
+      </div>
+    </div>
   );
 }
