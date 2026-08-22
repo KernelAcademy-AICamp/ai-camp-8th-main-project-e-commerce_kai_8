@@ -214,3 +214,24 @@ export function ArrowUpIcon({ size = 20 }: IconProps) {
     </svg>
   );
 }
+
+/** 문 밖으로 나가는 화살표 — 로그아웃. 시안 `#logoutBtn`의 SVG 그대로 */
+export function LogoutIcon({ size = 15 }: IconProps) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      width={size}
+      height={size}
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      <path d="M9 21H6a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h3" />
+      <polyline points="15 17 20 12 15 7" />
+      <line x1="20" y1="12" x2="9" y2="12" />
+    </svg>
+  );
+}

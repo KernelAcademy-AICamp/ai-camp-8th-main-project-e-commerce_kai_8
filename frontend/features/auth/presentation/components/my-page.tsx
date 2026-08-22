@@ -4,11 +4,19 @@ import Link from "next/link";
 
 import type { AuthNotice } from "@/features/auth/domain/auth-session";
 import {
-  ActionSkeleton,
-  IdentitySkeleton,
+  AccountSkeleton,
+  GreetingSkeleton,
   MyPageShell,
+  SIDE_BTN,
 } from "@/features/auth/presentation/components/my-page-shell";
 import { useAuthSession } from "@/features/auth/presentation/view-model/use-auth-session";
+import { LogoutIcon, PersonIcon } from "@/shared/icons";
+
+/** 인사말에 쓸 이름 — 이메일에서 계정 부분만 딴다(시안은 이름을 쓴다) */
+function displayName(email: string | null | undefined) {
+  if (email == null || email === "") return "회원";
+  return email.split("@")[0];
+}
 
 /**
  * 마이페이지 — 계정만 다룬다.
@@ -38,48 +46,36 @@ export function MyPage({
   return (
     <MyPageShell
       failure={failed || notice === "failed"}
-      identity={
+      greeting={
         <>
-          {state.kind === "loading" && <IdentitySkeleton />}
-          {state.kind === "signedOut" && (
-            <>
-              <h1 className="text-xl font-semibold text-ink">로그인이 필요해요</h1>
-              <p className="mt-1 text-sm text-ink-soft">
-                로그인하면 찜한 상품을 계정에 저장할 수 있어요
-              </p>
-            </>
-          )}
+          {state.kind === "loading" && <GreetingSkeleton />}
+          {state.kind === "signedOut" && "둘러보는 중이에요"}
           {state.kind === "signedIn" && (
             <>
-              <h1 className="truncate text-lg font-semibold text-ink">
-                {state.user.email ?? "구글 계정으로 로그인됨"}
-              </h1>
-              <p className="mt-1 text-sm text-ink-soft">
-                찜한 상품이 이 계정에 저장돼요
-              </p>
+              환영합니다,{" "}
+              <b className="font-extrabold text-ink">{displayName(state.user.email)}</b>{" "}
+              님
             </>
           )}
         </>
       }
-      action={
+      account={
         <>
-          {state.kind === "loading" && <ActionSkeleton />}
+          {state.kind === "loading" && <AccountSkeleton />}
           {state.kind === "signedOut" && (
-            <Link
-              href="/login"
-              className="block w-full rounded-full bg-slate neo-drop py-3.5 text-center font-medium text-on-slate"
-            >
-              로그인하기
+            <Link href="/login" aria-label="로그인" className={SIDE_BTN}>
+              <PersonIcon size={15} />
             </Link>
           )}
           {state.kind === "signedIn" && (
             <button
               type="button"
+              aria-label="로그아웃"
               onClick={signOut}
               disabled={busy}
-              className="w-full cursor-pointer rounded-full border border-line py-3.5 font-medium text-ink-soft disabled:opacity-60"
+              className={`${SIDE_BTN} disabled:opacity-60`}
             >
-              로그아웃
+              <LogoutIcon />
             </button>
           )}
         </>
