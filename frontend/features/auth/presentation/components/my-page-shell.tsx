@@ -1,6 +1,9 @@
 "use client";
 
+import { useRef } from "react";
+
 import { useBackTo } from "@/shared/history/use-nav-history";
+import { useSwipeToClose } from "@/shared/history/use-swipe-to-close";
 import { BackIcon } from "@/shared/icons";
 
 /** 사이드바 상단의 작은 원버튼 — 시안 `.side-close`·`.side-logout` (30px, 얕은 솟음) */
@@ -40,9 +43,18 @@ export function MyPageShell({
   children?: React.ReactNode;
 }) {
   const close = useBackTo("/");
+  // 오른쪽으로 잡아끌어도 닫힌다 — 시안의 사이드바 스와이프
+  const panelRef = useRef<HTMLElement>(null);
+  const swipe = useSwipeToClose(panelRef, close);
 
   return (
-    <main className="sidebar-in relative mx-auto min-h-dvh max-w-md text-ink">
+    <main
+      ref={panelRef}
+      {...swipe}
+      // 세로 스크롤은 그대로 두고 가로 제스처만 가져간다
+      style={{ touchAction: "pan-y" }}
+      className="sidebar-in relative mx-auto min-h-dvh max-w-md text-ink"
+    >
       {/* 시안 `.side-rail` — 색을 채운 세로 띠. 바닥에 세로 워드마크가 선다. */}
       <span aria-hidden className="side-rail" />
 
