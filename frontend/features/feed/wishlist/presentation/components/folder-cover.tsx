@@ -30,6 +30,7 @@ export function FolderCover({
 
   return (
     <div
+      data-folder-cover
       className={`relative shrink-0 ${sizePx === undefined ? "aspect-square w-full" : ""}`}
       style={sizePx === undefined ? undefined : { width: sizePx, height: sizePx }}
     >

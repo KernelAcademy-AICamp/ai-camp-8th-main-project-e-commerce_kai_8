@@ -295,3 +295,35 @@ html.search-open .veil-band {
   -webkit-mask-image: linear-gradient(to top, black 55%, transparent 100%);
   mask-image: linear-gradient(to top, black 55%, transparent 100%);
 }
+
+/* 폴더 열림 — 시안 `openFolderDetail`. 두 단계다.
+   ① 탭한 표지를 복제해 헤더 아래 중앙으로 날리고 목록은 사라진다.
+   ② 폴더 상세 격자가 작게 시작해 제 크기로 튕겨 퍼진다.
+   움직임을 줄이도록 설정한 기기에서는 연출 없이 곧바로 바뀐다(시안도 같다). */
+@media (prefers-reduced-motion: no-preference) {
+  .fly-clone {
+    position: absolute;
+    z-index: 6;
+    pointer-events: none;
+    transition: transform 330ms cubic-bezier(0.3, 0.8, 0.3, 1);
+  }
+
+  .fade-away {
+    opacity: 0 !important;
+    transition: opacity 200ms ease;
+  }
+
+  .grid-burst {
+    transform-origin: 50% 0;
+    animation: grid-burst 480ms var(--ease-spring);
+  }
+
+  @keyframes grid-burst {
+    from {
+      transform: translateY(-34px) scale(0.42);
+    }
+    to {
+      transform: none;
+    }
+  }
+}

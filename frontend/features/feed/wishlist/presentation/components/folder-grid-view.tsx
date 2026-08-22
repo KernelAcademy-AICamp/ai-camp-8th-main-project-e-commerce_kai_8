@@ -1,10 +1,12 @@
 "use client";
 
 import Link from "next/link";
+import { useRef } from "react";
 
 import { MAX_FOLDER_NAME } from "@/features/feed/wishlist/domain/wish-folders";
 import { wishlistNoticeMessage } from "@/features/feed/wishlist/domain/wishlist-notice";
 import { FolderCover } from "@/features/feed/wishlist/presentation/components/folder-cover";
+import { useFolderOpen } from "@/features/feed/wishlist/presentation/view-model/use-folder-open";
 import { useWishlistFolders } from "@/features/feed/wishlist/presentation/view-model/use-wishlist-folders";
 import { BackLink } from "@/shared/history/back-link";
 import { BackIcon, PlusIcon } from "@/shared/icons";
@@ -21,11 +23,19 @@ import { BackIcon, PlusIcon } from "@/shared/icons";
 export function FolderGridView() {
   const view = useWishlistFolders();
   const message = wishlistNoticeMessage(view.notice);
+  // 폴더를 탭하면 표지가 헤더 아래 중앙으로 모여든 뒤 상세로 넘어간다(시안 1단계)
+  const panelRef = useRef<HTMLDivElement>(null);
+  const listRef = useRef<HTMLUListElement>(null);
+  const headRef = useRef<HTMLElement>(null);
+  const openFolder = useFolderOpen(panelRef, listRef, headRef);
 
   return (
-    <div className="panel-in mx-auto max-w-md px-[22px] pb-[30px]">
+    <div
+      ref={panelRef}
+      className="panel-in relative mx-auto max-w-md px-[22px] pb-[30px]"
+    >
       {/* 시안 `.save-head` — 닫기 원버튼과 제목. 목록에서는 제목이 비어 있다. */}
-      <header className="flex items-center gap-3 pt-6 pb-5">
+      <header ref={headRef} className="flex items-center gap-3 pt-6 pb-5">
         <BackLink
           href="/"
           label="저장 폴더 닫기"
@@ -54,7 +64,7 @@ export function FolderGridView() {
       )}
 
       {view.access === "in" && (
-        <ul className="grid grid-cols-2 gap-x-4 gap-y-[22px]">
+        <ul ref={listRef} className="grid grid-cols-2 gap-x-4 gap-y-[22px]">
           {/* 시안은 새 폴더를 맨 앞에 둔다 — 만들기가 늘 같은 자리에 있다 */}
           <li>
             {view.creating ? (
@@ -104,7 +114,7 @@ export function FolderGridView() {
                 type="button"
                 onClick={view.startCreating}
                 aria-label="새 폴더 만들기"
-                className="relative block aspect-square w-full cursor-pointer rounded-[18px] border-[1.6px] border-dashed border-[#B9C0CF] px-[15px] py-4 text-left"
+                className="relative flex aspect-square w-full cursor-pointer flex-col items-start justify-start rounded-[18px] border-[1.6px] border-dashed border-[#B9C0CF] px-[15px] py-4 text-left"
               >
                 <strong className="block text-[14px] font-extrabold text-ink-soft">
                   새 폴더
@@ -121,7 +131,13 @@ export function FolderGridView() {
 
           {view.summaries.map((folder) => (
             <li key={folder.id ?? "default"}>
-              <Link href={`/wishlist/${folder.id ?? "default"}`} className="block">
+              <Link
+                href={`/wishlist/${folder.id ?? "default"}`}
+                className="block"
+                onClick={(event) => {
+                  openFolder(event, `/wishlist/${folder.id ?? "default"}`);
+                }}
+              >
                 <FolderCover
                   thumb={folder.thumbs[0]}
                   name={folder.name}

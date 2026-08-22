@@ -161,14 +161,17 @@ export function FolderDetailView({ folderParam }: { folderParam: string }) {
       )}
 
       {view.access === "in" && view.hasEntries && (
-        <FeedGrid
-          compact
-          columns={view.columns}
-          sentinelRef={view.sentinelRef}
-          onSelect={(card, originRect) => {
-            view.detail.open(card.product, originRect);
-          }}
-        />
+        // 시안 2단계 — 작게 시작해 제 크기로 튕겨 퍼진다
+        <div className="grid-burst">
+          <FeedGrid
+            compact
+            columns={view.columns}
+            sentinelRef={view.sentinelRef}
+            onSelect={(card, originRect) => {
+              view.detail.open(card.product, originRect);
+            }}
+          />
+        </div>
       )}
 
       {view.detail.stack.slice(-3).map((entry, i, shown) => {
