@@ -41,7 +41,7 @@ function AxisBar({ axis }: { axis: TasteAxis }) {
 
   return (
     <li>
-      <div className="flex items-center justify-between text-xs text-ink-muted">
+      <div className="flex items-center justify-between text-[11px] font-bold text-ink-soft">
         <span>{label.left}</span>
         <span>{label.right}</span>
       </div>
@@ -66,11 +66,36 @@ function AxisBar({ axis }: { axis: TasteAxis }) {
  * **묶음 사이 간격을 축 사이 간격보다 크게 둔다.** 둘이 같으면 소제목이 묶음의
  * 머리가 아니라 그냥 떠 있는 글자로 읽힌다(2026-08-20 화면 확인).
  */
-function Section({ title, children }: { title: string; children: React.ReactNode }) {
+/**
+ * 카드 안의 한 구역.
+ *
+ * 제목은 두 갈래다. **축 묶음의 제목**(색·프린트·값·실루엣)은 화면을 나누는
+ * 이정표라 또렷해야 하고, **곁들이는 설명**(자주 본 색·브랜드)은 시안 `.tc-sub`
+ * 대로 작고 연하다. 둘을 같은 색으로 두었더니 이정표가 바탕에 묻혔다 — 그 연한
+ * 회색은 바탕 대비 2.08:1로 본문이 읽히는 밝기가 아니다(실측).
+ */
+function Section({
+  title,
+  caption = false,
+  children,
+}: {
+  title: string;
+  /** 시안 `.tc-sub` — 작고 연한 곁들임 제목 */
+  caption?: boolean;
+  children: React.ReactNode;
+}) {
   return (
-    <section className="mt-10 first:mt-8">
-      <h3 className="text-[11px] font-bold text-ink-muted">{title}</h3>
-      <div className="mt-4">{children}</div>
+    <section className={caption ? "mt-10" : "mt-11 first:mt-8"}>
+      <h3
+        className={
+          caption
+            ? "text-[11px] font-bold text-ink-muted"
+            : "text-[12.5px] font-extrabold tracking-[0.02em] text-ink"
+        }
+      >
+        {title}
+      </h3>
+      <div className={caption ? "mt-4" : "mt-5"}>{children}</div>
     </section>
   );
 }
@@ -111,7 +136,7 @@ function TasteBody({ summary }: { summary: TasteSummary }) {
       ))}
 
       {colors.length > 0 && (
-        <Section title="자주 본 색">
+        <Section title="자주 본 색" caption>
           {/* 시안 `.tc-colors` — 알약 없이 동그란 색 아래 비율만. 이름은 적지 않는다. */}
           <ul className="flex flex-wrap gap-[18px]">
             {colors.map((color) => (
@@ -131,7 +156,7 @@ function TasteBody({ summary }: { summary: TasteSummary }) {
       )}
 
       {brands.length > 0 && (
-        <Section title="자주 본 브랜드">
+        <Section title="자주 본 브랜드" caption>
           {/* 시안 `.tc-brands` — 이름은 진하게, 사이의 가운뎃점만 연하게 */}
           <p className="text-[12.5px] font-bold text-ink">
             {brands.map((b, i) => (
