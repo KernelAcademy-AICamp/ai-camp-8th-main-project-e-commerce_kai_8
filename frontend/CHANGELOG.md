@@ -1,3 +1,13 @@
+## [0.1.23](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/compare/v0.1.22...v0.1.23) (2026-08-22)
+
+### Features
+
+* FOR YOU 큐레이션 순서를 벡터 유사도로 정한다 ([#84](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/issues/84)) ([06b0a2d](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/commit/06b0a2d0a94b275ee9a7ce8f461d4d84a57768a7))
+* 성별 라벨이 의심스러운 상품 741개를 다섯 경로에서 뺀다 ([#85](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/issues/85)) ([67b74a2](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/commit/67b74a2401fc54177bded1d862b36425c009f9ea))
+
+### Performance Improvements
+
+* 개인화 믹스 프로브를 40→10으로 (동시 4건 19.8초 → 2.0초) ([#87](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/issues/87)) ([cb7c0eb](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/commit/cb7c0ebd277603dab4a3b7613e084bb576cfc0f4))
 ## [0.1.22](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/compare/v0.1.21...v0.1.22) (2026-08-22)
 
 ### Features
