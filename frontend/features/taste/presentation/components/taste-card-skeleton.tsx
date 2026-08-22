@@ -10,7 +10,8 @@ function AxisRowSkeleton() {
         <div className="h-3 w-10 rounded bg-skel-1" />
         <div className="h-3 w-10 rounded bg-skel-1" />
       </div>
-      <div className="mt-1.5 h-1 rounded-full bg-skel-1" />
+      {/* 삼각형 자리만큼 막대가 내려와 있다 — 카드와 같은 간격이라야 안 튄다 */}
+      <div className="mt-3 h-1 rounded-full bg-skel-1" />
     </li>
   );
 }
