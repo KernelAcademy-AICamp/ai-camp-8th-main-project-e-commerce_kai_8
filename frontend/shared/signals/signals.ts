@@ -291,15 +291,11 @@ export type ActionType = Exclude<
 /**
  * 탭·찜·스타일 탐색·판매처 이동 — 해당 상품의 최근 노출에 귀속된다.
  * 로그인하지 않았으면 기록하지 않는다 (O-37).
- *
- * `gender`는 상품의 카탈로그 원문 성별(Product.gender)을 그대로 넘기면 된다 —
- * 앵커 성별로의 변환(빈 문자열·이상값 → 미상)은 profile-store가 한 곳에서 한다
- * (성별 피드 하드 필터 3단계).
  */
 export function logAction(
   type: ActionType,
   goodsNo: number,
-  options?: { policy?: FeedPolicy; gender?: string | null },
+  options?: { policy?: FeedPolicy },
 ): void {
   if (!isBrowser() || !isSignedInNow()) return;
   const sessionId = touchSession();
@@ -314,7 +310,7 @@ export function logAction(
   // 사용자의 의도는 바로 앞의 wish 이벤트가 이미 프로필에 반영했다. 여기서 또
   // 반영하면 같은 의도를 두 번 세는 셈이고, 실패한 건마다 취향이 더 세진다.
   if (type !== "wish_failed") {
-    recordProfileAction(type, goodsNo, sessionId, Date.now(), options?.gender);
+    recordProfileAction(type, goodsNo, sessionId, Date.now());
   }
 }
 

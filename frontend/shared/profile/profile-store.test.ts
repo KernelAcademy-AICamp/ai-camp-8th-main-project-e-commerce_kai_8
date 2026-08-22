@@ -89,7 +89,7 @@ describe("foldSessionProfileNow — 마이페이지 새로고침의 즉시 접�
     expect(nine?.weight).toBeCloseTo(0.9);
   });
 
-  it("옛 프로필(v1, 성별 없는 앵커) 로드가 오류 없이 통과한다", () => {
+  it("옛 프로필(v1) 로드가 오류 없이 통과한다", () => {
     localStorage.setItem(
       LONG_KEY,
       JSON.stringify({
@@ -100,7 +100,6 @@ describe("foldSessionProfileNow — 마이페이지 새로고침의 즉시 접�
     );
     const loaded = readLongTerm();
     expect(loaded.anchors).toEqual([{ goodsNo: 9, weight: 1, lastMs: 50 }]);
-    expect(loaded.anchors[0].gender).toBeUndefined();
   });
 
   it("찜 해제만 있어도 접는다 — 해제도 장기에 반영할 변화다", () => {
