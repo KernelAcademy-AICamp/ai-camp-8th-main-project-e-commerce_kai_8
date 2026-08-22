@@ -3,14 +3,25 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 
 /**
+ * 하단 저장 dock이 펼쳐져 있는 구간 (시안 `syncDdock`: `scrollTop < 60`).
+ *
+ * 이 값을 넘어가면 dock이 원버튼(맨 위로)으로 접힌다. pastHero와 기준이 다르다 —
+ * pastHero는 "사진을 다 지나 관련 상품에 들어왔는가"라서 훨씬 아래다.
+ */
+const DOCK_EXPANDED_ABOVE_Y = 60;
+
+/**
  * 상세 스크롤 컨테이너 관리 —
  * 복귀 시 저장된 위치를 복원하고, 히어로를 지나 탐색 그리드에 들어갔는지
- * 감지(pastHero)하며, 칩·맨위로 버튼의 맨 위 복귀 동작을 제공한다.
+ * 감지(pastHero)하며, 하단 dock이 펼쳐질 구간인지 알리고(nearTop),
+ * 칩·맨위로 버튼의 맨 위 복귀 동작을 제공한다.
  */
 export function useDetailScroll(initialScrollTop: number) {
   const scrollRef = useRef<HTMLDivElement | null>(null);
   const heroEndRef = useRef<HTMLDivElement | null>(null);
   const [pastHero, setPastHero] = useState(false);
+  // 시안의 저장 dock은 맨 위 60px 안에서만 펼쳐져 있다
+  const [nearTop, setNearTop] = useState(true);
 
   useEffect(() => {
     const container = scrollRef.current;
@@ -106,9 +117,23 @@ export function useDetailScroll(initialScrollTop: number) {
     };
   }, []);
 
+  // dock 펼침 구간 판정 — 시안과 같은 기준(60px)
+  useEffect(() => {
+    const container = scrollRef.current;
+    if (!container) return;
+    const onScroll = () => {
+      setNearTop(container.scrollTop < DOCK_EXPANDED_ABOVE_Y);
+    };
+    onScroll();
+    container.addEventListener("scroll", onScroll, { passive: true });
+    return () => {
+      container.removeEventListener("scroll", onScroll);
+    };
+  }, []);
+
   const scrollToTop = useCallback(() => {
     scrollRef.current?.scrollTo({ top: 0, behavior: "smooth" });
   }, []);
 
-  return { scrollRef, heroEndRef, pastHero, scrollToTop };
+  return { scrollRef, heroEndRef, pastHero, nearTop, scrollToTop };
 }

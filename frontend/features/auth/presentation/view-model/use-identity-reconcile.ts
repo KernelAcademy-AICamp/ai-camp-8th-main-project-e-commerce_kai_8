@@ -7,6 +7,7 @@ import {
   subscribeAuthChange,
 } from "@/features/auth/data/auth-repository";
 import { carryGender, shouldCarryGender } from "@/shared/identity/gender-carry";
+import { takeIdentityLanding } from "@/shared/identity/identity-landing";
 import { isIdentityTransition, markerFor } from "@/shared/identity/identity-marker";
 import { clearIdentityScopedData } from "@/shared/identity/identity-reset";
 import { carryWishes, shouldCarryWishes } from "@/shared/identity/wish-carry";
@@ -84,7 +85,13 @@ export function useIdentityReconcile(): void {
           // 것으로 오인한다. 지우기가 먼저이므로 중간에 죽어도 데이터는 남지 않는다.
           clearIdentityScopedData();
           writeTabMarker(current);
-          window.location.reload();
+          // 옮겨 달라고 부탁받은 자리가 있으면 그리로 — 로그아웃처럼 보던 자리가
+          // 더는 유효하지 않은 경우다. 부탁한 쪽이 따로 이동시키지 않고 여기에
+          // 맡기므로, 페이지를 다시 부르는 일이 한 곳에서만 일어난다.
+          // `replace`인 이유: 떠나온 자리로 뒤로가기해 봐야 볼 것이 없다.
+          const landing = takeIdentityLanding();
+          if (landing === null) window.location.reload();
+          else window.location.replace(landing);
         },
         () => {
           // 세션을 읽지 못하면 판정하지 않는다 — 잘못 지우는 것보다 낫다

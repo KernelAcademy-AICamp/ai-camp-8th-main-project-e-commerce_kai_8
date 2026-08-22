@@ -1,3 +1,12 @@
+## [0.1.24](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/compare/v0.1.23...v0.1.24) (2026-08-22)
+
+### Features
+
+* 뉴모피즘 시안을 전 화면에 이식한다 (0~6단계) ([#88](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/issues/88)) ([82a5785](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/commit/82a57859bc7a2fd03bf4a8730017783bcd2ee965))
+
+### Performance Improvements
+
+* 유사 탐색 프로브를 80에서 20으로 내린다 ([#89](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/issues/89)) ([2d0335f](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/commit/2d0335f3d4ae945aacc9a13b22e34770cd47d015))
 ## [0.1.23](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/compare/v0.1.22...v0.1.23) (2026-08-22)
 
 ### Features

@@ -15,10 +15,10 @@ export function GenderChoiceScreen() {
   const { choices, choose } = useGenderChoice();
 
   return (
-    <main className="flex min-h-svh flex-col justify-center px-6 text-neutral-200">
+    <main className="flex min-h-svh flex-col justify-center px-6 text-ink">
       <div className="mx-auto w-full max-w-md">
-        <h1 className="text-2xl font-semibold text-white">어떤 옷을 볼까요?</h1>
-        <p className="mt-3 text-[15px] leading-relaxed text-neutral-400">
+        <h1 className="text-2xl font-semibold text-ink">어떤 옷을 볼까요?</h1>
+        <p className="mt-3 text-[15px] leading-relaxed text-ink-soft">
           고른 쪽 상품만 보여드립니다. 설정에서 언제든 바꿀 수 있습니다.
         </p>
 
@@ -34,7 +34,7 @@ export function GenderChoiceScreen() {
               onClick={() => {
                 choose(gender);
               }}
-              className="flex-1 cursor-pointer rounded-2xl bg-neutral-800 py-6 text-lg font-medium text-white transition-colors hover:bg-neutral-700"
+              className="flex-1 cursor-pointer rounded-2xl bg-app py-6 text-lg font-medium text-ink neo active:neo-in"
             >
               {gender}
             </button>

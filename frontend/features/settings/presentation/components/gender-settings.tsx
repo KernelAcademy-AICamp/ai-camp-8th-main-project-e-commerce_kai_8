@@ -17,8 +17,8 @@ export function GenderSettings() {
 
   return (
     <section className="mt-8">
-      <h2 className="text-base font-semibold text-white">보여줄 상품</h2>
-      <p className="mt-1 text-sm text-neutral-400">
+      <h2 className="text-base font-semibold text-ink">보여줄 상품</h2>
+      <p className="mt-1 text-sm text-ink-soft">
         고른 쪽 상품만 나옵니다. 바꾸면 피드가 처음부터 다시 시작합니다.
       </p>
 
@@ -41,8 +41,8 @@ export function GenderSettings() {
               }}
               className={`flex-1 cursor-pointer rounded-xl py-3 font-medium transition-colors ${
                 selected
-                  ? "bg-white text-neutral-900"
-                  : "bg-neutral-800 text-white hover:bg-neutral-700"
+                  ? "bg-slate text-on-slate neo-drop"
+                  : "bg-app text-ink-soft neo active:neo-in"
               } disabled:opacity-60`}
             >
               {choice}
@@ -52,12 +52,12 @@ export function GenderSettings() {
       </div>
 
       {status.kind === "saving" && (
-        <p className="mt-2 text-sm text-neutral-400">저장하는 중…</p>
+        <p className="mt-2 text-sm text-ink-soft">저장하는 중…</p>
       )}
       {status.kind === "conflict" && (
         // 실패가 아니다 — 왜 다른 값이 되었는지 알려준다.
-        <p className="mt-2 text-sm text-neutral-300">
-          다른 기기에서 <b className="text-white">{status.gender}</b>(으)로 바꾼 것이 더
+        <p className="mt-2 text-sm text-ink-soft">
+          다른 기기에서 <b className="text-ink">{status.gender}</b>(으)로 바꾼 것이 더
           최신이라 그 값으로 맞췄습니다.
         </p>
       )}

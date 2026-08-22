@@ -14,18 +14,18 @@ import { SettingsHeader } from "@/features/settings/presentation/components/sett
  */
 export default function SettingsLoading() {
   return (
-    <main className="mx-auto max-w-md px-4 pb-6 text-neutral-200">
+    <main className="mx-auto max-w-md px-4 pb-6 text-ink">
       <SettingsHeader />
 
       <div aria-label="불러오는 중" className="animate-pulse">
         {/* 접힌 "개인화 안내" 줄 — 제목과 오른쪽 펼침 표시 */}
         <div className="flex items-center justify-between">
-          <div className="h-6 w-24 rounded bg-neutral-800" />
-          <div className="h-6 w-4 rounded bg-neutral-800" />
+          <div className="h-6 w-24 rounded bg-skel-1" />
+          <div className="h-6 w-4 rounded bg-skel-1" />
         </div>
 
         {/* "개인화 데이터 모두 지우기" 버튼 자리 */}
-        <div className="mt-8 h-12 w-full rounded-xl bg-neutral-800" />
+        <div className="mt-8 h-12 w-full rounded-xl bg-skel-1" />
       </div>
     </main>
   );

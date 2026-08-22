@@ -1,8 +1,9 @@
 import {
-  ActionSkeleton,
-  IdentitySkeleton,
+  AccountSkeleton,
+  GreetingSkeleton,
   MyPageShell,
 } from "@/features/auth/presentation/components/my-page-shell";
+import { SettingsMenuButton } from "@/features/settings/presentation/components/settings-menu-button";
 import { TasteCardSkeleton } from "@/features/taste/presentation/components/taste-card-skeleton";
 
 /**
@@ -24,7 +25,11 @@ import { TasteCardSkeleton } from "@/features/taste/presentation/components/tast
  */
 export default function MyLoading() {
   return (
-    <MyPageShell identity={<IdentitySkeleton />} action={<ActionSkeleton />}>
+    <MyPageShell
+      greeting={<GreetingSkeleton />}
+      settings={<SettingsMenuButton />}
+      account={<AccountSkeleton />}
+    >
       <TasteCardSkeleton />
     </MyPageShell>
   );
