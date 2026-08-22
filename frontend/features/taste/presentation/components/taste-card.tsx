@@ -13,6 +13,7 @@ import {
 } from "../../domain/taste-summary";
 import { useTasteSummary } from "../view-model/use-taste-summary";
 import { TasteCardSkeleton } from "./taste-card-skeleton";
+import { TasteGuestSkeleton } from "./taste-guest-skeleton";
 
 /** 색 칩과 브랜드는 몇 개 넘으면 읽히지 않는다. 서버는 더 보내도 화면이 줄인다. */
 // 시안 `TASTE_MAX_COLORS` — 자주 본 색은 일곱까지 보인다
@@ -178,12 +179,14 @@ function TasteBody({ summary }: { summary: TasteSummary }) {
  * **개별 상품을 깔지 않는다.** 앵커 가중치는 찜·판매처 이동이 크게 잡히므로
  * 상위 몇 개를 썸네일로 내보내면 찜 목록의 축소판이 된다(설계 §4).
  *
- * **회원에게만 보인다.** 취향 프로필이 계정에 있으므로 자연스럽다.
+ * **회원에게만 보인다.** 취향 프로필이 계정에 있으므로 자연스럽다. 비회원에게는
+ * 내용 대신 **자리만** 남긴다 — 시안의 비회원 모드다. 아무것도 안 그리면 프로필이
+ * 텅 비어 보이고, 그 위에 뜨는 로그인 안내가 무엇을 가리는지 알 수 없다.
  */
 export function TasteCard() {
   const { state, refreshing, refresh } = useTasteSummary();
 
-  if (state.kind === "hidden") return null;
+  if (state.kind === "hidden") return <TasteGuestSkeleton />;
   // 뼈대는 이동 중 화면과 공유한다 — 각자 그리면 도착하는 순간 깜빡인다
   if (state.kind === "loading") return <TasteCardSkeleton />;
 

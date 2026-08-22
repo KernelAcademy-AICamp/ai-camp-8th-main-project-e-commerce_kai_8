@@ -2,6 +2,7 @@
 
 import { useEffect } from "react";
 
+import { GuestLoginPopup } from "@/features/auth/presentation/components/guest-login-popup";
 import { MyPage } from "@/features/auth/presentation/components/my-page";
 import { RecentStrip } from "@/features/feed/presentation/components/recent-strip";
 import { ProfileStats } from "@/features/feed/wishlist/presentation/components/profile-stats";
@@ -35,6 +36,8 @@ export default function ProfileOverlay() {
         <RecentStrip />
         <ProfileStats />
       </MyPage>
+      {/* 비회원 안내는 판 바깥 — 판이 밀려 들어오는 동안의 변형에 끌려가지 않게 */}
+      <GuestLoginPopup />
     </div>
   );
 }

@@ -3,10 +3,20 @@
 import { useEffect, useState } from "react";
 
 import { useWishlistFolders } from "@/features/feed/wishlist/presentation/view-model/use-wishlist-folders";
+import { useSignedIn } from "@/shared/supabase/use-signed-in";
 
 /** 지난 7일의 시작 시각 */
 function weekAgo(nowMs: number): number {
   return nowMs - 7 * 24 * 60 * 60 * 1000;
+}
+
+const CELLS = ["저장한 핀", "폴더", "이번 주 발견"];
+
+/** 세 칸의 틀 — 숫자든 뼈대든 같은 자리에 들어간다 */
+function StatsFrame({ children }: { children: React.ReactNode }) {
+  return (
+    <div className="mt-5 grid grid-cols-3 border-t border-line pt-3.5">{children}</div>
+  );
 }
 
 /**
@@ -16,7 +26,7 @@ function weekAgo(nowMs: number): number {
  * 않는다(2026-08-22 제품 책임자) — 담아야 발견으로 친다. 찜에 저장 시각이 함께
  * 적히므로 그것으로 센다.
  */
-export function ProfileStats() {
+function StatsCounts() {
   const view = useWishlistFolders();
   const [week, setWeek] = useState(0);
   const savedAtMs = view.savedAtMs;
@@ -32,25 +42,59 @@ export function ProfileStats() {
     };
   }, [savedAtMs]);
 
-  const cells: { value: string; label: string }[] = [
-    { value: String(view.totalCount), label: "저장한 핀" },
-    { value: String(view.summaries.length), label: "폴더" },
-    { value: week > 0 ? `+${String(week)}` : "0", label: "이번 주 발견" },
+  const values = [
+    String(view.totalCount),
+    String(view.summaries.length),
+    week > 0 ? `+${String(week)}` : "0",
   ];
 
   return (
-    <div className="mt-5 grid grid-cols-3 border-t border-line pt-3.5">
-      {cells.map((cell, i) => (
+    <StatsFrame>
+      {CELLS.map((label, i) => (
         <div
-          key={cell.label}
+          key={label}
           className={`text-center ${i > 0 ? "border-l border-line" : ""}`}
         >
           <b className="block text-[19px] font-extrabold text-ink tabular-nums">
-            {cell.value}
+            {values[i]}
           </b>
-          <span className="text-[10.5px] font-bold text-ink-muted">{cell.label}</span>
+          <span className="text-[10.5px] font-bold text-ink-muted">{label}</span>
         </div>
       ))}
-    </div>
+    </StatsFrame>
   );
+}
+
+/**
+ * 활동 요약 — **회원만 숫자를 본다.**
+ *
+ * 비회원에게는 시안의 비회원 모드대로 세 칸의 자리만 남긴다. 로그아웃 상태의
+ * 기기에도 찜이 남아 있어 숫자를 그릴 수는 있지만, 그 위에 뜨는 안내가
+ * "저장한 핀은 로그인하면 볼 수 있어요"라고 말하는 동안 숫자가 보이면 서로
+ * 어긋난다.
+ *
+ * 판정 전(`unknown`)에도 뼈대다 — 숫자를 먼저 그렸다가 지우면 깜빡인다.
+ * **비회원일 때는 찜 훅을 아예 부르지 않는다**(칸이 갈라져 있는 이유) —
+ * 보여주지도 않을 것을 불러올 이유가 없다.
+ */
+export function ProfileStats() {
+  const signedIn = useSignedIn();
+
+  if (signedIn !== "in") {
+    return (
+      <StatsFrame>
+        {CELLS.map((label, i) => (
+          <div key={label} className={i > 0 ? "border-l border-line" : ""}>
+            <div
+              aria-hidden
+              className="mx-auto h-[46px] animate-pulse rounded-lg bg-skel-1"
+              style={{ width: "calc(100% - 10px)" }}
+            />
+          </div>
+        ))}
+      </StatsFrame>
+    );
+  }
+
+  return <StatsCounts />;
 }

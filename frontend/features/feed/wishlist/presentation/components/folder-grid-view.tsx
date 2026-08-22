@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { useRef } from "react";
+import { useRouter } from "next/navigation";
+import { useEffect, useRef } from "react";
 
 import { MAX_FOLDER_NAME } from "@/features/feed/wishlist/domain/wish-folders";
 import { wishlistNoticeMessage } from "@/features/feed/wishlist/domain/wishlist-notice";
@@ -21,7 +22,16 @@ import { BackIcon, PlusIcon } from "@/shared/icons";
  * 아니라 톤 카드, 목록에서는 제목을 비운다(폴더를 열면 그 자리에 폴더 이름이 온다).
  */
 export function FolderGridView() {
+  const router = useRouter();
   const view = useWishlistFolders();
+
+  // 보관함은 회원만 볼 수 있다. **이 판단은 화면이 한다** — 훅에 두었더니 같은
+  // 훅을 쓰는 프로필의 통계 칸까지 로그인으로 끌고 갔다(2026-08-22).
+  const { access } = view;
+  useEffect(() => {
+    if (access === "out") router.replace("/login");
+  }, [access, router]);
+
   const message = wishlistNoticeMessage(view.notice);
   // 폴더를 탭하면 표지가 헤더 아래 중앙으로 모여든 뒤 상세로 넘어간다(시안 1단계)
   const panelRef = useRef<HTMLDivElement>(null);
