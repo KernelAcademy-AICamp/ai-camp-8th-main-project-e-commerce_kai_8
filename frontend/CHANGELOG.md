@@ -1,3 +1,34 @@
+## [0.1.21](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/compare/v0.1.20...v0.1.21) (2026-08-21)
+
+### Features
+
+* 개인화 피드가 후보풀 커서로 깊이를 회복한다 (630 → 1,800) ([#81](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/issues/81)) ([9b1a584](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/commit/9b1a5845f524dfc1cba989bc3a0eab379afacd89))
+* 보관함에서 다른 성별 찜을 숨긴다 ([#80](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/issues/80)) ([7b1cc2e](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/commit/7b1cc2e0f018fb3317f9470c71f31e2c6bca95e6))
+
+### Bug Fixes
+
+* 검색 테스트의 성별 인자와 표본을 바로잡는다 ([#78](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/issues/78)) ([4ffdec8](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/commit/4ffdec81f892333b9ac29af6b80a5e6e46999e33))
+* 검색 회귀 테스트 잔여 5건을 고치고 낡음 감시를 자동화한다 ([#79](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/issues/79)) ([5c68377](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/commit/5c68377154ca461f3f9315fc0445b541ddd72b10)), closes [#77](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/issues/77)
+## [0.1.20](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/compare/v0.1.19...v0.1.20) (2026-08-21)
+
+### Features
+
+* 설정에서 성별을 고르고 그 성별 상품만 보여준다 (공용 제외) ([#77](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/issues/77)) ([e0da54c](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/commit/e0da54cca86cfea636215fa175f6bba8978863a6)), closes [#76](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/issues/76)
+## [0.1.19](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/compare/v0.1.18...v0.1.19) (2026-08-21)
+
+### Features
+
+* FOR YOU를 내 성별 것만 남기고, 본 큐레이션은 뒤로 미룬다 ([#76](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/issues/76)) ([a302d9c](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/commit/a302d9c67de6c716312298e3d6079b6a473fce88))
+## [0.1.18](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/compare/v0.1.17...v0.1.18) (2026-08-21)
+
+### Features
+
+* 큐레이션 상품에 성별을 싣고 내 성별만 남기는 규칙을 둔다 ([#75](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/issues/75)) ([788d130](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/commit/788d130f06503a1a1ad158022ade537e54302056))
+## [0.1.17](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/compare/v0.1.16...v0.1.17) (2026-08-21)
+
+### Features
+
+* FOR YOU를 6장으로 줄이고 그 사람 취향으로 채운다 ([#73](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/issues/73)) ([e656443](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/commit/e6564439fe368efddc7bf1c2f4b4376272d1aa9b))
 ## [0.1.16](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/compare/v0.1.15...v0.1.16) (2026-08-21)
 
 ### Features

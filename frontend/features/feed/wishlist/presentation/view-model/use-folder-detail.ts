@@ -17,6 +17,7 @@ import {
   entriesInFolder,
   normalizeFolderName,
 } from "@/features/feed/wishlist/domain/wish-folders";
+import { useVisibleWishes } from "@/features/feed/wishlist/presentation/view-model/use-visible-wishes";
 import { useWishlist } from "@/features/feed/wishlist/presentation/view-model/use-wishlist";
 
 /**
@@ -46,7 +47,15 @@ export function useFolderDetail(folderParam: string) {
 
   const name = isDefault ? DEFAULT_FOLDER_NAME : (folder?.name ?? "");
 
-  const mine = useMemo(() => entriesInFolder(entries, folderId), [entries, folderId]);
+  // 원본과 화면용을 **따로** 센다. 하나로 두면 헤더·삭제 확인 문구·빈 화면 판정
+  // 셋 중 둘이 반드시 거짓말을 한다 (설계 "개수의 개수", 교차 리뷰 지적).
+  const original = useMemo(
+    () => entriesInFolder(entries, folderId),
+    [entries, folderId],
+  );
+  const visible = useVisibleWishes(original);
+  const mine = visible.entries;
+
   const columns = useMemo(() => {
     const cards: FeedCardViewData[] = mine.map((entry, index) => ({
       feedKey: `wish-${String(entry.product.goodsNo)}`,
@@ -133,9 +142,17 @@ export function useFolderDetail(folderParam: string) {
     notice,
     name,
     isDefault,
+    /** 헤더에 적는 수 — 지금 화면에 실제로 보이는 장 수 */
     count: mine.length,
+    /** 이 폴더의 원본 수. 삭제 확인 문구가 쓴다 — 숨은 것도 함께 옮겨지기 때문이다 */
+    originalCount: original.length,
+    /** 이 폴더에서 성별 설정 때문에 가려진 수 */
+    hiddenCount: visible.hiddenCount,
     columns,
+    /** 그릴 것이 있나 (화면용) */
     hasEntries: mine.length > 0,
+    /** 이 폴더가 정말로 빈 폴더인가 — "아직 비어 있어요"는 이때만 사실이다 */
+    isEmpty: original.length === 0,
     detail,
     sentinelRef,
     mode,

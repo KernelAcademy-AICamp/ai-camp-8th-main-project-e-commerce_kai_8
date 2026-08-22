@@ -17,6 +17,7 @@ import { useSlideIndex } from "@/features/feed/detail/presentation/view-model/us
 import { formatPrice } from "@/features/feed/domain/format-price";
 import type { Product } from "@/features/feed/domain/product";
 import { initialSlideIndex } from "@/features/feed/domain/similar";
+import { FeedError } from "@/features/feed/presentation/components/feed-error";
 import { FeedGrid } from "@/features/feed/presentation/components/feed-grid";
 import { FeedSkeleton } from "@/features/feed/presentation/components/feed-skeleton";
 import {
@@ -26,6 +27,7 @@ import {
 import { wishlistNoticeMessage } from "@/features/feed/wishlist/domain/wishlist-notice";
 import { SaveSheet } from "@/features/feed/wishlist/presentation/components/save-sheet";
 import { useSaveSheet } from "@/features/feed/wishlist/presentation/view-model/use-save-sheet";
+import { useVisibleWishes } from "@/features/feed/wishlist/presentation/view-model/use-visible-wishes";
 import { useWishlist } from "@/features/feed/wishlist/presentation/view-model/use-wishlist";
 import { BackIcon, ExternalLinkIcon } from "@/shared/icons";
 import { logAction } from "@/shared/signals/signals";
@@ -87,6 +89,10 @@ export function ProductDetail({
   });
   const router = useRouter();
   const { wished, save, remove, folders, entries, notice, access } = useWishlist();
+  // 하트 판정·담기·빼기는 위의 **원본** 목록 그대로다. 담기 시트에 넘기는 목록만
+  // 화면용으로 바꾼다 — 시트의 폴더별 개수·썸네일이 보관함 화면과 같아야 한다
+  // (설계 "담기 시트는 경로가 다르다").
+  const visibleWishes = useVisibleWishes(entries);
   const sheet = useSaveSheet(save);
   const isWishedNow = wished(product.goodsNo);
   // 저장 버튼이 눌렸을 때 — 비회원이면 안내 없이 곧바로 로그인 화면으로
@@ -232,6 +238,7 @@ export function ProductDetail({
 
           <div className="px-3 pt-[22px] pb-[120px]">
             {explore.showSkeleton && <FeedSkeleton />}
+            {explore.failed && <FeedError onRetry={explore.retry} />}
             <FeedGrid
               columns={explore.columns}
               sentinelRef={explore.sentinelRef}
@@ -265,7 +272,7 @@ export function ProductDetail({
       {sheet.pending !== null && (
         <SaveSheet
           folders={folders}
-          entries={entries}
+          entries={visibleWishes.entries}
           onPick={sheet.pick}
           onClose={sheet.close}
           creating={sheet.creating}

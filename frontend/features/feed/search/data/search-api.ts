@@ -1,5 +1,6 @@
 import { type FeedProductDto, mapFeedDto } from "@/features/feed/data/feed-api";
 import type { Product } from "@/features/feed/domain/product";
+import type { GenderChoice } from "@/shared/gender/gender-setting";
 import { rpcPost } from "@/shared/supabase-rpc";
 
 // 서버 anon statement_timeout(8초)보다 살짝 길게 — 연결이 조용히 정지해도
@@ -71,6 +72,12 @@ export async function fetchSearchPage(
   cursor: SearchCursor | null,
   size: number,
   /**
+   * 사람이 설정에서 고른 성별. **필수이고 모든 페이지에 같은 값을 보낸다** — 성별은
+   * 질의문에 실리는 자연어가 아니라 별도 인자라, 1페이지에만 실으면 2페이지부터 샌다.
+   * 서버는 이 값으로 질의에서 뽑은 성별어를 **덮는다**(설정이 이긴다).
+   */
+  gender: GenderChoice,
+  /**
    * LLM이 읽은 부정 조건 (부정 조각 3단계). 없으면 지금까지와 똑같이 동작한다 —
    * 해석은 **필수 경로가 아니다**(설계 S-02).
    *
@@ -82,7 +89,12 @@ export async function fetchSearchPage(
   if (!isSearchV2Enabled()) {
     const dtos = await rpcPost<(FeedProductDto & WithUsedQuery)[]>(
       "c_search_page",
-      { p_query: query, p_after: cursor?.goodsNo ?? null, p_size: size },
+      {
+        p_query: query,
+        p_after: cursor?.goodsNo ?? null,
+        p_size: size,
+        p_gender: gender,
+      },
       { timeoutMs: SEARCH_TIMEOUT_MS },
     );
     const products = dtos.map(mapFeedDto);
@@ -106,6 +118,7 @@ export async function fetchSearchPage(
       // 빈 배열이 아니라 null을 보낸다 — 서버가 `is null`로 조건 자체를 건너뛴다.
       p_exclude: plan?.exclude.length ? plan.exclude : null,
       p_exclude_colors: plan?.exclude_colors.length ? plan.exclude_colors : null,
+      p_gender: gender,
     },
     { timeoutMs: SEARCH_TIMEOUT_MS },
   );
@@ -132,7 +145,8 @@ export async function fetchSearchPage(
 export async function fetchSearchPageWithFallback(
   query: string,
   size: number,
+  gender: GenderChoice,
   plan?: { exclude: string[]; exclude_colors: string[] },
 ): Promise<SearchPage> {
-  return fetchSearchPage(query, null, size, plan);
+  return fetchSearchPage(query, null, size, gender, plan);
 }

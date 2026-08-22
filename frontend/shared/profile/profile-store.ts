@@ -1,6 +1,8 @@
 // 취향 프로필 저장소 (설계 §6): 장기 = localStorage(백업 슬롯 1개, 멀티탭 병합),
 // 세션 = sessionStorage(탭 단위). 규칙 계산은 profile-rules(순수)로 위임한다.
 
+import { clearAnchorTitles } from "./anchor-titles";
+import { clearCurationViews } from "./curation-views";
 import {
   type AnchorGender,
   applyAction,
@@ -284,6 +286,12 @@ export function applyAnchorGenders(genders: Map<number, AnchorGender>): void {
 
 /** 개인화 데이터 초기화(설정)에서 함께 지운다 */
 export function clearProfile(): void {
+  // 앵커 제목 캐시도 여기서 지운다 — 어떤 상품에 반응했는지가 그대로 남아 있어,
+  // 앵커만 지우고 두면 "개인화 데이터 초기화"가 절반만 지운 것이 된다.
+  clearAnchorTitles();
+  // FOR YOU에 무엇을 몇 번 보여줬는지도 개인화 상태다 — 남겨 두면 초기화한 사람의
+  // 첫 화면이 여전히 "이미 본 것"으로 깎인 채 나온다.
+  clearCurationViews();
   try {
     localStorage.removeItem(LONG_KEY);
     localStorage.removeItem(BACKUP_KEY);
