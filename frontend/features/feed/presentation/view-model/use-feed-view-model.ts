@@ -98,6 +98,9 @@ export function useFeedViewModel(options?: FeedOptions) {
   // 하나로 합치면 무작위 경로에 해시를 보내게 된다.
   const afterRef = useRef<number | null>(null);
   const mixAfterRef = useRef<MixCursor | null>(null);
+  // 앵커 묶음 번호. 개인화 페이지를 **실제로 적용한 뒤에만** 올린다 —
+  // 요청 시점에 올리면 실패한 요청이 묶음 하나를 태우고 재시도가 다른 결과를 낸다.
+  const mixRotationRef = useRef(0);
   // 후보풀이 끝났다 — 개인화를 그만두고 무작위로 넘어간다.
   // (시드·성별이 바뀌면 아래 세대 효과가 풀어 준다)
   const mixExhaustedRef = useRef(false);
@@ -136,6 +139,7 @@ export function useFeedViewModel(options?: FeedOptions) {
     generationRef.current += 1;
     afterRef.current = null;
     mixAfterRef.current = null;
+    mixRotationRef.current = 0;
     mixExhaustedRef.current = false;
     exhaustedRef.current = false;
     // **진행 중 표시도 푼다.** 안 풀면 떠 있던 요청이 끝날 때까지 새 성별 요청이
@@ -210,12 +214,16 @@ export function useFeedViewModel(options?: FeedOptions) {
         boost: summary.boostActive,
         gender: genderFilter,
         after: mixAfterRef.current,
+        rotation: mixRotationRef.current,
       }).then((page) => {
         // 커서는 응답이 비면 null로 온다 — 그때는 들고 있던 값을 유지한다.
         if (page.cursor) mixAfterRef.current = page.cursor;
         // 소진 신호는 행에 실려 온다. 응답이 비면 신호도 없지만, 빈 페이지는
         // appendFeedPage가 이미 소진으로 처리한다.
         if (page.exhausted) mixExhaustedRef.current = true;
+        // 비어 있지 않은 페이지를 실제로 받았을 때만 앵커 묶음을 넘긴다.
+        // 빈 응답·실패는 묶음을 소비하지 않는다(같은 페이지가 비결정적이 된다).
+        if (page.products.length > 0) mixRotationRef.current += 1;
         policyRef.current = "personalized";
         applyPage(page.products, false);
       });

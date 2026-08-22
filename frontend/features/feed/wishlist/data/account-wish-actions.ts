@@ -20,6 +20,7 @@ import {
   renameWishFolder,
   WishlistFullError,
 } from "@/features/feed/wishlist/data/wishlist-api";
+import { logAction } from "@/shared/signals/signals";
 
 /**
  * 서버에서 계정 찜과 폴더를 다시 읽어 저장소를 맞춘다.
@@ -46,7 +47,14 @@ export async function reloadAccountWishes(): Promise<void> {
 const sync = createWishSync(
   (goodsNo, wanted, folderId) =>
     wanted ? addAccountWish(goodsNo, folderId) : removeAccountWish(goodsNo),
-  (_goodsNo, _confirmed, cause) => {
+  (goodsNo, confirmed, cause) => {
+    // **시도를 취소하지 않고 실패를 따로 남긴다** (정의 §3). 실패했다고 시도를
+    // 지우면 "찜하려 했는데 안 됐다"가 통째로 사라져 제품이 멀쩡해 보인다.
+    //
+    // confirmed=false = 되돌아간 상태가 "안 찜함" = **실패한 동작이 찜 저장**이다.
+    // 해제 실패(confirmed=true)는 세지 않는다 — 실패율의 분모가 찜 시도라
+    // 함께 세면 비율이 뜻을 잃는다.
+    if (!confirmed) logAction("wish_failed", goodsNo);
     setAccountNotice(cause instanceof WishlistFullError ? "full" : "failed");
     // 되돌리기는 서버를 다시 읽어 맞춘다. 화면에서 지운 상품의 정보를 되살릴
     // 방법이 이것뿐이고, 어긋난 채로 두는 것보다 낫다.

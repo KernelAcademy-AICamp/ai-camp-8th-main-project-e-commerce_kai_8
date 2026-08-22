@@ -1,6 +1,11 @@
 import { describe, expect, it } from "vitest";
 
-import { advanceSession, SESSION_TIMEOUT_MS } from "./session";
+import {
+  advanceSession,
+  BACKGROUND_TIMEOUT_MS,
+  markSessionHidden,
+  SESSION_TIMEOUT_MS,
+} from "./session";
 
 const newId = () => "fresh";
 
@@ -35,5 +40,61 @@ describe("advanceSession (세션 경계 = 비활성 30분, O-29)", () => {
     const result = advanceSession(prev, 5_000, newId);
     expect(result.state.id).toBe("keep");
     expect(result.started).toBe(false);
+  });
+});
+
+describe("백그라운드 경계 (5분 이상 비웠다 돌아오면 새 세션)", () => {
+  it("백그라운드에 들어간 시각을 기록한다", () => {
+    const prev = { id: "keep", lastActivityMs: 1_000 };
+    expect(markSessionHidden(prev, 2_000)).toEqual({
+      id: "keep",
+      lastActivityMs: 1_000,
+      hiddenSinceMs: 2_000,
+    });
+  });
+
+  it("세션이 없으면 기록할 것도 없다", () => {
+    expect(markSessionHidden(null, 2_000)).toBeNull();
+  });
+
+  it("5분 이상 비웠다 돌아오면 직전 세션을 끝내고 새로 시작한다", () => {
+    const prev = {
+      id: "old",
+      lastActivityMs: 1_000,
+      hiddenSinceMs: 2_000,
+    };
+    const result = advanceSession(prev, 2_000 + BACKGROUND_TIMEOUT_MS, newId);
+    expect(result.started).toBe(true);
+    expect(result.endedPrevious).toEqual(prev);
+    expect(result.state.id).toBe("fresh");
+  });
+
+  it("5분이 안 됐으면 세션을 유지한다", () => {
+    const prev = {
+      id: "keep",
+      lastActivityMs: 1_000,
+      hiddenSinceMs: 2_000,
+    };
+    const result = advanceSession(prev, 2_000 + BACKGROUND_TIMEOUT_MS - 1, newId);
+    expect(result.started).toBe(false);
+    expect(result.state.id).toBe("keep");
+  });
+
+  it("세션을 유지하면 백그라운드 표식을 지운다", () => {
+    // 안 지우면 다음 복귀가 옛 시각과 비교돼, 잠깐 비웠는데도 세션이 끊긴다
+    const prev = {
+      id: "keep",
+      lastActivityMs: 1_000,
+      hiddenSinceMs: 2_000,
+    };
+    const result = advanceSession(prev, 3_000, newId);
+    expect(result.state.hiddenSinceMs).toBeUndefined();
+  });
+
+  it("백그라운드 기록이 없으면 30분 규칙만 적용된다", () => {
+    const prev = { id: "keep", lastActivityMs: 1_000 };
+    const result = advanceSession(prev, 1_000 + SESSION_TIMEOUT_MS, newId);
+    expect(result.started).toBe(false);
+    expect(result.state.id).toBe("keep");
   });
 });

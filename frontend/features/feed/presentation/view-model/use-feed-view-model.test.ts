@@ -531,3 +531,89 @@ describe("useFeedViewModel — 후보풀 커서 (계획 2026-08-22-feed-depth-cu
     expect(typeof after).not.toBe("string");
   });
 });
+
+describe("useFeedViewModel — 앵커 회전 (계획 2026-08-22-vector-anchor-rotation)", () => {
+  const BIG = "-9174854730392098679";
+  const anchored = (): ProfileSummary => ({
+    schemaVersion: 2,
+    longAnchors: [{ goodsNo: 1, weight: 5 }],
+    sessionAnchors: [],
+    recentImpressions: [],
+    boostActive: false,
+    gender: null,
+  });
+
+  beforeEach(() => {
+    setGenderSetting("남성");
+    getFeedProfileSummaryMock.mockReturnValue(anchored());
+  });
+
+  it("첫 요청은 회전 0이다", async () => {
+    fetchMixPageMock.mockResolvedValue(mixPage([product(1)], { hk: BIG, no: "1" }));
+    renderFeedViewModel();
+    await waitFor(() => {
+      expect(fetchMixPageMock).toHaveBeenCalledWith(
+        expect.objectContaining({ rotation: 0 }),
+      );
+    });
+  });
+
+  it("페이지를 받을 때마다 회전이 1씩 오른다", async () => {
+    fetchMixPageMock.mockResolvedValue(mixPage([product(1)], { hk: BIG, no: "1" }));
+    renderFeedViewModel();
+    await waitFor(() => {
+      expect(fetchMixPageMock).toHaveBeenCalledTimes(1);
+    });
+    scrollToBottom();
+    await waitFor(() => {
+      expect(fetchMixPageMock.mock.calls.length).toBeGreaterThan(1);
+    });
+    // 0, 1, 2, ... — 페이지를 받을 때마다 정확히 하나씩 오른다.
+    const rotations = fetchMixPageMock.mock.calls.map(([r]) => r.rotation);
+    expect(rotations).toEqual(rotations.map((_, i) => i));
+  });
+
+  it("**빈 응답은 회전을 소비하지 않는다** — 재시도가 앵커 묶음을 태우면 안 된다", async () => {
+    fetchMixPageMock
+      .mockResolvedValue(mixPage([], null))
+      .mockResolvedValueOnce(mixPage([product(1)], { hk: BIG, no: "1" }));
+    renderFeedViewModel();
+    await waitFor(() => {
+      expect(fetchMixPageMock.mock.calls.length).toBeGreaterThan(1);
+    });
+    scrollToBottom();
+    // 첫 요청(회전 0)만 상품을 받았다 → 그 뒤 요청은 전부 회전 1에서 멈춘다.
+    // (빈 페이지는 소진으로 처리돼 로드가 곧 멈춘다 — 그래서 호출 수는 적다.)
+    const rotations = fetchMixPageMock.mock.calls.map(([r]) => r.rotation);
+    expect(rotations[0]).toBe(0);
+    expect(rotations.slice(1).every((r) => r === 1)).toBe(true);
+    expect(rotations.some((r) => r >= 2)).toBe(false);
+  });
+
+  it("성별이 바뀌면 회전이 0으로 돌아간다", async () => {
+    fetchMixPageMock.mockResolvedValue(mixPage([product(1)], { hk: BIG, no: "1" }));
+    renderFeedViewModel();
+    await waitFor(() => {
+      expect(fetchMixPageMock).toHaveBeenCalledTimes(1);
+    });
+    scrollToBottom();
+    // 회전이 0보다 커지기만 하면 된다 — 관찰자가 몇 번 더 발화하는지는
+    // 이 테스트의 관심사가 아니다(정확한 값을 단언하면 타이밍에 흔들린다).
+    await waitFor(() => {
+      const rots = fetchMixPageMock.mock.calls.map(([r]) => r.rotation);
+      expect(Math.max(...rots)).toBeGreaterThan(0);
+    });
+    const before = fetchMixPageMock.mock.calls.length;
+    setGenderSetting("여성");
+    await waitFor(() => {
+      const later = fetchMixPageMock.mock.calls.slice(before).map(([r]) => r);
+      expect(later.some((r) => r.gender === "여성")).toBe(true);
+    });
+    // 성별이 바뀐 뒤 **첫 여성 요청**이 회전 0 · 커서 없음으로 나간다.
+    const firstFemale = fetchMixPageMock.mock.calls
+      .slice(before)
+      .map(([r]) => r)
+      .find((r) => r.gender === "여성");
+    expect(firstFemale).toMatchObject({ rotation: 0, after: null });
+  });
+});
