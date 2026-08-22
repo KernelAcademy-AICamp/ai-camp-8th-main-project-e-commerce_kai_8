@@ -1,3 +1,10 @@
+## [0.1.22](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/compare/v0.1.21...v0.1.22) (2026-08-22)
+
+### Features
+
+* FOR YOU 목록 위에 이름을 부르는 한 줄을 둔다 ([#83](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/issues/83)) ([c4dcfa2](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/commit/c4dcfa2d769cc9d35e532a8d7ecf65704d7f2d85))
+* 개인화 피드가 앵커 묶음을 돌려 써 벡터 깊이를 늘린다 (252 → 493) ([#82](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/issues/82)) ([7141509](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/commit/71415099401366d95bea8ae82eca5de9cc43f4e8)), closes [#63](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/issues/63)
+* 계측 계약 1단계 — 배포 A (노출 귀속·세션 경계·발생 시점 표식·찜 실패) ([#74](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/issues/74)) ([8add78b](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/commit/8add78bf4fd16ff99c9572850599d1f0226c92cc))
 ## [0.1.21](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/compare/v0.1.20...v0.1.21) (2026-08-21)
 
 ### Features
