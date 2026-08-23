@@ -9,10 +9,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { GENDER_SETTING_KEY } from "@/shared/gender/gender-setting";
 
-import {
-  fetchAccountOnboarding,
-  putAccountOnboarding,
-} from "./account-onboarding-api";
+import { fetchAccountOnboarding, putAccountOnboarding } from "./account-onboarding-api";
 import {
   getAccountCompleted,
   getOnboardingSyncStatus,
