@@ -1,6 +1,8 @@
 // @vitest-environment jsdom
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
+import { forgetAccountOnboarding } from "@/shared/onboarding/account-onboarding-api";
+
 import { forgetAccountProfile } from "./account-profile-api";
 import {
   hasPendingTasteForget,
@@ -9,8 +11,13 @@ import {
 } from "./pending-taste-forget";
 
 vi.mock("./account-profile-api", () => ({ forgetAccountProfile: vi.fn() }));
+// 온보딩 선택도 **같은 큐로** 재시도한다 — 지우는 조건이 같아서다(§1-5).
+vi.mock("@/shared/onboarding/account-onboarding-api", () => ({
+  forgetAccountOnboarding: vi.fn(),
+}));
 
 const forgetMock = vi.mocked(forgetAccountProfile);
+const forgetOnboardingMock = vi.mocked(forgetAccountOnboarding);
 
 const STORAGE_KEY = "atee-pending-taste-forget";
 const ME = "11111111-1111-4111-8111-111111111111";
@@ -25,6 +32,8 @@ beforeEach(() => {
   localStorage.clear();
   forgetMock.mockReset();
   forgetMock.mockResolvedValue(1);
+  forgetOnboardingMock.mockReset();
+  forgetOnboardingMock.mockResolvedValue(1);
 });
 
 describe("미완료 취향 삭제 큐", () => {
@@ -34,6 +43,8 @@ describe("미완료 취향 삭제 큐", () => {
     await expect(retryPendingTasteForget(ME)).resolves.toBe(true);
 
     expect(forgetMock).toHaveBeenCalledTimes(1);
+    // 온보딩 선택도 함께 지운다 — 남으면 다음 로그인에 씨앗이 되살아난다
+    expect(forgetOnboardingMock).toHaveBeenCalledTimes(1);
     expect(hasPendingTasteForget()).toBe(false);
   });
 

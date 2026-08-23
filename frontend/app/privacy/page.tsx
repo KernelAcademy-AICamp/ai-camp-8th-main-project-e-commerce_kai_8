@@ -62,7 +62,11 @@ export default function PrivacyPolicyPage() {
           <li>
             <b className="text-ink">고른 성별과 옷은 이 기기에만 있습니다.</b> 로그인
             전에는 서버로 보내지 않고, 계정이 생길 때 그 계정으로 옮겨져 첫 추천의
-            시작점이 됩니다. 가입하지 않고 나가면 기기에만 남습니다.
+            시작점이 됩니다. 가입하지 않고 나가면 기기에만 남습니다. 옮겨지는 것은{" "}
+            <b className="text-ink">
+              상품 번호와 화면에서의 위치·고른 순서, 그리고 본 후보 목록의 판
+            </b>
+            뿐이고 상품 정보는 복사하지 않습니다.
           </li>
           <li>
             <b className="text-ink">탐색 행동은 기록하지 않습니다.</b> 카드가 화면에
@@ -96,8 +100,8 @@ export default function PrivacyPolicyPage() {
           </li>
           <li>
             저장되는 것: 계정 식별자와 이메일, 가입·마지막 로그인 시각, 연결된 구글
-            신원, 로그인 세션과 갱신 토큰, 그리고{" "}
-            <b className="text-ink">취향 프로필</b>.
+            신원, 로그인 세션과 갱신 토큰, <b className="text-ink">취향 프로필</b>,
+            그리고 <b className="text-ink">온보딩에서 고른 옷</b>.
           </li>
           <li>이 기기에는 로그인 세션 쿠키와 현재 신원 표시자가 남습니다.</li>
           <li>
@@ -132,6 +136,11 @@ export default function PrivacyPolicyPage() {
           <li>검색어 기록 — 90일 뒤 자동 삭제</li>
           <li>탐색 행동·익명 ID — 지울 때까지</li>
           <li>계정 · 취향 프로필 — 탈퇴할 때까지</li>
+          <li>
+            온보딩에서 고른 옷 — 탈퇴하거나 개인화 데이터를 지울 때까지 (지운 뒤에도{" "}
+            <b className="text-ink">&ldquo;온보딩을 마쳤다&rdquo;는 사실</b>은 남습니다
+            — 지울 때마다 처음 세 화면을 다시 보게 되지 않도록)
+          </li>
           <li>찜 목록 — 탈퇴하거나, 찜을 풀거나, 개인화 데이터를 지울 때까지</li>
         </ul>
       </section>
@@ -140,15 +149,16 @@ export default function PrivacyPolicyPage() {
         <h2 className="text-base font-semibold text-ink">어떻게 지우나요</h2>
         <p>
           <b className="text-ink">개인화 데이터 모두 지우기</b> — 이 기기의 익명 ID·취향
-          프로필·최근 본 제품·보여줄 상품의 성별, 서버에 기록된 탐색 행동·검색어, 그리고{" "}
-          <b className="text-ink">계정에 담긴 찜과 폴더</b>가 모두 지워지고 새 익명 ID로
+          프로필·최근 본 제품·보여줄 상품의 성별, 서버에 기록된 탐색 행동·검색어,{" "}
+          <b className="text-ink">계정에 담긴 찜과 폴더</b>, 그리고{" "}
+          <b className="text-ink">온보딩에서 고른 옷</b>이 모두 지워지고 새 익명 ID로
           처음 상태가 됩니다. <b className="text-ink">계정 자체는 남습니다</b> —
           계정까지 지우려면 아래 계정 삭제를 쓰세요.
         </p>
         <p>
           <b className="text-ink">계정 삭제</b> — 계정과 연결된 구글 신원, 로그인 세션,{" "}
-          <b className="text-ink">계정에 담긴 찜과 취향 프로필</b>이 지워지고, 이어서 이
-          기기의 탐색 행동·검색어 기록도 함께 지워집니다.
+          <b className="text-ink">계정에 담긴 찜과 취향 프로필, 온보딩 기록 전부</b>가
+          지워지고, 이어서 이 기기의 탐색 행동·검색어 기록도 함께 지워집니다.
         </p>
         <p>
           서버 삭제가 실패하면 이 기기가 그 사실을 적어 두고 다음 접속에서 다시

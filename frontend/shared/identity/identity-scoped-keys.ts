@@ -28,6 +28,15 @@ const KEEP_EXACT = new Set([
   // (shared/identity/gender-carry.ts). **설정 본체(atee-gender)는 여기 넣지 않는다**
   // — 앞 사용자의 성별이 다음 사용자에게 새면 안 되므로 지워지는 것이 맞다.
   "atee-gender-migrate",
+  // 계정으로 옮길 온보딩 선택 보관함. 찜·성별과 같은 이유다
+  // (shared/identity/onboarding-carry.ts). **선택 본체(atee-onboarding-picks)는
+  // 여기 넣지 않는다** — 앞사람이 고른 옷이 다음 사람에게 새면 안 되므로 지워지는
+  // 것이 맞다(O-35).
+  "atee-onboarding-migrate",
+  // "이 기기에서 온보딩을 마친 적이 있다"는 **사실만** 담는 표식. 로그아웃해도 남아야
+  // 다음 방문이 로그인 화면부터 시작한다(계획 §1-0). 누가 했는지·무엇을 골랐는지는
+  // 담지 않으므로 남겨도 앞사람의 취향이 새지 않는다.
+  "atee-onboarding-done",
 ]);
 
 /** 버전이 붙는 키들 */

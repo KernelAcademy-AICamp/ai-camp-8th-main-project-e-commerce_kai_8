@@ -3,6 +3,8 @@
 // 모든 공개 함수는 SSR·저장 불가 환경에서 조용히 no-op한다.
 
 import { clearPersonalizationData } from "@/shared/identity/identity-reset";
+import { forgetAccountOnboarding } from "@/shared/onboarding/account-onboarding-api";
+import { clearStoredPicks } from "@/shared/onboarding/onboarding-store";
 import { forgetAccountProfile } from "@/shared/profile/account-profile-api";
 import { rememberPendingTasteForget } from "@/shared/profile/pending-taste-forget";
 import { PROFILE_SCHEMA_VERSION } from "@/shared/profile/profile-rules";
@@ -339,6 +341,13 @@ async function clearAccountTaste(): Promise<boolean> {
   if (userId === null) return true; // 로그인하지 않았으면 계정에 지울 것이 없다
   try {
     await forgetAccountProfile();
+    // 온보딩 선택도 같은 자리에서 지운다 — **선택만 지우고 완료 표식은 남는다.**
+    // 남기지 않으면 초기화할 때마다 온보딩이 다시 떠서 초기화가 못 쓸 기능이 된다
+    // (성별 설정에 이미 같은 판단이 적혀 있다). 표식만으로는 피드가 기울지 않는다.
+    //
+    // **재시도 큐를 따로 만들지 않는다.** 둘 다 "그 계정으로 로그인해 있어야
+    // 부를 수 있는" 삭제라 조건이 같다 — 큐를 나누면 같은 조건을 두 벌 관리하게 된다.
+    await forgetAccountOnboarding();
     return true;
   } catch {
     rememberPendingTasteForget(userId);
@@ -378,6 +387,9 @@ export async function clearSignals(): Promise<number | null> {
   // 기기 기록 삭제가 실패해도 계정 취향은 따로 시도한다 — 한쪽 실패가 다른 쪽
   // 삭제를 막을 이유가 없다. 각자 자기 몫을 재시도 큐에 적는다.
   if (!(await clearAccountTaste())) deleted = null;
+  // 기기에 남은 온보딩 선택은 **계정 쪽을 지운 뒤에** 비운다. 먼저 비우면 그 사이에
+  // 계정 동기화가 한 번 돌아 방금 지우려던 것을 서버에서 다시 내려놓는다.
+  clearStoredPicks();
   // 계정에 담긴 찜과 폴더도 지운다 (2026-08-22 제품 책임자) — "처음 이 서비스를
   // 접하는 사람처럼"에는 보관함도 들어간다.
   //
