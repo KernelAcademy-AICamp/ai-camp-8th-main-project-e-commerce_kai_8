@@ -1,3 +1,10 @@
+## [0.1.26](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/compare/v0.1.25...v0.1.26) (2026-08-23)
+
+### Features
+
+* 공유 카드와 앱 아이콘을 홈 화면 로고로 맞춘다 ([#93](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/issues/93)) ([d48f69f](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/commit/d48f69f5a3d0fb9f68a13d9cbc9af8a0357c4a31))
+* 링거 큐레이션을 성별 쿼터로 12장으로 넓힌다 ([#92](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/issues/92)) ([ad39b51](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/commit/ad39b51b62210b41448d347ea82b707b318462d9))
+* 어드민에 컨셉 검증 지표와 좁혀 보기를 더한다 ([#91](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/issues/91)) ([16fdea9](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/commit/16fdea9820aa00d080bf60e93d9c207bb68f5095))
 ## [0.1.25](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/compare/v0.1.24...v0.1.25) (2026-08-22)
 ## [0.1.24](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/compare/v0.1.23...v0.1.24) (2026-08-22)
 
