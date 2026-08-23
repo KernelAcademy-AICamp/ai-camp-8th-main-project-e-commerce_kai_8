@@ -18,7 +18,7 @@ export const metadata: Metadata = {
   description: "aTee가 무엇을 수집하고, 얼마나 보관하고, 어떻게 지우는지.",
 };
 
-const UPDATED_AT = "2026년 8월 19일";
+const UPDATED_AT = "2026년 8월 24일";
 
 /** 구글 OAuth 심사가 처리방침에 연락 수단을 요구한다 (2026-08-18 제품 책임자 결정). */
 const CONTACT_EMAIL = "likefry98@gmail.com";
@@ -43,20 +43,26 @@ export default function PrivacyPolicyPage() {
       <section className="space-y-4 text-[15px] leading-relaxed">
         <h2 className="text-base font-semibold text-ink">한 줄 요약</h2>
         <p>
-          <b className="text-ink">로그인하지 않으면 탐색 행동을 기록하지 않습니다.</b>{" "}
-          로그인하면 그 행동으로 취향 피드를 만들고, 이메일 주소와 찜·취향을 계정에
-          저장합니다. 언제든 지울 수 있습니다.
+          <b className="text-ink">둘러보려면 구글 로그인이 필요합니다.</b> 로그인 전
+          온보딩에서 고른 옷은 <b className="text-ink">이 기기에만</b> 있다가 계정이
+          생길 때 옮겨집니다. 로그인하면 탐색 행동으로 취향 피드를 만들고, 이메일 주소와
+          찜·취향을 계정에 저장합니다. 언제든 지울 수 있습니다.
         </p>
       </section>
 
       <section className="mt-8 space-y-4 text-[15px] leading-relaxed">
         <h2 className="text-base font-semibold text-ink">무엇을 수집하나요</h2>
 
-        <h3 className="font-medium text-ink">로그인하지 않아도</h3>
+        <h3 className="font-medium text-ink">로그인 전 (온보딩 세 화면)</h3>
         <ul className="list-disc space-y-2 pl-5">
           <li>
             <b className="text-ink">익명 ID</b> — 이 브라우저에 무작위로 만들어 저장하는
             식별자입니다. 이름·연락처와 연결되지 않습니다.
+          </li>
+          <li>
+            <b className="text-ink">고른 성별과 옷은 이 기기에만 있습니다.</b> 로그인
+            전에는 서버로 보내지 않고, 계정이 생길 때 그 계정으로 옮겨져 첫 추천의
+            시작점이 됩니다. 가입하지 않고 나가면 기기에만 남습니다.
           </li>
           <li>
             <b className="text-ink">탐색 행동은 기록하지 않습니다.</b> 카드가 화면에
@@ -74,7 +80,7 @@ export default function PrivacyPolicyPage() {
           </li>
         </ul>
 
-        <h3 className="font-medium text-ink">로그인하면 (선택)</h3>
+        <h3 className="font-medium text-ink">로그인하면</h3>
         <ul className="list-disc space-y-2 pl-5">
           <li>
             구글 로그인의 <b className="text-ink">기본 범위</b>만 받습니다 — 이메일
@@ -100,9 +106,9 @@ export default function PrivacyPolicyPage() {
             브라우저의 익명 ID에 붙습니다.
           </li>
           <li>
-            <b className="text-ink">찜 목록</b> — 로그인하면 찜이 계정에 저장됩니다.{" "}
+            <b className="text-ink">찜 목록</b> — 찜은 계정에 저장됩니다.{" "}
             <b className="text-ink">상품 번호와 담은 시각만</b> 담고 상품 정보는
-            복사하지 않습니다. 로그인하지 않으면 이 기기에만 남습니다.
+            복사하지 않습니다.
           </li>
         </ul>
       </section>
