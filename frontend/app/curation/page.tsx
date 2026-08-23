@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 
-// 큐레이션은 홈의 PICKS 칸으로 들어갔다. 옛 링크만 살려 둔다.
+// 큐레이션은 홈의 Curation 칸으로 들어갔다. 옛 링크만 살려 둔다.
 export default function CurationPage() {
   redirect("/");
 }

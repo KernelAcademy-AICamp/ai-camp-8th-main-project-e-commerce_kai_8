@@ -6,9 +6,12 @@ import {
   fetchLocalUserId,
   subscribeAuthChange,
 } from "@/features/auth/data/auth-repository";
+import { carryGender, shouldCarryGender } from "@/shared/identity/gender-carry";
+import { takeIdentityLanding } from "@/shared/identity/identity-landing";
 import { isIdentityTransition, markerFor } from "@/shared/identity/identity-marker";
 import { clearIdentityScopedData } from "@/shared/identity/identity-reset";
 import { carryWishes, shouldCarryWishes } from "@/shared/identity/wish-carry";
+import { endSessionNow } from "@/shared/signals/signals";
 
 /**
  * 이 탭이 마지막으로 처리한 신원.
@@ -67,13 +70,28 @@ export function useIdentityReconcile(): void {
           // 사라진 뒤다. 익명 → 사용자 전환에서만 일어난다 — 사용자 A → B에서
           // 옮기면 A의 찜이 B 계정으로 들어간다(설계 §4).
           if (shouldCarryWishes(previous, current)) carryWishes(localStorage);
+          // 성별도 같은 자리에서 빼둔다 — 아래 정리가 설정 본체를 지운다.
+          // 안 빼두면 비회원으로 고른 성별이 사라져 로그인 직후 다시 묻게 된다.
+          if (shouldCarryGender(previous, current)) carryGender(localStorage);
+
+          // **지우기 전에** 지금 세션을 끝낸다. 아래 정리가 세션 키를 지우므로,
+          // 여기서 끝내지 않으면 직전 세션은 종료 줄 없이 사라진다 — 그 세션의
+          // 끝을 알 수 없어 길이도, 로그인 전 구간의 경계도 못 잡는다.
+          // 종료 줄은 미전송 큐에 들어가고, 그 큐는 전환 정리에서 살아남는다.
+          endSessionNow();
 
           // 순서: 지우고 → 표식을 확정하고 → 다시 불러온다.
           // 표식을 먼저 쓰면 다시 불러오기 전에 탭이 죽었을 때 정리가 끝난
           // 것으로 오인한다. 지우기가 먼저이므로 중간에 죽어도 데이터는 남지 않는다.
           clearIdentityScopedData();
           writeTabMarker(current);
-          window.location.reload();
+          // 옮겨 달라고 부탁받은 자리가 있으면 그리로 — 로그아웃처럼 보던 자리가
+          // 더는 유효하지 않은 경우다. 부탁한 쪽이 따로 이동시키지 않고 여기에
+          // 맡기므로, 페이지를 다시 부르는 일이 한 곳에서만 일어난다.
+          // `replace`인 이유: 떠나온 자리로 뒤로가기해 봐야 볼 것이 없다.
+          const landing = takeIdentityLanding();
+          if (landing === null) window.location.reload();
+          else window.location.replace(landing);
         },
         () => {
           // 세션을 읽지 못하면 판정하지 않는다 — 잘못 지우는 것보다 낫다

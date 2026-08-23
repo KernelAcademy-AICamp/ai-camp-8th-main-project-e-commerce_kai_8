@@ -2,6 +2,7 @@
 // 서버(c_events)는 계측·평가 전용이고, 취향 프로필 계산은 기기가 한다(설계 §2).
 // 모든 공개 함수는 SSR·저장 불가 환경에서 조용히 no-op한다.
 
+import { clearPersonalizationData } from "@/shared/identity/identity-reset";
 import { forgetAccountProfile } from "@/shared/profile/account-profile-api";
 import { rememberPendingTasteForget } from "@/shared/profile/pending-taste-forget";
 import { PROFILE_SCHEMA_VERSION } from "@/shared/profile/profile-rules";
@@ -16,12 +17,19 @@ import { rememberPendingForget } from "@/shared/signals/pending-forget";
 import { getCurrentUserId } from "@/shared/supabase/current-user";
 import { isSignedInNow } from "@/shared/supabase/session-state";
 import { rpcPost } from "@/shared/supabase-rpc";
+import { forgetAccountWishes } from "@/shared/wishlist/account-wish-forget";
 
 import { getDeviceId } from "./device-id";
+import {
+  impressionIdFor,
+  type ImpressionMemory,
+  rememberImpression,
+} from "./impression-memory";
 import { SignalQueue } from "./queue";
-import { advanceSession, type SessionState } from "./session";
+import { advanceSession, markSessionHidden, type SessionState } from "./session";
 import {
   type FeedPolicy,
+  INSTRUMENTATION_VER,
   MODEL_VER,
   type SignalEvent,
   type SignalEventType,
@@ -31,14 +39,39 @@ import {
 
 const SESSION_KEY = "atee-session";
 const QUEUE_KEY = "atee-signal-queue";
+const IMPRESSIONS_KEY = "atee-impressions";
 const FLUSH_INTERVAL_MS = 5_000;
 
 let queue: SignalQueue | null = null;
 let flushTimer: ReturnType<typeof setInterval> | null = null;
-let pageHideHooked = false;
+let lifecycleHooked = false;
 
-/** 세션 내 상품별 최근 노출 ID — 행동 이벤트의 노출 귀속(설계 §4) */
-const impressionByGoods = new Map<number, string>();
+/**
+ * 세션 내 상품별 최근 노출 ID — 행동 이벤트의 노출 귀속(설계 §4).
+ *
+ * **기기에 저장한다.** 메모리에만 두면 새로고침하는 순간 지워져, 그 뒤의 클릭이
+ * 어느 추천 때문인지 알 수 없게 된다 (계획 2026-08-21 A-1). 키가 `atee-`로
+ * 시작하므로 신원이 바뀌면 함께 지워진다 — 그래야 앞사람의 노출이 뒷사람의
+ * 클릭에 붙지 않는다.
+ */
+function readImpressions(): ImpressionMemory {
+  try {
+    const raw = localStorage.getItem(IMPRESSIONS_KEY);
+    if (!raw) return [];
+    const parsed: unknown = JSON.parse(raw);
+    return Array.isArray(parsed) ? (parsed as ImpressionMemory) : [];
+  } catch {
+    return [];
+  }
+}
+
+function writeImpressions(memory: ImpressionMemory): void {
+  try {
+    localStorage.setItem(IMPRESSIONS_KEY, JSON.stringify(memory));
+  } catch {
+    // 저장 불가 — 귀속 없이 동작한다 (기록 자체는 계속된다)
+  }
+}
 
 function isBrowser(): boolean {
   return typeof window !== "undefined";
@@ -113,6 +146,9 @@ function baseEvent(
     session_id: sessionId,
     event_type: type,
     occurred_at: new Date(occurredAtMs).toISOString(),
+    // **여기서 박는다.** 이벤트를 만드는 순간이 곧 발생 시점이다.
+    signed_in: isSignedInNow(),
+    instr_ver: INSTRUMENTATION_VER,
     policy,
     model_ver: MODEL_VER,
     profile_ver: PROFILE_SCHEMA_VERSION,
@@ -130,11 +166,19 @@ function startPump(): void {
     if (getQueue().size() === 0) return;
     void getQueue().flush();
   }, FLUSH_INTERVAL_MS);
-  if (!pageHideHooked) {
-    pageHideHooked = true;
+  if (!lifecycleHooked) {
+    lifecycleHooked = true;
     // 이탈 직전 마지막 전송 — rpcPost keepalive라 페이지가 닫혀도 이어진다
     window.addEventListener("pagehide", () => {
       void getQueue().flush();
+    });
+    // 백그라운드에 들어간 시각을 적어 둔다. 5분 이상 비웠다 돌아오면 새 세션이
+    // 된다(설계 §1) — 적어 두지 않으면 자리를 비운 시간이 세션 길이에 통째로
+    // 들어가, 세션 길이를 몰입도로 읽을 수 없다.
+    document.addEventListener("visibilitychange", () => {
+      if (document.visibilityState !== "hidden") return;
+      const hidden = markSessionHidden(readSession(), Date.now());
+      if (hidden !== null) writeSession(hidden);
     });
   }
 }
@@ -161,6 +205,29 @@ export function touchSession(): string {
     enqueue(baseEvent("session_start", result.state.id, now, "random"));
   }
   return result.state.id;
+}
+
+/**
+ * 지금 세션을 끝낸다 — **신원이 바뀔 때** 부른다 (설계 §1).
+ *
+ * 신원 전환 정리가 세션 키를 지우는데, 그냥 지우면 **직전 세션의 종료 줄이
+ * 영영 남지 않는다.** 종료 줄이 없으면 그 세션의 끝을 알 수 없어 길이도,
+ * 로그인 전 구간의 경계도 못 잡는다.
+ *
+ * 종료 시각은 마지막 활동 시각이다 — 만료로 끝나는 세션과 같은 규칙이다.
+ * 미전송 큐는 신원 전환에도 살아남으므로, 여기서 넣어 두면 다시 불러온 뒤에
+ * 전송된다.
+ */
+export function endSessionNow(): void {
+  if (!isBrowser()) return;
+  const current = readSession();
+  if (current === null) return;
+  enqueue(baseEvent("session_end", current.id, current.lastActivityMs, "random"));
+  try {
+    localStorage.removeItem(SESSION_KEY);
+  } catch {
+    // 저장소 접근 불가 — 다음 활동이 만료 판정으로 새 세션을 연다
+  }
 }
 
 export interface ImpressionInput {
@@ -201,11 +268,19 @@ export function logImpression(input: ImpressionInput): string | null {
     seed: input.seed,
     surface: input.surface,
   };
-  impressionByGoods.set(input.goodsNo, event.event_id);
+  writeImpressions(
+    rememberImpression(readImpressions(), input.goodsNo, event.event_id, sessionId),
+  );
   enqueue(event);
   // 취향 프로필의 자기강화 보정·최근 노출 목록 갱신 (설계 §6)
   recordProfileImpression(input.goodsNo, sessionId, Date.now());
   return event.event_id;
+}
+
+/** 큐에 쌓인 것을 지금 보낸다. 주기 전송을 기다리지 않는 경로(테스트·이탈 직전). */
+export async function flushSignalsNow(): Promise<void> {
+  if (!isBrowser()) return;
+  await getQueue().flush();
 }
 
 export type ActionType = Exclude<
@@ -216,25 +291,27 @@ export type ActionType = Exclude<
 /**
  * 탭·찜·스타일 탐색·판매처 이동 — 해당 상품의 최근 노출에 귀속된다.
  * 로그인하지 않았으면 기록하지 않는다 (O-37).
- *
- * `gender`는 상품의 카탈로그 원문 성별(Product.gender)을 그대로 넘기면 된다 —
- * 앵커 성별로의 변환(빈 문자열·이상값 → 미상)은 profile-store가 한 곳에서 한다
- * (성별 피드 하드 필터 3단계).
  */
 export function logAction(
   type: ActionType,
   goodsNo: number,
-  options?: { policy?: FeedPolicy; gender?: string | null },
+  options?: { policy?: FeedPolicy },
 ): void {
   if (!isBrowser() || !isSignedInNow()) return;
   const sessionId = touchSession();
   enqueue({
     ...baseEvent(type, sessionId, Date.now(), options?.policy ?? "random"),
     goods_no: goodsNo,
-    impression_id: impressionByGoods.get(goodsNo),
+    impression_id: impressionIdFor(readImpressions(), goodsNo, sessionId),
   });
-  // 행동은 취향 프로필의 세션 앵커에도 반영된다 (설계 §6 가중 서열)
-  recordProfileAction(type, goodsNo, sessionId, Date.now(), options?.gender);
+  // 행동은 취향 프로필의 세션 앵커에도 반영된다 (설계 §6 가중 서열).
+  //
+  // **찜 저장 실패는 빼고** — 저장이 실패한 것은 취향을 가르칠 근거가 아니다.
+  // 사용자의 의도는 바로 앞의 wish 이벤트가 이미 프로필에 반영했다. 여기서 또
+  // 반영하면 같은 의도를 두 번 세는 셈이고, 실패한 건마다 취향이 더 세진다.
+  if (type !== "wish_failed") {
+    recordProfileAction(type, goodsNo, sessionId, Date.now());
+  }
 }
 
 /**
@@ -301,14 +378,26 @@ export async function clearSignals(): Promise<number | null> {
   // 기기 기록 삭제가 실패해도 계정 취향은 따로 시도한다 — 한쪽 실패가 다른 쪽
   // 삭제를 막을 이유가 없다. 각자 자기 몫을 재시도 큐에 적는다.
   if (!(await clearAccountTaste())) deleted = null;
+  // 계정에 담긴 찜과 폴더도 지운다 (2026-08-22 제품 책임자) — "처음 이 서비스를
+  // 접하는 사람처럼"에는 보관함도 들어간다.
+  //
+  // **실패하면 삼키지 않고 던진다.** 재시도 큐가 없으므로 조용히 넘기면 남아 있는
+  // 찜을 지웠다고 말하게 된다. 부르는 쪽이 "지우지 못했다"를 띄우고 다시 시도한다.
+  if (isSignedInNow()) await forgetAccountWishes();
+  // 이 기기에 쌓인 탐색 흔적을 한 번에 걷어낸다 — 취향 프로필만 지우면 앵커
+  // 제목·최근 본 제품·피드 씨앗이 남아 화면이 그대로라 "안 지워졌다"로 읽힌다.
+  clearPersonalizationData();
   try {
+    // 이 셋은 그물이 남기는 것들이다(기기 것이므로). 초기화에서는 **새 익명 ID로
+    // 처음부터 시작**해야 하므로 여기서 따로 지운다.
     localStorage.removeItem("atee-device-id");
     localStorage.removeItem(SESSION_KEY);
     localStorage.removeItem(QUEUE_KEY);
+    localStorage.removeItem(IMPRESSIONS_KEY);
   } catch {
     // 저장소 접근 불가면 지울 것도 없다
   }
   queue = null;
-  impressionByGoods.clear();
+
   return deleted;
 }

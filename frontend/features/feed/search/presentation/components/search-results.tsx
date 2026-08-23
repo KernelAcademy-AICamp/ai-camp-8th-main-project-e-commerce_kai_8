@@ -66,18 +66,18 @@ export function SearchResults({
     <div>
       {/* 대체 피드일 때는 아래 안내가 질의를 말하므로 여기서 반복하지 않는다 */}
       {!isEmpty && (
-        <p className="px-1 pt-1 pb-3 text-sm text-neutral-400">
-          &lsquo;<span className="text-neutral-100">{query}</span>&rsquo; 결과
+        <p className="px-1 pt-1 pb-3 text-sm text-ink-soft">
+          &lsquo;<span className="text-ink">{query}</span>&rsquo; 결과
         </p>
       )}
       {showSkeleton && <FeedSkeleton />}
       {error && (
-        <div className="flex flex-col items-center gap-3 py-16 text-sm text-neutral-400">
+        <div className="flex flex-col items-center gap-3 py-16 text-sm text-ink-soft">
           <p>검색 결과를 불러오지 못했어요</p>
           <button
             type="button"
             onClick={onRetry}
-            className="rounded-full border border-neutral-700 px-4 py-1.5 text-neutral-200"
+            className="rounded-full border border-line px-4 py-1.5 text-ink"
           >
             다시 시도
           </button>
@@ -85,16 +85,16 @@ export function SearchResults({
       )}
       {isEmpty && !error && (
         <>
-          <div className="flex flex-col items-center gap-3 py-10 text-sm text-neutral-400">
+          <div className="flex flex-col items-center gap-3 py-10 text-sm text-ink-soft">
             <p>
-              &lsquo;<span className="text-neutral-300">{query}</span>&rsquo; 검색
-              결과가 없어요
+              &lsquo;<span className="text-ink-soft">{query}</span>&rsquo; 검색 결과가
+              없어요
             </p>
-            <p className="text-neutral-200">대신 취향에 맞는 티셔츠를 보여드릴게요</p>
+            <p className="text-ink">대신 취향에 맞는 티셔츠를 보여드릴게요</p>
             <button
               type="button"
               onClick={onClear}
-              className="rounded-full border border-neutral-700 px-4 py-1.5 text-neutral-200"
+              className="rounded-full border border-line px-4 py-1.5 text-ink"
             >
               검색어 지우기
             </button>
@@ -113,9 +113,9 @@ export function SearchResults({
           <FeedGrid columns={columns} sentinelRef={sentinelRef} onSelect={onSelect} />
           {exhausted && (
             <>
-              <p className="px-1 py-8 text-center text-sm text-neutral-400">
-                &lsquo;<span className="text-neutral-300">{query}</span>&rsquo; 결과는
-                여기까지예요 — <span className="text-neutral-200">이런 건 어때요</span>
+              <p className="px-1 py-8 text-center text-sm text-ink-soft">
+                &lsquo;<span className="text-ink-soft">{query}</span>&rsquo; 결과는
+                여기까지예요 — <span className="text-ink">이런 건 어때요</span>
               </p>
               {replacement.showSkeleton && <FeedSkeleton />}
               <FeedGrid

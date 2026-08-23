@@ -26,9 +26,9 @@ describe("웹 앱 매니페스트", () => {
     expect(maskable.length).toBeGreaterThan(0);
   });
 
-  it("테마·배경색이 앱 배경(#0a0a0a)과 같다", () => {
+  it("테마·배경색이 앱 배경(#E4E6EB)과 같다", () => {
     // 설치 스플래시 화면이 앱 첫 화면과 이어져 보이게
-    expect(m.theme_color).toBe("#0a0a0a");
-    expect(m.background_color).toBe("#0a0a0a");
+    expect(m.theme_color).toBe("#E4E6EB");
+    expect(m.background_color).toBe("#E4E6EB");
   });
 });

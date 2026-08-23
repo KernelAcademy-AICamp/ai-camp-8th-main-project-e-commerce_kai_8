@@ -1,7 +1,6 @@
 "use client";
 
-import { useRouter } from "next/navigation";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 
 import { createAccountFolder } from "@/features/feed/wishlist/data/account-wish-actions";
 import {
@@ -12,20 +11,27 @@ import {
   normalizeFolderName,
   summarizeFolders,
 } from "@/features/feed/wishlist/domain/wish-folders";
+import { useVisibleWishes } from "@/features/feed/wishlist/presentation/view-model/use-visible-wishes";
 import { useWishlist } from "@/features/feed/wishlist/presentation/view-model/use-wishlist";
 
-/** 보관함 첫 화면(폴더 그리드)의 상태·동작 */
+/**
+ * 보관함 첫 화면(폴더 그리드)의 상태·동작.
+ *
+ * ⚠️ **여기서 화면을 옮기지 않는다.** 비회원을 로그인으로 보내는 일은 보관함
+ * 화면의 몫이다. 이 훅은 프로필의 활동 요약 3칸도 같이 쓰는데, 훅이 이동을
+ * 들고 있으면 **프로필에서 로그아웃하는 순간 통계 칸이 화면을 로그인으로
+ * 끌고 간다** — 실제로 그랬다(2026-08-22). `access`를 그대로 내보내고 판단은
+ * 화면이 한다.
+ */
 export function useWishlistFolders() {
-  const router = useRouter();
   const { entries, folders, notice, access } = useWishlist();
 
-  useEffect(() => {
-    if (access === "out") router.replace("/login");
-  }, [access, router]);
-
+  // 타일 개수·썸네일은 화면용이다 — 타일에 적힌 수와 폴더를 열었을 때 보이는
+  // 장 수가 어긋나면 안 된다 (설계 "개수 계약").
+  const visible = useVisibleWishes(entries);
   const summaries = useMemo(
-    () => summarizeFolders(folders, entries),
-    [folders, entries],
+    () => summarizeFolders(folders, visible.entries),
+    [folders, visible.entries],
   );
 
   // + 타일의 인라인 입력
@@ -72,7 +78,9 @@ export function useWishlistFolders() {
     access,
     notice,
     summaries,
-    totalCount: entries.length,
+    totalCount: visible.entries.length,
+    /** 보이는 찜의 저장 시각들 — 활동 요약이 "이번 주 발견"을 셀 때 쓴다 */
+    savedAtMs: visible.entries.map((entry) => entry.addedAtMs),
     creating,
     startCreating,
     cancelCreating,

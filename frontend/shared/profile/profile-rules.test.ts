@@ -1,16 +1,12 @@
 import { describe, expect, it } from "vitest";
 
 import {
-  type Anchor,
   applyAction,
   applyImpression,
   DECAY_PER_SESSION,
-  deriveDominantGender,
   emptyLongTerm,
   emptySession,
   foldSessionIntoLongTerm,
-  GENDER_MIN_ANCHORS,
-  GENDER_SHARE_THRESHOLD,
   IMPRESSION_COUNT_MAX,
   LONG_ANCHOR_MAX,
   mergeLongTerm,
@@ -18,7 +14,6 @@ import {
   SESSION_ANCHOR_MAX,
   SIGNAL_WEIGHTS,
   STYLE_BOOST_IMPRESSIONS,
-  toAnchorGender,
 } from "./profile-rules";
 
 const NOW = 1_000_000;
@@ -180,166 +175,5 @@ describe("mergeLongTerm (멀티탭 병합)", () => {
     const merged = mergeLongTerm(a, b);
     expect(merged.anchors).toHaveLength(3);
     expect(merged.anchors.find((x) => x.goodsNo === 1)?.weight).toBe(5);
-  });
-});
-
-describe("앵커 성별 기록", () => {
-  it("성별 있는 액션으로 새 앵커가 성별을 갖는다", () => {
-    let session = emptySession("s1");
-    session = applyAction(session, {
-      type: "tap",
-      goodsNo: 1,
-      nowMs: NOW,
-      gender: "남성",
-    });
-    expect(session.anchors.find((a) => a.goodsNo === 1)?.gender).toBe("남성");
-  });
-
-  it("성별 없는 후속 액션이 기존 성별을 지우지 않는다", () => {
-    let session = emptySession("s1");
-    session = applyAction(session, {
-      type: "tap",
-      goodsNo: 1,
-      nowMs: NOW,
-      gender: "여성",
-    });
-    session = applyAction(session, { type: "wish", goodsNo: 1, nowMs: NOW });
-    expect(session.anchors.find((a) => a.goodsNo === 1)?.gender).toBe("여성");
-  });
-
-  it("성별 있는 후속 액션은 기존 성별을 갱신한다", () => {
-    let session = emptySession("s1");
-    session = applyAction(session, {
-      type: "tap",
-      goodsNo: 1,
-      nowMs: NOW,
-      gender: "여성",
-    });
-    session = applyAction(session, {
-      type: "wish",
-      goodsNo: 1,
-      nowMs: NOW,
-      gender: "남성",
-    });
-    expect(session.anchors.find((a) => a.goodsNo === 1)?.gender).toBe("남성");
-  });
-
-  it("foldSessionIntoLongTerm이 성별을 잃지 않고 통과시킨다", () => {
-    let longTerm = emptyLongTerm();
-    let session = emptySession("s1");
-    session = applyAction(session, {
-      type: "wish",
-      goodsNo: 1,
-      nowMs: NOW,
-      gender: "남성",
-    });
-    longTerm = foldSessionIntoLongTerm(longTerm, session, NOW);
-    expect(longTerm.anchors.find((a) => a.goodsNo === 1)?.gender).toBe("남성");
-  });
-
-  it("mergeLongTerm이 한쪽에만 성별이 있으면 있는 쪽 값을 취한다", () => {
-    const a = emptyLongTerm();
-    a.anchors = [{ goodsNo: 1, weight: 1, lastMs: NOW }];
-    const b = emptyLongTerm();
-    b.anchors = [{ goodsNo: 1, weight: 5, lastMs: NOW + 1, gender: "여성" }];
-    const merged = mergeLongTerm(a, b);
-    expect(merged.anchors.find((x) => x.goodsNo === 1)?.gender).toBe("여성");
-  });
-});
-
-describe("deriveDominantGender (우세 성별 판정)", () => {
-  const anchor = (
-    goodsNo: number,
-    weight: number,
-    gender?: Anchor["gender"],
-  ): Anchor => ({ goodsNo, weight, lastMs: NOW, gender });
-
-  it("남성 앵커 3개(가중 동일) → 남성", () => {
-    const anchors = [anchor(1, 1, "남성"), anchor(2, 1, "남성"), anchor(3, 1, "남성")];
-    expect(deriveDominantGender(anchors)).toBe("남성");
-  });
-
-  it("남성 2개뿐 → null (최소 개수 미달)", () => {
-    const anchors = [anchor(1, 1, "남성"), anchor(2, 1, "남성")];
-    expect(deriveDominantGender(anchors)).toBeNull();
-  });
-
-  it("남성 3 + 여성 2 (가중 동일) → 남성 비율 60% → 남성 (경계 이상 포함)", () => {
-    const anchors = [
-      anchor(1, 1, "남성"),
-      anchor(2, 1, "남성"),
-      anchor(3, 1, "남성"),
-      anchor(4, 1, "여성"),
-      anchor(5, 1, "여성"),
-    ];
-    expect(deriveDominantGender(anchors)).toBe("남성");
-  });
-
-  it("남성 3 + 여성 3 → 50% → null", () => {
-    const anchors = [
-      anchor(1, 1, "남성"),
-      anchor(2, 1, "남성"),
-      anchor(3, 1, "남성"),
-      anchor(4, 1, "여성"),
-      anchor(5, 1, "여성"),
-      anchor(6, 1, "여성"),
-    ];
-    expect(deriveDominantGender(anchors)).toBeNull();
-  });
-
-  it("가중치가 지배: 남성 3개(w=1) + 여성 3개(w=3) → 여성 75% → 여성", () => {
-    const anchors = [
-      anchor(1, 1, "남성"),
-      anchor(2, 1, "남성"),
-      anchor(3, 1, "남성"),
-      anchor(4, 3, "여성"),
-      anchor(5, 3, "여성"),
-      anchor(6, 3, "여성"),
-    ];
-    expect(deriveDominantGender(anchors)).toBe("여성");
-  });
-
-  it("공용·성별 미상만 있으면 null", () => {
-    const anchors = [anchor(1, 1, "공용"), anchor(2, 1), anchor(3, 1, "공용")];
-    expect(deriveDominantGender(anchors)).toBeNull();
-  });
-
-  it("빈 배열 → null", () => {
-    expect(deriveDominantGender([])).toBeNull();
-  });
-
-  it("GENDER_MIN_ANCHORS·GENDER_SHARE_THRESHOLD는 문서화된 시작값이다", () => {
-    expect(GENDER_MIN_ANCHORS).toBe(3);
-    expect(GENDER_SHARE_THRESHOLD).toBe(0.6);
-  });
-});
-
-describe("toAnchorGender (상품 성별 → 앵커 성별 변환)", () => {
-  it("'남성'은 그대로 남성이다", () => {
-    expect(toAnchorGender("남성")).toBe("남성");
-  });
-
-  it("'여성'은 그대로 여성이다", () => {
-    expect(toAnchorGender("여성")).toBe("여성");
-  });
-
-  it("'공용'은 그대로 공용이다", () => {
-    expect(toAnchorGender("공용")).toBe("공용");
-  });
-
-  it("빈 문자열은 미상(undefined)이다 — 카탈로그의 빈 문자열 성별 1,911건 대응", () => {
-    expect(toAnchorGender("")).toBeUndefined();
-  });
-
-  it("null은 미상이다", () => {
-    expect(toAnchorGender(null)).toBeUndefined();
-  });
-
-  it("undefined는 미상이다", () => {
-    expect(toAnchorGender(undefined)).toBeUndefined();
-  });
-
-  it("정의된 값 외의 문자열(이상값)은 미상이다", () => {
-    expect(toAnchorGender("아동")).toBeUndefined();
   });
 });

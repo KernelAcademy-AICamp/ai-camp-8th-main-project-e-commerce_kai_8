@@ -4,7 +4,10 @@
 // 자동으로 지워지는 쪽이 안전하다 — 빠뜨리면 앞사람의 취향이 새지만,
 // 반대로 실수하면 편의가 줄 뿐이다.
 
-const PREFIX = "atee-";
+// ⚠️ **두 가지 이름꼴이 섞여 있다.** 대부분 `atee-`지만 뒤에 붙은 몇몇은 `atee.`다.
+// 하이픈만 보면 `atee.recent-products` 같은 것이 그물에 걸리지 않아, 로그아웃해도
+// 앞사람이 본 상품이 다음 사람에게 그대로 보인다 — 실제로 그랬다(2026-08-22).
+const PREFIXES = ["atee-", "atee."];
 
 /** 기기에 매인 것 — 신원이 바뀌어도 유지한다 (설계 §2: 기기 ID를 회전하지 않는다) */
 const KEEP_EXACT = new Set([
@@ -20,6 +23,11 @@ const KEEP_EXACT = new Set([
   // 계정으로 옮길 찜 보관함. 정리 **직전에** 여기로 빼두므로, 같이 지우면
   // 옮길 것이 사라진다 (shared/identity/wish-carry.ts).
   "atee-wishlist-migrate",
+  // 계정으로 옮길 성별 보관함. 찜과 같은 이유다 — 정리 직전에 빼두므로 같이 지우면
+  // 비회원이 고른 성별이 사라져 로그인 직후 다시 묻게 된다
+  // (shared/identity/gender-carry.ts). **설정 본체(atee-gender)는 여기 넣지 않는다**
+  // — 앞 사용자의 성별이 다음 사용자에게 새면 안 되므로 지워지는 것이 맞다.
+  "atee-gender-migrate",
 ]);
 
 /** 버전이 붙는 키들 */
@@ -32,8 +40,27 @@ const KEEP_PREFIX = [
 export function identityScopedKeys(allKeys: readonly string[]): string[] {
   return allKeys.filter(
     (key) =>
-      key.startsWith(PREFIX) &&
+      PREFIXES.some((prefix) => key.startsWith(prefix)) &&
       !KEEP_EXACT.has(key) &&
       !KEEP_PREFIX.some((prefix) => key.startsWith(prefix)),
   );
+}
+
+/**
+ * 개인화 데이터 초기화에서 지울 키.
+ *
+ * **신원 전환과 같은 범위다.** 초기화의 약속은 "처음 이 서비스를 접하는 사람처럼"
+ * 이므로(2026-08-22 제품 책임자), 다음 사람에게 새면 안 되는 것과 정확히 같은
+ * 목록이다 — 취향 프로필·앵커 제목·피드 씨앗·최근 본 제품에 더해 **성별 설정과
+ * 기기 찜까지** 걷는다.
+ *
+ * 남는 것 둘: **삭제 재시도 표식**(지우면 삭제 약속이 깨진다)과 **기기 ID·미전송
+ * 큐**다. 뒤의 둘은 신원 전환에서는 남아야 하지만 초기화에서는 지워야 하므로,
+ * 부르는 쪽이 따로 지운다(`clearSignals`).
+ *
+ * ⚠️ 계정에 담긴 찜과 계정에 저장된 성별은 서버에 있어 여기서 지워지지 않는다.
+ * 그것까지 지우려면 회원 탈퇴다 — 방침 문구도 그렇게 적혀 있다.
+ */
+export function personalizationScopedKeys(allKeys: readonly string[]): string[] {
+  return identityScopedKeys(allKeys);
 }

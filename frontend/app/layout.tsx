@@ -1,8 +1,12 @@
+// Pretendard — 시안이 지정한 글꼴. 92개 조각으로 나뉜 판이라 브라우저가
+// 실제로 쓰는 글자 범위만 내려받는다(한 조각 ~30KB). 통짜 판은 2MB다.
+import "pretendard/dist/web/variable/pretendardvariable-dynamic-subset.css";
 import "./globals.css";
 
 import type { Metadata, Viewport } from "next";
 
 import { IdentityGuard } from "@/features/auth/presentation/components/identity-guard";
+import { GenderAccountGuard } from "@/shared/gender/gender-account-guard";
 import { NavMarkGuard } from "@/shared/history/nav-mark-guard";
 import { AccountProfileGuard } from "@/shared/profile/account-profile-guard";
 
@@ -14,7 +18,9 @@ export const metadata: Metadata = {
   appleWebApp: {
     capable: true,
     title: "aTee",
-    statusBarStyle: "black-translucent",
+    // 밝은 회색 앱이라 상태바 글자는 어두워야 한다. black-translucent는
+    // 글자를 희게 만들어 밝은 바탕에서 보이지 않는다.
+    statusBarStyle: "default",
   },
   icons: {
     apple: "/icons/apple-touch-icon.png",
@@ -24,18 +30,31 @@ export const metadata: Metadata = {
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
-  // 설치 전에도 브라우저 상단색이 앱 배경(#0a0a0a)과 어울리게
-  themeColor: "#0a0a0a",
+  // 설치 전에도 브라우저 상단색이 앱 배경(#E4E6EB)과 어울리게
+  themeColor: "#E4E6EB",
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+/**
+ * `overlay`는 지금 화면 **위에 겹쳐** 띄우는 자리다(`app/@overlay`). 앱 안에서
+ * `/my`·`/login`으로 넘어올 때만 채워지고, 주소로 직접 들어오면 비어 있다 —
+ * 그때는 `children` 쪽이 단독 화면을 그린다.
+ */
+export default function RootLayout({
+  children,
+  overlay,
+}: {
+  children: React.ReactNode;
+  overlay: React.ReactNode;
+}) {
   return (
     <html lang="ko">
       <body>
         <NavMarkGuard />
         <IdentityGuard />
         <AccountProfileGuard />
+        <GenderAccountGuard />
         {children}
+        {overlay}
       </body>
     </html>
   );

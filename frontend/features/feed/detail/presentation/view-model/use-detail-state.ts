@@ -71,7 +71,7 @@ export function useDetailState(owner: string) {
       window.history.pushState(withDetailMark(window.history.state, mark), "");
       // 상세 열기 = 탭 신호 — 모든 진입 경로(피드·상세 하단 탐색 체인)의 단일 지점.
       // 되살아난 겹은 여기를 지나지 않는다 — 새로 본 것이 아니다.
-      logAction("tap", product.goodsNo, { gender: product.gender });
+      logAction("tap", product.goodsNo);
     },
     [owner],
   );

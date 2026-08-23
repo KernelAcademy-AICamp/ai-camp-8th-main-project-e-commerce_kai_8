@@ -57,6 +57,15 @@ CARD_RULE = {   # key -> (min_buy, min_review, order)
     "women_online_new":  (0, 0, NEW_ARRIVAL_ORDER),
 }
 
+# 성별마다 몇 장씩 뽑을지. key -> 장수. 없으면 TOP_N 상위컷(성별 안 봄).
+#
+# 화면은 **내 성별 것만** 남기고 공용까지 뺀다(curation-gender.ts, 사람 결정 2026-08-21).
+# 그런데 뽑을 때는 성별을 안 보고 평점 상위만 자르니, 한쪽으로 쏠린 큐레이션은 거른 뒤
+# 3장(MIN_SLIDES) 미달로 **목록에서 통째로 사라진다.** 링거가 그랬다 — 공용4·남성2·여성3
+# 이라 남성에게 안 보였다. 상위컷을 21장까지 늘려도 공용이 앞을 먹어 여성은 3장에서
+# 멈춘다(실측 2026-08-23). 그래서 개수가 아니라 **성별마다** 뽑는다.
+GENDER_QUOTA = {"ringer": 4}   # 공용4·남성4·여성4 = 12장
+
 # 반소매 티셔츠 = 일반(001001) + 스포츠(017016005). 긴팔·후드·나시는 뺀다.
 BASE_SCOPE = "base_cat in ('001001','017016005')"
 
@@ -271,7 +280,10 @@ SEED = [
      "title": "목이랑 소매 끝만 색이 다른 링거",
      "lede": "링거가 올여름 다시 올라왔다. 몸판은 단색인데 목 밴드와 소매 끝단만 다른 색으로 둘러진 것. "
              "래글런은 소매 재단 얘기라 기준이 달라서 뺐다.",
-     "rules": {"kw": ["링거"]},
+     # lede가 "래글런은 뺐다"고 적어 두었는데 규칙에는 그 제외가 없었다. 상위 9장에는
+     # 우연히 안 걸렸지만 성별 쿼터로 넓히자 래글런이 딸려 들어왔다(2026-08-23).
+     # 래글런은 baseball_raglan 이 따로 다룬다.
+     "rules": {"kw": ["링거"], "not_kw": ["나그랑", "래글런", "라글란", "라글렌"]},
      "cond_labels": ["링거"]},
 
     {"key": "stripe",
@@ -681,7 +693,7 @@ NOTES = {
 
 
 CARD_COLS = ("goods_no, title, brand_name, brand, price_final, thumbnail, "
-             "review_count, review_score, purchase_total, tags, similar_no")
+             "review_count, review_score, purchase_total, tags, similar_no, gender")
 
 
 def connect():
@@ -718,7 +730,7 @@ def strip_variant(title):
     return re.sub(r"\s+", " ", t).strip().lower()
 
 
-def dedupe_variants(rows, limit, appear=None):
+def dedupe_variants(rows, limit, appear=None, per_gender=None):
     """같은 옷 색상만 다른 것(similar_no 공유)은 앞선 하나만 남기고 다음 순위로 채운다.
 
     similar_no = 0 은 묶음이 없다는 뜻이라, 그때는 브랜드 + 색상 표기를 지운
@@ -730,17 +742,20 @@ def dedupe_variants(rows, limit, appear=None):
     맞다. 다만 리뷰 조건만 있는 큐레이션("안 덥다", "정사이즈")은 생김새를 안 봐서
     좋은 상품을 전부 빨아들인다. 그래서 상한만 둔다.
     """
-    seen, out = set(), []
+    seen, out, per = set(), [], {}
     for r in rows:
+        if per_gender is not None and per.get(r[11] or "", 0) >= per_gender:
+            continue
         ks = {("t", r[2] or r[3], strip_variant(r[1]))}
         if r[10]:
             ks.add(("s", r[10]))
         if ks & seen or (appear is not None and appear.get(r[0], 0) >= MAX_APPEAR):
             continue
         seen |= ks; out.append(r)
+        per[r[11] or ""] = per.get(r[11] or "", 0) + 1
         if appear is not None:
             appear[r[0]] = appear.get(r[0], 0) + 1
-        if len(out) == limit:
+        if per_gender is None and len(out) == limit:
             break
     return out
 
@@ -758,11 +773,15 @@ def build(cur, curations):
         cur.execute(f"""select {CARD_COLS} from c_goods where {BASE_SCOPE} and {where}
                         and purchase_total >= {min_buy} and review_count >= {min_rev}
                         order by {order} limit {TOP_N * 5}""", params)
-        rows = dedupe_variants(cur.fetchall(), TOP_N, appear)
+        rows = dedupe_variants(cur.fetchall(), TOP_N, appear,
+                               per_gender=GENDER_QUOTA.get(c["key"]))
+        # g(성별)는 화면에서 "내 성별 것만" 거르는 데 쓴다
+        # (계획 2026-08-21-curation-gender-filter). 빈 값은 안 싣는다 — 미상은 안 거른다.
         items = [{"t": r[1], "b": r[2] or r[3], "p": r[4], "img": r[5],
                   "rc": r[6] or 0, "rs": r[7], "buy": r[8] or 0,
                   "u": f"https://www.musinsa.com/products/{r[0]}",
                   "tg": [t for t in (r[9] or []) if 1 < len(t) <= 7][:3],
+                  **({"g": r[11]} if r[11] else {}),
                   "note": NOTES.get(str(r[0]), "")} for r in rows]
         # 목록 카드는 첫 상품 이미지를 쓴다. 앞선 큐레이션이 이미 쓴 상품이면 뺀다
         # (9개를 채우려고 다음 순위를 끌어오지 않는다 — 사람 결정 2026-08-20).
@@ -935,7 +954,7 @@ def demo():
     """자체 점검: 규칙이 의도한 SQL로 번역되는지."""
     # 색만 다른 옷은 similar_no가 0이어도 한 옷으로 묶인다 (r = CARD_COLS 순서)
     def row(no, title, brand, sim=0):
-        return (no, title, brand, brand, 0, "", 0, 0, 0, [], sim)
+        return (no, title, brand, brand, 0, "", 0, 0, 0, [], sim, "남성")
     picked = dedupe_variants([row(1, "포켓 티셔츠 (그레이)", "노이어"),
                               row(2, "포켓 티셔츠 (블루)", "노이어"),
                               row(3, "포켓 티셔츠 [블랙]", "다른브랜드"),

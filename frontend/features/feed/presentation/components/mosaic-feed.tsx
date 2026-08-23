@@ -4,6 +4,7 @@ import { useEffect, useRef } from "react";
 
 import { DetailLayers } from "@/features/feed/detail/presentation/components/detail-layers";
 import { useDetailState } from "@/features/feed/detail/presentation/view-model/use-detail-state";
+import { FeedError } from "@/features/feed/presentation/components/feed-error";
 import { FeedGrid } from "@/features/feed/presentation/components/feed-grid";
 import { FeedSkeleton } from "@/features/feed/presentation/components/feed-skeleton";
 import { useFeedViewModel } from "@/features/feed/presentation/view-model/use-feed-view-model";
@@ -45,7 +46,16 @@ export function MosaicFeed({ active = true }: { active?: boolean }) {
   // 훅을 새로 만들지 않고 이것을 쓰는 이유: 개인화·콜드스타트 폴백·실패 폴백·
   // 제외 목록·무한 스크롤이 이미 여기 다 있고, 사용자가 보던 피드가 그대로
   // 이어져 대기 시간도 없다.
-  const { columns, sentinelRef, onImpress, showSkeleton } = useFeedViewModel({
+  const {
+    columns,
+    sentinelRef,
+    onImpress,
+    showSkeleton,
+    loadingMore,
+    lastLoadMs,
+    failed,
+    retry,
+  } = useFeedViewModel({
     paused: detailOpen || (searching && !showReplacement),
     // 같은 훅이 메인 피드와 대체 피드 양쪽을 맡는다(둘은 동시에 렌더되지 않는다).
     // 지금 어느 자리인지만 알려 주면 노출 기록이 갈린다 — 훅을 복제하면 두 벌이 갈린다.
@@ -69,17 +79,24 @@ export function MosaicFeed({ active = true }: { active?: boolean }) {
     search.submittedQuery,
     rootRef,
   );
-  const { collapsed, expand, onInputFocus, onInputBlur } = useSearchCollapse(
-    suppressUntilRef,
-    rootRef,
-  );
+  const { collapsed, pinned, expand, dismiss, onInputFocus, onInputBlur } =
+    useSearchCollapse(suppressUntilRef, rootRef);
+  // 검색창을 손으로 펼친 동안은 화면 맨 아래 흐림 띠를 걷는다 (시안 `.search-open`).
+  // 띠는 홈 껍데기가 그리므로 문서 뿌리에 표시를 남겨 CSS가 읽게 한다.
+  useEffect(() => {
+    const root = document.documentElement;
+    root.classList.toggle("search-open", pinned);
+    return () => {
+      root.classList.remove("search-open");
+    };
+  }, [pinned]);
   // 키보드가 하단 고정 검색창을 가리지 않게 그 높이만큼 띄운다
   const keyboardInset = useKeyboardInset();
   // 지난번 서버 삭제가 실패했다면 조용히 다시 시도한다 (방침 O-32 삭제 계약)
   useRetryPendingForget();
 
   return (
-    <div ref={rootRef} className="mx-auto max-w-md px-2 pt-2 pb-24">
+    <div ref={rootRef} className="mx-auto max-w-md px-3 pt-4 pb-[130px]">
       {search.submittedQuery != null ? (
         <SearchResults
           query={search.submittedQuery}
@@ -98,7 +115,8 @@ export function MosaicFeed({ active = true }: { active?: boolean }) {
         />
       ) : (
         <>
-          {showSkeleton && <FeedSkeleton />}
+          {showSkeleton && <FeedSkeleton fillMs={lastLoadMs} />}
+          {failed && <FeedError onRetry={retry} />}
           <FeedGrid
             columns={columns}
             sentinelRef={sentinelRef}
@@ -107,8 +125,34 @@ export function MosaicFeed({ active = true }: { active?: boolean }) {
               open(card.product, originRect);
             }}
           />
+          {/*
+            다음 배치를 받는 동안 피드 끝에 뼈대를 이어 붙인다 — 시안은 배치마다
+            뼈대를 놓고 물이 다 차오르면 그 자리에서 실제 카드로 바뀐다.
+            첫 로딩(showSkeleton)일 때는 위에서 이미 화면을 채우므로 겹치지 않게 뺀다.
+          */}
+          {!showSkeleton && loadingMore && (
+            <div className="mt-3.5">
+              <FeedSkeleton perColumn={2} fillMs={lastLoadMs} />
+            </div>
+          )}
         </>
       )}
+
+      {/*
+        어두운 막 — 시안 `.dim`. **원버튼을 손으로 눌러 펼쳤을 때만** 깔린다.
+        맨 위라서 펼쳐져 있는 것은 평상시 화면이므로 어둡게 하지 않는다.
+        검색 dock(z-30)보다 아래에 두어 dock은 그대로 조작할 수 있고,
+        피드를 덮으므로 그 동안 화면이 멈춘다. 탭하면 걷힌다.
+      */}
+      <button
+        type="button"
+        aria-label="검색 닫기"
+        tabIndex={pinned ? undefined : -1}
+        onClick={dismiss}
+        className={`fixed inset-0 z-[25] bg-dim-search transition-opacity duration-[280ms] ${
+          pinned ? "opacity-100" : "pointer-events-none opacity-0"
+        }`}
+      />
 
       <FloatingSearch
         input={search.input}

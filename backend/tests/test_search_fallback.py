@@ -3,10 +3,17 @@
 이 케이스들은 원래 프론트엔드 vitest(`hangul-keyboard.test.ts`)에 있었다. 로직을
 서버로 옮기면서 함께 옮겼다 — 구현이 한 벌이면 테스트도 한 벌이어야 한다.
 
-이 파일은 **카탈로그가 실린 실 DB**를 상대로 검색 경로 전체를 확인한다. CI에는
+이 파일은 **카탈로그가 실린 실 DB**를 상대로 검색 경로 전체를 확인한다. PR CI에는
 그런 DB가 없어 통째로 건너뛴다. 자판·오타 규칙을 고칠 때는 손으로 돌린다:
 
   SEARCH_TEST_DSN="$SUPABASE_DB_URL" venv/bin/python -m pytest tests/test_search_fallback.py -v
+
+**하루 1회 예약 실행이 이 파일을 운영 카탈로그로 돌린다**
+(`.github/workflows/search-drift.yml`, 2026-08-22). 여기서 잡는 것의 상당수는
+PR과 무관한 **운영 데이터 낡음**이라 PR 게이트로는 못 잡기 때문이다 — 재수집 뒤
+파생 표를 다시 안 만들면 아무도 코드를 안 고쳐도 깨진다. 그래도 **배포 전에
+직접 돌리는 것을 대신하지는 않는다**: 성별 작업에서 이 파일을 크게 고쳐 놓고
+배포 뒤에야 처음 돌려 15건 실패를 봤다(docs/plans/2026-08-22-search-test-drift.md).
 
 CI가 검증하는 몫은 `test_search_functions.py`가 맡는다 — 카탈로그가 필요 없는
 순수 함수(자판 상태기계·자모 분해·LIKE 이스케이프)를 빈 Postgres에 올려 돌린다.
@@ -146,7 +153,7 @@ def test_g6_query_that_broke_stays_at_zero(cur):
     이것까지 뚫리면 그건 새로운 회귀다.
     """
     for q in ("asdfasdf", "12345", "흐으으으음"):
-        cur.execute("select count(*) from c_search_page_v2(%s, null, null, 20)", (q,))
+        cur.execute("select count(*) from c_search_page_v2(%s, null, null, 20, null, null, '남성')", (q,))
         assert cur.fetchone()[0] == 0, f"{q}: 뜻 없는 입력은 0건이어야 한다"
 
 
@@ -161,7 +168,7 @@ def test_g6_query_that_broke_stays_at_zero(cur):
     ],
 )
 def test_search_reports_query_actually_used(cur, query, expected_used):
-    cur.execute("select query_used from c_search_page_v2(%s, null, null, 1)", (query,))
+    cur.execute("select query_used from c_search_page_v2(%s, null, null, 1, null, null, '남성')", (query,))
     row = cur.fetchone()
     assert row is not None, f"{query}: 결과가 있어야 한다"
     assert row[0] == expected_used
@@ -169,7 +176,7 @@ def test_search_reports_query_actually_used(cur, query, expected_used):
 
 def test_fallback_does_not_hijack_a_query_that_already_works(cur):
     """멀쩡한 질의를 교정하면 사용자 의도를 덮어쓴다 — 결과가 있으면 그게 의도다."""
-    cur.execute("select count(*) from c_search_page_v2('반팔', null, null, 30)")
+    cur.execute("select count(*) from c_search_page_v2('반팔', null, null, 30, null, null, '남성')")
     assert cur.fetchone()[0] == 30
     assert scalar(cur, "select c_search_correct_query(%s)", "반팔") is None
 
@@ -189,22 +196,26 @@ def test_fallback_does_not_hijack_a_query_that_already_works(cur):
 @pytest.mark.parametrize("query", ["타일러", "밀로티", "클로에", "zj", "tla", "ekt"])
 def test_short_result_set_does_not_switch_query_on_next_page(cur, query):
     cur.execute(
-        "select score, goods_no from c_search_page_v2(%s, null, null, 30)"
+        "select score, goods_no from c_search_page_v2(%s, null, null, 30, null, null, '남성')"
         " order by score, goods_no desc limit 1",
         (query,),
     )
     last = cur.fetchone()
     if last is not None:
         cur.execute(
-            "select count(*) from c_search_page_v2(%s, %s::real, %s::bigint, 30)",
+            "select count(*) from c_search_page_v2(%s, %s::real, %s::bigint, 30, null, null, '남성')",
             (query, last[0], last[1]),
         )
         assert cur.fetchone()[0] == 0, f"{query}: v2는 소진 뒤 0건이어야 한다"
 
-    cur.execute("select max(goods_no) from c_search_page(%s, null, 30)", (query,))
+    cur.execute("select max(goods_no) from c_search_page(%s, null, 30, '남성')", (query,))
     v1_last = cur.fetchone()[0]
-    assert v1_last is not None, f"{query}: v1 1페이지에 결과가 있어야 이 검사가 성립한다"
-    cur.execute("select count(*) from c_search_page(%s, %s, 30)", (query, v1_last))
+    if v1_last is None:
+        # 성별이 필수·등식이 된 뒤로는(2026-08-22) 이 질의가 남성 쪽에서 0건일 수 있다
+        # — `클로에`는 여성 브랜드다. 재려는 것은 "소진 뒤 질의가 바뀌지 않는가"이므로,
+        # 셀 것이 없으면 이 표본은 건너뛴다(조용히 통과시키지 않고 이유를 남긴다).
+        pytest.skip(f"{query}: 남성 쪽 결과가 0건이라 소진 검사를 세울 수 없다")
+    cur.execute("select count(*) from c_search_page(%s, %s, 30, '남성')", (query, v1_last))
     assert cur.fetchone()[0] == 0, f"{query}: v1도 소진 뒤 0건이어야 한다"
 
 
@@ -212,23 +223,23 @@ def test_short_result_set_does_not_switch_query_on_next_page(cur, query):
 # 서버는 첫 페이지에서만 폴백을 결정하므로 이것이 호출자의 계약이다.
 @pytest.mark.parametrize("query,resolved", [("skdlzl", "나이키"), ("아디다드", "아디다스")])
 def test_next_page_continues_with_query_used(cur, query, resolved):
-    cur.execute("select distinct query_used from c_search_page(%s, null, 30)", (query,))
+    cur.execute("select distinct query_used from c_search_page(%s, null, 30, '남성')", (query,))
     assert cur.fetchone()[0] == resolved, "v1도 실제로 쓴 질의를 알려줘야 한다"
 
-    cur.execute("select max(goods_no) from c_search_page(%s, null, 30)", (query,))
+    cur.execute("select max(goods_no) from c_search_page(%s, null, 30, '남성')", (query,))
     last = cur.fetchone()[0]
-    cur.execute("select count(*) from c_search_page(%s, %s, 30)", (resolved, last))
+    cur.execute("select count(*) from c_search_page(%s, %s, 30, '남성')", (resolved, last))
     assert cur.fetchone()[0] > 0, "계약대로 이으면 다음 페이지가 나온다"
 
     cur.execute(
-        "select count(*) from c_search_page(%s, %s, 30) x"
-        " where x.goods_no in (select goods_no from c_search_page(%s, null, 30))",
+        "select count(*) from c_search_page(%s, %s, 30, '남성') x"
+        " where x.goods_no in (select goods_no from c_search_page(%s, null, 30, '남성'))",
         (resolved, last, query),
     )
     assert cur.fetchone()[0] == 0, "1페이지와 겹치지 않는다"
 
     # 계약을 어겨 원문으로 이으면 0건이다 — 다른 질의 결과가 섞이지는 않는다
-    cur.execute("select count(*) from c_search_page(%s, %s, 30)", (query, last))
+    cur.execute("select count(*) from c_search_page(%s, %s, 30, '남성')", (query, last))
     assert cur.fetchone()[0] == 0
 
 
@@ -236,19 +247,19 @@ def test_next_page_continues_with_query_used(cur, query, resolved):
 def test_pagination_still_continues_where_it_should(cur, query):
     """결과가 많은 질의는 v1·v2 모두 그대로 이어져야 한다."""
     cur.execute(
-        "select score, goods_no from c_search_page_v2(%s, null, null, 30)"
+        "select score, goods_no from c_search_page_v2(%s, null, null, 30, null, null, '남성')"
         " order by score, goods_no desc limit 1",
         (query,),
     )
     last = cur.fetchone()
     cur.execute(
-        "select count(*) from c_search_page_v2(%s, %s::real, %s::bigint, 30)",
+        "select count(*) from c_search_page_v2(%s, %s::real, %s::bigint, 30, null, null, '남성')",
         (query, last[0], last[1]),
     )
     assert cur.fetchone()[0] > 0, f"{query}: v2 2페이지가 이어져야 한다"
 
-    cur.execute("select max(goods_no) from c_search_page(%s, null, 30)", (query,))
-    cur.execute("select count(*) from c_search_page(%s, %s, 30)", (query, cur.fetchone()[0]))
+    cur.execute("select max(goods_no) from c_search_page(%s, null, 30, '남성')", (query,))
+    cur.execute("select count(*) from c_search_page(%s, %s, 30, '남성')", (query, cur.fetchone()[0]))
     assert cur.fetchone()[0] > 0, f"{query}: v1 2페이지가 이어져야 한다"
 
 
@@ -297,7 +308,7 @@ def test_black_query_returns_only_black_labelled_products(cur):
     """핵심 기준. 바꾸기 전에는 상위 20개 중 3개가 검정이 아니었다."""
     cur.execute(
         "select count(*), count(*) filter (where g.color_codes && array['2'])"
-        " from c_search_page_v2('검정 반팔', null, null, 20) r"
+        " from c_search_page_v2('검정 반팔', null, null, 20, null, null, '남성') r"
         " join c_goods g using (goods_no)"
     )
     total, black = cur.fetchone()
@@ -307,7 +318,7 @@ def test_black_query_returns_only_black_labelled_products(cur):
 
 def test_color_only_query_works(cur):
     """`검정`처럼 색만 말하면 텍스트 조건 없이 색으로만 찾는다."""
-    cur.execute("select count(*) from c_search_page_v2('검정', null, null, 20)")
+    cur.execute("select count(*) from c_search_page_v2('검정', null, null, 20, null, null, '남성')")
     assert cur.fetchone()[0] == 20
 
 
@@ -444,13 +455,13 @@ def test_query_used_is_re_inputtable(cur):
     아니라 색 질의의 2페이지가 전부 0건이 됐다. 무한 스크롤 제품에서 치명적이다.
     """
     cur.execute(
-        "select score, goods_no, query_used from c_search_page_v2('검정 반팔', null, null, 5)"
+        "select score, goods_no, query_used from c_search_page_v2('검정 반팔', null, null, 5, null, null, '남성')"
         " order by score, goods_no desc limit 1"
     )
     score, goods_no, used = cur.fetchone()
     assert used == "검정 반팔"
     cur.execute(
-        "select count(*) from c_search_page_v2(%s, %s::real, %s::bigint, 5)",
+        "select count(*) from c_search_page_v2(%s, %s::real, %s::bigint, 5, null, null, '남성')",
         (used, score, goods_no),
     )
     assert cur.fetchone()[0] == 5, "돌려준 질의로 다음 페이지가 이어져야 한다"
@@ -471,7 +482,8 @@ def test_query_used_is_re_inputtable(cur):
 )
 def test_query_used_carries_every_branch_to_the_next_page(cur, query, size):
     cur.execute(
-        "select score, goods_no, query_used from c_search_page_v2(%s, null, null, %s)"
+        "select score, goods_no, query_used"
+        " from c_search_page_v2(%s, null, null, %s, null, null, '남성')"
         " order by score, goods_no desc limit 1",
         (query, size),
     )
@@ -479,13 +491,16 @@ def test_query_used_carries_every_branch_to_the_next_page(cur, query, size):
     assert row is not None, f"{query}: 1페이지에 결과가 있어야 한다"
     score, goods_no, used = row
     cur.execute(
-        "select count(*) from c_search_page_v2(%s, %s::real, %s::bigint, %s)",
+        "select count(*)"
+        " from c_search_page_v2(%s, %s::real, %s::bigint, %s, null, null, '남성')",
         (used, score, goods_no, size),
     )
     assert cur.fetchone()[0] > 0, f"{query}: 돌려준 질의로 다음 페이지가 이어져야 한다"
     cur.execute(
-        "select count(*) from c_search_page_v2(%s, %s::real, %s::bigint, %s) p2"
-        " where p2.goods_no in (select goods_no from c_search_page_v2(%s, null, null, %s))",
+        "select count(*)"
+        " from c_search_page_v2(%s, %s::real, %s::bigint, %s, null, null, '남성') p2"
+        " where p2.goods_no in ("
+        "   select goods_no from c_search_page_v2(%s, null, null, %s, null, null, '남성'))",
         (used, score, goods_no, size, query, size),
     )
     assert cur.fetchone()[0] == 0, f"{query}: 1페이지와 겹치면 안 된다"
@@ -494,11 +509,11 @@ def test_query_used_carries_every_branch_to_the_next_page(cur, query, size):
 @pytest.mark.parametrize("typed,restored", [("rjawjd qksvkf", "검정 반팔")])
 def test_color_is_parsed_after_keyboard_restore(cur, typed, restored):
     """색 해석을 후보마다 하지 않으면, 자판으로 친 같은 말이 색 조건을 못 탄다."""
-    cur.execute("select query_used from c_search_page_v2(%s, null, null, 1)", (typed,))
+    cur.execute("select query_used from c_search_page_v2(%s, null, null, 1, null, null, '남성')", (typed,))
     assert cur.fetchone()[0] == restored
     cur.execute(
         "select count(*), count(*) filter (where g.color_codes && array['2'])"
-        " from c_search_page_v2(%s, null, null, 20) r join c_goods g using (goods_no)",
+        " from c_search_page_v2(%s, null, null, 20, null, null, '남성') r join c_goods g using (goods_no)",
         (typed,),
     )
     total, black = cur.fetchone()
@@ -520,14 +535,29 @@ def test_multiword_brand_names_are_not_split_by_color(cur, query):
     assert cur.fetchone()[0] is None, f"{query}: 브랜드명 안의 색은 색이 아니다"
 
 
-@pytest.mark.parametrize("query", ["톰 브라운", "브라운 스튜디오", "하이퍼 데님", "블랙 퍼플"])
-def test_brand_queries_still_return_products(cur, query):
+# 성별은 **브랜드마다 상품이 있는 쪽**으로 준다. 성별이 필수·등식이 된 뒤로는
+# (2026-08-22) 브랜드가 한쪽 성별만 취급하면 반대 성별로는 0건이 정상이다 —
+# 예: `블랙 퍼플`은 상품 26개가 전부 여성이다. 여기서 재려는 것은 "색 추출이
+# 브랜드를 지우지 않는가"이지 성별이 아니므로, 성별 때문에 0건이 되지 않게 맞춘다.
+@pytest.mark.parametrize(
+    "query,gender",
+    [
+        ("톰 브라운", "남성"),
+        ("브라운 스튜디오", "남성"),
+        ("하이퍼 데님", "남성"),
+        ("블랙 퍼플", "여성"),
+    ],
+)
+def test_brand_queries_still_return_products(cur, query, gender):
     """색 추출로 브랜드가 사라지지 않는지. `하이퍼 데님`은 실제로 0건이 됐었다.
 
     조건어를 붙인 형태(`하이퍼 데님 반팔`)는 여기서 세지 않는다 — 그 브랜드
     상품 3개의 제목에 `반팔`이 없어서 0건인 것이 정상이고, 색과 무관하다.
     """
-    cur.execute("select count(*) from c_search_page_v2(%s, null, null, 20)", (query,))
+    cur.execute(
+        "select count(*) from c_search_page_v2(%s, null, null, 20, null, null, %s)",
+        (query, gender),
+    )
     assert cur.fetchone()[0] > 0
 
 
@@ -569,7 +599,7 @@ def test_price_and_color_conditions_are_never_violated(cur, query, pmin, pmax, c
         " count(*) filter (where %s::int is not null and g.price_final > %s::int),"
         " count(*) filter (where %s::int is not null and g.price_final < %s::int),"
         " count(*) filter (where %s::text[] is not null and not (g.color_codes && %s::text[]))"
-        " from c_search_page_v2(%s, null, null, 20) r join c_goods g using (goods_no)",
+        " from c_search_page_v2(%s, null, null, 20, null, null, '남성') r join c_goods g using (goods_no)",
         (pmax, pmax, pmin, pmin, code, code, query),
     )
     total, over, under, wrong_color = cur.fetchone()
@@ -594,7 +624,7 @@ def test_structured_conditions_survive_the_five_word_cap(cur):
 
 def test_keyboard_restore_works_when_the_query_also_has_a_price(cur):
     """자판 복원이 질의 전체를 요구하면 가격이 섞였을 때 통째로 막힌다."""
-    cur.execute("select query_used from c_search_page_v2(%s, null, null, 1)", ("rjawjd qksvkf 3만원 이하",))
+    cur.execute("select query_used from c_search_page_v2(%s, null, null, 1, null, null, '남성')", ("rjawjd qksvkf 3만원 이하",))
     assert cur.fetchone()[0] == "검정 반팔 3만원 이하"
 
 
@@ -614,35 +644,72 @@ def test_search_docs_price_matches_the_catalog(cur):
     )
 
 
-# ── 성별 하드 조건 (검색 성별 조건, 2026-08-20) ─────────────────────────────
+# ── 성별 하드 조건 — **설정이 이긴다** (설정 성별 토글, 2026-08-22) ────────────
 #
-# '남성전용'은 제목 커버리지가 0이라 텍스트로는 영원히 0건이다. 성별은 카탈로그
-# 라벨(c_search_docs.gender)로 거른다. 파서 규칙 자체는 test_search_functions.py가
-# CI에서 잡고, 여기서는 **검색 경로 전체**가 라벨을 지키는지 본다.
+# 2026-08-20에는 질의의 성별어가 조건을 만들었다('남성전용'은 남성만, '남성'은
+# 남성+공용). 사람이 설정에서 직접 고르게 되면서 그 규칙이 바뀌었다 — **인자로 받은
+# 성별이 질의의 성별어를 덮고, 공용도 빠진다.** 파서 규칙 자체는 여전히 살아 있지만
+# (test_search_functions.py가 본다) 검색 결과를 가르는 것은 인자다.
+
+
+@pytest.mark.parametrize("gender", ["남성", "여성"])
+@pytest.mark.parametrize(
+    "query",
+    [
+        "반팔",              # 성별어 없음
+        "남성전용",          # 질의가 '전용'을 말해도
+        "여성 반팔",         # 질의가 반대 성별을 말해도
+        "검정 남성 반팔",    # 다른 하드 조건과 함께여도
+    ],
+)
+def test_setting_gender_always_wins(cur, query, gender):
+    """상위 20개는 **인자로 준 성별 하나뿐**이어야 한다 — 공용도 미상도 없다."""
+    cur.execute(
+        "select count(*), array_agg(distinct gender)"
+        " from c_search_page_v2(%s, null, null, 20, null, null, %s)",
+        (query, gender),
+    )
+    total, genders = cur.fetchone()
+    assert total > 0, f"{query}/{gender}: 결과가 있어야 한다"
+    assert set(genders) == {gender}, (
+        f"{query}/{gender}: 설정 밖 성별이 섞였다 {set(genders) - {gender}}"
+    )
+
+
+def test_v1_also_obeys_the_setting(cur):
+    """기본 배포 경로인 v1도 같은 계약을 지킨다 — v2만 고치면 실제 검색은 안 걸린다."""
+    for gender in ("남성", "여성"):
+        cur.execute(
+            "select count(*), array_agg(distinct gender)"
+            " from c_search_page(%s, null, 20, %s)",
+            ("반팔", gender),
+        )
+        total, genders = cur.fetchone()
+        assert total > 0
+        assert set(genders) == {gender}
 
 
 @pytest.mark.parametrize(
-    "query,allowed",
+    "call",
     [
-        # '전용' 형태는 그 성별만
-        ("남성전용", {"남성"}),
-        ("여성전용", {"여성"}),
-        # 일반 성별어는 해당 성별 + 공용 (피드 #63과 같은 의미)
-        ("남성", {"남성", "공용"}),
-        ("여성 반팔", {"여성", "공용"}),
-        # 다른 하드 조건과 함께 걸려도 성별이 유지된다
-        ("검정 남성 반팔", {"남성", "공용"}),
+        # 인자를 아예 뺀 옛 요청 형태 — 함수 자체가 없다
+        "c_search_page_v2('반팔', null, null, 20)",
+        "c_search_page('반팔', null, 20)",
+        # 인자는 줬지만 허용 밖 값 — 널로 정화하면 필터가 조용히 꺼진다
+        "c_search_page_v2('반팔', null, null, 20, null, null, null)",
+        "c_search_page_v2('반팔', null, null, 20, null, null, '공용')",
+        "c_search_page('반팔', null, 20, '공용')",
     ],
 )
-def test_gender_condition_is_never_violated(cur, query, allowed):
-    """성별어가 든 질의의 상위 20개는 전부 허용 라벨 안이어야 한다."""
-    cur.execute(
-        "select count(*), array_agg(distinct gender) from c_search_page_v2(%s, null, null, 20)",
-        (query,),
-    )
-    total, genders = cur.fetchone()
-    assert total > 0, f"{query}: 결과가 있어야 한다 (바꾸기 전 '남성전용'은 0건이었다)"
-    assert set(genders) <= allowed, f"{query}: 허용 밖 성별 {set(genders) - allowed}"
+def test_missing_or_invalid_gender_is_rejected(cur, call):
+    """성별을 빼거나 허용 밖 값을 주면 거부된다.
+
+    ⚠️ 이 테스트는 한 번 **스스로를 망가뜨린 적이 있다** — 다른 호출부에 성별을 채우는
+    일괄 치환이 이 테스트의 호출까지 고쳐, "생략을 검사한다"면서 생략하지 않았다
+    (교차 리뷰가 잡았다). 여기 호출들은 **일부러 인자가 모자라거나 틀린 것**이다.
+    """
+    with pytest.raises(psycopg.errors.Error):
+        cur.execute(f"select count(*) from {call}")
 
 
 def test_conflicting_genders_drop_the_condition(cur):
@@ -650,7 +717,7 @@ def test_conflicting_genders_drop_the_condition(cur):
     cur.execute("select gender, strict from c_search_gender_parse(c_search_split('남성 여성'))")
     assert cur.fetchone() == (None, None)
     # 조건 없이도 검색 자체는 텍스트 매칭으로 돈다
-    cur.execute("select count(*) from c_search_page_v2('남성 여성', null, null, 20)")
+    cur.execute("select count(*) from c_search_page_v2('남성 여성', null, null, 20, null, null, '남성')")
     assert cur.fetchone()[0] > 0
 
 
@@ -746,25 +813,71 @@ def test_brand_is_split_out_of_the_text_query(cur, query, brand, rest):
 
 @pytest.mark.parametrize(
     "query,brand",
-    [("데상트 민소매", "데상트"), ("커버낫 후드", "커버낫"), ("트립션 반팔", "트립션")],
+    [("무신사 스탠다드 민소매", "무신사 스탠다드"),
+     ("아스트랄 프로젝션 후드", "아스트랄 프로젝션"),
+     ("트립션 반팔", "트립션")],
 )
 def test_brand_plus_attribute_no_longer_returns_zero(cur, query, brand):
-    """이 조각의 이유. 세 질의 모두 0건이었다 — 데상트에 민소매가 74개 있는데
-    제목에 `민소매`가 든 것이 0개라서다.
+    """이 조각의 이유. 세 질의 모두 0건이었다 — 브랜드에 그 카테고리 상품이
+    수십~수백 개 있는데 **제목에 그 낱말이 든 것이 0개**라서다.
 
     1단계에서는 파서만 만들고 이 테스트가 **여전히 0건임을 고정**했다.
     2단계에서 후보 자격을 바꿔 실제로 풀렸다.
+
+    ⚠️ **표본이 원래 `데상트 민소매`·`커버낫 후드`였다** (2026-08-22 교체).
+    카탈로그에서 사라져서가 아니다 — 그 조합은 지금도 74개·150개 있다.
+    성별 토글(#77)이 성별 조건을 등식으로 바꾸면서 **공용이 빠졌고**, 두 브랜드는
+    카탈로그가 거의 공용이라 남성 쪽 후보가 말랐다(데상트 민소매: 공용 72·남성 0).
+    아래 `test_unisex_exclusion_can_empty_a_brand`가 그 상태를 따로 고정한다.
+
+    표본을 고른 기준은 **남성 라벨 20건 이상 + 제목 커버리지 0**이다. 제목에 낱말이
+    있으면 "카테고리를 정본으로 쓴다"는 검사가 텍스트 매칭으로도 통과해 뜻을 잃는다.
+    실측(2026-08-22): 무신사 스탠다드+민소매 95개/제목 0, 아스트랄 프로젝션+후드
+    376개/제목 0.
     """
     cur.execute("select brand from c_search_brand_parse(c_search_split(%s))", (query,))
     assert cur.fetchone()[0] == brand
     cur.execute(
         "select count(*), count(*) filter (where g.brand_name = %s)"
-        " from c_search_page_v2(%s, null, null, 20) r join c_goods g using (goods_no)",
+        " from c_search_page_v2(%s, null, null, 20, null, null, '남성') r join c_goods g using (goods_no)",
         (brand, query),
     )
     total, same = cur.fetchone()
     assert total == 20, "하드 조건만으로도 후보 자격이 된다"
     assert same == total, "브랜드는 하드 조건이라 상위가 전부 그 브랜드여야 한다"
+
+
+def test_unisex_exclusion_can_empty_a_brand(cur):
+    """공용 제외의 **대가**를 고정한다 — 상품은 카탈로그에 있는데 검색엔 안 나온다.
+
+    성별 토글(#77, 20260822100000)이 성별 조건을 "해당 성별 또는 공용"에서
+    **등식**으로 바꿨다. 카탈로그의 18.2%(4.1만)가 공용이고 0.8%가 미상이라,
+    그 19%는 어느 성별 설정에서도 안 보인다. 사람이 알고 고른 대가다.
+
+    그 대가가 브랜드 단위로 얼마나 커질 수 있는지를 여기서 눈에 보이게 둔다.
+    `데상트 민소매`는 카탈로그에 74개 있지만 남성 설정에서는 **0건**이다 —
+    72개가 공용이라서다. 2026-08-22에 이것을 "카탈로그 드리프트"로 오진했다.
+    다시 오진하지 않도록 놀람이 아니라 **설명된 사실**로 만든다.
+
+    ⚠️ 단언은 특정 숫자가 아니라 **규칙**을 본다. 라벨이 교정되면
+    (docs/plans/2026-08-22-gender-label-correction.md) 숫자는 바뀌어도 규칙은
+    남는다 — 검색은 공용을 빼고 요청한 성별 라벨만 센다.
+    """
+    cur.execute(
+        "select count(*) filter (where gender = '공용'),"
+        "       count(*) filter (where gender = '남성')"
+        " from c_search_docs where brand = '데상트' and cat_rank = 3"
+    )
+    unisex, male = cur.fetchone()
+    assert unisex > 0, "공용 상품이 없으면 이 표본으로는 대가를 보일 수 없다"
+
+    cur.execute(
+        "select count(*) from c_search_page_v2("
+        "  '데상트 민소매', null, null, 20, null, null, '남성')"
+    )
+    assert cur.fetchone()[0] == min(male, 20), (
+        f"검색은 공용({unisex}개)을 빼고 남성 라벨({male}개)만 센다"
+    )
 
 
 # ── 카테고리 말을 하드 조건으로 (소프트 텍스트 4단계) ──────────────────────
@@ -777,12 +890,14 @@ def test_brand_plus_attribute_no_longer_returns_zero(cur, query, brand):
     "query,category",
     [("민소매", "001011"), ("반팔", "001001"), ("긴팔", "001010"),
      ("피케", "001003"), ("후드", "001004"),
-     ("데상트 민소매", "001011"), ("검정 민소매", "001011"), ("커버낫 후드", "001004")],
+     # 브랜드가 함께 걸린 형태. 표본 교체 사유는 위 브랜드 테스트의 주석 참고
+     ("무신사 스탠다드 민소매", "001011"), ("검정 민소매", "001011"),
+     ("아스트랄 프로젝션 후드", "001004")],
 )
 def test_category_word_becomes_a_hard_condition(cur, query, category):
     cur.execute(
         "select count(*), count(*) filter (where g.category = %s)"
-        " from c_search_page_v2(%s, null, null, 20) r join c_goods g using (goods_no)",
+        " from c_search_page_v2(%s, null, null, 20, null, null, '남성') r join c_goods g using (goods_no)",
         (category, query),
     )
     total, same = cur.fetchone()
@@ -796,7 +911,7 @@ def test_title_word_that_contradicts_the_category_does_not_surface(cur):
     카테고리를 정본으로 쓰면 이것들이 `반팔` 상위에 오지 않는다.
     """
     cur.execute(
-        "select count(*) from c_search_page_v2('반팔', null, null, 20) r"
+        "select count(*) from c_search_page_v2('반팔', null, null, 20, null, null, '남성') r"
         " join c_goods g using (goods_no) where g.category <> '001001'"
     )
     assert cur.fetchone()[0] == 0
@@ -809,7 +924,7 @@ def test_two_different_categories_are_left_alone(cur, query):
     """
     cur.execute("select ranks from c_search_category_parse(c_search_split(%s))", (query,))
     assert cur.fetchone()[0] is None
-    cur.execute("select count(*) from c_search_page_v2(%s, null, null, 20)", (query,))
+    cur.execute("select count(*) from c_search_page_v2(%s, null, null, 20, null, null, '남성')", (query,))
     assert cur.fetchone()[0] > 0, "카테고리를 포기해도 텍스트로 답이 나와야 한다"
 
 
@@ -846,7 +961,7 @@ def test_category_rank_mapping_is_one_to_one(cur):
 def test_known_violations_are_excluded(cur, query, exclude, violates):
     cur.execute(
         f"select count(*), count(*) filter (where {violates})"
-        " from c_search_page_v2(%s, null, null, 20, %s::text[]) r"
+        " from c_search_page_v2(%s, null, null, 20, %s::text[], null, '남성') r"
         " join c_search_docs d using (goods_no) join c_goods g using (goods_no)",
         (query, exclude),
     )
@@ -864,7 +979,7 @@ def test_unknown_values_are_kept(cur):
     """
     cur.execute(
         "select count(*), count(*) filter (where g.sheer is null or g.sheer = '')"
-        " from c_search_page_v2('비침 없는 흰 반팔티', null, null, 20, array['비침']) r"
+        " from c_search_page_v2('비침 없는 흰 반팔티', null, null, 20, array['비침'], null, '남성') r"
         " join c_goods g using (goods_no)"
     )
     total, unknown = cur.fetchone()
@@ -875,10 +990,10 @@ def test_unknown_values_are_kept(cur):
 def test_excluding_nothing_changes_nothing(cur):
     """부정을 주지 않으면 지금과 결과가 같아야 한다."""
     for q in ("검정 반팔", "커버낫 후드", "주황색이 들어간 티"):
-        cur.execute("select array_agg(goods_no order by goods_no) from c_search_page_v2(%s,null,null,20)", (q,))
+        cur.execute("select array_agg(goods_no order by goods_no) from c_search_page_v2(%s, null, null, 20, null, null, '남성')", (q,))
         a = cur.fetchone()[0]
         cur.execute(
-            "select array_agg(goods_no order by goods_no) from c_search_page_v2(%s,null,null,20,null::text[])",
+            "select array_agg(goods_no order by goods_no) from c_search_page_v2(%s, null, null, 20, null::text[], null, '남성')",
             (q,),
         )
         assert cur.fetchone()[0] == a, f"{q}: 부정 없이 부르면 결과가 같아야 한다"
@@ -890,10 +1005,10 @@ def test_negation_terms_are_a_closed_set(cur):
     표에 없는 값을 넘기면 아무것도 제외하지 않는다 — 조용히 무시하는 것이 맞다.
     새 축을 만들려면 표를 먼저 고쳐야 한다.
     """
-    cur.execute("select count(*) from c_search_page_v2('반팔', null, null, 20)")
+    cur.execute("select count(*) from c_search_page_v2('반팔', null, null, 20, null, null, '남성')")
     base = cur.fetchone()[0]
     cur.execute(
-        "select count(*) from c_search_page_v2('반팔', null, null, 20, array['지어낸축'])"
+        "select count(*) from c_search_page_v2('반팔', null, null, 20, array['지어낸축'], null, '남성')"
     )
     assert cur.fetchone()[0] == base
 

@@ -56,6 +56,13 @@ SYSTEM_CHANGELOG = {
 }
 
 TOP_N = 20  # 판정 대상 상위 개수 — P@20·nDCG@20의 K와 같게 맞춘다
+
+# 검색 RPC가 성별을 필수로 받는다(2026-08-22, 설정 성별 토글 계획 7단계).
+# **기본값을 두지 않는다.** 한 성별을 임의로 박아 두면, 전체 성별로 만든 옛 풀과
+# 말없이 비교하게 되어 개선인지 회귀인지 알 수 없다. 부를 때 명시하게 하고 산출물
+# 메타에 남긴다 — 성별이 다른 풀끼리는 비교하지 않는다.
+GENDER_CHOICES = ("남성", "여성")
+GENDER = None  # main()이 채운다
 SYSTEMS = {
     "baseline": {
         "name": "baseline-c_search_page",
@@ -69,12 +76,12 @@ SYSTEMS = {
             " (select string_agg(cg.name_ko, '/' order by cg.code) from c_color_groups cg"
             "   where cg.code = any(g.color_codes)) as color_label,"
             " g.category"
-            " from c_search_page(%s, null, %s) with ordinality as r("
+            " from c_search_page(%s, null, %s, %s) with ordinality as r("
             "   goods_no, title, brand_name, price_final, thumbnail, gender, gallery,"
             "   width, height, query_used, ord)"
             " join c_goods g using (goods_no) order by r.ord"
         ),
-        "args": lambda q, n: (q, n),
+        "args": lambda q, n: (q, n, GENDER),
     },
     # LLM 해석(부정·의도)을 얹은 경로. `a`와 같은 RPC를 부르되 질의 해석 결과를
     # 함께 넘긴다 — 해석은 라우트 핸들러가 주므로 이 시스템은 dev 서버가 떠 있어야 한다.
@@ -85,7 +92,7 @@ SYSTEMS = {
             " (select string_agg(cg.name_ko, '/' order by cg.code) from c_color_groups cg"
             "   where cg.code = any(g.color_codes)) as color_label,"
             " g.category"
-            " from c_search_page_v2(%s, null, null, %s, %s::text[], %s::text[])"
+            " from c_search_page_v2(%s, null, null, %s, %s::text[], %s::text[], %s)"
             " with ordinality as r("
             "   goods_no, title, brand_name, price_final, gender, gallery, thumbnail,"
             "   width, height, score, query_used, ord)"
@@ -107,12 +114,12 @@ SYSTEMS = {
             " (select string_agg(cg.name_ko, '/' order by cg.code) from c_color_groups cg"
             "   where cg.code = any(g.color_codes)) as color_label,"
             " g.category"
-            " from c_search_page_v2(%s, null, null, %s) with ordinality as r("
+            " from c_search_page_v2(%s, null, null, %s, null, null, %s) with ordinality as r("
             "   goods_no, title, brand_name, price_final, gender, gallery, thumbnail,"
             "   width, height, score, query_used, ord)"
             " join c_goods g using (goods_no) order by r.ord"
         ),
-        "args": lambda q, n: (q, n),
+        "args": lambda q, n: (q, n, GENDER),
     },
 }
 
@@ -210,7 +217,7 @@ def build(system: str) -> dict:  # noqa: C901
                     cur.execute(
                         spec["sql"],
                         (q, TOP_N, plan.get("exclude") or None,
-                         plan.get("exclude_colors") or None),
+                         plan.get("exclude_colors") or None, GENDER),
                     )
                 else:
                     cur.execute(spec["sql"], spec["args"](norm, TOP_N))
@@ -250,6 +257,9 @@ def build(system: str) -> dict:  # noqa: C901
             "purpose": f"후보 풀 — 시스템 '{spec['name']}'의 상위 {TOP_N}건. 판정 대상이다.",
             "generatedBy": "backend/eval/build_pool.py",
             "system": spec["name"],
+            # **어느 성별로 만든 풀인가.** 성별이 다르면 다른 모집단이라 지표를 나란히
+            # 놓으면 안 된다. 옛 풀에는 이 값이 없다 — 그것들은 전체 성별 기준이다.
+            "gender": GENDER,
             # 같은 이름이라도 구현이 바뀌면 다른 시스템이다. 언제 무엇이 바뀌었는지
             # 산출물 자체에 남긴다 — 주석은 산출물을 따라오지 않는다.
             "systemChangedAt": SYSTEM_CHANGELOG.get(system, []),
@@ -336,8 +346,18 @@ def main() -> int:
         help="커밋된 pool-baseline.json을 덮어쓴다 (아래 경고를 읽고 쓸 것)",
     )
     parser.add_argument("--system", default="baseline", choices=sorted(SYSTEMS))
+    parser.add_argument(
+        "--gender",
+        choices=GENDER_CHOICES,
+        help="검색 RPC에 실을 성별. 재생성할 때는 필수다 (성별이 다르면 다른 풀이다).",
+    )
     parser.add_argument("--out", default=None)
     args = parser.parse_args()
+
+    global GENDER
+    GENDER = args.gender
+    if not args.summary and GENDER is None:
+        parser.error("--gender를 지정해야 한다 (남성|여성). 성별이 다르면 다른 풀이다.")
 
     out_path = (ROOT / args.out) if args.out else OUT_PATH
     if args.summary:

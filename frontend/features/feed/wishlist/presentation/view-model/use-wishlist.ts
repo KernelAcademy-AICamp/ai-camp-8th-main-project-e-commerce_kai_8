@@ -95,7 +95,7 @@ export function useWishlist() {
       setAccountWishes(
         addWish(getAccountWishesSnapshot(), product, folderId, Date.now()),
       );
-      logAction("wish", product.goodsNo, { gender: product.gender });
+      logAction("wish", product.goodsNo);
       requestAccountWish(product.goodsNo, true, folderId);
     },
     [signedIn],
@@ -108,7 +108,7 @@ export function useWishlist() {
 
       setAccountNotice(null);
       setAccountWishes(removeWish(getAccountWishesSnapshot(), product.goodsNo));
-      logAction("unwish", product.goodsNo, { gender: product.gender });
+      logAction("unwish", product.goodsNo);
       requestAccountWish(product.goodsNo, false);
     },
     [signedIn],

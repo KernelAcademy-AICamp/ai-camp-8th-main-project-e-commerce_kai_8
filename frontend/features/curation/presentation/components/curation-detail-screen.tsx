@@ -30,10 +30,10 @@ export function CurationDetailScreen({
 
   return (
     /* 셸 헤더·탭바까지 덮는다 — 상품 상세와 같은 전체화면. 안 덮으면 로고줄과
-       BROWSE/PICKS 탭이 상세 위에 남아 "지금 어디인지"가 두 겹으로 보인다.
+       BROWSE/FOR YOU 탭이 상세 위에 남아 "지금 어디인지"가 두 겹으로 보인다.
        z는 상품 상세(z-50)보다 아래 — 여기서 상품을 열면 그게 위로 와야 한다. */
     <div
-      className="fixed inset-0 z-40 overflow-y-auto overscroll-contain bg-[#0a0a0a]"
+      className="fixed inset-0 z-40 overflow-y-auto overscroll-contain bg-app"
       style={{ "--accent": curation.accent ?? "#FAFAFA" } as CSSProperties}
     >
       <div className="mx-auto max-w-md pb-16">
@@ -44,23 +44,23 @@ export function CurationDetailScreen({
             type="button"
             aria-label="뒤로 가기"
             onClick={onBack}
-            className="flex h-10 w-10 cursor-pointer items-center justify-center rounded-full text-neutral-400"
+            className="flex h-10 w-10 cursor-pointer items-center justify-center rounded-full text-ink-soft"
           >
             <BackIcon />
           </button>
         </header>
-        <h2 className="px-4 text-base leading-tight font-semibold tracking-tight text-white">
+        <h2 className="px-4 text-base leading-tight font-semibold tracking-tight text-ink">
           {curation.title}
         </h2>
 
-        <p className="px-4 pt-4 text-[13px] leading-relaxed text-neutral-400">
+        <p className="px-4 pt-4 text-[13px] leading-relaxed text-ink-soft">
           {curation.lede}
         </p>
-        <p className="mx-4 mt-3 border-t border-neutral-800 pt-3 text-[11px] leading-relaxed text-neutral-500">
+        <p className="mx-4 mt-3 border-t border-line pt-3 text-[11px] leading-relaxed text-ink-muted">
           {curation.cond.join(" · ")}
         </p>
 
-        <p className="pt-4 pb-2 text-center font-mono text-xs tracking-wider text-neutral-500 tabular-nums">
+        <p className="pt-4 pb-2 text-center font-mono text-xs tracking-wider text-ink-muted tabular-nums">
           <b className="text-sm font-semibold text-(--accent)">{index + 1}</b> /{" "}
           {curation.items.length}
         </p>
@@ -91,10 +91,10 @@ export function CurationDetailScreen({
                       width={item.w ?? 500}
                       height={item.h ?? 600}
                       sizes="100vw"
-                      className="h-auto w-full rounded-xl bg-neutral-900"
+                      className="h-auto w-full rounded-xl bg-skel-1"
                     />
                     <span
-                      className="absolute flex size-6 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-white/95 text-neutral-950 shadow"
+                      className="absolute flex size-6 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-thumb/95 text-accent-ink shadow"
                       style={{ left: `${String(x)}%`, top: `${String(y)}%` }}
                     >
                       {openInfo === i ? <CloseIcon /> : <PlusIcon />}
@@ -133,7 +133,7 @@ export function CurationDetailScreen({
                       href={item.u}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="absolute inset-x-2.5 bottom-2.5 flex cursor-pointer items-center gap-2.5 rounded-lg bg-neutral-50 p-2.5 text-left shadow-lg"
+                      className="absolute inset-x-2.5 bottom-2.5 flex cursor-pointer items-center gap-2.5 rounded-lg bg-thumb neo-sm p-2.5 text-left shadow-lg"
                       onClick={() => {
                         // 나가는 것도 취향 신호다. 앱 안 상세를 거치지 않게 되면서
                         // 여기가 큐레이션에서 상품에 대한 행동을 잡는 유일한 지점이다.
@@ -151,13 +151,11 @@ export function CurationDetailScreen({
                         className="h-[55px] w-[46px] flex-none rounded object-cover"
                       />
                       <span className="min-w-0">
-                        <span className="block text-[11px] text-neutral-600">
-                          {item.b}
-                        </span>
-                        <span className="block truncate text-[12.5px] font-medium text-neutral-950">
+                        <span className="block text-[11px] text-ink">{item.b}</span>
+                        <span className="block truncate text-[12.5px] font-medium text-accent-ink">
                           {item.t}
                         </span>
-                        <span className="block text-[13px] font-semibold text-neutral-950 tabular-nums">
+                        <span className="block text-[13px] font-semibold text-accent-ink tabular-nums">
                           {formatPrice(item.p)}
                         </span>
                       </span>
@@ -171,7 +169,7 @@ export function CurationDetailScreen({
                       onClick={() => {
                         step(-1);
                       }}
-                      className="absolute top-1/2 -left-8 h-11 w-8 -translate-y-1/2 cursor-pointer text-3xl leading-none text-neutral-500"
+                      className="absolute top-1/2 -left-8 h-11 w-8 -translate-y-1/2 cursor-pointer text-3xl leading-none text-ink-muted"
                     >
                       ‹
                     </button>
@@ -183,7 +181,7 @@ export function CurationDetailScreen({
                       onClick={() => {
                         step(1);
                       }}
-                      className="absolute top-1/2 -right-8 h-11 w-8 -translate-y-1/2 cursor-pointer text-3xl leading-none text-neutral-500"
+                      className="absolute top-1/2 -right-8 h-11 w-8 -translate-y-1/2 cursor-pointer text-3xl leading-none text-ink-muted"
                     >
                       ›
                     </button>
