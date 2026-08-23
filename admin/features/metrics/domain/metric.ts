@@ -129,6 +129,44 @@ export function toTable(
   };
 }
 
+/**
+ * 셀이 주소면 링크로 보여줄 정보, 아니면 null.
+ *
+ * 지표 SQL이 주소를 그대로 컬럼으로 내면 표가 링크로 그린다. 이렇게 하면
+ * **새 카드에 링크를 붙일 때 화면 코드를 고치지 않아도 된다** — 설계 §4가
+ * "컬럼 이름을 그대로 표 머리글로 쓴다"로 얻은 것과 같은 성질이다.
+ *
+ * 보이는 글자는 주소의 **마지막 조각**이다. 긴 주소를 그대로 깔면 표가 옆으로
+ * 밀려 다른 칸이 안 보인다.
+ *
+ * 두 종류를 구분한다 — 밖으로 나가는 주소(`https://`)는 새 탭, 같은 화면을 좁혀
+ * 보는 주소(`?session=...`)는 같은 탭이다. 좁혀 보기가 새 탭으로 열리면 파고들다
+ * 탭이 쌓이고, 돌아가기 버튼으로 개요에 못 돌아온다.
+ */
+export function asLink(cell: string): MetricLink | null {
+  if (/^https?:\/\/\S+$/.test(cell)) {
+    return {
+      href: cell,
+      label: cell.split("/").filter(Boolean).at(-1) ?? cell,
+      external: true,
+    };
+  }
+  // 같은 화면을 좁혀 보는 링크(`?session=...`). 보이는 글자는 = 뒤의 값이라
+  // 표에는 필터를 걸기 전과 똑같은 글자가 남는다.
+  if (/^\?[a-z]+=[\w-]+$/.test(cell)) {
+    return { href: cell, label: cell.slice(cell.indexOf("=") + 1), external: false };
+  }
+  return null;
+}
+
+/** 누를 수 있는 셀 */
+export interface MetricLink {
+  href: string;
+  label: string;
+  /** true면 밖으로 나가는 주소 — 새 탭에서 연다 */
+  external: boolean;
+}
+
 /** 표에 넣을 문자열. 값이 없는 것과 빈 문자열을 구분한다 */
 export function formatCell(value: unknown): string {
   if (value === null || value === undefined) return "—";

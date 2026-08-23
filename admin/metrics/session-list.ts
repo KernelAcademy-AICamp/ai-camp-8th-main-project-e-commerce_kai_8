@@ -1,3 +1,4 @@
+import { EVENT_FILTER_SQL } from "@/features/metrics/domain/filters";
 import type { MetricDefinition } from "@/features/metrics/domain/metric";
 
 /**
@@ -21,7 +22,10 @@ export const sessionList: MetricDefinition = {
   sql: `
     select
       left(device_id::text, 8)  as "기기",
-      left(session_id::text, 8) as "세션",
+      -- 누르면 이 세션만 남는다. 보이는 글자는 앞 8자리 그대로다(asLink).
+      '?session=' || left(session_id::text, 8) as "세션",
+      '?date=' || to_char(min(occurred_at) at time zone 'Asia/Seoul', 'YYYY-MM-DD')
+        as "날짜",
       to_char(min(occurred_at) at time zone 'Asia/Seoul', 'MM-DD HH24:MI') as "시작(KST)",
       (max(occurred_at) - min(occurred_at))::text as "길이(비운 시간 포함)",
       count(distinct goods_no) filter (where event_type = 'impression')::int as "노출개",
@@ -35,6 +39,7 @@ export const sessionList: MetricDefinition = {
       count(distinct goods_no) filter (where event_type = 'outbound')::int   as "이동개",
       count(*)                 filter (where event_type = 'outbound')::int   as "이동번"
     from c_events
+    where ${EVENT_FILTER_SQL}
     group by device_id, session_id
     order by min(occurred_at) desc
     limit 30

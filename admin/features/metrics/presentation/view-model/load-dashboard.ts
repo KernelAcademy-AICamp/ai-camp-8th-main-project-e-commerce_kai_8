@@ -7,14 +7,17 @@
 import { METRICS } from "@/metrics";
 
 import { checkConnection, runMetrics } from "../../data/metric-repository";
+import { type DashboardFilter, NO_FILTER } from "../../domain/filters";
 import { type DashboardState, sortMetrics } from "../../domain/metric";
 
-export async function loadDashboard(): Promise<DashboardState> {
+export async function loadDashboard(
+  filter: DashboardFilter = NO_FILTER,
+): Promise<DashboardState> {
   // 접속을 먼저 확인한다. 안 되는 상태로 카드를 돌리면 전부 실패로 떠서
   // "지표가 다 깨졌다"처럼 보이고 진짜 원인이 가려진다 (설계 §7).
   const connectionError = await checkConnection();
   if (connectionError !== null) {
     return { kind: "connection-failed", message: connectionError };
   }
-  return { kind: "loaded", results: await runMetrics(sortMetrics(METRICS)) };
+  return { kind: "loaded", results: await runMetrics(sortMetrics(METRICS), filter) };
 }

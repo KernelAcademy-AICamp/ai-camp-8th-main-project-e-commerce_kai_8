@@ -10,9 +10,25 @@ import { GenderAccountGuard } from "@/shared/gender/gender-account-guard";
 import { NavMarkGuard } from "@/shared/history/nav-mark-guard";
 import { AccountProfileGuard } from "@/shared/profile/account-profile-guard";
 
+const TAGLINE = "취향으로 변하는 티셔츠 무한 탐색";
+
+/**
+ * 공유 카드 이미지의 절대 주소를 만들 기준.
+ *
+ * 카톡·문자는 상대 경로를 못 읽어 절대 주소가 필요하다. Vercel이 주는 시스템
+ * 환경변수를 쓰되 **프로덕션 도메인을 먼저** 본다 — 미리보기 배포에서 공유해도
+ * 카드가 같은 그림을 가리키게 하려는 것이다(미리보기 주소는 배포마다 바뀐다).
+ */
+const siteUrl = process.env.VERCEL_PROJECT_PRODUCTION_URL
+  ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
+  : process.env.VERCEL_URL
+    ? `https://${process.env.VERCEL_URL}`
+    : "http://localhost:3000";
+
 export const metadata: Metadata = {
+  metadataBase: new URL(siteUrl),
   title: "aTee",
-  description: "취향으로 변하는 티셔츠 무한 탐색",
+  description: TAGLINE,
   // iOS는 매니페스트만으로 부족하다 — 홈 화면 추가용 메타를 따로 단다
   // (docs/plans/2026-08-19-pwa-install.md)
   appleWebApp: {
@@ -24,6 +40,23 @@ export const metadata: Metadata = {
   },
   icons: {
     apple: "/icons/apple-touch-icon.png",
+  },
+  // 링크를 카톡·문자로 보낼 때 뜨는 미리보기 카드. 그림은 홈 화면 로고에서
+  // 만든다(scripts/make-brand-assets.py) — 카드와 앱 첫인상을 맞추려는 것이다.
+  openGraph: {
+    type: "website",
+    siteName: "aTee",
+    title: "aTee",
+    description: TAGLINE,
+    url: "/",
+    locale: "ko_KR",
+    images: [{ url: "/og.png", width: 1200, height: 630, alt: `aTee — ${TAGLINE}` }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "aTee",
+    description: TAGLINE,
+    images: ["/og.png"],
   },
 };
 

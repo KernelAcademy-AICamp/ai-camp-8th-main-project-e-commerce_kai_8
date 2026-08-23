@@ -1,0 +1,90 @@
+// 좁혀 보기(줌·필터). 주소의 검색 파라미터가 유일한 입력이다.
+//
+// 흐름: 개요(전체) → 날짜로 좁힘 → 세션 하나로 좁힘 → 그 세션의 원본 기록.
+// 표의 세션·날짜 칸이 링크라, 눌러 내려가는 것으로 이 흐름이 만들어진다.
+
+/** 지금 화면이 보고 있는 범위 */
+export interface DashboardFilter {
+  /** 세션 번호 **앞 8자리**. 표에 보이는 것과 같은 형태다 */
+  session: string | null;
+  /** 한국 시간 기준 날짜 `YYYY-MM-DD` */
+  date: string | null;
+  /** 형식이 틀려서 버린 파라미터 이름들. 화면이 이 사실을 알려야 한다 */
+  ignored: string[];
+}
+
+export const NO_FILTER: DashboardFilter = { session: null, date: null, ignored: [] };
+
+const SESSION_RE = /^[0-9a-f]{8}$/;
+const DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
+
+function firstValue(raw: string | string[] | undefined): string | null {
+  if (raw === undefined) return null;
+  // 같은 이름이 여러 번 오면 첫 번째만 쓴다. `.at()`이라야 빈 배열도 안전하다
+  const value = (Array.isArray(raw) ? raw : [raw]).at(0);
+  return value === undefined || value === "" ? null : value;
+}
+
+/** `2026-02-31`처럼 형식은 맞지만 없는 날짜를 거른다 */
+function isRealDate(value: string): boolean {
+  const parsed = new Date(`${value}T00:00:00Z`);
+  return !Number.isNaN(parsed.getTime()) && parsed.toISOString().startsWith(value);
+}
+
+/**
+ * 주소에서 온 값을 거른다. **여기가 신뢰 경계다.**
+ *
+ * 값은 SQL 문장에 글자로 이어붙이지 않는다 — 파라미터로만 넘긴다(설계 §4:
+ * "브라우저 입력에서 오는 SQL은 실행하지 않는다"). 그래서 이 검사는 주입 방어가
+ * 아니라 **오타·장난 값이 조용히 빈 표로 보이는 것**을 막는 용도다.
+ *
+ * 형식이 틀리면 버리되 **버렸다는 사실을 남긴다.** 조용히 전체를 보여주면
+ * 사용자는 좁혀진 화면을 보고 있다고 착각한다 — 이 대시보드가 가장 경계하는 거짓말이다.
+ */
+export function parseFilter(
+  params: Record<string, string | string[] | undefined>,
+): DashboardFilter {
+  const ignored: string[] = [];
+  const rawSession = firstValue(params.session);
+  const rawDate = firstValue(params.date);
+
+  let session: string | null = null;
+  if (rawSession !== null) {
+    if (SESSION_RE.test(rawSession)) session = rawSession;
+    else ignored.push("session");
+  }
+
+  let date: string | null = null;
+  if (rawDate !== null) {
+    if (DATE_RE.test(rawDate) && isRealDate(rawDate)) date = rawDate;
+    else ignored.push("date");
+  }
+
+  return { session, date, ignored };
+}
+
+/** 좁혀 보는 중인가 */
+export function isNarrowed(filter: DashboardFilter): boolean {
+  return filter.session !== null || filter.date !== null;
+}
+
+/**
+ * SQL에 넘길 값. **순서가 `EVENT_FILTER_SQL`의 `$1`·`$2`와 묶여 있다.**
+ * 순서를 바꾸면 세션 자리에 날짜가 들어가 조용히 0건이 된다.
+ */
+export function toParams(filter: DashboardFilter): (string | null)[] {
+  return [filter.session, filter.date];
+}
+
+/**
+ * 지표 SQL의 `where`에 넣는 조각. `c_events`의 컬럼이 보이는 자리에 쓴다.
+ *
+ * **세션은 앞 8자리로 맞춘다.** 표가 8자리만 보여주므로 주소도 8자리라야 짧고,
+ * 눌렀을 때 보이던 것과 같은 값이 주소에 남는다.
+ * ponytail: 8자리 앞맞춤이라 이론상 다른 세션과 겹칠 수 있다. 세션이 수만 개가
+ * 되면 전체 uuid로 바꾼다 — 그때 고칠 곳은 이 조각과 링크를 내는 SQL뿐이다.
+ */
+export const EVENT_FILTER_SQL = `
+      (($1)::text is null or left(session_id::text, 8) = ($1)::text)
+      and (($2)::text is null
+           or (occurred_at at time zone 'Asia/Seoul')::date = ($2)::date)`;
