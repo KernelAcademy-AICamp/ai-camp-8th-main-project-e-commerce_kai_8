@@ -99,6 +99,10 @@ export function useOnboardingFlow(): OnboardingFlowViewModel {
     // lint 규칙(set-state-in-effect)에도 걸린다 — effect는 부르기만 한다.
     setLoading(true);
     setFailed(false);
+    // ⚠️ **같은 성별을 다시 골라도 요청을 새로 낸다.** 뒤로 갔다가 같은 쪽을 다시
+    // 고르면 `gender`가 안 바뀌어 아래 effect가 돌지 않는데, 로딩은 켜져 있으므로
+    // **끝나지 않는 스켈레톤**이 된다(재검증 ⑤). 이 번호가 바뀌면 항상 다시 받는다.
+    setAttempt((n) => n + 1);
     // 성별을 바꾸면 앞의 옷 선택을 재사용하지 않는다(계획 §1-2).
     setSelected([]);
     setScreen("picks");
@@ -181,8 +185,10 @@ export function useOnboardingFlow(): OnboardingFlowViewModel {
     // 로그인한 경로 — 바로 계정에 저장한다. **저장이 확인되기 전에는 홈을 열지 않는다.**
     setSaveState("saving");
     putAccountOnboarding(gender, version, picks).then(
-      (saved) => {
-        setPicks(version, saved);
+      (confirmed) => {
+        // 보낸 값이 아니라 **서버가 확정한 값**을 설치한다(재검증 ①).
+        setGenderSetting(confirmed.gender);
+        setPicks(confirmed.candidatesVersion, confirmed.picks);
         // 계정에 담긴 것을 확인한 뒤에만 기기 표식을 남긴다.
         markDone();
         setSaveState("idle");

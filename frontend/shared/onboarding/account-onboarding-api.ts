@@ -26,6 +26,36 @@ interface OnboardingRowDto {
   picks: unknown;
 }
 
+/** `c_onboarding_put`의 응답 — 상태 열이 행마다 반복되고 선택은 널일 수 있다. */
+interface PutRowDto {
+  gender: string;
+  candidates_version: string;
+  goods_no: number | null;
+  card_pos: number | null;
+  pick_seq: number | null;
+}
+
+function toState(rows: unknown): AccountOnboarding | null {
+  if (!Array.isArray(rows) || rows.length === 0) return null;
+  const [head] = rows as PutRowDto[];
+  if (head.gender !== "남성" && head.gender !== "여성") return null;
+  if (typeof head.candidates_version !== "string") return null;
+  return {
+    gender: head.gender,
+    completed: true,
+    candidatesVersion: head.candidates_version,
+    picks: toPicks(
+      (rows as PutRowDto[])
+        .filter((r) => r.goods_no !== null)
+        .map((r) => ({
+          goods_no: r.goods_no,
+          card_pos: r.card_pos,
+          pick_seq: r.pick_seq,
+        })),
+    ),
+  };
+}
+
 /**
  * 계정에 보관된 온보딩 상태.
  *
@@ -54,14 +84,16 @@ export async function fetchAccountOnboarding(): Promise<AccountOnboarding | null
  * 아무것도 바꾸지 않고 저장돼 있는 것을 돌려준다. 지연 요청·다중 탭·직접 호출이
  * 최신 성별과 선택을 되돌리지 못하게 하는 계약이다(교차 리뷰 ②).
  *
- * @returns 서버에 실제로 담긴 선택. 화면은 이 값을 설치한다.
+ * @returns **서버가 확정한 상태.** 보낸 값이 아니라 이것을 설치한다 — 다른 탭·기기가
+ *   먼저 마쳤으면 그쪽 성별·판 번호가 이기고, 이 기기가 자기 값을 설치하면 화면과
+ *   계정이 갈린다(재검증 ①).
  * @throws 응답이 오지 않거나 서버가 거부했을 때. 부르는 쪽이 재시도로 다룬다.
  */
 export async function putAccountOnboarding(
   gender: GenderChoice,
   version: string,
   picks: readonly OnboardingPick[],
-): Promise<OnboardingPick[]> {
+): Promise<AccountOnboarding> {
   const rows = await authedRpc<unknown>("c_onboarding_put", {
     p_gender: gender,
     // **사용자가 본 판을 그대로 보낸다.** 서버가 지금 판을 다시 읽으면 화면을 보는
@@ -69,10 +101,11 @@ export async function putAccountOnboarding(
     p_version: version,
     p_picks: picks.map(toWire),
   });
-  const saved = toPicks(rows);
-  // 빈 응답은 "저장됐다"로 볼 수 없다 — 서버는 최소 3개를 보장한다.
-  if (saved.length === 0) throw new Error("온보딩 저장 응답을 해석할 수 없다");
-  return saved;
+  // 서버는 선택이 비어 있어도(개인화 초기화 뒤) 행을 하나 준다 — 그 행에 성별과
+  // 판 번호가 실려 온다. 행이 아예 없으면 응답을 해석할 수 없는 것이다.
+  const state = toState(rows);
+  if (state === null) throw new Error("온보딩 저장 응답을 해석할 수 없다");
+  return state;
 }
 
 /**

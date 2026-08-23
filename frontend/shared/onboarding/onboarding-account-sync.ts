@@ -146,15 +146,12 @@ export async function syncOnboardingWithAccount(
     }
     try {
       const version = carried?.version ?? "";
-      const saved = await putAccountOnboarding(gender, version, decision.picks);
-      // 서버가 성별까지 한 트랜잭션에서 확정했으므로 **기기도 그 성별로 맞춘다** —
-      // 안 맞추면 화면은 옛 성별로 피드를 부르고 계정은 새 성별인 상태가 된다.
-      setGenderSetting(gender);
-      install(
-        { gender, completed: true, candidatesVersion: version, picks: saved },
-        version,
-        saved,
-      );
+      // **응답에 담긴 서버의 값을 설치한다.** 보낸 값이 아니다 — 다른 탭·기기가 먼저
+      // 마쳤으면 그쪽이 이기고, 이 기기가 자기 성별을 설치하면 화면과 계정이 갈린다
+      // (재검증 ①). 서버는 최초 완료를 원자적으로 선점하고 승패와 무관하게 확정값을 준다.
+      const confirmed = await putAccountOnboarding(gender, version, decision.picks);
+      setGenderSetting(confirmed.gender);
+      install(confirmed, confirmed.candidatesVersion, confirmed.picks);
       // **성공을 확인한 뒤에만** 보관함을 비운다.
       onCarriedConsumed();
     } catch {

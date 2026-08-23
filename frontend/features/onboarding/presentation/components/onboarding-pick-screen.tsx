@@ -77,11 +77,22 @@ export function OnboardingPickScreen({
       )}
 
       {/* 자격을 잃은 후보를 빼고 나니 고를 것이 부족하다. 사람이 후보를 갈아야 한다는
-          신호다 — 조용히 최소 개수를 낮추면 그 사실이 아무 데도 안 남는다. */}
+          신호다 — 조용히 최소 개수를 낮추면 그 사실이 아무 데도 안 남는다.
+          **"다시 시도"라고 쓰면 누를 것이 있어야 한다** — 예전에는 문구만 있고 버튼이
+          없어 「뒤로」밖에 못 눌렀다(재검증 ⑤). */}
       {tooFew && (
-        <p role="status" className="mt-10 text-[15px] leading-relaxed text-ink-soft">
-          지금 보여드릴 옷이 부족합니다. 잠시 뒤 다시 시도해 주세요.
-        </p>
+        <div role="status" className="mt-10 space-y-4">
+          <p className="text-[15px] leading-relaxed text-ink-soft">
+            지금 보여드릴 옷이 부족합니다.
+          </p>
+          <button
+            type="button"
+            onClick={onRetry}
+            className="cursor-pointer rounded-full bg-app px-6 py-3 text-[15px] text-ink neo active:neo-in"
+          >
+            다시 시도
+          </button>
+        </div>
       )}
 
       {!loading && !failed && !tooFew && (
