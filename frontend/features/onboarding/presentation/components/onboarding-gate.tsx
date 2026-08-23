@@ -2,9 +2,11 @@
 
 import type { ReactNode } from "react";
 
+import { retryOnboardingSync } from "@/shared/onboarding/onboarding-account-sync";
 import { useOnboardingStep } from "@/shared/onboarding/onboarding-gate-state";
 
 import { OnboardingFlow } from "./onboarding-flow";
+import { OnboardingUnreachableScreen } from "./onboarding-unreachable-screen";
 import { ReturningLoginScreen } from "./returning-login-screen";
 
 /**
@@ -24,6 +26,9 @@ export function OnboardingGate({ children }: { children: ReactNode }) {
   // 아직 모르는 동안에는 **묻지도, 그리지도 않는다.** 계정 조회가 끝나기 전에
   // 온보딩을 띄우면 이미 마친 사람이 처음부터 다시 하게 된다.
   if (step === "pending") return null;
+  // 계정 상태를 못 읽었다 — 온보딩으로 보내면 이미 마친 사람이 다시 하게 된다.
+  if (step === "unreachable")
+    return <OnboardingUnreachableScreen onRetry={retryOnboardingSync} />;
   if (step === "login") return <ReturningLoginScreen />;
   if (step === "onboarding") return <OnboardingFlow />;
   return <>{children}</>;

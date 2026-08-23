@@ -6,8 +6,8 @@ import { fetchLocalUserId } from "@/features/auth/data/auth-repository";
 import { useGenderSetting } from "@/shared/gender/use-gender-setting";
 import {
   clearCarriedOnboarding,
-  isCarriedForOther,
   readCarriedOnboarding,
+  shouldDiscardCarried,
 } from "@/shared/identity/onboarding-carry";
 import {
   getSignedInServerSnapshot,
@@ -15,7 +15,12 @@ import {
   subscribeSession,
 } from "@/shared/supabase/session-state";
 
-import { syncOnboardingWithAccount } from "./onboarding-account-sync";
+import {
+  getOnboardingSyncServerStatus,
+  getOnboardingSyncStatus,
+  subscribeOnboardingSync,
+  syncOnboardingWithAccount,
+} from "./onboarding-account-sync";
 
 /**
  * 로그인 상태면 계정의 온보딩 상태와 맞춘다. 화면을 그리지 않는다 —
@@ -32,17 +37,26 @@ export function OnboardingAccountGuard() {
     getSignedInServerSnapshot,
   );
   const gender = useGenderSetting();
+  // 「다시 시도」가 상태를 idle로 되돌리면 이 effect가 다시 돈다 — 세션·성별이
+  // 그대로면 저절로 다시 돌 계기가 없기 때문이다.
+  const syncStatus = useSyncExternalStore(
+    subscribeOnboardingSync,
+    getOnboardingSyncStatus,
+    getOnboardingSyncServerStatus,
+  );
 
   useEffect(() => {
     if (session !== "in") return;
+    if (syncStatus === "running" || syncStatus === "settled") return;
     let active = true;
 
     void fetchLocalUserId().then(
       (userId) => {
         if (!active || userId === null) return;
-        // **남의 보관함이면 먼저 버린다.** A에 올리다 실패한 뒤 로그아웃하고 B가
-        // 로그인하면, 대상 확인 없이는 A가 고른 옷이 B 계정으로 들어간다.
-        if (isCarriedForOther(localStorage, userId)) {
+        // **못 쓸 보관함은 먼저 버린다.** 남의 것(A가 올리다 실패한 뒤 B가 로그인)과
+        // 못 읽는 것(깨진 JSON·옛 형식) 둘 다다. 뒤엣것을 남기면 키가 살아남아
+        // 이후 승계를 영영 막는다(교차 리뷰 ④).
+        if (shouldDiscardCarried(localStorage, userId)) {
           clearCarriedOnboarding(localStorage);
         }
         // 보관함에는 **성별과 선택이 한 묶음으로** 들어 있다 — 따로 다니면
@@ -61,7 +75,7 @@ export function OnboardingAccountGuard() {
     return () => {
       active = false;
     };
-  }, [session, gender]);
+  }, [session, gender, syncStatus]);
 
   return null;
 }

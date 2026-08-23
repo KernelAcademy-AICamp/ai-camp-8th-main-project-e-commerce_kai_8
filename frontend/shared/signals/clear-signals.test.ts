@@ -27,6 +27,7 @@ const forgetMock = vi.mocked(forgetAccountProfile);
 const forgetOnboardingMock = vi.mocked(forgetAccountOnboarding);
 
 const TASTE_QUEUE_KEY = "atee-pending-taste-forget";
+const ONBOARDING_QUEUE_KEY = "atee-pending-onboarding-forget";
 const DEVICE_QUEUE_KEY = "atee-pending-forget";
 const ME = "11111111-1111-4111-8111-111111111111";
 
@@ -66,12 +67,26 @@ describe("clearSignals — 개인화 데이터 초기화", () => {
     expect(localStorage.getItem("atee-onboarding-done")).toBe("1");
   });
 
-  it("온보딩 삭제가 실패해도 같은 재시도 큐에 적힌다", async () => {
+  // 큐를 **나눠 둔 이유**: 한 큐면 부분 성공을 표현하지 못해, 재시도가 이미 지운
+  // 취향부터 다시 불러 그 사이에 새로 쌓인 취향까지 없앤다(교차 리뷰 ③).
+  it("온보딩 삭제만 실패하면 온보딩 큐에만 적히고 취향 큐는 비어 있다", async () => {
     forgetOnboardingMock.mockRejectedValue(new Error("네트워크"));
 
     await clearSignals();
 
+    expect(JSON.parse(localStorage.getItem(ONBOARDING_QUEUE_KEY) ?? "[]")).toEqual([
+      ME,
+    ]);
+    expect(localStorage.getItem(TASTE_QUEUE_KEY)).toBeNull();
+  });
+
+  it("취향 삭제만 실패하면 취향 큐에만 적힌다", async () => {
+    forgetMock.mockRejectedValue(new Error("네트워크"));
+
+    await clearSignals();
+
     expect(JSON.parse(localStorage.getItem(TASTE_QUEUE_KEY) ?? "[]")).toEqual([ME]);
+    expect(localStorage.getItem(ONBOARDING_QUEUE_KEY)).toBeNull();
   });
 
   it("로그인하지 않았으면 계정 취향은 부르지 않는다", async () => {

@@ -5,6 +5,7 @@
 import { clearPersonalizationData } from "@/shared/identity/identity-reset";
 import { forgetAccountOnboarding } from "@/shared/onboarding/account-onboarding-api";
 import { clearStoredPicks } from "@/shared/onboarding/onboarding-store";
+import { rememberPendingOnboardingForget } from "@/shared/onboarding/pending-onboarding-forget";
 import { forgetAccountProfile } from "@/shared/profile/account-profile-api";
 import { rememberPendingTasteForget } from "@/shared/profile/pending-taste-forget";
 import { PROFILE_SCHEMA_VERSION } from "@/shared/profile/profile-rules";
@@ -339,20 +340,26 @@ export function getFeedProfileSummary(): ProfileSummary | null {
 async function clearAccountTaste(): Promise<boolean> {
   const userId = await getCurrentUserId();
   if (userId === null) return true; // 로그인하지 않았으면 계정에 지울 것이 없다
+  // **둘을 독립적으로 시도하고 각자 자기 큐에 적는다.** 한 큐에 담으면 부분
+  // 성공을 표현하지 못해, 재시도가 이미 지운 쪽부터 다시 불러 그 사이에 새로
+  // 쌓인 데이터까지 없앤다(교차 리뷰 ③). 한쪽 실패가 다른 쪽을 막지도 않는다.
+  let ok = true;
   try {
     await forgetAccountProfile();
-    // 온보딩 선택도 같은 자리에서 지운다 — **선택만 지우고 완료 표식은 남는다.**
-    // 남기지 않으면 초기화할 때마다 온보딩이 다시 떠서 초기화가 못 쓸 기능이 된다
-    // (성별 설정에 이미 같은 판단이 적혀 있다). 표식만으로는 피드가 기울지 않는다.
-    //
-    // **재시도 큐를 따로 만들지 않는다.** 둘 다 "그 계정으로 로그인해 있어야
-    // 부를 수 있는" 삭제라 조건이 같다 — 큐를 나누면 같은 조건을 두 벌 관리하게 된다.
-    await forgetAccountOnboarding();
-    return true;
   } catch {
     rememberPendingTasteForget(userId);
-    return false;
+    ok = false;
   }
+  try {
+    // 온보딩은 **선택만 지우고 완료 표식은 남긴다.** 남기지 않으면 초기화할 때마다
+    // 온보딩이 다시 떠서 초기화가 못 쓸 기능이 된다(성별 설정에 같은 판단이 있다).
+    // 표식만으로는 피드가 기울지 않는다.
+    await forgetAccountOnboarding();
+  } catch {
+    rememberPendingOnboardingForget(userId);
+    ok = false;
+  }
+  return ok;
 }
 
 /**

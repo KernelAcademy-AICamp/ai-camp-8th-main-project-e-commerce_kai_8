@@ -8,11 +8,15 @@
 // 삭제는 **그 계정으로 로그인해 있어야** 부를 수 있다. 한 목록에 섞으면 기기
 // ID를 계정으로, 계정을 기기 ID로 재시도하게 된다.
 //
+// ⚠️ **온보딩 선택 삭제도 별도 목록이다**(shared/onboarding/pending-onboarding-forget.ts).
+// 조건이 같다고 한 목록에 담으면 **부분 성공을 표현하지 못한다** — 여기만 성공하고
+// 저쪽이 실패했을 때, 재시도가 이미 지운 취향부터 다시 지워 그 사이에 새로 쌓인
+// 취향까지 없앤다(교차 리뷰 ③).
+//
 // ⚠️ 왜 사용자 식별자를 적어 두는가: 서버 함수는 호출자의 인증 주체만 지운다.
 // 그래서 A의 삭제가 밀린 채 B가 로그인한 상태에서 재시도하면 **B의 취향이
 // 지워진다.** 적어 둔 식별자와 지금 로그인한 사람이 같을 때만 부른다.
 
-import { forgetAccountOnboarding } from "@/shared/onboarding/account-onboarding-api";
 import { nextPendingForgetList } from "@/shared/signals/pending-forget-list";
 
 import { forgetAccountProfile } from "./account-profile-api";
@@ -66,9 +70,6 @@ export async function retryPendingTasteForget(currentUserId: string): Promise<bo
 
   try {
     await forgetAccountProfile();
-    // 온보딩 선택도 같은 큐로 재시도한다 — 지우는 조건("그 계정으로 로그인해
-    // 있어야 한다")이 같아서다. 선택만 지우고 완료 표식은 남는다.
-    await forgetAccountOnboarding();
   } catch {
     return false; // 다음 접속에 다시 시도한다
   }

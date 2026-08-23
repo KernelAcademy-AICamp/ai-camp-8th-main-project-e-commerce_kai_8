@@ -40,7 +40,7 @@ beforeEach(() => {
 
 describe("온보딩 선택이 추천 요청 입력에 들어간다", () => {
   it("행동이 없는 첫 홈에서는 고른 3개가 그대로 실린다", () => {
-    setPicks(PICKS);
+    setPicks("2026-08-24", PICKS);
 
     const summary = getProfileSummary("s1", 0);
 
@@ -61,7 +61,7 @@ describe("온보딩 선택이 추천 요청 입력에 들어간다", () => {
 
   it("행동 앵커와 나란히 실리되 행동이 앞에 온다", () => {
     writeLongTerm([{ goodsNo: 111, weight: 2 }]);
-    setPicks(PICKS);
+    setPicks("2026-08-24", PICKS);
 
     const anchors = getProfileSummary("s1", 0).longAnchors;
 
@@ -71,7 +71,7 @@ describe("온보딩 선택이 추천 요청 입력에 들어간다", () => {
 
   it("같은 상품이 행동으로도 잡혔으면 두 번 싣지 않는다", () => {
     writeLongTerm([{ goodsNo: 2086653, weight: 9 }]);
-    setPicks(PICKS);
+    setPicks("2026-08-24", PICKS);
 
     const anchors = getProfileSummary("s1", 0).longAnchors;
 
@@ -86,7 +86,7 @@ describe("온보딩 선택이 추천 요청 입력에 들어간다", () => {
         weight: 1,
       })),
     );
-    setPicks(PICKS);
+    setPicks("2026-08-24", PICKS);
 
     const anchors = getProfileSummary("s1", 0).longAnchors;
 
@@ -96,7 +96,7 @@ describe("온보딩 선택이 추천 요청 입력에 들어간다", () => {
 
   it("계산된 장기 취향 자체는 오염되지 않는다 — 저장은 따로 둔다", () => {
     writeLongTerm([{ goodsNo: 111, weight: 2 }]);
-    setPicks(PICKS);
+    setPicks("2026-08-24", PICKS);
 
     getProfileSummary("s1", 0);
 

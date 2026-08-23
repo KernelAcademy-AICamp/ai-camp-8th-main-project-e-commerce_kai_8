@@ -33,6 +33,7 @@ export function OnboardingFlow() {
         stepIndex={flow.stepIndex}
         stepCount={flow.stepCount}
         candidates={flow.candidates}
+        onDead={flow.markDead}
         loading={flow.loadingCandidates}
         failed={flow.candidatesFailed}
         onRetry={flow.retryCandidates}

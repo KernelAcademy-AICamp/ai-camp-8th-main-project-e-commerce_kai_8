@@ -17,7 +17,7 @@ import {
   toPicks,
   toWire,
 } from "@/shared/onboarding/onboarding-pick";
-import { parsePicks, PICKS_KEY } from "@/shared/onboarding/onboarding-store";
+import { parseStoredPicks, PICKS_KEY } from "@/shared/onboarding/onboarding-store";
 
 import { ANONYMOUS } from "./identity-marker";
 
@@ -38,6 +38,8 @@ export interface CarriedBox {
    * 고른 옷과 성별은 **한 화면에서 함께 정해진 하나**라 따로 다니면 안 된다.
    */
   gender: GenderChoice;
+  /** 그때 본 후보 목록 판. 저장할 때 그대로 돌려보낸다(교차 리뷰 ⑥). */
+  version: string;
   picks: OnboardingPick[];
 }
 
@@ -61,19 +63,28 @@ export function shouldCarryOnboarding(
  */
 export function carryOnboarding(storage: Storage, targetUserId: string): void {
   try {
-    const picks = parsePicks(storage.getItem(PICKS_KEY));
-    if (picks.length === 0) return;
+    const { version, picks } = parseStoredPicks(storage.getItem(PICKS_KEY));
+    if (picks.length === 0 || version === "") return;
     // 성별이 없으면 옮기지 않는다 — 서버가 성별과 후보의 일치를 검사하므로
     // 성별 없는 선택은 올릴 수 없다. 다시 고르게 하는 편이 낫다.
     const gender = storage.getItem(GENDER_SETTING_KEY);
     if (!isGenderChoice(gender)) return;
     // 지난번 옮기기가 아직 안 끝났으면 덮어쓰지 않는다.
-    if (storage.getItem(ONBOARDING_CARRY_KEY) !== null) return;
+    //
+    // ⚠️ **키가 있는지가 아니라 읽히는지를 본다.** 깨진 JSON이나 성별이 빠진 옛
+    // 형식은 아무도 못 쓰는데, 키가 있다는 이유로 새 승계를 막으면 그 기기는
+    // **이후 모든 로그인에서 선택을 잃는다**(교차 리뷰 ④). 못 읽는 상자는 버린다.
+    if (readBox(storage) !== null) return;
     // 저장 형태는 `toWire` 하나로 통일한다 — 여기서 다른 이름으로 쓰면
     // 아래 `readBox`가 못 읽어 승계가 조용히 빈다.
     storage.setItem(
       ONBOARDING_CARRY_KEY,
-      JSON.stringify({ userId: targetUserId, gender, picks: picks.map(toWire) }),
+      JSON.stringify({
+        userId: targetUserId,
+        gender,
+        version,
+        picks: picks.map(toWire),
+      }),
     );
     // 선택 본체는 정리가 지운다 — 여기서 지우지 않는다.
   } catch {
@@ -93,10 +104,21 @@ export function readCarriedOnboarding(
   return box?.userId === currentUserId ? box : null;
 }
 
-/** 보관함이 이 사용자의 것이 아닌가 — 그렇다면 폐기해야 한다. */
-export function isCarriedForOther(storage: Storage, currentUserId: string): boolean {
-  const box = readBox(storage);
-  return box?.userId !== undefined && box.userId !== currentUserId;
+/**
+ * 지금 폐기해야 할 보관함이 있는가.
+ *
+ * 둘이다 — **남의 것**(A에 올리다 실패한 뒤 B가 로그인)과 **못 읽는 것**(깨진 JSON,
+ * 성별이 빠진 옛 형식). 뒤엣것을 남겨 두면 키가 살아남아 이후 승계를 영영 막는다.
+ */
+export function shouldDiscardCarried(storage: Storage, currentUserId: string): boolean {
+  let raw: string | null;
+  try {
+    raw = storage.getItem(ONBOARDING_CARRY_KEY);
+  } catch {
+    return false;
+  }
+  if (raw === null) return false;
+  return readBox(storage)?.userId !== currentUserId;
 }
 
 function readBox(storage: Storage): CarriedBox | null {
@@ -105,14 +127,15 @@ function readBox(storage: Storage): CarriedBox | null {
     if (raw === null) return null;
     const parsed: unknown = JSON.parse(raw);
     if (typeof parsed !== "object" || parsed === null) return null;
-    const { userId, gender, picks } = parsed as Record<string, unknown>;
+    const { userId, gender, version, picks } = parsed as Record<string, unknown>;
     if (typeof userId !== "string" || userId === "") return null;
+    if (typeof version !== "string" || version === "") return null;
     // 성별이 없는 보관함은 옛 형식이다. 올릴 수 없으므로 없는 것으로 본다 —
     // 남겨 두면 영원히 실패하는 재시도가 된다.
     if (!isGenderChoice(gender)) return null;
     const list = toPicks(picks);
     if (list.length === 0) return null;
-    return { userId, gender, picks: list };
+    return { userId, gender, version, picks: list };
   } catch {
     return null;
   }

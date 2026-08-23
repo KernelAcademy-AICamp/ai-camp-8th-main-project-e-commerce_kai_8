@@ -34,50 +34,72 @@ export function subscribeOnboarding(listener: () => void): () => void {
 
 // ── ① 고른 옷 ───────────────────────────────────────────────────────────────
 
-let picks: OnboardingPick[] = [];
+/**
+ * 고른 것과 **그때 본 후보 판**을 한 덩어리로 담는다.
+ *
+ * 판을 따로 두면 둘이 어긋난다. 그리고 승계는 신원 전환 정리 직전에 저장소에서
+ * 읽어 가는데, 그 자리에서 두 키를 맞춰 읽을 이유가 없다(교차 리뷰 ⑥).
+ */
+export interface StoredPicks {
+  version: string;
+  picks: OnboardingPick[];
+}
+
+const EMPTY_STORED: StoredPicks = { version: "", picks: [] };
+
+let stored: StoredPicks = EMPTY_STORED;
 let picksLoaded = false;
 
-/** 저장된 문자열을 선택 목록으로. 형태가 어긋나면 없는 것으로 본다. */
-export function parsePicks(raw: string | null): OnboardingPick[] {
-  if (raw === null) return [];
+/** 저장된 문자열을 해석한다. 형태가 어긋나면 없는 것으로 본다. */
+export function parseStoredPicks(raw: string | null): StoredPicks {
+  if (raw === null) return EMPTY_STORED;
   try {
-    return toPicks(JSON.parse(raw));
+    const parsed: unknown = JSON.parse(raw);
+    if (typeof parsed !== "object" || parsed === null) return EMPTY_STORED;
+    const { version, picks } = parsed as Record<string, unknown>;
+    if (typeof version !== "string" || version === "") return EMPTY_STORED;
+    const list = toPicks(picks);
+    if (list.length === 0) return EMPTY_STORED;
+    return { version, picks: list };
   } catch {
-    return [];
+    return EMPTY_STORED;
   }
 }
 
-function serialize(list: readonly OnboardingPick[]): string {
-  return JSON.stringify(list.map(toWire));
+function serialize(value: StoredPicks): string {
+  return JSON.stringify({ version: value.version, picks: value.picks.map(toWire) });
 }
 
 /**
  * 지금 값. **첫 호출에서 저장소를 동기적으로 읽는다** — effect 뒤로 미루면 그 사이에
  * 피드 훅이 마운트 즉시 씨앗 없는 요청을 보내버린다(성별 설정과 같은 이유).
  */
-export function getPicksSnapshot(): readonly OnboardingPick[] {
+export function getStoredSnapshot(): StoredPicks {
   if (!picksLoaded) {
     try {
-      picks = parsePicks(localStorage.getItem(PICKS_KEY));
+      stored = parseStoredPicks(localStorage.getItem(PICKS_KEY));
     } catch {
-      picks = [];
+      stored = EMPTY_STORED;
     }
     picksLoaded = true;
   }
-  return picks;
+  return stored;
+}
+
+export function getPicksSnapshot(): readonly OnboardingPick[] {
+  return getStoredSnapshot().picks;
 }
 
 /** 서버 렌더에는 이 기기의 값이 없다 — 항상 비어 있다. */
-const EMPTY: readonly OnboardingPick[] = [];
 export function getPicksServerSnapshot(): readonly OnboardingPick[] {
-  return EMPTY;
+  return EMPTY_STORED.picks;
 }
 
-export function setPicks(next: readonly OnboardingPick[]): void {
-  picks = [...next];
+export function setPicks(version: string, next: readonly OnboardingPick[]): void {
+  stored = { version, picks: [...next] };
   picksLoaded = true;
   try {
-    localStorage.setItem(PICKS_KEY, serialize(picks));
+    localStorage.setItem(PICKS_KEY, serialize(stored));
   } catch {
     // 저장은 실패해도 이번 세션 동안은 고른 대로 동작한다.
   }
@@ -86,7 +108,7 @@ export function setPicks(next: readonly OnboardingPick[]): void {
 
 /** 메모리 캐시만 비운다 — 저장소는 건드리지 않는다(테스트·신원 전환용). */
 export function clearPicksCache(): void {
-  picks = [];
+  stored = EMPTY_STORED;
   picksLoaded = false;
   notify();
 }
@@ -135,7 +157,7 @@ export function markDone(): void {
 
 /** 테스트용 — 모듈 상태를 처음으로 되돌린다. */
 export function resetOnboardingStore(): void {
-  picks = [];
+  stored = EMPTY_STORED;
   picksLoaded = false;
   done = null;
   notify();

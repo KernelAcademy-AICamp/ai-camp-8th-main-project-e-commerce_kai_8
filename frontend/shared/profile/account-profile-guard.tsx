@@ -2,6 +2,10 @@
 
 import { useEffect } from "react";
 
+import {
+  hasPendingOnboardingForget,
+  retryPendingOnboardingForget,
+} from "@/shared/onboarding/pending-onboarding-forget";
 import { getCurrentUserId } from "@/shared/supabase/current-user";
 import { useSignedIn } from "@/shared/supabase/use-signed-in";
 
@@ -56,9 +60,14 @@ export function AccountProfileGuard() {
      * 왕복을 더하지 않는다.
      */
     async function forgetThenLoad(): Promise<void> {
-      if (hasPendingTasteForget()) {
+      // 취향과 온보딩 선택은 **각자 큐를 가진다** — 한 큐면 부분 성공을 표현하지
+      // 못해, 재시도가 이미 지운 쪽을 다시 불러 그 뒤 새로 쌓인 것까지 없앤다.
+      if (hasPendingTasteForget() || hasPendingOnboardingForget()) {
         const userId = await getCurrentUserId();
-        if (userId !== null) await retryPendingTasteForget(userId);
+        if (userId !== null) {
+          await retryPendingTasteForget(userId);
+          await retryPendingOnboardingForget(userId);
+        }
       }
       if (!isAlive()) return;
       const profile = await fetchAccountProfile();

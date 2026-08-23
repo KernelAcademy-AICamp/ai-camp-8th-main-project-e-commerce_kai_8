@@ -17,6 +17,10 @@ const KEEP_EXACT = new Set([
   // 계정 취향 삭제 재시도 대기. 로그아웃하면 신원 전환 정리가 곧바로 도는데,
   // 여기서 같이 지우면 **다시 로그인해도 서버에 남은 취향을 지울 수 없다.**
   "atee-pending-taste-forget",
+  // 온보딩 선택 삭제 재시도 대기. 취향 큐와 **나눠 둔 이유**는 부분 성공 때문이다 —
+  // 한 큐면 한쪽만 실패해도 재시도가 양쪽을 다시 불러, 이미 지운 뒤 새로 쌓인
+  // 데이터까지 없앤다 (shared/onboarding/pending-onboarding-forget.ts).
+  "atee-pending-onboarding-forget",
   // 탈퇴 대기 표식. 탈퇴하면 세션이 사라지면서 신원 전환 정리가 곧바로 도는데,
   // 여기서 같이 지우면 "삭제가 서버에 닿았는지" 확인할 손잡이를 잃는다.
   "atee-pending-account-delete",

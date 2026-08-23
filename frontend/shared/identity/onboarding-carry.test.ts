@@ -5,15 +5,19 @@ import { PICKS_KEY } from "@/shared/onboarding/onboarding-store";
 import {
   carryOnboarding,
   clearCarriedOnboarding,
-  isCarriedForOther,
   ONBOARDING_CARRY_KEY,
   readCarriedOnboarding,
   shouldCarryOnboarding,
+  shouldDiscardCarried,
 } from "./onboarding-carry";
 
 const A = "user-a";
 const B = "user-b";
-const PICKS = '[{"goods_no":11,"card_pos":0,"pick_seq":0}]';
+const VERSION = "2026-08-24";
+const PICKS = JSON.stringify({
+  version: VERSION,
+  picks: [{ goods_no: 11, card_pos: 0, pick_seq: 0 }],
+});
 const GENDER_KEY = "atee-gender";
 
 /** 로그인 전에 여성 옷을 고른 기기를 만든다. */
@@ -73,6 +77,7 @@ describe("carryOnboarding", () => {
     expect(readCarriedOnboarding(storage, A)).toEqual({
       userId: A,
       gender: "여성",
+      version: VERSION,
       picks: [{ goodsNo: 11, cardPos: 0, pickSeq: 0 }],
     });
   });
@@ -101,8 +106,8 @@ describe("carryOnboarding", () => {
     deviceChoseFemale();
     carryOnboarding(storage, A);
     expect(readCarriedOnboarding(storage, B)).toBeNull();
-    expect(isCarriedForOther(storage, B)).toBe(true);
-    expect(isCarriedForOther(storage, A)).toBe(false);
+    expect(shouldDiscardCarried(storage, B)).toBe(true);
+    expect(shouldDiscardCarried(storage, A)).toBe(false);
   });
 
   it("고른 것이 없으면 보관함을 만들지 않는다", () => {
@@ -113,7 +118,13 @@ describe("carryOnboarding", () => {
   it("지난번 옮기기가 안 끝났으면 덮어쓰지 않는다", () => {
     deviceChoseFemale();
     carryOnboarding(storage, A);
-    storage.setItem(PICKS_KEY, '[{"goods_no":99,"card_pos":1,"pick_seq":0}]');
+    storage.setItem(
+      PICKS_KEY,
+      JSON.stringify({
+        version: VERSION,
+        picks: [{ goods_no: 99, card_pos: 1, pick_seq: 0 }],
+      }),
+    );
     carryOnboarding(storage, A);
     expect(readCarriedOnboarding(storage, A)?.picks).toEqual([
       { goodsNo: 11, cardPos: 0, pickSeq: 0 },
@@ -129,7 +140,44 @@ describe("carryOnboarding", () => {
   it("깨진 보관함은 없는 것으로 본다", () => {
     storage.setItem(ONBOARDING_CARRY_KEY, "{");
     expect(readCarriedOnboarding(storage, A)).toBeNull();
-    expect(isCarriedForOther(storage, A)).toBe(false);
+  });
+
+  // 교차 리뷰 ④ — 깨진 상자 하나가 이후 모든 승계를 막던 결함.
+  it("못 읽는 보관함은 새 승계를 막지 않는다", () => {
+    storage.setItem(ONBOARDING_CARRY_KEY, "{");
+    deviceChoseFemale();
+
+    carryOnboarding(storage, A);
+
+    expect(readCarriedOnboarding(storage, A)?.picks).toEqual([
+      { goodsNo: 11, cardPos: 0, pickSeq: 0 },
+    ]);
+  });
+
+  it("성별이 빠진 옛 상자도 새 승계를 막지 않는다", () => {
+    storage.setItem(
+      ONBOARDING_CARRY_KEY,
+      JSON.stringify({
+        userId: A,
+        picks: [{ goods_no: 99, card_pos: 0, pick_seq: 0 }],
+      }),
+    );
+    deviceChoseFemale();
+
+    carryOnboarding(storage, A);
+
+    expect(readCarriedOnboarding(storage, A)?.picks).toEqual([
+      { goodsNo: 11, cardPos: 0, pickSeq: 0 },
+    ]);
+  });
+
+  it("못 읽는 보관함은 폐기 대상이다 — 남기면 키가 살아남아 계속 막는다", () => {
+    storage.setItem(ONBOARDING_CARRY_KEY, "{");
+    expect(shouldDiscardCarried(storage, A)).toBe(true);
+  });
+
+  it("보관함이 없으면 폐기할 것도 없다", () => {
+    expect(shouldDiscardCarried(storage, A)).toBe(false);
   });
 
   it("비우면 사라진다", () => {

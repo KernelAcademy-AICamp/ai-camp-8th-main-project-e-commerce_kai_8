@@ -12,6 +12,7 @@ import type { GenderChoice } from "@/shared/gender/gender-setting";
 import { rpcPost } from "@/shared/supabase-rpc";
 
 interface CandidateDto {
+  version: string;
   goods_no: number;
   ord: number;
   title: string | null;
@@ -21,16 +22,33 @@ interface CandidateDto {
   height: number;
 }
 
+/**
+ * 후보 한 판.
+ *
+ * **판 번호를 함께 준다.** 저장할 때 서버가 지금 판을 다시 읽으면, 화면을 보는
+ * 도중 목록이 갈렸을 때 **사용자가 보지 않은 판**으로 기록된다. 어느 판을 봤는지는
+ * 첫 배포 뒤 되살릴 수 없는 데이터라 추측으로 채우면 안 된다(교차 리뷰 ⑥).
+ */
+export interface OnboardingCandidatePage {
+  version: string;
+  candidates: OnboardingCandidate[];
+}
+
 export async function fetchOnboardingCandidates(
   gender: GenderChoice,
-): Promise<OnboardingCandidate[]> {
+): Promise<OnboardingCandidatePage> {
   const dtos = await rpcPost<CandidateDto[]>(
     "c_onboarding_candidates_get",
     { p_gender: gender },
     // 첫 화면이라 오래 기다리게 두지 않는다. 실패하면 다시 시도할 수 있다.
     { timeoutMs: 8_000 },
   );
-  return dtos.map((dto) => ({
+  // 판 번호는 모든 행에 같은 값으로 실려 온다 — 행이 없으면 알 수 없는데, 그때는
+  // 고를 것도 없으므로 저장까지 갈 일이 없다. (타입은 빈 배열 접근을 걸러 주지
+  // 않으므로 길이로 본다.)
+  if (dtos.length === 0) return { version: "", candidates: [] };
+
+  const candidates = dtos.map((dto) => ({
     goodsNo: dto.goods_no,
     ord: dto.ord,
     title: dto.title ?? "티셔츠",
@@ -39,4 +57,5 @@ export async function fetchOnboardingCandidates(
     width: dto.width,
     height: dto.height,
   }));
+  return { version: dtos[0].version, candidates };
 }

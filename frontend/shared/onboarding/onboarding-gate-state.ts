@@ -34,14 +34,19 @@ import {
  * - `login` — 이 기기에서 온보딩을 마친 적이 있는데 지금은 로그아웃 상태다.
  *   온보딩을 다시 돌리지 않고 로그인부터 시킨다.
  * - `onboarding` — 온보딩을 보여준다.
+ * - `unreachable` — **계정 상태를 읽지 못했다.** 온보딩으로 보내면 이미 마친 사람이
+ *   처음부터 다시 하게 되고, 그대로 두면 빈 화면이다. 그래서 다시 시도할 자리를 준다.
  * - `done` — 홈으로 보낸다.
  */
-export type OnboardingStep = "pending" | "login" | "onboarding" | "done";
+export type OnboardingStep =
+  "pending" | "login" | "onboarding" | "unreachable" | "done";
 
 export interface StepInput {
   session: SignedInState;
   /** 계정 조회가 끝났는가 */
   syncSettled: boolean;
+  /** 계정 조회에 실패했는가 — "안 했다"와 **다른 상태**다 */
+  syncFailed: boolean;
   /** 계정이 온보딩을 마친 적이 있는가 (선택이 비어 있어도 참일 수 있다) */
   accountCompleted: boolean;
   /** 이 기기에서 온보딩을 마친 적이 있는가 */
@@ -54,6 +59,8 @@ export function decideOnboardingStep(input: StepInput): OnboardingStep {
   if (input.session === "unknown") return "pending";
 
   if (input.session === "in") {
+    // 읽지 못한 것을 "안 했다"로 단정하지 않는다 — 완료 사용자가 처음부터 다시 하게 된다.
+    if (input.syncFailed) return "unreachable";
     if (!input.syncSettled) return "pending";
     // 완료 계정 — 성별도 함께 확정돼 있다(c_onboarding_put이 한 트랜잭션에서 쓴다).
     if (input.accountCompleted) return "done";
@@ -95,6 +102,7 @@ export function useOnboardingStep(): OnboardingStep {
   return decideOnboardingStep({
     session,
     syncSettled: syncStatus === "settled",
+    syncFailed: syncStatus === "failed",
     accountCompleted,
     deviceDone,
   });

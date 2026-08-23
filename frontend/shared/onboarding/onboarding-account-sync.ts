@@ -19,8 +19,14 @@ import type { OnboardingPick } from "./onboarding-pick";
 import { resolveOnboardingOnLogin } from "./onboarding-resolve";
 import { markDone, setPicks } from "./onboarding-store";
 
-/** 계정 조회가 끝났는가. 게이트는 이것이 끝나기 전에는 묻지 않는다. */
-export type OnboardingSyncStatus = "idle" | "running" | "settled";
+/**
+ * 계정 조회가 끝났는가. 게이트는 이것이 끝나기 전에는 묻지 않는다.
+ *
+ * `failed`가 따로 있는 이유: **읽기 실패를 "온보딩을 안 했다"로 확정하면 안 된다.**
+ * 예전에는 실패해도 `settled`로 넘겨서, 계정 조회가 한 번 실패한 완료 사용자가
+ * 온보딩을 처음부터 다시 보게 됐다(교차 리뷰 지적). 모르는 것은 모른다고 둔다.
+ */
+export type OnboardingSyncStatus = "idle" | "running" | "settled" | "failed";
 
 let status: OnboardingSyncStatus = "idle";
 /** 계정이 온보딩을 마친 적이 있나. 조회 전에는 `null`(모름). */
@@ -60,6 +66,18 @@ export function getAccountCompleted(): boolean {
   return accountCompleted === true;
 }
 
+/**
+ * 실패한 조회를 다시 시도할 수 있게 되돌린다.
+ *
+ * 가드의 effect는 `[session, gender]`에만 반응하므로 그 둘이 그대로면 저절로 다시
+ * 돌지 않는다. 사람이 「다시 시도」를 누르면 이 함수가 상태를 되돌리고, 가드가
+ * 구독하고 있는 상태가 바뀌면서 다시 돈다.
+ */
+export function retryOnboardingSync(): void {
+  if (status !== "failed") return;
+  setStatus("idle");
+}
+
 /** 테스트용 — 모듈 상태를 처음으로 되돌린다. */
 export function resetOnboardingSync(): void {
   status = "idle";
@@ -68,9 +86,13 @@ export function resetOnboardingSync(): void {
 }
 
 /** 계정에서 받은 것을 이 기기에 설치한다. */
-function install(account: AccountOnboarding | null, picks: OnboardingPick[]): void {
+function install(
+  account: AccountOnboarding | null,
+  version: string,
+  picks: OnboardingPick[],
+): void {
   accountCompleted = account !== null;
-  setPicks(picks);
+  setPicks(version, picks);
   // 계정이 마친 적이 있다면 이 기기도 "마친 적 있는 기기"다 — 로그아웃 뒤 재방문이
   // 온보딩이 아니라 로그인 화면부터 시작한다(§1-0).
   if (account !== null) markDone();
@@ -95,9 +117,10 @@ export async function syncOnboardingWithAccount(
   try {
     account = await fetchAccountOnboarding();
   } catch {
-    // **읽기 실패를 "안 했다"로 오인하지 않는다.** 판정을 미루고 다음 기회에
-    // 다시 맞춘다. 게이트를 영원히 막지 않도록 상태는 끝낸다.
-    setStatus("settled");
+    // **읽기 실패를 "안 했다"로 오인하지 않는다.** `settled`로 넘기면 게이트가
+    // 완료 사용자에게 온보딩을 처음부터 다시 보여준다. 실패는 실패라고 말하고,
+    // 부르는 쪽이 다시 시도하거나 사람에게 알린다.
+    setStatus("failed");
     return;
   }
 
@@ -108,7 +131,7 @@ export async function syncOnboardingWithAccount(
   });
 
   if (decision.kind === "useAccount") {
-    install(account, decision.picks);
+    install(account, account?.candidatesVersion ?? "", decision.picks);
     // 계정이 이겼으므로 승계값은 버린다 — 남겨 두면 다음 로그인에서 되살아난다.
     if (decision.discardCarried) onCarriedConsumed();
   } else if (decision.kind === "claim") {
@@ -122,16 +145,21 @@ export async function syncOnboardingWithAccount(
       return;
     }
     try {
-      const saved = await putAccountOnboarding(gender, decision.picks);
+      const version = carried?.version ?? "";
+      const saved = await putAccountOnboarding(gender, version, decision.picks);
       // 서버가 성별까지 한 트랜잭션에서 확정했으므로 **기기도 그 성별로 맞춘다** —
       // 안 맞추면 화면은 옛 성별로 피드를 부르고 계정은 새 성별인 상태가 된다.
       setGenderSetting(gender);
-      install({ gender, completed: true, picks: saved }, saved);
+      install(
+        { gender, completed: true, candidatesVersion: version, picks: saved },
+        version,
+        saved,
+      );
       // **성공을 확인한 뒤에만** 보관함을 비운다.
       onCarriedConsumed();
     } catch {
       // 올리기 실패 — 보관함을 남겨 다음에 다시 시도한다. 화면은 기기 값으로 진행한다.
-      setPicks(decision.picks);
+      setPicks(carried?.version ?? "", decision.picks);
     }
   } else {
     accountCompleted = false;

@@ -1,7 +1,6 @@
 "use client";
 
 import Image from "next/image";
-import { useState } from "react";
 
 import type { OnboardingCandidate } from "@/features/onboarding/domain/candidate";
 
@@ -19,6 +18,7 @@ export function OnboardingPickScreen({
   stepIndex,
   stepCount,
   candidates,
+  onDead,
   loading,
   failed,
   onRetry,
@@ -35,12 +35,13 @@ export function OnboardingPickScreen({
   stepIndex: number;
   stepCount: number;
   candidates: OnboardingCandidate[];
+  onDead: (goodsNo: number) => void;
   loading: boolean;
   failed: boolean;
   onRetry: () => void;
   tooFew: boolean;
   selected: number[];
-  onToggle: (goodsNo: number, cardPos: number) => void;
+  onToggle: (goodsNo: number) => void;
   minPicks: number;
   canGoNext: boolean;
   onBack: () => void;
@@ -85,13 +86,13 @@ export function OnboardingPickScreen({
 
       {!loading && !failed && !tooFew && (
         <ul className="mt-6 grid grid-cols-2 gap-3">
-          {candidates.map((candidate, index) => (
+          {candidates.map((candidate) => (
             <li key={candidate.goodsNo}>
               <PickCard
                 candidate={candidate}
-                cardPos={index}
                 checked={selected.includes(candidate.goodsNo)}
                 onToggle={onToggle}
+                onDead={onDead}
               />
             </li>
           ))}
@@ -132,26 +133,21 @@ export function OnboardingPickScreen({
 
 function PickCard({
   candidate,
-  cardPos,
   checked,
   onToggle,
+  onDead,
 }: {
   candidate: OnboardingCandidate;
-  cardPos: number;
   checked: boolean;
-  onToggle: (goodsNo: number, cardPos: number) => void;
+  onToggle: (goodsNo: number) => void;
+  onDead: (goodsNo: number) => void;
 }) {
-  // 이미지가 죽었으면 카드를 지운다 — 서버는 상품이 사라진 것만 알고, CDN이
-  // 404를 내는 것은 여기서만 알 수 있다(전수 조사에서 285건이 그랬다).
-  const [dead, setDead] = useState(false);
-  if (dead) return null;
-
   return (
     <button
       type="button"
       aria-pressed={checked}
       onClick={() => {
-        onToggle(candidate.goodsNo, cardPos);
+        onToggle(candidate.goodsNo);
       }}
       className={`block w-full cursor-pointer overflow-hidden rounded-2xl bg-thumb text-left ${
         checked ? "ring-2 ring-accent" : "neo"
@@ -164,8 +160,12 @@ function PickCard({
           fill
           sizes="(max-width: 448px) 50vw, 224px"
           className="object-cover"
+          // 이미지가 죽으면 **부모에게 알린다.** 여기서 혼자 숨기면 부모는 여전히
+          // 12장으로 알고 있어, 보이는 카드가 2장뿐인데도 "3개 이상 골라주세요"만
+          // 남는 막다른 화면이 된다(교차 리뷰 ⑤). CDN 404는 클라이언트만 안다 —
+          // 전수 조사에서 285건이 그랬다.
           onError={() => {
-            setDead(true);
+            onDead(candidate.goodsNo);
           }}
         />
         {checked && (

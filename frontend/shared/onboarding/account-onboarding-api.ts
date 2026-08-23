@@ -13,6 +13,8 @@ export interface AccountOnboarding {
   gender: GenderChoice;
   /** 마친 적이 있다는 뜻이다. 선택이 비어 있어도(초기화 뒤) 참이다. */
   completed: true;
+  /** 그때 본 후보 목록 판. */
+  candidatesVersion: string;
   /** 개인화 초기화로 걷어냈으면 빈 배열이다. */
   picks: OnboardingPick[];
 }
@@ -36,24 +38,35 @@ export async function fetchAccountOnboarding(): Promise<AccountOnboarding | null
   if (!row) return null;
   // 서버가 보낸 값을 그대로 믿지 않는다 — 성별이 허용값이 아니면 행이 깨진 것이다.
   if (row.gender !== "남성" && row.gender !== "여성") return null;
-  return { gender: row.gender, completed: true, picks: toPicks(row.picks) };
+  return {
+    gender: row.gender,
+    completed: true,
+    candidatesVersion: row.candidates_version,
+    picks: toPicks(row.picks),
+  };
 }
 
 /**
  * 계정에 저장한다. 서버가 최소 3개·후보 목록 안·성별 일치를 검증하고,
  * 어긋나면 **정화하지 않고 거부한다.**
  *
- * 원자적·멱등이다 — 같은 요청을 두 번 보내도 결과가 같다.
+ * 원자적·멱등이다. **완료는 한 번뿐이다** — 이미 마친 계정이 다시 부르면 서버가
+ * 아무것도 바꾸지 않고 저장돼 있는 것을 돌려준다. 지연 요청·다중 탭·직접 호출이
+ * 최신 성별과 선택을 되돌리지 못하게 하는 계약이다(교차 리뷰 ②).
  *
  * @returns 서버에 실제로 담긴 선택. 화면은 이 값을 설치한다.
  * @throws 응답이 오지 않거나 서버가 거부했을 때. 부르는 쪽이 재시도로 다룬다.
  */
 export async function putAccountOnboarding(
   gender: GenderChoice,
+  version: string,
   picks: readonly OnboardingPick[],
 ): Promise<OnboardingPick[]> {
   const rows = await authedRpc<unknown>("c_onboarding_put", {
     p_gender: gender,
+    // **사용자가 본 판을 그대로 보낸다.** 서버가 지금 판을 다시 읽으면 화면을 보는
+    // 도중 갈린 경우 보지 않은 판으로 기록된다(교차 리뷰 ⑥).
+    p_version: version,
     p_picks: picks.map(toWire),
   });
   const saved = toPicks(rows);

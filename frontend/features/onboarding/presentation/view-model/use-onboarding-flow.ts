@@ -28,17 +28,25 @@ export interface OnboardingFlowViewModel {
   gender: GenderChoice | null;
   chooseGender: (gender: GenderChoice) => void;
 
+  /** **보이는 카드만.** 이미지가 죽은 카드는 빠져 있다 — 화면 위치와 최소 개수 판정이
+   *  같은 목록에서 나와야 한다. */
   candidates: OnboardingCandidate[];
+  /** 이미지가 죽은 카드를 알린다. 부모가 목록에서 빼고 위치를 다시 매긴다 */
+  markDead: (goodsNo: number) => void;
   /** 후보를 아직 못 받았다 */
   loadingCandidates: boolean;
   candidatesFailed: boolean;
   retryCandidates: () => void;
-  /** 서버가 자격 있는 후보를 최소 개수만큼도 주지 못했다 — 사람이 후보를 갈아야 한다 */
+  /**
+   * **보이는 카드**가 최소 개수보다 적다 — 사람이 후보를 갈아야 한다는 신호다.
+   * 서버가 준 개수가 아니라 **실제로 그려진 개수**를 센다. CDN 404는 클라이언트만
+   * 알기 때문에, 서버 응답만 보면 아무것도 못 고르는 막다른 화면이 생긴다.
+   */
   tooFewCandidates: boolean;
 
   /** 고른 상품 번호 (고른 순서대로) */
   selected: number[];
-  toggle: (goodsNo: number, cardPos: number) => void;
+  toggle: (goodsNo: number) => void;
   minPicks: number;
   canGoNext: boolean;
 
@@ -67,13 +75,14 @@ export function useOnboardingFlow(): OnboardingFlowViewModel {
 
   const [screen, setScreen] = useState<FlowScreen>("gender");
   const [gender, setGender] = useState<GenderChoice | null>(null);
-  const [candidates, setCandidates] = useState<OnboardingCandidate[]>([]);
+  const [received, setReceived] = useState<OnboardingCandidate[]>([]);
+  const [version, setVersion] = useState<string | null>(null);
+  const [dead, setDead] = useState<number[]>([]);
   const [loadingCandidates, setLoading] = useState(false);
   const [candidatesFailed, setFailed] = useState(false);
   const [attempt, setAttempt] = useState(0);
   // 고른 순서를 그대로 들고 있는다 — `pick_seq`가 여기서 나온다.
   const [selected, setSelected] = useState<number[]>([]);
-  const [positions, setPositions] = useState<Record<number, number>>({});
   const [saveState, setSaveState] = useState<SaveState>("idle");
 
   // 로그인한 사람은 로그인 화면이 없다 — 없는 단계를 세지 않는다.
@@ -92,7 +101,6 @@ export function useOnboardingFlow(): OnboardingFlowViewModel {
     setFailed(false);
     // 성별을 바꾸면 앞의 옷 선택을 재사용하지 않는다(계획 §1-2).
     setSelected([]);
-    setPositions({});
     setScreen("picks");
   }, []);
 
@@ -101,9 +109,13 @@ export function useOnboardingFlow(): OnboardingFlowViewModel {
     if (gender === null) return;
     let active = true;
     fetchOnboardingCandidates(gender).then(
-      (list) => {
+      (page) => {
         if (!active) return;
-        setCandidates(list);
+        setReceived(page.candidates);
+        // **사용자가 본 판을 그대로 들고 있다가 저장에 실려 보낸다.** 저장 시점에
+        // 다시 읽으면 화면을 보는 도중 판이 바뀌었을 때 보지 않은 판으로 기록된다.
+        setVersion(page.version);
+        setDead([]);
         setLoading(false);
       },
       () => {
@@ -123,18 +135,32 @@ export function useOnboardingFlow(): OnboardingFlowViewModel {
     setAttempt((n) => n + 1);
   }, []);
 
-  const toggle = useCallback((goodsNo: number, cardPos: number) => {
+  // 이미지가 죽은 카드는 **목록에서 뺀다.** 자식이 스스로 숨기면 부모는 여전히 12장으로
+  // 알고 있어, ① 최소 개수 판정이 틀리고 ② 뒤 카드의 저장 위치가 실제 화면과 어긋난다.
+  const markDead = useCallback((goodsNo: number) => {
+    setDead((current) => (current.includes(goodsNo) ? current : [...current, goodsNo]));
+    // 죽은 카드가 이미 골라져 있었으면 선택에서도 뺀다 — 안 빼면 보이지 않는 것을
+    // 고른 상태로 저장한다.
+    setSelected((current) => current.filter((no) => no !== goodsNo));
+  }, []);
+
+  const candidates = received.filter((c) => !dead.includes(c.goodsNo));
+
+  const toggle = useCallback((goodsNo: number) => {
     setSelected((current) =>
       current.includes(goodsNo)
         ? current.filter((no) => no !== goodsNo)
         : [...current, goodsNo],
     );
-    setPositions((current) => ({ ...current, [goodsNo]: cardPos }));
   }, []);
 
+  // **화면 위치는 저장 시점의 보이는 목록에서 센다.** 클릭 시점에 적어 두면 그 뒤에
+  // 앞 카드가 죽었을 때 남은 값이 실제 화면과 어긋난다 — 위치 편향을 보려고 남기는
+  // 값이 오염되면 남기는 의미가 없다(교차 리뷰 ⑦). 서버도 위치의 유일성과 범위를
+  // 검사하므로 여기서 어긋나면 저장이 거부된다.
   const picks: OnboardingPick[] = selected.map((goodsNo, index) => ({
     goodsNo,
-    cardPos: positions[goodsNo] ?? index,
+    cardPos: candidates.findIndex((c) => c.goodsNo === goodsNo),
     pickSeq: index,
   }));
 
@@ -144,18 +170,19 @@ export function useOnboardingFlow(): OnboardingFlowViewModel {
   }, []);
 
   const goNext = useCallback(() => {
-    if (!canProceed(picks) || gender === null) return;
+    if (!canProceed(picks) || gender === null || version === null) return;
     if (signedIn !== "in") {
       // 새 기기 경로 — 기기에 담아 두고 가입 화면으로. 로그인하면 승계가 옮긴다.
-      setPicks(picks);
+      // **본 판을 함께 담는다** — 승계가 그것을 그대로 서버에 돌려보낸다.
+      setPicks(version, picks);
       setScreen("signup");
       return;
     }
     // 로그인한 경로 — 바로 계정에 저장한다. **저장이 확인되기 전에는 홈을 열지 않는다.**
     setSaveState("saving");
-    putAccountOnboarding(gender, picks).then(
+    putAccountOnboarding(gender, version, picks).then(
       (saved) => {
-        setPicks(saved);
+        setPicks(version, saved);
         // 계정에 담긴 것을 확인한 뒤에만 기기 표식을 남긴다.
         markDone();
         setSaveState("idle");
@@ -167,7 +194,7 @@ export function useOnboardingFlow(): OnboardingFlowViewModel {
         setSaveState("failed");
       },
     );
-  }, [picks, gender, signedIn]);
+  }, [picks, gender, signedIn, version]);
 
   const tooFewCandidates =
     !loadingCandidates &&
@@ -182,6 +209,7 @@ export function useOnboardingFlow(): OnboardingFlowViewModel {
     gender,
     chooseGender,
     candidates,
+    markDead,
     loadingCandidates,
     candidatesFailed,
     retryCandidates,

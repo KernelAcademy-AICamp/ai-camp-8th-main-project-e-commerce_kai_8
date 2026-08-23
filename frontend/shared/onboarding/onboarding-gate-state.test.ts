@@ -6,6 +6,7 @@ function step(over: Partial<StepInput>) {
   return decideOnboardingStep({
     session: "out",
     syncSettled: false,
+    syncFailed: false,
     accountCompleted: false,
     deviceDone: false,
     ...over,
@@ -52,5 +53,19 @@ describe("decideOnboardingStep", () => {
 
   it("처음 온 기기는 온보딩부터", () => {
     expect(step({ session: "out", deviceDone: false })).toBe("onboarding");
+  });
+
+  // 예전에는 실패를 settled로 넘겨서, 계정 조회가 한 번 실패한 완료 사용자가
+  // 온보딩을 처음부터 다시 봤다(교차 리뷰 ①).
+  it("계정 상태를 못 읽었으면 온보딩으로 보내지 않는다", () => {
+    expect(step({ session: "in", syncFailed: true })).toBe("unreachable");
+    // settled가 함께 참이어도 실패가 이긴다 — 모르는 것은 모른다고 둔다
+    expect(step({ session: "in", syncFailed: true, syncSettled: true })).toBe(
+      "unreachable",
+    );
+  });
+
+  it("비회원은 계정 조회 실패와 무관하다", () => {
+    expect(step({ session: "out", syncFailed: true, deviceDone: true })).toBe("login");
   });
 });
