@@ -1,4 +1,4 @@
-import type { MetricResult } from "../../domain/metric";
+import { asLink, type MetricResult } from "../../domain/metric";
 
 /**
  * 카드 한 장.
@@ -74,7 +74,7 @@ function Table({ columns, rows }: { columns: string[]; rows: string[][] }) {
                   key={columns[cellIndex] ?? cellIndex}
                   className="border-b border-neutral-800/60 px-3 py-2 whitespace-nowrap text-neutral-200 tabular-nums"
                 >
-                  {cell}
+                  <Cell value={cell} />
                 </td>
               ))}
             </tr>
@@ -82,5 +82,20 @@ function Table({ columns, rows }: { columns: string[]; rows: string[][] }) {
         </tbody>
       </table>
     </div>
+  );
+}
+
+/** 주소면 누를 수 있게, 아니면 그냥 글자 */
+function Cell({ value }: { value: string }) {
+  const link = asLink(value);
+  if (link === null) return <>{value}</>;
+  return (
+    <a
+      href={link.href}
+      {...(link.external ? { target: "_blank", rel: "noreferrer" } : {})}
+      className="text-sky-400 underline underline-offset-2 hover:text-sky-300"
+    >
+      {link.label}
+    </a>
   );
 }

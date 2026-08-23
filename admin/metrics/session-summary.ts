@@ -1,3 +1,4 @@
+import { EVENT_FILTER_SQL } from "@/features/metrics/domain/filters";
 import type { MetricDefinition } from "@/features/metrics/domain/metric";
 
 /**
@@ -28,6 +29,7 @@ export const sessionSummary: MetricDefinition = {
         count(distinct goods_no) filter (where event_type = 'unwish')     as 해제개,
         count(distinct goods_no) filter (where event_type = 'outbound')   as 이동개
       from c_events
+      where ${EVENT_FILTER_SQL}
       group by device_id, session_id
     )
     select

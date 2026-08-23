@@ -1,3 +1,4 @@
+import { parseFilter } from "@/features/metrics/domain/filters";
 import { Dashboard } from "@/features/metrics/presentation/components/dashboard";
 
 /**
@@ -9,6 +10,16 @@ import { Dashboard } from "@/features/metrics/presentation/components/dashboard"
  */
 export const dynamic = "force-dynamic";
 
-export default function Page() {
-  return <Dashboard />;
+/**
+ * 좁혀 보기는 **주소에만** 있다 — `?date=2026-08-23&session=711ce185`.
+ *
+ * 화면에 상태를 두지 않아서 좋은 점: 주소를 그대로 복사해 넘기면 같은 화면이
+ * 열린다. 서버 컴포넌트라 브라우저에서 다시 계산하는 부분도 없다.
+ */
+export default async function Page({
+  searchParams,
+}: {
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
+}) {
+  return <Dashboard filter={parseFilter(await searchParams)} />;
 }

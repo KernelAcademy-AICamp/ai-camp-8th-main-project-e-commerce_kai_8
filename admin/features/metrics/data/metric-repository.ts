@@ -1,5 +1,6 @@
 // 지표 SQL 실행 — 결과를 domain 타입으로 바꿔 돌려준다.
 
+import { type DashboardFilter, NO_FILTER, toParams } from "../domain/filters";
 import { type MetricDefinition, type MetricResult, toTable } from "../domain/metric";
 import { describeError, getPool } from "./db";
 
@@ -21,10 +22,25 @@ export async function checkConnection(): Promise<string | null> {
   }
 }
 
+/**
+ * SQL이 실제로 쓰는 파라미터 개수(`$1`,`$2`...의 최대 번호).
+ *
+ * 안 쓰는 카드에까지 값을 넘기면 데이터베이스가 개수 불일치로 거부한다. 그러면
+ * 필터와 무관한 카드가 통째로 "실패"로 떠서 원인이 가려진다.
+ */
+export function countPlaceholders(sql: string): number {
+  const found = [...sql.matchAll(/\$(\d+)/g)].map((m) => Number(m[1]));
+  return found.length === 0 ? 0 : Math.max(...found);
+}
+
 /** 카드 한 장. 실패해도 던지지 않는다 — 실패는 결과의 한 종류다 */
-export async function runMetric(definition: MetricDefinition): Promise<MetricResult> {
+export async function runMetric(
+  definition: MetricDefinition,
+  filter: DashboardFilter = NO_FILTER,
+): Promise<MetricResult> {
   try {
-    const result = await getPool().query(definition.sql);
+    const values = toParams(filter).slice(0, countPlaceholders(definition.sql));
+    const result = await getPool().query(definition.sql, values);
     const columns = result.fields.map((field) => field.name);
     return {
       definition,
@@ -43,6 +59,7 @@ export async function runMetric(definition: MetricDefinition): Promise<MetricRes
  */
 export async function runMetrics(
   definitions: readonly MetricDefinition[],
+  filter: DashboardFilter = NO_FILTER,
 ): Promise<MetricResult[]> {
-  return Promise.all(definitions.map((definition) => runMetric(definition)));
+  return Promise.all(definitions.map((definition) => runMetric(definition, filter)));
 }
