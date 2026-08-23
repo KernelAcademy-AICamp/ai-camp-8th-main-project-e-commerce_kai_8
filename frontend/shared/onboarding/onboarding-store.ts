@@ -74,7 +74,7 @@ function serialize(value: StoredPicks): string {
  * 지금 값. **첫 호출에서 저장소를 동기적으로 읽는다** — effect 뒤로 미루면 그 사이에
  * 피드 훅이 마운트 즉시 씨앗 없는 요청을 보내버린다(성별 설정과 같은 이유).
  */
-export function getStoredSnapshot(): StoredPicks {
+function getStoredSnapshot(): StoredPicks {
   if (!picksLoaded) {
     try {
       stored = parseStoredPicks(localStorage.getItem(PICKS_KEY));
@@ -90,11 +90,6 @@ export function getPicksSnapshot(): readonly OnboardingPick[] {
   return getStoredSnapshot().picks;
 }
 
-/** 서버 렌더에는 이 기기의 값이 없다 — 항상 비어 있다. */
-export function getPicksServerSnapshot(): readonly OnboardingPick[] {
-  return EMPTY_STORED.picks;
-}
-
 export function setPicks(version: string, next: readonly OnboardingPick[]): void {
   stored = { version, picks: [...next] };
   picksLoaded = true;
@@ -106,8 +101,8 @@ export function setPicks(version: string, next: readonly OnboardingPick[]): void
   notify();
 }
 
-/** 메모리 캐시만 비운다 — 저장소는 건드리지 않는다(테스트·신원 전환용). */
-export function clearPicksCache(): void {
+/** 메모리 캐시만 비운다 — 저장소는 건드리지 않는다. */
+function clearPicksCache(): void {
   stored = EMPTY_STORED;
   picksLoaded = false;
   notify();
