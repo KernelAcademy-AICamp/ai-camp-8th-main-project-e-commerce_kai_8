@@ -1,0 +1,906 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="robots" content="noindex, nofollow" />
+<title>취향 분석 이용 대시보드 목업 (가짜 데이터)</title>
+<style>
+  /* ─────────────────────────────────────────────────────────────
+     색 토큰 — admin 앱(admin/app/globals.css · metric-card.tsx)의 어두운 색을 잇는다.
+     카드 배경 #121212 = bg-neutral-900/60 을 body #0a0a0a 위에 얹은 값.
+     차트 색은 이 표면을 기준으로 검증했다.
+     ───────────────────────────────────────────────────────────── */
+  :root {
+    color-scheme: dark;
+
+    --surface-page:   #0a0a0a;
+    --surface-card:   #121212;
+    --surface-sunken: #0f0f0f;
+
+    --border:         #262626;
+    --border-strong:  #404040;
+
+    --text-1:         #f5f5f5;
+    --text-2:         #a3a3a3;
+    /* 작은 회색 글자. #737373은 카드 배경에서 3.95:1로 일반 텍스트 기준(4.5:1)에
+       못 미쳤다. #858585 = 5.08:1 (2026-08-21 리뷰 지적, 재측정해 확인) */
+    --text-3:         #858585;
+
+    --grid:           #2c2c2a;
+    --axis:           #383835;
+
+    /* 일별 추이 2계열 — 검증 통과 (CVD ΔE 26.8 / 정상시야 31.8) */
+    --s-view:         #3987e5;
+    --s-refresh:      #d95926;
+
+    /* 새로고침 결과 — 파랑 순서형 3단 + 실패(status critical) + 결과없음(중립 회색) */
+    --o-changed:      #86b6ef;
+    --o-unchanged:    #3987e5;
+    --o-noupdates:    #1c5cab;
+    --o-failed:       #d03b3b;
+    --o-unresolved:   #898781;
+
+    --critical:       #d03b3b;
+    --focus:          #7cb0f0;
+  }
+
+  * { box-sizing: border-box; }
+
+  /* overflow-x:hidden 으로 덮지 않는다 — 넘치면 내용이 조용히 잘려 검토가 안 된다.
+     넓은 것(차트·표)은 각자 자기 상자 안에서 가로 스크롤한다. */
+  html, body { max-width: 100%; }
+
+  body {
+    margin: 0;
+    background: var(--surface-page);
+    color: var(--text-1);
+    font-family: system-ui, -apple-system, "Segoe UI", "Malgun Gothic", sans-serif;
+    font-size: 14px;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* 1280px인 이유: 30일 × 히트영역 24px + y축 30px = 750px가 일별 차트의 최소 폭이다.
+     8칸 카드가 그보다 좁으면 차트가 제자리에서 가로 스크롤에 들어가 끝 날짜가 가려진다. */
+  .wrap { max-width: 1280px; margin: 0 auto; padding: 0 20px 80px; }
+
+  :focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+
+  /* ── 가짜 데이터 배너 ── */
+  .mock-banner {
+    background: #3a2a00; border-bottom: 1px solid #5c4300; color: #fbe5a6;
+    padding: 10px 20px; font-size: 13px; text-align: center;
+  }
+  .mock-banner strong { color: #fff6df; }
+
+  header.page { padding: 34px 0 20px; }
+  header.page h1 { margin: 0; font-size: 21px; font-weight: 600; }
+  header.page p  { margin: 6px 0 0; font-size: 13px; color: var(--text-3); }
+
+  /* ── 카드 ── */
+  .card {
+    background: var(--surface-card); border: 1px solid var(--border);
+    border-radius: 8px; padding: 20px; min-width: 0;
+  }
+  .card > h2 { margin: 0; font-size: 15px; font-weight: 600; }
+  .card > .why { margin: 4px 0 0; font-size: 13px; color: var(--text-2); }
+  .card-body { margin-top: 18px; }
+
+  .stack-v { display: flex; flex-direction: column; gap: 18px; }
+
+  /* ── 필터 줄 — 탭 위에 두어 두 탭 모두에 걸린다 ── */
+  .filters {
+    background: var(--surface-card); border: 1px solid var(--border);
+    border-radius: 8px; padding: 14px 16px;
+    display: flex; flex-wrap: wrap; gap: 14px 26px; align-items: center;
+  }
+  .fgroup { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; min-width: 0; }
+  .flabel { font-size: 12px; color: var(--text-3); white-space: nowrap; }
+  .seg {
+    display: flex; flex-wrap: wrap; gap: 2px; background: var(--surface-sunken);
+    border: 1px solid var(--border); border-radius: 6px; padding: 2px;
+  }
+  .seg button {
+    appearance: none; border: 0; background: transparent; cursor: pointer;
+    color: var(--text-2); font: inherit; font-size: 12.5px;
+    padding: 6px 12px; border-radius: 4px; min-height: 32px;
+  }
+  .seg button:hover:not(:disabled) { background: #1c1c1c; color: var(--text-1); }
+  .seg button[aria-pressed="true"] { background: #2b2b2b; color: var(--text-1); font-weight: 600; }
+  /* 분류 입력 기능이 아직 없다 — 눌리는데 숫자가 안 바뀌면 기능이 있는 것처럼 오해된다.
+     그래서 비활성으로 잠그고 '전체'로 고정한다 (설계 §6.3, 2026-08-21 리뷰 ①) */
+  .seg button:disabled { cursor: not-allowed; opacity: 0.45; }
+  .seg[aria-disabled="true"] { opacity: 0.75; }
+
+  .stamp { font-size: 12px; color: var(--text-3); margin-left: auto; text-align: right; }
+  .stamp b { color: var(--text-2); font-weight: 500; }
+
+  .note { margin: 10px 0 0; font-size: 12px; color: var(--text-3); }
+  .note code, code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 11.5px; }
+
+  .badge {
+    display: inline-flex; align-items: center; gap: 5px;
+    font-size: 11.5px; padding: 2px 8px; border-radius: 999px;
+    border: 1px solid var(--border-strong); color: var(--text-2); white-space: nowrap;
+  }
+  .badge.small-n { border-color: #5c4300; color: #e8c86a; }
+  .badge.pending { border-color: var(--border-strong); color: var(--text-3); }
+
+  /* ── 탭 ── */
+  .tabs { display: flex; gap: 4px; margin: 22px 0 0; border-bottom: 1px solid var(--border); flex-wrap: wrap; }
+  .tabs button {
+    appearance: none; border: 0; background: transparent; cursor: pointer;
+    color: var(--text-2); font: inherit; font-size: 13.5px; font-weight: 500;
+    padding: 10px 16px; min-height: 42px; border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
+  }
+  .tabs button:hover { color: var(--text-1); }
+  .tabs button[aria-selected="true"] { color: var(--text-1); border-bottom-color: var(--s-view); font-weight: 600; }
+  .panel[hidden] { display: none; }
+  .panel { padding-top: 20px; }
+
+  /* ── KPI 타일 ── */
+  .tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(196px, 1fr)); gap: 12px; }
+  .tile { background: var(--surface-card); border: 1px solid var(--border); border-radius: 8px; padding: 16px; }
+  .tile .t-label { font-size: 12.5px; color: var(--text-2); min-height: 34px; }
+  .tile .t-value {
+    margin-top: 6px; font-size: 30px; font-weight: 600;
+    letter-spacing: -0.02em; line-height: 1.1;
+    /* 큰 단독 숫자에는 tabular-nums 를 쓰지 않는다 — 자간이 헐거워 보인다 */
+  }
+  .tile .t-frac { margin-top: 3px; font-size: 12.5px; color: var(--text-2); font-variant-numeric: tabular-nums; }
+  .tile .t-foot { margin-top: 9px; font-size: 11.5px; color: var(--text-3); }
+
+  /* ── 개요 2열: 일별 추이(넓게) + 새로고침 결과(좁게) ── */
+  .two-col { display: grid; grid-template-columns: 8fr 4fr; gap: 18px; align-items: start; }
+  @media (max-width: 1000px) { .two-col { grid-template-columns: 1fr; } }
+
+  .chart-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 14px; flex-wrap: wrap; }
+  .legend { display: flex; gap: 16px; flex-wrap: wrap; align-items: center; }
+  .legend .item { display: flex; align-items: center; gap: 7px; font-size: 12.5px; color: var(--text-2); }
+  .swatch { width: 10px; height: 10px; border-radius: 2px; flex: 0 0 auto; display: inline-block; }
+
+  /* ── 일별 막대 ── */
+  /* overflow-x:auto 는 세로도 함께 자른다 — 맨 위 눈금이 잘리지 않게 위 여백을 준다 */
+  .plot-scroll { overflow-x: auto; margin-top: 14px; padding-top: 10px; }
+  .plot { display: grid; grid-template-columns: 26px 1fr; min-width: 620px; }
+  .y-axis { position: relative; height: 180px; }
+  .y-axis span {
+    position: absolute; right: 6px; transform: translateY(-50%);
+    font-size: 11px; color: var(--text-3); font-variant-numeric: tabular-nums;
+  }
+  .plot-area { position: relative; height: 180px; border-bottom: 1px solid var(--axis); }
+  .gridline { position: absolute; left: 0; right: 0; height: 1px; background: var(--grid); }
+  .cols { position: absolute; inset: 0; display: flex; align-items: flex-end; }
+
+  /* 열 자체를 초점 받을 수 있게 만든다 — 마우스 없이도 값을 열 수 있어야 한다
+     (2026-08-21 리뷰: div+mousemove 라 키보드·터치로 툴팁을 못 연다) */
+  .col {
+    flex: 1 1 0; height: 100%; min-width: 24px;
+    display: flex; align-items: flex-end; justify-content: center; gap: 2px;
+    position: relative; cursor: default; border: 0; background: transparent; padding: 0;
+    font: inherit; color: inherit;
+  }
+  .col:hover, .col:focus-visible { background: rgba(255,255,255,0.06); }
+  .bar { width: 11px; max-width: 24px; border-radius: 4px 4px 0 0; } /* 데이터 끝만 둥글게 */
+  .bar.view { background: var(--s-view); }
+  .bar.refresh { background: var(--s-refresh); }
+
+  /* 집계가 실패한 날 — "0건"으로 보이면 안 되므로 빈 칸이 아니라 눈에 띄는 표시를 둔다 */
+  .col.errday {
+    background: repeating-linear-gradient(45deg, #4a1f1f 0 3px, transparent 3px 7px);
+    border-top: 2px solid var(--critical);
+  }
+  .col.errday .err-mark {
+    position: absolute; bottom: 6px; left: 50%; transform: translateX(-50%);
+    width: 16px; height: 16px; border-radius: 50%;
+    background: var(--critical); color: #fff;
+    font-size: 12px; font-weight: 700; line-height: 16px; text-align: center;
+  }
+  .col.today::after {
+    content: ""; position: absolute; inset: 0;
+    border-left: 1px dashed var(--border-strong); border-right: 1px dashed var(--border-strong);
+  }
+
+  /* 눈금을 flex 칸으로 두면 30개의 글자 폭이 도표의 최소 폭을 밀어 올려, 차트가
+     제자리에서 가로 스크롤에 들어가고 끝 날짜가 가려졌다 (실측: x축을 숨기면
+     823 → 758로 넘침이 사라졌다). 절대 배치로 바꿔 폭 계산에서 아예 빼고,
+     보이는 눈금만 그린다. */
+  .x-axis { position: relative; height: 15px; margin-top: 7px; }
+  .x-tick {
+    position: absolute; top: 0; transform: translateX(-50%);
+    font-size: 10px; color: var(--text-3);
+    font-variant-numeric: tabular-nums; white-space: nowrap;
+  }
+  /* 양 끝 눈금은 가운데 정렬하면 절반이 도표 밖으로 나간다 */
+  .x-tick.at-start { transform: translateX(-25%); }
+  .x-tick.at-end   { transform: translateX(-75%); }
+
+  .tooltip {
+    position: fixed; z-index: 50; pointer-events: none;
+    background: #1c1c1c; border: 1px solid var(--border-strong);
+    border-radius: 6px; padding: 9px 11px; font-size: 12px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.5); max-width: 270px; display: none;
+  }
+  .tooltip .tt-date { font-weight: 600; margin-bottom: 5px; }
+  .tooltip .tt-row { display: flex; align-items: center; gap: 7px; color: var(--text-2); font-variant-numeric: tabular-nums; }
+  .tooltip .tt-row b { color: var(--text-1); font-weight: 600; }
+
+  /* ── 누적 막대 ── */
+  .stack { display: flex; width: 100%; height: 30px; gap: 2px; margin-top: 4px; } /* 2px = 표면 간격 */
+  .stack .seg-fill {
+    height: 100%; border-radius: 2px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11.5px; font-weight: 600;
+  }
+  .stack .seg-fill:first-child { border-radius: 4px 2px 2px 4px; }
+  .stack .seg-fill:last-child  { border-radius: 2px 4px 4px 2px; }
+
+  .stack-legend { display: flex; flex-direction: column; gap: 7px; margin-top: 14px; }
+  .stack-legend .item {
+    display: grid; grid-template-columns: 10px 1fr auto; align-items: baseline; gap: 9px;
+    font-size: 12.5px; color: var(--text-2); line-height: 1.4;
+  }
+  .stack-legend .item .swatch { position: relative; top: 1px; }
+  .stack-legend .item .n { color: var(--text-1); font-weight: 600; font-variant-numeric: tabular-nums; white-space: nowrap; }
+
+  .rate-list { margin-top: 16px; border-top: 1px solid var(--border); padding-top: 14px; display: flex; flex-direction: column; gap: 9px; }
+  .rate-list .r { display: flex; justify-content: space-between; gap: 12px; font-size: 12.5px; color: var(--text-2); align-items: baseline; }
+  .rate-list .r b { color: var(--text-1); font-variant-numeric: tabular-nums; white-space: nowrap; }
+
+  /* ── 상태·회복 요약 ── */
+  .state-tree { display: flex; flex-wrap: wrap; gap: 10px; }
+  .st-box { background: var(--surface-sunken); border: 1px solid var(--border); border-radius: 7px; padding: 12px 14px; min-width: 150px; flex: 1 1 150px; }
+  .st-box.sub { border-style: dashed; margin-left: 18px; }
+  .st-box .st-name { font-size: 12.5px; color: var(--text-2); }
+  .st-box .st-num { margin-top: 4px; font-size: 22px; font-weight: 600; letter-spacing: -0.02em; }
+  .st-box .st-sub { font-size: 11.5px; color: var(--text-3); font-variant-numeric: tabular-nums; }
+  .st-total {
+    margin-top: 14px; padding-top: 13px; border-top: 1px solid var(--border);
+    display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; align-items: baseline;
+    font-size: 13px; color: var(--text-2);
+  }
+  .st-total b { color: var(--text-1); font-variant-numeric: tabular-nums; }
+
+  /* ── 표 ── */
+  .table-scroll { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th {
+    border-bottom: 1px solid var(--border-strong); padding: 8px 12px; text-align: left;
+    font-weight: 500; color: var(--text-2); white-space: nowrap; font-size: 12.5px;
+  }
+  td {
+    border-bottom: 1px solid rgba(38,38,38,0.6); padding: 8px 12px;
+    white-space: nowrap; font-variant-numeric: tabular-nums;
+  }
+  tbody tr.acct:nth-of-type(odd) { background: rgba(23,23,23,0.4); }
+  td.muted { color: var(--text-3); }
+  td.expand-cell { padding: 0; background: var(--surface-sunken); }
+  .sub-table { padding: 12px 16px 16px 34px; }
+  .sub-table caption { text-align: left; font-size: 12px; color: var(--text-3); padding-bottom: 8px; }
+  .sub-table th { font-size: 11.5px; }
+  .sub-table td { font-size: 12.5px; }
+
+  .row-toggle {
+    appearance: none; background: transparent; border: 1px solid var(--border-strong);
+    color: var(--text-2); font: inherit; font-size: 11.5px; cursor: pointer;
+    padding: 3px 9px; border-radius: 5px; min-height: 28px; white-space: nowrap;
+  }
+  .row-toggle:hover { background: #1c1c1c; color: var(--text-1); }
+
+  .table-toggle {
+    appearance: none; background: transparent; border: 1px solid var(--border-strong);
+    color: var(--text-2); font: inherit; font-size: 12px; cursor: pointer;
+    padding: 6px 12px; border-radius: 6px; min-height: 32px;
+  }
+  .table-toggle:hover { background: #1c1c1c; color: var(--text-1); }
+  .table-view[hidden] { display: none; }
+  .table-view { margin-top: 16px; }
+
+  /* ── QA 탭 ── */
+  .states { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 12px; }
+  .state-box { border: 1px solid var(--border); border-radius: 7px; padding: 13px 14px; background: var(--surface-sunken); }
+  .state-box .sb-when { font-size: 11.5px; color: var(--text-3); }
+  .state-box .sb-show { margin-top: 7px; font-size: 13px; }
+  .state-box.fail { border-color: #7f1d1d; background: rgba(69,10,10,0.4); }
+  .state-box.fail .sb-show { color: #fca5a5; }
+  .state-box.fail .sb-show strong { color: #fecaca; }
+
+  h2.section { margin: 26px 0 12px; font-size: 13px; font-weight: 600; color: var(--text-3); }
+  h2.section:first-child { margin-top: 0; }
+
+  /* ── 좁은 화면 ── */
+  @media (max-width: 640px) {
+    /* 손가락으로 누르는 화면에서는 28~32px가 너무 작다 */
+    .seg button { min-height: 44px; padding: 8px 14px; font-size: 13px; }
+    /* 손가락 표적은 44px 이상 — 행 펼치기 28px, 표 토글 32px, 탭 42px이 모두 모자랐다 */
+    .row-toggle, .table-toggle { min-height: 44px; padding: 8px 14px; font-size: 13px; }
+    .tabs button { min-height: 44px; }
+    .stamp { margin-left: 0; text-align: left; }
+    .state-tree { flex-direction: column; }   /* 가로 스크롤 대신 세로로 쌓는다 */
+    .st-box.sub { margin-left: 0; }
+    .wrap { padding: 0 14px 60px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="mock-banner">
+  <strong>가짜 데이터 목업입니다.</strong> 화면의 숫자는 모두 검토용으로 지어냈습니다. 실제 데이터베이스에 연결돼 있지 않고 admin 코드도 건드리지 않았습니다.
+</div>
+
+<div class="wrap">
+
+  <header class="page">
+    <h1>취향 분석 이용 대시보드</h1>
+    <p>마이페이지 취향 분석이 몇 명에게 제공됐고 얼마나 읽혔는지, 새로고침으로 결과가 바뀌었는지 봅니다.</p>
+  </header>
+
+  <!-- ══════════ 필터 — 탭 위에 한 줄. 두 탭 모두에 걸린다 ══════════ -->
+  <div class="filters">
+    <div class="fgroup">
+      <span class="flabel">기간</span>
+      <div class="seg" id="seg-period">
+        <button type="button" data-label="오늘 (2026-08-21)">오늘</button>
+        <button type="button" data-label="최근 7일 (2026-08-15 ~ 08-21)">최근 7일</button>
+        <button type="button" data-label="최근 30일 (2026-07-23 ~ 08-21)" aria-pressed="true">최근 30일</button>
+        <button type="button" data-label="전체 기간 (2026-07-01 ~ 08-21)">전체</button>
+        <button type="button" data-label="직접 선택한 기간">직접</button>
+      </div>
+    </div>
+
+    <div class="fgroup">
+      <span class="flabel">세션</span>
+      <div class="seg" id="seg-session" aria-disabled="true">
+        <button type="button" aria-pressed="true" disabled>전체</button>
+        <button type="button" disabled>자발</button>
+        <button type="button" disabled>관찰</button>
+        <button type="button" disabled>미분류</button>
+      </div>
+      <span class="badge pending">분류 기능 준비 전</span>
+    </div>
+
+    <div class="stamp">
+      <div>기준: <b>한국시간(KST)</b> · <span id="period-label">최근 30일 (2026-07-23 ~ 08-21)</span></div>
+      <div>최종 수집 시각 <b>2026-08-21 16:41</b></div>
+    </div>
+  </div>
+  <p class="note">
+    세션 필터는 <b>잠겨 있습니다.</b> 관찰·자발을 표시하는 입력 화면이 아직 없어 전체로 고정했습니다.
+    아래 세션 표에는 분류가 붙은 뒤의 모습을 보여주려고 자발·관찰·미분류 샘플을 넣었습니다.
+    기간 필터는 목업이라 선택 상태와 라벨만 바뀌고 숫자는 그대로입니다.
+  </p>
+
+  <!-- ══════════ 탭 ══════════ -->
+  <div class="tabs" role="tablist" aria-label="대시보드 화면">
+    <button type="button" role="tab" id="tab-overview" aria-controls="panel-overview" aria-selected="true">개요</button>
+    <button type="button" role="tab" id="tab-accounts" aria-controls="panel-accounts" aria-selected="false">계정 · 세션</button>
+    <button type="button" role="tab" id="tab-qa" aria-controls="panel-qa" aria-selected="false">상태 견본 (QA)</button>
+  </div>
+
+  <!-- ══════════════════ 개요 ══════════════════ -->
+  <div class="panel" id="panel-overview" role="tabpanel" aria-labelledby="tab-overview">
+
+    <div class="tiles">
+      <div class="tile">
+        <div class="t-label">마이페이지 방문 계정</div>
+        <div class="t-value">18</div>
+        <div class="t-frac">계정</div>
+        <div class="t-foot">취향 분석을 받을 기회가 있던 계정</div>
+      </div>
+      <div class="tile">
+        <div class="t-label">분석 결과 제공률</div>
+        <div class="t-value">72%</div>
+        <div class="t-frac">13 / 18계정</div>
+        <div class="t-foot"><code>collecting</code>은 성공에 넣지 않음</div>
+      </div>
+      <div class="tile">
+        <div class="t-label">유효 조회율</div>
+        <div class="t-value">69%</div>
+        <div class="t-frac">9 / 13계정</div>
+        <div class="t-foot">결과가 표시된 채 3초 이상</div>
+      </div>
+      <div class="tile">
+        <div class="t-label">7일 리텐션 <span class="badge small-n">표본 적음</span></div>
+        <div class="t-value">33%</div>
+        <div class="t-frac">2 / 6계정</div>
+        <div class="t-foot">첫 유효 조회 후 7일이 지난 계정만 셉니다. 3계정은 아직 대상 밖입니다</div>
+      </div>
+      <div class="tile">
+        <div class="t-label">새로고침 계정률 <span class="badge small-n">표본 적음</span></div>
+        <div class="t-value">56%</div>
+        <div class="t-frac">5 / 9계정</div>
+        <div class="t-foot">몇 명이 눌렀는지의 비율입니다</div>
+      </div>
+    </div>
+
+    <div class="two-col" style="margin-top:18px">
+
+      <!-- 일별 추이 -->
+      <section class="card">
+        <div class="chart-head">
+          <div>
+            <h2>일별 고유 계정 추이</h2>
+            <p class="why">막대에 커서를 올리거나 <kbd>Tab</kbd>으로 이동하면 그날의 방문 계정과 분자·분모가 나옵니다.</p>
+          </div>
+          <button type="button" class="table-toggle" data-target="daily-table" aria-expanded="false" aria-controls="daily-table">표로 보기</button>
+        </div>
+
+        <div class="card-body">
+          <div class="legend">
+            <span class="item"><span class="swatch" style="background:var(--s-view)"></span> 취향 분석 유효 조회 계정</span>
+            <span class="item"><span class="swatch" style="background:var(--s-refresh)"></span> 새로고침 계정</span>
+            <span class="item"><span class="swatch" style="background:repeating-linear-gradient(45deg,#5b2626 0 3px,transparent 3px 6px);border:1px solid #7f1d1d"></span> 집계 실패 (0건과 다름)</span>
+          </div>
+
+          <div class="plot-scroll">
+            <div class="plot">
+              <div class="y-axis" id="y-axis"></div>
+              <div>
+                <div class="plot-area" id="plot-area"><div class="cols" id="cols"></div></div>
+                <div class="x-axis" id="x-axis"></div>
+              </div>
+            </div>
+          </div>
+
+          <p class="note">
+            기본 30일은 일 단위, 90일을 넘는 기간은 주 단위로 묶습니다.
+            같은 계정이 여러 날 오면 날마다 한 번씩 세므로 <b>일별 고유 계정을 다 더하면 기간 전체 고유 계정 9보다 큽니다.</b>
+          </p>
+
+          <div class="table-view" id="daily-table" hidden>
+            <div class="table-scroll">
+              <table>
+                <thead><tr><th>날짜 (KST)</th><th>유효 조회 계정</th><th>새로고침 계정</th><th>마이페이지 방문 계정</th><th>상태</th></tr></thead>
+                <tbody id="daily-tbody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 새로고침 결과 -->
+      <section class="card">
+        <h2>새로고침 결과</h2>
+        <p class="why">새로고침 시도 14건의 결과 분포입니다.</p>
+
+        <div class="card-body">
+          <div class="stack" role="img"
+               aria-label="새로고침 시도 14건: 결과 변경 5건, 새 행동은 있었지만 화면 동일 3건, 새 행동 없음 4건, 실패 1건, 완료 기록 없음 1건">
+            <div class="seg-fill" style="flex:5;background:var(--o-changed);color:#0b0b0b">5</div>
+            <div class="seg-fill" style="flex:3;background:var(--o-unchanged);color:#0b0b0b">3</div>
+            <div class="seg-fill" style="flex:4;background:var(--o-noupdates);color:#ffffff">4</div>
+            <div class="seg-fill" style="flex:1;background:var(--o-failed);color:#ffffff"></div>
+            <div class="seg-fill" style="flex:1;background:var(--o-unresolved);color:#0b0b0b"></div>
+          </div>
+
+          <!-- 막대에는 건수만 둔다. 비율을 함께 두면 36%(전체 대비)와 38%(결과 도착분 대비)가
+               한 화면에서 비슷한 크기로 보여 해석 비용만 늘어난다 (2026-08-21 리뷰 ②) -->
+          <div class="stack-legend">
+            <span class="item"><span class="swatch" style="background:var(--o-changed)"></span> 결과 변경 <span class="n">5건</span></span>
+            <span class="item"><span class="swatch" style="background:var(--o-unchanged)"></span> 새 행동은 있었지만 화면 동일 <span class="n">3건</span></span>
+            <span class="item"><span class="swatch" style="background:var(--o-noupdates)"></span> 새 행동 없음 <span class="n">4건</span></span>
+            <span class="item"><span class="swatch" style="background:var(--o-failed)"></span> 실패 <span class="n">1건</span></span>
+            <span class="item"><span class="swatch" style="background:var(--o-unresolved)"></span> 완료 기록 없음 <span class="n">1건</span></span>
+          </div>
+
+          <div class="rate-list">
+            <div class="r"><span>처리 결과가 기록된 시도 중 변경</span><b>38% · 5/13건</b></div>
+            <div class="r"><span>전체 시도 중 실패</span><b>7% · 1/14건</b></div>
+            <div class="r"><span>완료 기록이 없는 시도</span><b>7% · 1/14건</b></div>
+            <div class="r"><span>계정당 새로고침 횟수</span><b>중앙값 2 · 범위 1~5</b></div>
+          </div>
+
+          <p class="note">
+            분모가 둘입니다. 변경률은 <b>처리 결과가 기록된 13건</b>, 실패율은 <b>전체 시도 14건</b>이 기준입니다.
+          </p>
+        </div>
+      </section>
+    </div>
+
+    <!-- 분석 상태·회복 요약 -->
+    <section class="card" style="margin-top:18px">
+      <h2>첫 요청 결과와 회복</h2>
+      <p class="why">
+        <b>선택 기간 안에서 각 방문 계정의 첫 초기 조회(<code>source=initial</code>) 결과</b>를 셉니다.
+        계정 생애 최초가 아니라 이 기간의 첫 요청이 기준입니다. 계정마다 하나뿐이라 합이 방문 계정과 맞습니다.
+        새로고침으로 뒤집힌 결과는 아래 회복에 따로 답니다.
+      </p>
+
+      <div class="card-body">
+        <div class="state-tree">
+          <div class="st-box">
+            <div class="st-name">첫 요청 <code>ready</code></div>
+            <div class="st-num">12</div>
+            <div class="st-sub">67% · 12/18계정</div>
+          </div>
+          <div class="st-box">
+            <div class="st-name">아직 모으는 중 <code>collecting</code></div>
+            <div class="st-num">4</div>
+            <div class="st-sub">22% · 4/18계정 · 결과 제공 아님</div>
+          </div>
+          <div class="st-box">
+            <div class="st-name">불러오기 실패 <code>failed</code></div>
+            <div class="st-num">2</div>
+            <div class="st-sub">11% · 2/18계정</div>
+          </div>
+          <div class="st-box">
+            <div class="st-name">상태 기록 없음</div>
+            <div class="st-num">0</div>
+            <div class="st-sub">방문은 있는데 결과 이벤트가 없는 계정</div>
+          </div>
+          <div class="st-box sub">
+            <div class="st-name">└ 새로고침으로 회복</div>
+            <div class="st-num">1</div>
+            <div class="st-sub">실패 2계정 중</div>
+          </div>
+        </div>
+
+        <div class="st-total">
+          <span>첫 요청 결과 합계 <b>12 + 4 + 2 + 0 = 18계정</b> (방문 계정과 일치)</span>
+          <span>기간 중 한 번이라도 <code>ready</code> <b>13계정</b> · 정상 상태 도달 계정 <b>17 / 18 · 94%</b></span>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- ══════════════════ 계정 · 세션 ══════════════════ -->
+  <div class="panel" id="panel-accounts" role="tabpanel" aria-labelledby="tab-accounts" hidden>
+    <section class="card">
+      <h2>계정 표</h2>
+      <p class="why">
+        한 계정이 여러 기기와 세션을 쓸 수 있어 <b>행은 계정 하나</b>입니다. 기기와 세션은 펼쳐서 봅니다.
+        계정 UUID는 내보내지 않고 가린 표시명만 씁니다.
+      </p>
+      <div class="card-body">
+        <div class="table-scroll">
+          <table>
+            <thead>
+              <tr>
+                <th>계정</th><th>기기 수</th><th>세션 수</th><th>유효 조회</th>
+                <th>새로고침 총횟수</th><th>최근 상태</th><th>최근 시각 (KST)</th><th></th>
+              </tr>
+            </thead>
+            <tbody id="acct-tbody"></tbody>
+          </table>
+        </div>
+        <p class="note">
+          최근 시각 내림차순 정렬, 전체 18계정 중 13건 표시.
+          <b>A-01</b>은 기기 2대, <b>A-09</b>는 실패 뒤 새로고침으로 회복한 계정입니다. 펼쳐서 세션별로 확인하세요.
+        </p>
+      </div>
+    </section>
+  </div>
+
+  <!-- ══════════════════ QA ══════════════════ -->
+  <div class="panel" id="panel-qa" role="tabpanel" aria-labelledby="tab-qa" hidden>
+    <section class="card">
+      <h2>실패·빈 상태를 화면이 어떻게 말하는가</h2>
+      <p class="why">
+        실제 대시보드 본문에는 두지 않습니다. 계측 도구에서 가장 위험한 오류는 못 읽은 값을 0건으로 보여주는 것이라,
+        여섯 경우의 문구를 여기서 따로 검토합니다.
+      </p>
+      <div class="card-body">
+        <div class="states">
+          <div class="state-box fail">
+            <div class="sb-when">데이터베이스 연결 실패</div>
+            <div class="sb-show"><strong>데이터베이스에 연결하지 못했습니다.</strong> 아래 숫자는 0이 아니라 알 수 없음입니다.</div>
+          </div>
+          <div class="state-box fail">
+            <div class="sb-when">카드 하나의 집계 실패</div>
+            <div class="sb-show"><strong>이 지표를 읽지 못했습니다.</strong> 다른 카드는 그대로 표시됩니다.</div>
+          </div>
+          <div class="state-box">
+            <div class="sb-when">선택 기간 데이터 0건</div>
+            <div class="sb-show">집계는 성공했고 <b>해당 기간 사용자가 0명</b>입니다.</div>
+          </div>
+          <div class="state-box">
+            <div class="sb-when">리텐션 집계 대상 계정 0명</div>
+            <div class="sb-show"><b>계산할 계정 없음.</b> 첫 유효 조회 후 7일이 지난 계정이 아직 없습니다. 0%로 쓰지 않습니다.</div>
+          </div>
+          <div class="state-box">
+            <div class="sb-when">방문은 있는데 상태 기록이 없음</div>
+            <div class="sb-show"><b>상태 기록 없음.</b> 마이페이지는 열렸는데 분석 결과 이벤트가 오지 않은 계정입니다. <code>failed</code>로 세지 않습니다.</div>
+          </div>
+          <div class="state-box">
+            <div class="sb-when">새로고침 시도 0건</div>
+            <div class="sb-show"><b>시도 없음.</b> 결과 막대를 빈 비율로 그리지 않습니다.</div>
+          </div>
+        </div>
+
+        <h2 class="section" style="margin-top:26px">일부러 쓰지 않은 표현</h2>
+        <p class="note" style="margin:0">
+          "완독" · "끝까지 봄" · "실시간 분석" · "새로고침 전환율" · "평균 새로고침"만 단독 표시 ·
+          <code>collecting</code>을 분석 결과 제공 성공에 포함하는 문구 · "오류 없이 화면을 낸 계정" ·
+          "결과 없음" · "조회 실패". 모두 설계 문서 §9.4가 금지한 표현입니다.
+        </p>
+        <p class="note">
+          뒤의 셋은 이번 검토에서 더해졌습니다. 회복한 계정은 이미 오류를 겪었고,
+          "결과 없음"은 취향 분석 결과가 비었다는 뜻으로 읽히며, 집계가 실패한 것을 조회 실패라고 부르면 주체가 바뀝니다.
+        </p>
+      </div>
+    </section>
+  </div>
+
+</div>
+
+<div class="tooltip" id="tooltip" role="status" aria-live="polite"></div>
+
+<script>
+(function () {
+  "use strict";
+
+  /* ── 일별 데이터 (검토용 가짜 값) ─────────────────────────────
+     view = 유효 조회 계정, refresh = 새로고침 계정, visit = 마이페이지 방문 계정.
+     err = true 인 날은 "0건"이 아니라 "집계 실패"다. */
+  var DAILY = [
+    { d: "07-23", view: 1, refresh: 0, visit: 2 }, { d: "07-24", view: 2, refresh: 1, visit: 3 },
+    { d: "07-25", view: 0, refresh: 0, visit: 1 }, { d: "07-26", view: 1, refresh: 0, visit: 2 },
+    { d: "07-27", view: 2, refresh: 1, visit: 3 }, { d: "07-28", view: 3, refresh: 1, visit: 4 },
+    { d: "07-29", view: 1, refresh: 0, visit: 2 }, { d: "07-30", view: 0, refresh: 0, visit: 0 },
+    { d: "07-31", view: 2, refresh: 1, visit: 3 }, { d: "08-01", view: 3, refresh: 2, visit: 4 },
+    { d: "08-02", view: 2, refresh: 0, visit: 3 }, { d: "08-03", view: 1, refresh: 1, visit: 2 },
+    { d: "08-04", view: 0, refresh: 0, visit: 1 }, { d: "08-05", view: 2, refresh: 1, visit: 3 },
+    { d: "08-06", view: 4, refresh: 2, visit: 5 }, { d: "08-07", view: 3, refresh: 1, visit: 4 },
+    { d: "08-08", view: 1, refresh: 0, visit: 2 }, { d: "08-09", err: true },
+    { d: "08-10", view: 2, refresh: 1, visit: 3 }, { d: "08-11", view: 3, refresh: 2, visit: 4 },
+    { d: "08-12", view: 2, refresh: 1, visit: 3 }, { d: "08-13", view: 1, refresh: 0, visit: 2 },
+    { d: "08-14", view: 0, refresh: 0, visit: 1 }, { d: "08-15", view: 2, refresh: 1, visit: 3 },
+    { d: "08-16", view: 3, refresh: 1, visit: 4 }, { d: "08-17", view: 4, refresh: 2, visit: 5 },
+    { d: "08-18", view: 2, refresh: 1, visit: 3 }, { d: "08-19", view: 3, refresh: 2, visit: 4 },
+    { d: "08-20", view: 2, refresh: 1, visit: 3 }, { d: "08-21", view: 1, refresh: 0, visit: 2, today: true }
+  ];
+
+  /* ── 계정 → 세션 (검토용 가짜 값) ────────────────────────────
+     세션별 새로고침 합 = 계정 총횟수, 계정 총합 = 14건. */
+  var ACCOUNTS = [
+    { id: "A-01", last: "2026-08-21 14:02", state: "ready", sessions: [
+      { dev: "D-1a", ses: "S-93f", kind: "자발", st: "ready", eng: "예",   r: 2, res: "changed · unresolved" },
+      { dev: "D-1a", ses: "S-88c", kind: "자발", st: "ready", eng: "예",   r: 1, res: "no_updates" },
+      { dev: "D-7e", ses: "S-51b", kind: "관찰", st: "ready", eng: "예",   r: 2, res: "changed · unchanged_with_updates" },
+      { dev: "D-7e", ses: "S-2f0", kind: "자발", st: "ready", eng: "아니오", r: 0, res: "—" } ] },
+    { id: "A-02", last: "2026-08-21 09:47", state: "ready", sessions: [
+      { dev: "D-2c", ses: "S-71b", kind: "자발", st: "ready", eng: "예",   r: 2, res: "no_updates · no_updates" },
+      { dev: "D-2c", ses: "S-66a", kind: "자발", st: "ready", eng: "예",   r: 1, res: "no_updates" },
+      { dev: "D-2c", ses: "S-40f", kind: "자발", st: "ready", eng: "아니오", r: 1, res: "changed" } ] },
+    { id: "A-03", last: "2026-08-20 20:15", state: "ready", sessions: [
+      { dev: "D-3e", ses: "S-40d", kind: "관찰", st: "ready", eng: "예", r: 2, res: "unchanged_with_updates ×2" },
+      { dev: "D-3e", ses: "S-12b", kind: "관찰", st: "ready", eng: "예", r: 0, res: "—" } ] },
+    { id: "A-04", last: "2026-08-20 18:33", state: "ready", sessions: [
+      { dev: "D-4a", ses: "S-2c8", kind: "자발", st: "ready", eng: "예", r: 1, res: "failed" },
+      { dev: "D-4a", ses: "S-9d3", kind: "자발", st: "ready", eng: "예", r: 1, res: "changed" } ] },
+    { id: "A-05", last: "2026-08-19 23:58", state: "ready", sessions: [
+      { dev: "D-5f", ses: "S-8e1", kind: "미분류", st: "ready", eng: "예", r: 0, res: "—" } ] },
+    { id: "A-06", last: "2026-08-19 12:20", state: "ready", sessions: [
+      { dev: "D-6b", ses: "S-19a", kind: "자발", st: "ready", eng: "예",   r: 0, res: "—" },
+      { dev: "D-6b", ses: "S-77c", kind: "자발", st: "ready", eng: "아니오", r: 0, res: "—" } ] },
+    { id: "A-07", last: "2026-08-18 16:41", state: "ready", sessions: [
+      { dev: "D-7d", ses: "S-55c", kind: "관찰", st: "ready", eng: "아니오", r: 0, res: "—" } ] },
+    { id: "A-08", last: "2026-08-18 10:05", state: "collecting", sessions: [
+      { dev: "D-8a", ses: "S-6f2", kind: "자발", st: "collecting", eng: "아니오", r: 0, res: "—" } ] },
+    { id: "A-09", last: "2026-08-17 21:12", state: "ready (회복)", sessions: [
+      { dev: "D-9c", ses: "S-a37", kind: "미분류", st: "failed", eng: "아니오", r: 0, res: "—" },
+      { dev: "D-4b", ses: "S-c19", kind: "미분류", st: "failed → ready", eng: "예", r: 1, res: "changed" } ] },
+    { id: "A-10", last: "2026-08-16 19:30", state: "failed", sessions: [
+      { dev: "D-0e", ses: "S-b84", kind: "관찰", st: "failed", eng: "아니오", r: 0, res: "—" } ] },
+    { id: "A-11", last: "2026-08-15 22:03", state: "ready", sessions: [
+      { dev: "D-1f", ses: "S-c05", kind: "자발", st: "ready", eng: "예", r: 0, res: "—" } ] },
+    { id: "A-12", last: "2026-08-14 08:29", state: "collecting", sessions: [
+      { dev: "D-2b", ses: "S-d76", kind: "자발", st: "collecting", eng: "아니오", r: 0, res: "—" } ] },
+    { id: "A-13", last: "2026-08-13 19:44", state: "ready", sessions: [
+      { dev: "D-3d", ses: "S-e41", kind: "자발", st: "ready", eng: "예", r: 0, res: "—" } ] }
+  ];
+
+  var Y_MAX = 4, PLOT_H = 180;
+
+  /* ── y축 눈금 + 격자 (실선 헤어라인) ── */
+  var yAxis = document.getElementById("y-axis"), plotArea = document.getElementById("plot-area");
+  for (var t = 0; t <= Y_MAX; t++) {
+    var top = PLOT_H - (t / Y_MAX) * PLOT_H;
+    var lab = document.createElement("span");
+    lab.textContent = String(t); lab.style.top = top + "px";
+    yAxis.appendChild(lab);
+    if (t > 0) {
+      var g = document.createElement("div");
+      g.className = "gridline"; g.style.top = top + "px";
+      plotArea.appendChild(g);
+    }
+  }
+
+  function pct(n, d) { return d ? Math.round((n / d) * 100) + "%" : "—"; }
+
+  function describe(row) {
+    if (row.err) return "2026-" + row.d + " 집계 실패. 0건이 아닙니다";
+    return "2026-" + row.d + (row.today ? " 오늘, 진행 중" : "") +
+           ". 유효 조회 " + row.view + "계정, 새로고침 " + row.refresh +
+           "계정, 마이페이지 방문 " + row.visit + "계정";
+  }
+
+  /* ── 막대 + x축 ──
+     열을 button 으로 만들어 Tab·터치로도 값을 열 수 있게 한다. */
+  var cols = document.getElementById("cols"), xAxis = document.getElementById("x-axis");
+  var tooltip = document.getElementById("tooltip");
+
+  DAILY.forEach(function (row, i) {
+    var col = document.createElement("button");
+    col.type = "button";
+    col.className = "col" + (row.err ? " errday" : "") + (row.today ? " today" : "");
+    col.setAttribute("aria-label", describe(row));
+
+    if (row.err) {
+      var mark = document.createElement("span");
+      mark.className = "err-mark"; mark.setAttribute("aria-hidden", "true");
+      mark.textContent = "!";
+      col.appendChild(mark);
+    } else {
+      [["view", row.view], ["refresh", row.refresh]].forEach(function (pair) {
+        if (pair[1] === 0) return;
+        var bar = document.createElement("span");
+        bar.className = "bar " + pair[0];
+        bar.style.height = (pair[1] / Y_MAX) * PLOT_H + "px";
+        col.appendChild(bar);
+      });
+    }
+
+    col.addEventListener("mousemove", function (e) { showTip(row, e.clientX, e.clientY); });
+    col.addEventListener("mouseleave", hideTip);
+    // 키보드·터치 경로 — 초점을 받거나 눌렀을 때도 같은 내용을 연다
+    col.addEventListener("focus", function () { showTipAt(row, col); });
+    col.addEventListener("blur", hideTip);
+    col.addEventListener("click", function () { showTipAt(row, col); });
+    cols.appendChild(col);
+
+    // 보이는 눈금만 만든다 — 숨긴 눈금도 글자 폭만큼 자리를 차지해 도표 폭을 밀었다
+    if (i % 5 === 0 || i === DAILY.length - 1) {
+      var tick = document.createElement("div");
+      tick.className = "x-tick" +
+        (i === 0 ? " at-start" : i === DAILY.length - 1 ? " at-end" : "");
+      tick.style.left = ((i + 0.5) / DAILY.length) * 100 + "%";
+      tick.textContent = row.today ? row.d + "*" : row.d;
+      xAxis.appendChild(tick);
+    }
+  });
+
+  function tipHtml(row) {
+    var html = '<div class="tt-date">2026-' + row.d + (row.today ? " (오늘, 진행 중)" : "") + "</div>";
+    if (row.err) {
+      return html + '<div class="tt-row" style="color:#fca5a5">집계 실패입니다. 0건이 아닙니다</div>';
+    }
+    html += '<div class="tt-row"><span class="swatch" style="background:var(--s-view)"></span>유효 조회 <b>' +
+            row.view + "</b>계정 · " + pct(row.view, row.visit) + " · " + row.view + "/" + row.visit + "</div>";
+    html += '<div class="tt-row"><span class="swatch" style="background:var(--s-refresh)"></span>새로고침 <b>' +
+            row.refresh + "</b>계정 · " + pct(row.refresh, row.view) + " · " + row.refresh + "/" + row.view + "</div>";
+    html += '<div class="tt-row" style="margin-top:4px">마이페이지 방문 <b>' + row.visit + "</b>계정</div>";
+    return html;
+  }
+
+  function showTip(row, x, y) {
+    tooltip.innerHTML = tipHtml(row);
+    tooltip.style.display = "block";
+    var box = tooltip.getBoundingClientRect();
+    var left = x + 14, top = y + 14;
+    if (left + box.width > window.innerWidth - 8) left = x - box.width - 14;
+    if (top + box.height > window.innerHeight - 8) top = y - box.height - 14;
+    tooltip.style.left = Math.max(8, left) + "px";
+    tooltip.style.top = Math.max(8, top) + "px";
+  }
+
+  function showTipAt(row, el) {
+    var r = el.getBoundingClientRect();
+    showTip(row, r.left + r.width / 2, r.top + r.height);
+  }
+
+  function hideTip() { tooltip.style.display = "none"; }
+
+  /* ── 일별 표 뷰 (툴팁이 값을 가두지 않게 하는 짝) ── */
+  var tbody = document.getElementById("daily-tbody");
+  DAILY.forEach(function (row) {
+    var tr = document.createElement("tr");
+    if (row.err) {
+      tr.innerHTML = "<td>2026-" + row.d + '</td><td class="muted">—</td><td class="muted">—</td>' +
+                     '<td class="muted">—</td><td style="color:#fca5a5">집계 실패</td>';
+    } else {
+      tr.innerHTML = "<td>2026-" + row.d + (row.today ? " *" : "") + "</td><td>" + row.view +
+                     "</td><td>" + row.refresh + "</td><td>" + row.visit + '</td><td class="muted">정상</td>';
+    }
+    tbody.appendChild(tr);
+  });
+
+  /* ── 계정 표 (행 펼치면 세션 상세) ── */
+  var acctBody = document.getElementById("acct-tbody");
+  ACCOUNTS.forEach(function (a, idx) {
+    var devices = {}, totalR = 0, engaged = "아니오";
+    a.sessions.forEach(function (s) {
+      devices[s.dev] = true;
+      totalR += s.r;
+      if (s.eng === "예") engaged = "예";
+    });
+    var devCount = Object.keys(devices).length;
+    var detailId = "sessions-" + a.id;
+
+    var tr = document.createElement("tr");
+    tr.className = "acct";
+    tr.innerHTML =
+      "<td>" + a.id + "</td>" +
+      "<td>" + devCount + "</td>" +
+      "<td>" + a.sessions.length + "</td>" +
+      "<td>" + engaged + "</td>" +
+      "<td>" + totalR + "</td>" +
+      "<td>" + a.state + "</td>" +
+      "<td>" + a.last + "</td>" +
+      '<td><button type="button" class="row-toggle" aria-expanded="false" aria-controls="' +
+        detailId + '">세션 보기</button></td>';
+    acctBody.appendChild(tr);
+
+    var detailTr = document.createElement("tr");
+    detailTr.id = detailId;
+    detailTr.hidden = true;
+    var rows = a.sessions.map(function (s) {
+      return "<tr><td>" + s.dev + "</td><td>" + s.ses + "</td><td>" + s.kind + "</td><td>" +
+             s.st + "</td><td>" + s.eng + "</td><td>" + s.r + '</td><td class="muted">' + s.res + "</td></tr>";
+    }).join("");
+    detailTr.innerHTML =
+      '<td class="expand-cell" colspan="8"><div class="sub-table"><div class="table-scroll"><table>' +
+      "<caption>" + a.id + " 의 세션 " + a.sessions.length + "건 · 기기 " + devCount + "대</caption>" +
+      "<thead><tr><th>기기</th><th>세션</th><th>세션 구분</th><th>취향 상태</th><th>유효 조회</th><th>새로고침</th><th>결과</th></tr></thead>" +
+      "<tbody>" + rows + "</tbody></table></div></div></td>";
+    acctBody.appendChild(detailTr);
+
+    // 기본으로 두 계정만 펼쳐 둔다 — 여러 기기 사례(A-01)와 회복 사례(A-09)
+    if (a.id === "A-01" || a.id === "A-09") {
+      detailTr.hidden = false;
+      var b = tr.querySelector(".row-toggle");
+      b.setAttribute("aria-expanded", "true");
+      b.textContent = "세션 접기";
+    }
+  });
+
+  /* ── 펼치기·접기 (aria-expanded / aria-controls 동기화) ── */
+  document.addEventListener("click", function (e) {
+    var btn = e.target.closest(".row-toggle, .table-toggle");
+    if (!btn) return;
+    var target = document.getElementById(btn.getAttribute("aria-controls"));
+    if (!target) return;
+    var opening = target.hasAttribute("hidden");
+    if (opening) target.removeAttribute("hidden"); else target.setAttribute("hidden", "");
+    btn.setAttribute("aria-expanded", opening ? "true" : "false");
+    if (btn.classList.contains("row-toggle")) btn.textContent = opening ? "세션 접기" : "세션 보기";
+    else btn.textContent = opening ? "표 닫기" : "표로 보기";
+  });
+
+  /* ── 탭 ── */
+  var tabs = Array.prototype.slice.call(document.querySelectorAll('[role="tab"]'));
+  function selectTab(tab) {
+    tabs.forEach(function (t) {
+      var on = t === tab;
+      t.setAttribute("aria-selected", on ? "true" : "false");
+      var p = document.getElementById(t.getAttribute("aria-controls"));
+      if (on) p.removeAttribute("hidden"); else p.setAttribute("hidden", "");
+    });
+  }
+  tabs.forEach(function (tab, i) {
+    tab.addEventListener("click", function () { selectTab(tab); });
+    tab.addEventListener("keydown", function (e) {
+      var next = e.key === "ArrowRight" ? i + 1 : e.key === "ArrowLeft" ? i - 1 : -1;
+      if (next < 0 || next >= tabs.length) return;
+      e.preventDefault();
+      tabs[next].focus();
+      selectTab(tabs[next]);
+    });
+  });
+
+  /* ── 기간 필터: 선택 상태와 라벨만 바꾼다 (목업) ── */
+  document.getElementById("seg-period").addEventListener("click", function (e) {
+    var btn = e.target.closest("button");
+    if (!btn) return;
+    Array.prototype.forEach.call(this.querySelectorAll("button"), function (b) {
+      b.setAttribute("aria-pressed", b === btn ? "true" : "false");
+    });
+    document.getElementById("period-label").textContent = btn.getAttribute("data-label");
+  });
+})();
+</script>
+
+</body>
+</html>
