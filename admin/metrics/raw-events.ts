@@ -1,3 +1,4 @@
+import { EVENT_FILTER_SQL } from "@/features/metrics/domain/filters";
 import type { MetricDefinition } from "@/features/metrics/domain/metric";
 
 /**
@@ -27,7 +28,7 @@ export const rawEvents: MetricDefinition = {
     select
       to_char(occurred_at at time zone 'Asia/Seoul', 'MM-DD HH24:MI:SS') as "발생(KST)",
       left(device_id::text, 8)  as "기기",
-      left(session_id::text, 8) as "세션",
+      '?session=' || left(session_id::text, 8) as "세션",
       case
         when signed_in is null then '알 수 없음'
         when signed_in         then '회원'
@@ -35,13 +36,16 @@ export const rawEvents: MetricDefinition = {
       end                       as "발생 시점 상태",
       coalesce(instr_ver, '계약 이전') as "계측",
       event_type                as "이벤트",
-      goods_no::text            as "상품",
+      -- 주소를 그대로 낸다 — 표가 알아서 링크로 그리고 상품번호만 보여준다(asLink).
+      -- goods_no가 null인 세션 경계 이벤트는 이어붙이기 결과도 null이라 "—"로 뜬다.
+      'https://www.musinsa.com/products/' || goods_no as "상품",
       source_bucket             as "추천 유형",
       policy                    as "정책",
       surface                   as "자리",
       is_fresh                  as "신선",
       rank                      as "순위"
     from c_events
+    where ${EVENT_FILTER_SQL}
     order by occurred_at desc
     limit 40
   `,

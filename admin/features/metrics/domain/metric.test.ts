@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import {
+  asLink,
   findDuplicateIds,
   findWriteKeywords,
   formatCell,
@@ -131,5 +132,36 @@ describe("formatCell", () => {
 
   it("false를 값 없음으로 만들지 않는다", () => {
     expect(formatCell(false)).toBe("false");
+  });
+});
+
+describe("asLink", () => {
+  it("주소면 마지막 조각을 이름으로 준다", () => {
+    expect(asLink("https://www.musinsa.com/products/4212345")).toEqual({
+      href: "https://www.musinsa.com/products/4212345",
+      label: "4212345",
+      external: true,
+    });
+  });
+
+  it("주소가 아니면 null — 숫자·글자는 그냥 글자로 남는다", () => {
+    for (const cell of ["4212345", "—", "impression", "2.53", ""]) {
+      expect(asLink(cell)).toBeNull();
+    }
+  });
+
+  it("좁혀 보기 링크는 같은 탭에서 열고 = 뒤의 값을 보여준다", () => {
+    // 파고들다 탭이 쌓이면 개요로 돌아갈 수 없다
+    expect(asLink("?session=711ce185")).toEqual({
+      href: "?session=711ce185",
+      label: "711ce185",
+      external: false,
+    });
+    expect(asLink("?date=2026-08-23")?.label).toBe("2026-08-23");
+  });
+
+  it("공백이 섞인 문장은 주소로 보지 않는다", () => {
+    // "https://... 참고" 같은 설명 문구가 통째로 링크가 되면 안 된다
+    expect(asLink("https://example.com 참고")).toBeNull();
   });
 });
