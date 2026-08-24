@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { type ReactNode, useEffect } from "react";
+import { type ReactNode, useCallback, useEffect, useRef } from "react";
 
 import { MosaicFeed } from "@/features/feed/presentation/components/mosaic-feed";
 import {
@@ -47,15 +47,29 @@ export function HomeShell({ forYou }: { forYou: ReactNode }) {
     resetForPane();
   }, [pane, resetForPane]);
 
+  // 로고를 누르면 지금 보고 있는 칸만 맨 위로 — 두 칸이 각자 스크롤을 가지므로
+  // (usePaneSwipe 참고) 안 보는 칸까지 같이 옮길 필요는 없다.
+  const browseScrollRef = useRef<HTMLDivElement>(null);
+  const forYouScrollRef = useRef<HTMLDivElement>(null);
+  const scrollActivePaneToTop = useCallback(() => {
+    const el = pane === "browse" ? browseScrollRef.current : forYouScrollRef.current;
+    el?.scrollTo({ top: 0, behavior: "smooth" });
+  }, [pane]);
+
   return (
     <div className="relative flex h-dvh flex-col overflow-hidden">
       <header className="shrink-0 bg-app">
         {/* 로고줄 — 새 테마 모자이크 마크(스펙 2026-08-25-mosaic-logo-mark) + 글자, 오른쪽 아이콘 둘 */}
         <div className="mx-auto flex max-w-md items-center justify-between px-4 py-3">
-          <span className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={scrollActivePaneToTop}
+            aria-label="맨 위로"
+            className="flex cursor-pointer items-center gap-2"
+          >
             <AteeMark size={22} />
             <h1 className="text-lg font-semibold tracking-tight text-ink">aTee</h1>
-          </span>
+          </button>
           <div className="flex items-center">
             <Link
               href="/wishlist"
@@ -128,12 +142,14 @@ export function HomeShell({ forYou }: { forYou: ReactNode }) {
         {/* 칸 높이는 줄 높이에 맞춰 늘어난다(flex 기본 stretch). 넘치는 내용은
             칸 안에서 흐르고, 끝에 닿아도 바깥으로 넘겨주지 않는다. */}
         <div
+          ref={browseScrollRef}
           onScroll={onTabBarScroll}
           className="w-full shrink-0 snap-center overflow-y-auto overscroll-y-contain [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
         >
           <MosaicFeed active={pane === "browse"} />
         </div>
         <div
+          ref={forYouScrollRef}
           onScroll={onTabBarScroll}
           className="w-full shrink-0 snap-center overflow-y-auto overscroll-y-contain [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
         >
