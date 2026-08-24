@@ -106,3 +106,24 @@ describe("신원 변경 경계", () => {
     expect(queued()).toHaveLength(0);
   });
 });
+
+describe("나가 있던 시간이 이벤트에 실린다", () => {
+  it("잠깐 나갔다 오면 그 시간이 이후 이벤트에 담긴다", async () => {
+    const signals = await import("@/shared/signals/signals");
+    signals.logImpression({ goodsNo: GOODS });
+
+    setVisibility("hidden");
+    vi.setSystemTime(T0 + 90 * 1000); // 90초 나가 있었다 (5분 미만이라 같은 세션)
+    setVisibility("visible");
+    signals.logAction("tap", GOODS);
+
+    const tap = queued().find((event) => event.event_type === "tap");
+    expect(tap?.away_ms).toBe(90 * 1000);
+  });
+
+  it("나간 적이 없으면 0이다", async () => {
+    const signals = await import("@/shared/signals/signals");
+    signals.logImpression({ goodsNo: GOODS });
+    expect(queued()[0]?.away_ms).toBe(0);
+  });
+});

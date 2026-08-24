@@ -149,6 +149,8 @@ function baseEvent(
     // **여기서 박는다.** 이벤트를 만드는 순간이 곧 발생 시점이다.
     signed_in: isSignedInNow(),
     instr_ver: INSTRUMENTATION_VER,
+    // touchSession이 방금 갱신해 둔 값을 읽는다
+    away_ms: readSession()?.awayMs ?? 0,
     policy,
     model_ver: MODEL_VER,
     profile_ver: PROFILE_SCHEMA_VERSION,

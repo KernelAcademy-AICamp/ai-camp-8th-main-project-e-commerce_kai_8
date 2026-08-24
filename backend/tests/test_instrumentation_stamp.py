@@ -191,3 +191,48 @@ def test_모르는_이벤트_종류는_여전히_버린다(db_with_wish_failed):
         occurred_at=now_iso(db_with_wish_failed), event_type="not_a_real_event"
     )
     assert log(db_with_wish_failed, device, event) == 0
+
+
+# ── 나가 있던 시간 (계획 A-2 후속, 정의 §1) ─────────────────────────────────
+
+AWAY_SQL = "20260824000000_events_away_ms.sql"
+
+
+@pytest.fixture(scope="module")
+def db_with_away(db_with_wish_failed):
+    with db_with_wish_failed.cursor() as cur:
+        cur.execute(migration_text(AWAY_SQL))
+    return db_with_wish_failed
+
+
+def away_of(db, event_id: str):
+    with db.cursor() as cur:
+        cur.execute("select away_ms from c_events where event_id = %s", (event_id,))
+        return cur.fetchone()[0]
+
+
+def test_나가_있던_시간을_그대로_저장한다(db_with_away):
+    device = uuid.uuid4()
+    event = base_event(occurred_at=now_iso(db_with_away), away_ms=90_000)
+    assert log(db_with_away, device, event) == 1
+    assert away_of(db_with_away, event["event_id"]) == 90_000
+
+
+def test_값이_없는_옛_이벤트도_버리지_않는다(db_with_away):
+    """null은 0이 아니라 모름이다. 0으로 세면 나가 있던 시간이 없었던 것이 된다."""
+    device = uuid.uuid4()
+    event = base_event(occurred_at=now_iso(db_with_away))
+    assert log(db_with_away, device, event) == 1
+    assert away_of(db_with_away, event["event_id"]) is None
+
+
+def test_음수는_버린다(db_with_away):
+    device = uuid.uuid4()
+    event = base_event(occurred_at=now_iso(db_with_away), away_ms=-1)
+    assert log(db_with_away, device, event) == 0
+
+
+def test_하루를_넘는_값은_버린다(db_with_away):
+    device = uuid.uuid4()
+    event = base_event(occurred_at=now_iso(db_with_away), away_ms=86_400_001)
+    assert log(db_with_away, device, event) == 0
