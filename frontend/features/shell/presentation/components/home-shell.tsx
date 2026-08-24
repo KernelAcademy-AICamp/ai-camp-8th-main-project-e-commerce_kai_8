@@ -1,25 +1,26 @@
 "use client";
 
 import Link from "next/link";
-import type { ReactNode } from "react";
+import { type ReactNode, useEffect } from "react";
 
 import { MosaicFeed } from "@/features/feed/presentation/components/mosaic-feed";
 import {
   type Pane,
   usePaneSwipe,
 } from "@/features/shell/presentation/view-model/use-pane-swipe";
-import { AteeMark, HeartIcon, PersonIcon } from "@/shared/icons";
+import { useTabBarVisibility } from "@/features/shell/presentation/view-model/use-tab-bar-visibility";
+import { HeartIcon, PersonIcon } from "@/shared/icons";
 
-// 라벨은 시안(`design/atee-neo-mockup.html`)의 모드바를 따른다. 칸의 식별자는
-// 코드 곳곳이 쓰고 있으므로 그대로 둔다 — 바뀌는 것은 사람이 읽는 이름뿐이다.
+// 뉴모피즘 이식(#88) 이전 원본 표기(대문자). 칸의 식별자는 코드 곳곳이 쓰고
+// 있으므로 그대로 둔다 — 바뀌는 것은 사람이 읽는 이름뿐이다.
 const TABS: { id: Pane; label: string }[] = [
-  { id: "browse", label: "Explore" },
-  { id: "forYou", label: "Curation" },
+  { id: "browse", label: "BROWSE" },
+  { id: "forYou", label: "FOR YOU" },
 ];
 
-/** 우상단 원형 버튼 — 시안 `.mybtn` (40px 원, 솟음. 누르면 눌림) */
+/** 우상단 아이콘 — 버튼 테두리·배경 없이 아이콘만 (원본 36px 탭 영역) */
 const MY_BTN =
-  "flex h-10 w-10 items-center justify-center rounded-full bg-app text-ink-soft neo active:neo-in";
+  "flex h-9 w-9 items-center justify-center text-ink-soft transition-colors active:text-ink";
 
 /**
  * 홈 껍데기 — 로고줄, 모드바, 가로로 미는 두 칸.
@@ -35,64 +36,74 @@ const MY_BTN =
  */
 export function HomeShell({ forYou }: { forYou: ReactNode }) {
   const { railRef, pane, onScroll, go } = usePaneSwipe();
+  const {
+    hidden: tabBarHidden,
+    onScroll: onTabBarScroll,
+    resetForPane,
+  } = useTabBarVisibility();
+  // 칸이 바뀌면(탭 탭·손으로 밀기) 새 칸의 scrollTop 기준으로 다시 잰다 —
+  // 안 그러면 직전 칸의 위치와 비교해 엉뚱한 방향으로 읽힌다.
+  useEffect(() => {
+    resetForPane();
+  }, [pane, resetForPane]);
 
   return (
     <div className="relative flex h-dvh flex-col overflow-hidden">
       <header className="shrink-0 bg-app">
-        {/* 로고줄 — 시안 `.brandrow`: 왼쪽 심볼+워드마크, 오른쪽 원형 버튼 둘 */}
-        <div className="mx-auto flex max-w-md items-center justify-between px-5 pt-4 pb-0.5">
-          <span
-            aria-label="aTee 로고"
-            className="flex items-center gap-2 text-[22px] font-extrabold tracking-[-0.02em] text-slate"
-          >
-            <AteeMark />
-            <span className="emboss">aTee</span>
-          </span>
-          <div className="flex items-center gap-2.5">
+        {/* 로고줄 — 뉴모피즘 이식 이전 원본: 심볼 없이 글자만, 오른쪽 아이콘 둘 */}
+        <div className="mx-auto flex max-w-md items-center justify-between px-4 py-3">
+          <h1 className="text-lg font-semibold tracking-tight text-ink">aTee</h1>
+          <div className="flex items-center">
             <Link href="/wishlist" aria-label="저장한 폴더 열기" className={MY_BTN}>
               <HeartIcon />
             </Link>
             <Link href="/my" aria-label="마이 페이지 열기" className={MY_BTN}>
-              <PersonIcon size={19} />
+              <PersonIcon />
             </Link>
           </div>
         </div>
 
         {/*
-          모드바 — 시안 `.modebar`: 눌린 알약 안에서 색 조각이 미끄러진다.
-          조각은 두 칸을 반씩 차지하므로 폭 계산이 알약 안쪽 여백(5px)에 묶여 있다.
+          탭 — 원본: 알약·슬라이딩 인디케이터 없이 각 탭이 자기 밑줄을 직접 그린다.
+
+          내려 스크롤하면 접히고 올려 스크롤하면 펼쳐진다. `grid-template-rows`를
+          `1fr`↔`0fr`로 전환하는 방식이라 탭 바의 실제 높이를 몰라도(콘텐츠
+          기반) 부드럽게 접힌다 — 고정 px 높이를 재서 넣는 방식보다 화면 폭이
+          바뀌어도 안 깨진다.
         */}
-        <div className="mx-auto max-w-md px-4">
-          <div
-            role="tablist"
-            aria-label="화면 전환"
-            className="relative mt-3 flex rounded-full bg-app p-[5px] neo-in"
-          >
-            <span
-              aria-hidden
-              className={`pointer-events-none absolute top-[5px] bottom-[5px] left-[5px] w-[calc(50%-5px)] rounded-full bg-slate neo-drop transition-transform duration-[260ms] ease-spring ${
-                pane === "forYou" ? "translate-x-full" : "translate-x-0"
-              }`}
-            />
-            {TABS.map((tab) => {
-              const on = pane === tab.id;
-              return (
-                <button
-                  key={tab.id}
-                  type="button"
-                  role="tab"
-                  aria-selected={on}
-                  onClick={() => {
-                    go(tab.id);
-                  }}
-                  className={`relative z-[1] flex-1 cursor-pointer py-2 text-[13px] font-bold tracking-[0.01em] transition-colors duration-200 ${
-                    on ? "text-on-slate" : "text-ink-muted"
-                  }`}
-                >
-                  {tab.label}
-                </button>
-              );
-            })}
+        <div
+          aria-hidden={tabBarHidden}
+          className={`grid transition-[grid-template-rows] duration-300 ease-out ${
+            tabBarHidden ? "grid-rows-[0fr]" : "grid-rows-[1fr]"
+          }`}
+        >
+          <div className="overflow-hidden">
+            <div
+              role="tablist"
+              aria-label="화면 전환"
+              className="mx-auto flex max-w-md border-b border-line"
+            >
+              {TABS.map((tab) => {
+                const on = pane === tab.id;
+                return (
+                  <button
+                    key={tab.id}
+                    type="button"
+                    role="tab"
+                    aria-selected={on}
+                    tabIndex={tabBarHidden ? -1 : undefined}
+                    onClick={() => {
+                      go(tab.id);
+                    }}
+                    className={`-mb-px flex-1 cursor-pointer border-b-2 py-2.5 text-xs tracking-[0.12em] transition-colors duration-200 ${
+                      on ? "border-ink text-ink" : "border-transparent text-ink-muted"
+                    }`}
+                  >
+                    {tab.label}
+                  </button>
+                );
+              })}
+            </div>
           </div>
         </div>
       </header>
@@ -109,10 +120,16 @@ export function HomeShell({ forYou }: { forYou: ReactNode }) {
       >
         {/* 칸 높이는 줄 높이에 맞춰 늘어난다(flex 기본 stretch). 넘치는 내용은
             칸 안에서 흐르고, 끝에 닿아도 바깥으로 넘겨주지 않는다. */}
-        <div className="w-full shrink-0 snap-center overflow-y-auto overscroll-y-contain [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+        <div
+          onScroll={onTabBarScroll}
+          className="w-full shrink-0 snap-center overflow-y-auto overscroll-y-contain [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+        >
           <MosaicFeed active={pane === "browse"} />
         </div>
-        <div className="w-full shrink-0 snap-center overflow-y-auto overscroll-y-contain [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+        <div
+          onScroll={onTabBarScroll}
+          className="w-full shrink-0 snap-center overflow-y-auto overscroll-y-contain [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+        >
           {/* 피드 쪽이 max-w-md라 폭을 맞춘다 — 안 맞추면 넓은 화면에서 칸마다 폭이 다르다 */}
           <div className="mx-auto max-w-md">{forYou}</div>
         </div>
