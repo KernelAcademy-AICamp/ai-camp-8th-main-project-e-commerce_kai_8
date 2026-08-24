@@ -1,9 +1,6 @@
 "use client";
 
-import { useRef } from "react";
-
 import { useBackTo } from "@/shared/history/use-nav-history";
-import { useSwipeToClose } from "@/shared/history/use-swipe-to-close";
 import { BackIcon } from "@/shared/icons";
 
 /** 사이드바 상단의 작은 원버튼 — 시안 `.side-close`·`.side-logout` (30px, 얕은 솟음) */
@@ -15,7 +12,8 @@ export const SIDE_BTN =
  *
  * 시안 `.sidebar` 마크업을 따른다. 그 패널은 폭 100%에 불투명이라(3단계 저장
  * 패널과 같다) 주소를 가진 이 화면으로 두어도 보이는 결과가 같다. 오른쪽에서
- * 밀려 들어오고, 왼쪽에는 색을 채운 세로 레일이 선다.
+ * 밀려 들어와 이전 화면을 완전히 덮는다(2026-08-25 push 스택 전환 — 왼쪽에는
+ * 색을 채운 세로 레일이 선다.
  *
  * **아바타와 취향 칩은 없다.** 시안의 옛 판에는 있었으나 지금 판에서 빠졌고,
  * 그 자리를 머리줄의 **인사말**이 대신한다. CSS에는 옛 규칙이 남아 있으므로
@@ -24,6 +22,10 @@ export const SIDE_BTN =
  * 이 화면은 두 번 그려진다. 버튼을 누른 직후(`app/my/loading.tsx`)와 서버 응답이
  * 도착한 뒤(`MyPage`)다. 둘이 각자 틀을 갖고 있으면 조금만 어긋나도 **도착하는
  * 순간 화면이 튄다** — 그래서 틀을 하나만 두고 안쪽만 갈아 끼운다.
+ *
+ * **닫기는 버튼으로만 한다.** 오른쪽으로 드래그해 닫는 제스처는 2026-08-25
+ * push 스택 전환에서 걷어냈다 — 설정이 이 위에 쌓이는 화면에서는 드래그 충돌이
+ * 생기기 쉽고, 버튼이 이미 같은 자리(왼쪽 위)에 있다.
  */
 export function MyPageShell({
   greeting,
@@ -43,19 +45,12 @@ export function MyPageShell({
   children?: React.ReactNode;
 }) {
   const close = useBackTo("/");
-  // 오른쪽으로 잡아끌어도 닫힌다 — 시안의 사이드바 스와이프
-  const panelRef = useRef<HTMLElement>(null);
-  const swipe = useSwipeToClose(panelRef, close);
 
   return (
     <main
-      ref={panelRef}
-      {...swipe}
-      // 세로 스크롤은 그대로 두고 가로 제스처만 가져간다
-      style={{ touchAction: "pan-y" }}
       // **화면 끝까지 덮는다.** 시안 `.sidebar`는 폭 100%다 — 폭을 좁히면 열린
       // 뒤에도 양옆으로 뒤 화면이 비어져 나온다. 배경도 자기가 갖는다(없으면 비친다).
-      className="sidebar-in relative min-h-dvh w-full bg-app text-ink shadow-[-12px_0_28px_rgb(20_26_40/0.25)]"
+      className="push-in relative min-h-dvh w-full bg-app text-ink shadow-[-12px_0_28px_rgb(20_26_40/0.25)]"
     >
       {/* 판은 끝까지 덮되, 읽는 내용은 폰 폭으로 모은다 */}
       <div className="relative mx-auto min-h-dvh max-w-md">

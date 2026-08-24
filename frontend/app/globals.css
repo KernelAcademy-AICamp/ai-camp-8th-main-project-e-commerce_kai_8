@@ -294,15 +294,16 @@ html.search-open .veil-band {
   }
 }
 
-/* ── 4단계: 프로필 사이드바 ──────────────────────────────────────────
-   시안 `.sidebar`도 폭 100%에 불투명이라(3단계 패널과 같다) 주소를 가진 화면으로
-   두고 모양과 열리는 방식만 맞춘다. 오른쪽에서 밀려 들어온다. */
+/* ── 4단계: push 스택(프로필·설정) ──────────────────────────────────
+   새 화면이 오른쪽에서 밀려 들어와 이전 화면을 완전히 덮는다. 뒤 화면은
+   움직이거나 줄어들지 않는다(2026-08-25 push 스택 전환 — 그 전엔 뒤가
+   줄어드는 사이드시트였다). */
 @media (prefers-reduced-motion: no-preference) {
-  .sidebar-in {
-    animation: sidebar-in 340ms cubic-bezier(0.25, 0.9, 0.3, 1);
+  .push-in {
+    animation: push-in 340ms cubic-bezier(0.25, 0.9, 0.3, 1);
   }
 
-  @keyframes sidebar-in {
+  @keyframes push-in {
     from {
       transform: translateX(103%);
     }
@@ -362,19 +363,4 @@ html.search-open .veil-band {
       transform: scale(1) translateY(0);
     }
   }
-}
-
-/* 프로필이 홈 위에 겹쳐 열리면 뒤의 홈이 살짝 줄어들며 물러난다
-   (시안 `.screen.side-open .scroll`). 겹침이 아닌 단독 화면에서는 이 표시가
-   붙지 않으므로 아무 일도 일어나지 않는다. */
-html.profile-open > body > main {
-  transform: scale(0.92);
-  border-radius: 28px;
-  overflow: hidden;
-}
-
-html > body > main {
-  transition:
-    transform 340ms cubic-bezier(0.25, 0.9, 0.3, 1),
-    border-radius 340ms ease;
 }
