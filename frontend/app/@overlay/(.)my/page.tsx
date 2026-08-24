@@ -15,8 +15,10 @@ import { TasteCard } from "@/features/taste/presentation/components/taste-card";
  * (2026-08-25 push 스택 전환, 그 전엔 살짝 줄어드는 사이드시트였다). 프로필 위에
  * 설정을 더 열 때도 같은 방식으로 쌓인다 — 루트 레이아웃의 `settingsOverlay` 자리.
  *
- * 서버를 기다리지 않는다. `?auth=` 안내는 로그인에서 돌아올 때만 붙는데 그것은
- * 주소로 들어오는 경로라 단독 화면이 맡는다.
+ * 서버를 기다리지 않는다. `?auth=` 안내는 구글 로그인 콜백(`app/auth/callback/route.ts`)이
+ * 서버에서 `/my`로 리다이렉트할 때만 붙는 하드 내비게이션이라 이 인터셉트 오버레이를
+ * 아예 거치지 않는다 — 항상 `app/my/page.tsx`(단독 화면)가 그 안내를 받는다. 그래서
+ * 여기는 항상 `notice={null}`이다(`app/@settingsOverlay/(.)settings/page.tsx`와 같은 이유).
  */
 export default function ProfileOverlay() {
   return (

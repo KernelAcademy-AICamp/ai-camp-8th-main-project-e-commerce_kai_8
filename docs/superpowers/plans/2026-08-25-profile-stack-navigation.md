@@ -4,7 +4,7 @@
 
 **Goal:** `/my`를 사이드시트(오른쪽 슬라이드 + 뒤 화면 축소)에서, `/settings`까지 포함해 완전히 덮으며 쌓이는 push 스택으로 바꾼다.
 
-**Architecture:** `/my`가 이미 쓰는 인터셉팅 라우트(`app/@overlay/(.)my/`) + 병렬 슬롯 패턴을, `/my` 자신의 렌더 트리 안에 `/settings`용 병렬 슬롯(`@settingsOverlay`)을 하나 더 두는 식으로 한 단계 중첩시킨다. 두 화면 다 여전히 실제 라우트라 직접 URL 접속·새로고침은 그대로 동작한다.
+**Architecture:** `/my`가 이미 쓰는 인터셉팅 라우트(`app/@overlay/(.)my/`) + 병렬 슬롯 패턴을 `/settings`에도 하나 더 반복한다. **(완료 기록)** 처음엔 `/my` 자신의 렌더 트리 안에 `/settings`용 슬롯을 중첩하려 했으나 Next.js가 이를 인터셉션으로 인식하지 못해 실패했다 — 최종적으로는 `@settingsOverlay`를 `/my` 안이 아니라 **루트 레이아웃에 `@overlay`와 형제로** 두는 구조로 구현했다(Task 2 본문의 "개정 이력" 참고). 두 화면 다 여전히 실제 라우트라 직접 URL 접속·새로고침은 그대로 동작한다.
 
 **Tech Stack:** Next.js 16 (App Router, Turbopack), React, TypeScript, Tailwind CSS, vitest.
 
