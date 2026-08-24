@@ -139,18 +139,42 @@ export function CloseIcon({ size = 13 }: IconProps) {
 }
 
 /**
- * aTee 로고 심볼 — 색이 찬 원 안에 티셔츠 글립.
+ * aTee 로고 심볼 — 모자이크 조각 네 개(스펙 2026-08-25-mosaic-logo-mark).
  *
- * 원은 `currentColor`, 글립은 앱 배경색으로 뚫는다(시안 `.mark-glyph`).
- * 그래서 감싸는 요소의 text 색만 바꾸면 심볼 전체 색이 따라온다.
+ * 실제 홈 피드(2열 masonry)를 축약한 비대칭 배치. 색은 항상
+ * `--color-accent`(세이지그린) 한 가지 — 감싸는 요소의 text 색과 무관하게
+ * 고정된 브랜드 색을 쓴다(로고는 currentColor를 따르지 않는다).
  */
 export function AteeMark({ size = 26 }: IconProps) {
   return (
-    <svg viewBox="0 0 26 26" width={size} height={size} fill="none" aria-hidden="true">
-      <circle cx="13" cy="13" r="12" fill="currentColor" />
-      <path
-        d="M13 6.5C11.9 6.5 11 7.4 11 8.5C11 9.2 11.4 9.8 12 10.2V11L5.8 15.4C5.3 15.7 5.5 16.5 6.1 16.5H19.9C20.5 16.5 20.7 15.7 20.2 15.4L14 11V10.2C14.6 9.8 15 9.2 15 8.5H13.6C13.6 8.8 13.3 9.1 13 9.1C12.7 9.1 12.4 8.8 12.4 8.5C12.4 8.2 12.7 7.9 13 7.9V6.5Z"
-        fill="var(--color-app)"
+    <svg viewBox="0 0 56 56" width={size} height={size} fill="none" aria-hidden="true">
+      <rect x="8" y="8" width="20" height="26" rx="4" fill="var(--color-accent)" />
+      <rect
+        x="31"
+        y="8"
+        width="17"
+        height="14"
+        rx="4"
+        fill="var(--color-accent)"
+        fillOpacity="0.55"
+      />
+      <rect
+        x="31"
+        y="25"
+        width="17"
+        height="23"
+        rx="4"
+        fill="var(--color-accent)"
+        fillOpacity="0.8"
+      />
+      <rect
+        x="8"
+        y="37"
+        width="20"
+        height="11"
+        rx="4"
+        fill="var(--color-accent)"
+        fillOpacity="0.4"
       />
     </svg>
   );

@@ -9,7 +9,7 @@ import {
   usePaneSwipe,
 } from "@/features/shell/presentation/view-model/use-pane-swipe";
 import { useTabBarVisibility } from "@/features/shell/presentation/view-model/use-tab-bar-visibility";
-import { PersonIcon } from "@/shared/icons";
+import { AteeMark, PersonIcon } from "@/shared/icons";
 
 // 뉴모피즘 이식(#88) 이전 원본 표기(대문자). 칸의 식별자는 코드 곳곳이 쓰고
 // 있으므로 그대로 둔다 — 바뀌는 것은 사람이 읽는 이름뿐이다.
@@ -50,9 +50,12 @@ export function HomeShell({ forYou }: { forYou: ReactNode }) {
   return (
     <div className="relative flex h-dvh flex-col overflow-hidden">
       <header className="shrink-0 bg-app">
-        {/* 로고줄 — 뉴모피즘 이식 이전 원본: 심볼 없이 글자만, 오른쪽 아이콘 둘 */}
+        {/* 로고줄 — 새 테마 모자이크 마크(스펙 2026-08-25-mosaic-logo-mark) + 글자, 오른쪽 아이콘 둘 */}
         <div className="mx-auto flex max-w-md items-center justify-between px-4 py-3">
-          <h1 className="text-lg font-semibold tracking-tight text-ink">aTee</h1>
+          <span className="flex items-center gap-2">
+            <AteeMark size={22} />
+            <h1 className="text-lg font-semibold tracking-tight text-ink">aTee</h1>
+          </span>
           <div className="flex items-center">
             <Link
               href="/wishlist"
