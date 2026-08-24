@@ -81,6 +81,11 @@ export default function PrivacyPolicyPage() {
             않습니다. 피드도 개인화하지 않습니다.
           </li>
           <li>
+            <b className="text-ink">온보딩 진행 표식</b> — 브라우저에 잠깐 보관하는
+            값입니다. 성별 화면, 옷 화면, 가입 화면 중 어느 단계에 도달했는지 확인하는
+            데만 사용되며, 온보딩이 끝나면 삭제됩니다.
+          </li>
+          <li>
             <b className="text-ink">검색어</b> — 입력한 내용 그대로 기록되며{" "}
             <b className="text-ink">90일 뒤 자동으로 삭제</b>됩니다. 검색 품질을
             개선하고 평가하기 위한 것이며, 추천 프로필 계산에는 쓰지 않습니다.

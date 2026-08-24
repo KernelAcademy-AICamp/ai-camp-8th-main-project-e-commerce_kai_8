@@ -1,8 +1,8 @@
-import { EVENT_FILTER_SQL } from "@/features/metrics/domain/filters";
+import { eventFilterSql } from "@/features/metrics/domain/filters";
 import type { MetricDefinition } from "@/features/metrics/domain/metric";
 
 /**
- * 깔때기와 전환율.
+ * 퍼널과 전환율.
  * 정의: docs/atee/living/session-metrics.md §6
  *
  * ```
@@ -20,32 +20,50 @@ import type { MetricDefinition } from "@/features/metrics/domain/metric";
  */
 export const sessionFunnel: MetricDefinition = {
   id: "session-funnel",
-  title: "깔때기와 전환율",
-  why: "노출 → 상세 열기 → 찜·이동으로 얼마나 내려오는가. 비율은 전부 '개'(중복 뺀 종류 수) 기준이고 찜률·이동률의 분모는 상세 열기다",
+  title: "퍼널",
+  why: "들어온 세션 중 몇 %가 다음 단계로 갔나. 분모가 상품 수가 아니라 세션 수다 — 상품 수로 세면 한 세션이 200장을 훑고 아무것도 안 눌렀을 때 그 200이 전체 비율을 끌어내린다. 카드 단위 전환율은 추천 유형별 전환 카드가 따로 잰다",
   order: 30,
+  screen: "overview",
   sql: `
     with 세션 as (
       select
         device_id,
         session_id,
-        count(distinct goods_no) filter (where event_type = 'impression') as 노출개,
-        count(distinct goods_no) filter (where event_type = 'tap')        as 상세개,
-        count(distinct goods_no) filter (where event_type = 'wish')       as 찜개,
-        count(distinct goods_no) filter (where event_type = 'outbound')   as 이동개
+        count(*) filter (where event_type = 'impression') as 노출,
+        count(*) filter (where event_type = 'tap')        as 클릭,
+        count(*) filter (where event_type = 'wish')       as 찜,
+        count(*) filter (where event_type = 'outbound')   as 이동
       from c_events
-      where ${EVENT_FILTER_SQL}
+      where ${eventFilterSql()}
       group by device_id, session_id
+    ),
+    집계 as (
+      select
+        count(*) filter (where 노출 > 0) as 노출세션,
+        count(*) filter (where 클릭 > 0) as 클릭세션,
+        count(*) filter (where 찜   > 0) as 찜세션,
+        count(*) filter (where 이동 > 0) as 이동세션
+      from 세션
+    ),
+    -- 단계를 행으로 세운다. 분자와 분모를 나란히 둬야 표본이 몇인지 보인다.
+    단계 as (
+      select '노출이 있는 세션' as 단계, 1 as 순서,
+             노출세션 as 세션, null::int as 분모 from 집계
+      union all
+      select '상품을 클릭한 세션', 2, 클릭세션, 노출세션 from 집계
+      union all
+      select '찜을 시도한 세션',   3, 찜세션,   클릭세션 from 집계
+      union all
+      select '판매처로 나간 세션', 4, 이동세션, 클릭세션 from 집계
     )
     select
-      sum(노출개)::int as "노출(개)",
-      sum(상세개)::int as "상세 열기(개)",
-      sum(찜개)::int   as "찜(개)",
-      sum(이동개)::int as "판매처 이동(개)",
-      -- 분모가 0이면 나눗셈 대신 값 없음(—)으로 둔다. 0%로 적으면 "아무도 안 눌렀다"로
-      -- 읽히는데, 실제로는 "셀 것이 없었다"이다.
-      round(100.0 * sum(상세개) / nullif(sum(노출개), 0), 2) as "상세 열기율 %",
-      round(100.0 * sum(찜개)   / nullif(sum(상세개), 0), 2) as "찜률 % (÷상세)",
-      round(100.0 * sum(이동개) / nullif(sum(상세개), 0), 2) as "이동률 % (÷상세)"
-    from 세션
+      단계   as "단계",
+      세션   as "세션",
+      분모   as "분모",
+      -- 분모가 0이면 0%가 아니라 값 없음이다. 0%는 "아무도 안 눌렀다"로 읽히는데
+      -- 실제로는 "셀 것이 없었다"이다.
+      round(100.0 * 세션 / nullif(분모, 0), 1) as "세션률"
+    from 단계
+    order by 순서
   `,
 };

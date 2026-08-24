@@ -3,7 +3,9 @@
 import { useCallback, useEffect, useState } from "react";
 
 import { fetchOnboardingCandidates } from "@/features/onboarding/data/candidates-api";
+import { reportReach } from "@/features/onboarding/data/reach-api";
 import type { OnboardingCandidate } from "@/features/onboarding/domain/candidate";
+import { finishReach, readReachMark } from "@/features/onboarding/domain/reach-mark";
 import { type GenderChoice, setGenderSetting } from "@/shared/gender/gender-setting";
 import { putAccountOnboarding } from "@/shared/onboarding/account-onboarding-api";
 import {
@@ -86,6 +88,19 @@ export function useOnboardingFlow(): OnboardingFlowViewModel {
   const [received, setReceived] = useState<OnboardingCandidate[]>([]);
   const [version, setVersion] = useState<string | null>(null);
   const [dead, setDead] = useState<number[]>([]);
+  // **지금 화면에 도달했다고 한 번 보낸다** (O-42). 어디서 떨어지는지 세는 것이
+  // 목적이라, 화면이 바뀔 때마다 보낸다. 같은 표식으로 같은 단계를 두 번 보내도
+  // 서버가 한 번으로 센다 — 뒤로 갔다 오는 것이 전환율을 왜곡하지 않게 한다.
+  //
+  // 실패는 조용히 넘어간다. 도달을 못 센 것보다 온보딩이 멈추는 것이 훨씬 나쁘다.
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    void reportReach(
+      readReachMark(window.localStorage, () => crypto.randomUUID()),
+      screen === "gender" ? "gender" : screen === "picks" ? "picks" : "signup",
+    );
+  }, [screen]);
+
   // 이어 받은 성별이 있으면 아래 effect가 곧바로 후보를 부른다 — 그 사이에 CTA가
   // 열려 있으면 화면에 없는 카드로 저장이 나간다. 처음부터 불러오는 중으로 둔다.
   const [loadingCandidates, setLoading] = useState(restored.gender !== null);
@@ -206,6 +221,14 @@ export function useOnboardingFlow(): OnboardingFlowViewModel {
         setPicks(confirmed.candidatesVersion, confirmed.picks);
         // 계정에 담긴 것을 확인한 뒤에만 기기 표식을 남긴다.
         markDone();
+        // 마쳤다고 알리고 진행 표식을 지운다 (O-42).
+        finishReach(
+          window.localStorage,
+          () => crypto.randomUUID(),
+          (mark, step) => {
+            void reportReach(mark, step);
+          },
+        );
         // 마쳤으므로 진행 기록을 지운다 — 남기면 다음 방문이 중간 화면에서 열린다.
         clearFlowProgress();
         setSaveState("idle");

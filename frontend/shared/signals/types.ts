@@ -45,6 +45,13 @@ export interface SignalEvent {
   signed_in: boolean;
   /** 계측 계약 버전 — 정의가 다른 데이터를 갈라 보기 위한 표식 */
   instr_ver: string;
+  /**
+   * 이 시점까지 이 세션에서 백그라운드에 있던 시간의 합(밀리초).
+   *
+   * 집계는 세션별 **최댓값**을 쓴다. 세션 종료 줄은 마지막 방문에서 영영 오지
+   * 않을 수 있어(§7), 종료 줄에만 실으면 그 세션의 값을 잃는다.
+   */
+  away_ms: number;
   policy: FeedPolicy;
   model_ver: string;
   profile_ver: number;
