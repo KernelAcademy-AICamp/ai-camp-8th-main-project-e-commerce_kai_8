@@ -1,4 +1,4 @@
-import { EVENT_FILTER_SQL } from "@/features/metrics/domain/filters";
+import { eventFilterSql } from "@/features/metrics/domain/filters";
 import type { MetricDefinition } from "@/features/metrics/domain/metric";
 
 /**
@@ -53,7 +53,7 @@ export const sessionList: MetricDefinition = {
       count(distinct goods_no) filter (where event_type = 'outbound')::int   as "이동개",
       count(*)                 filter (where event_type = 'outbound')::int   as "이동번"
     from c_events
-    where ${EVENT_FILTER_SQL}
+    where ${eventFilterSql()}
     group by device_id, session_id
     order by min(occurred_at) desc
     limit 30

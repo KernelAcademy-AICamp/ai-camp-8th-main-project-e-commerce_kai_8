@@ -1,4 +1,4 @@
-import { EVENT_FILTER_SQL } from "@/features/metrics/domain/filters";
+import { eventFilterSql } from "@/features/metrics/domain/filters";
 import type { MetricDefinition } from "@/features/metrics/domain/metric";
 
 /**
@@ -45,7 +45,7 @@ export const rawEvents: MetricDefinition = {
       is_fresh                  as "신선",
       rank                      as "순위"
     from c_events
-    where ${EVENT_FILTER_SQL}
+    where ${eventFilterSql()}
     order by occurred_at desc
     limit 40
   `,

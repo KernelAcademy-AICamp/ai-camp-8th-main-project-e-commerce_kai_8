@@ -1,4 +1,4 @@
-import { EVENT_FILTER_SQL } from "@/features/metrics/domain/filters";
+import { eventFilterSql } from "@/features/metrics/domain/filters";
 import type { MetricDefinition } from "@/features/metrics/domain/metric";
 
 import { BUCKET_GROUP_SQL, MIN_IMPRESSIONS_SQL } from "./bucket-groups";
@@ -33,7 +33,7 @@ export const tasteOscillation: MetricDefinition = {
       select device_id, session_id
       from c_events
       where event_type = 'impression'
-        and ${EVENT_FILTER_SQL}
+        and ${eventFilterSql()}
       group by 1, 2
       having count(*) >= ${MIN_IMPRESSIONS_SQL}
     ),
@@ -47,13 +47,15 @@ export const tasteOscillation: MetricDefinition = {
       join 유효세션 v
         on v.device_id = e.device_id and v.session_id = e.session_id
       where e.event_type = 'impression'
-        and ${EVENT_FILTER_SQL}
+        -- 여기는 c_events와 유효세션이 함께 보인다. 별칭 없이 쓰면 두 쪽 모두
+        -- session_id를 가지고 있어 어느 것인지 정하지 못하고 죽는다.
+        and ${eventFilterSql("e")}
     ),
     탭 as (
       select distinct impression_id
       from c_events
       where event_type = 'tap' and impression_id is not null
-        and ${EVENT_FILTER_SQL}
+        and ${eventFilterSql()}
     ),
     세션별 as (
       select

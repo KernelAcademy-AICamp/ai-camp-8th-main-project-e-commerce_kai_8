@@ -1,4 +1,4 @@
-import { EVENT_FILTER_SQL } from "@/features/metrics/domain/filters";
+import { eventFilterSql } from "@/features/metrics/domain/filters";
 import type { MetricDefinition } from "@/features/metrics/domain/metric";
 
 /**
@@ -33,7 +33,7 @@ export const sessionFunnel: MetricDefinition = {
         count(distinct goods_no) filter (where event_type = 'wish')       as 찜개,
         count(distinct goods_no) filter (where event_type = 'outbound')   as 이동개
       from c_events
-      where ${EVENT_FILTER_SQL}
+      where ${eventFilterSql()}
       group by device_id, session_id
     )
     select

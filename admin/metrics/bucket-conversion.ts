@@ -1,4 +1,4 @@
-import { EVENT_FILTER_SQL } from "@/features/metrics/domain/filters";
+import { eventFilterSql } from "@/features/metrics/domain/filters";
 import type { MetricDefinition } from "@/features/metrics/domain/metric";
 
 import { BUCKET_GROUP_SQL } from "./bucket-groups";
@@ -53,14 +53,14 @@ export const bucketConversion: MetricDefinition = {
         ${BUCKET_GROUP_SQL} as 계열
       from c_events
       where event_type = 'impression'
-        and ${EVENT_FILTER_SQL}
+        and ${eventFilterSql()}
     ),
     행동 as (
       select impression_id, event_type
       from c_events
       where event_type in ('tap', 'wish', 'outbound')
         and impression_id is not null
-        and ${EVENT_FILTER_SQL}
+        and ${eventFilterSql()}
     ),
     집계 as (
       select
