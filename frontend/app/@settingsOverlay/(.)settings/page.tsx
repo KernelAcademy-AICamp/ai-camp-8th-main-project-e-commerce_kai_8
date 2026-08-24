@@ -1,4 +1,5 @@
 import { AccountDeleteSection } from "@/features/auth/presentation/components/account-delete-section";
+import { LogoutSection } from "@/features/auth/presentation/components/logout-section";
 import { AppVersionLine } from "@/features/settings/presentation/components/app-version-line";
 import { GenderSettings } from "@/features/settings/presentation/components/gender-settings";
 import { PrivacySettings } from "@/features/settings/presentation/components/privacy-settings";
@@ -12,7 +13,8 @@ import { SettingsHeader } from "@/features/settings/presentation/components/sett
  * 그려진다. 닫기는 `SettingsHeader`의 뒤로가기 화살표가 맡는다 — 쌓인 상태면
  * 한 단계만 뒤로(설정 → 프로필), 아니면 `/my`로 보낸다(`useBackTo`, 손대지 않음).
  *
- * 이 앱에서 `/settings`로 가는 링크는 프로필 화면(설정 메뉴)의 "회원 탈퇴" 하나뿐이다
+ * 이 앱에서 `/settings`로 가는 길은 프로필 화면의 톱니 버튼뿐이다(2026-08-25 —
+ * 예전엔 톱니를 누르면 시트가 펼쳐졌고, 그 안의 "회원 탈퇴"만 이 화면으로 왔다)
  * — 그래서 이 자리가 루트 레이아웃의 슬롯이라 "항상 존재"해도 실제로는 프로필을
  * 거칠 때만 채워진다.
  *
@@ -29,6 +31,7 @@ export default function SettingsOverlay() {
           <SettingsHeader />
           <GenderSettings />
           <PrivacySettings />
+          <LogoutSection />
           <AccountDeleteSection notice={null} />
           <AppVersionLine />
         </div>
