@@ -19,6 +19,7 @@ import { useSearchCollapse } from "@/features/feed/search/presentation/view-mode
 import { useSearchFeed } from "@/features/feed/search/presentation/view-model/use-search-feed";
 import { useSearchScroll } from "@/features/feed/search/presentation/view-model/use-search-scroll";
 import { useSearchState } from "@/features/feed/search/presentation/view-model/use-search-state";
+import { RefreshIcon } from "@/shared/icons";
 import { useRetryPendingForget } from "@/shared/signals/use-retry-pending-forget";
 
 // active=false 면 다른 칸을 보고 있다는 뜻 — 화면은 그대로 두고(스크롤 위치·검색
@@ -144,14 +145,14 @@ export function MosaicFeed({ active = true }: { active?: boolean }) {
             style={{ height: pullHeight }}
           >
             <span
-              className={`text-2xl ${refreshing ? "animate-spin" : ""}`}
+              className={`text-ink ${refreshing ? "animate-spin" : ""}`}
               style={
                 refreshing
                   ? undefined
                   : { transform: `rotate(${String(pullRotationDeg)}deg)` }
               }
             >
-              🔄
+              <RefreshIcon size={22} />
             </span>
           </div>
           {showSkeleton && <FeedSkeletonSimple />}
