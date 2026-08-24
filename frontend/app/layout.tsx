@@ -64,8 +64,8 @@ export const metadata: Metadata = {
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
-  // 설치 전에도 브라우저 상단색이 앱 배경(#E4E6EB)과 어울리게
-  themeColor: "#E4E6EB",
+  // 설치 전에도 브라우저 상단색이 앱 배경(#000000)과 어울리게
+  themeColor: "#000000",
 };
 
 /**
