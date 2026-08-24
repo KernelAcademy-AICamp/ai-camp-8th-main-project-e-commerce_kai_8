@@ -1,7 +1,6 @@
 "use client";
 
 import Image from "next/image";
-import Link from "next/link";
 
 import { OnboardingHeader } from "./onboarding-header";
 
@@ -127,9 +126,18 @@ export function OnboardingSignupScreen({
         <p>가입하면 취향과 찜이 계정에 저장돼요.</p>
         <p>
           받는 정보는 이메일 주소뿐이에요.{" "}
-          <Link href="/privacy" className="underline">
+          {/* **새 창으로 연다.** 같은 창에서 열면 온보딩이 통째로 언마운트돼
+              돌아왔을 때 1단계부터 다시 시작한다(고른 옷은 기기에 남지만 화면
+              위치를 잃는다). 동의 문서를 새 창으로 여는 것은 흔한 방식이기도 하다. */}
+          <a
+            href="/privacy"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="개인정보 처리방침 (새 창)"
+            className="underline"
+          >
             개인정보 처리방침
-          </Link>
+          </a>
         </p>
       </div>
     </main>

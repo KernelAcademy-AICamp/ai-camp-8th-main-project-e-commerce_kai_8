@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 
 import { BackLink } from "@/shared/history/back-link";
 import { BackIcon } from "@/shared/icons";
@@ -26,12 +25,17 @@ const CONTACT_EMAIL = "likefry98@gmail.com";
 export default function PrivacyPolicyPage() {
   return (
     <main className="mx-auto max-w-md px-4 pb-6 text-ink">
-      {/* 뒤로가기 좌표를 마이페이지와 맞춘다 — 왼쪽 16px·위 8px (전 화면 공통) */}
-      <header className="mb-4 flex items-center gap-1 py-2">
+      {/* 뒤로가기 좌표를 마이페이지와 맞춘다 — 왼쪽 16px·위 8px (전 화면 공통).
+          모양도 앱 표준을 따른다 — 상세·보관함·온보딩과 같은 뉴모피즘 원형.
+
+          **이름을 중립으로 둔다.** 이 화면은 프로필에서만 열리지 않는다 —
+          온보딩 3단계의 동의 문구에서도 열린다(O-41). "프로필로 돌아가기"라고
+          적으면 온보딩에서 온 사람에게 거짓말이 된다. */}
+      <header className="mb-4 flex items-center gap-2 py-2">
         <BackLink
           href="/my"
-          label="프로필로 돌아가기"
-          className="flex h-10 w-10 items-center justify-center rounded-full text-ink-soft"
+          label="뒤로 가기"
+          className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-app text-ink-soft neo active:neo-in"
         >
           <BackIcon />
         </BackLink>
@@ -200,13 +204,18 @@ export default function PrivacyPolicyPage() {
         </p>
       </section>
 
-      {/* 설정이 프로필 안 팝오버가 되면서 이 화면은 프로필에서 열린다 */}
-      <Link
+      {/* **왔던 자리로 되돌아간다.** 예전에는 `/my`로 곧장 갔는데, 이 화면이
+          온보딩 3단계에서도 열리게 되면서(O-41) 온보딩 중에 누르면 프로필로
+          튀어 나갔다 — 원하는 흐름이 아니다. 위 화살표와 같은 동작을 쓴다.
+          기록이 없을 때만(구글 OAuth 심사처럼 이 주소로 바로 들어온 경우)
+          프로필로 보낸다. */}
+      <BackLink
         href="/my"
+        label="돌아가기"
         className="mt-4 block rounded-xl bg-well neo py-3 text-center font-medium text-ink"
       >
-        프로필로 돌아가기
-      </Link>
+        돌아가기
+      </BackLink>
     </main>
   );
 }
