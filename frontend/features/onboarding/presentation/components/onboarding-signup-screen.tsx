@@ -47,7 +47,7 @@ export function OnboardingSignupScreen({
         </p>
       </div>
 
-      <section className="mt-6 rounded-[28px] bg-app px-5 pt-6 pb-2 neo">
+      <section className="mt-6 rounded-[28px] bg-raised px-5 pt-6 pb-2 neo-sm">
         <TasteConvergeFigure thumbnails={thumbnails} />
 
         <ul className="mt-4">
@@ -119,12 +119,17 @@ export function OnboardingSignupScreen({
   );
 }
 
-/** 시안의 눌린 사각 아이콘 칸 — 안쪽 그림자로 파인 자리를 만든다. */
+/**
+ * 시안의 사각 아이콘 칸 — **테두리만** 있고 그림자가 없다.
+ *
+ * 안쪽 그림자를 주면 밝은 카드 위에서 파인 자국이 도드라져, 이미 그림자를 가진
+ * 사진·원반과 겹쳐 카드 하나에 층이 너무 많아진다.
+ */
 function FigureIcon({ children }: { children: React.ReactNode }) {
   return (
     <span
       aria-hidden
-      className="flex h-13 w-13 shrink-0 items-center justify-center rounded-2xl bg-app text-ink-soft neo-in-sm"
+      className="flex h-13 w-13 shrink-0 items-center justify-center rounded-2xl border border-line text-ink-soft"
     >
       <svg viewBox="0 0 24 24" width="24" height="24" fill="none">
         {children}

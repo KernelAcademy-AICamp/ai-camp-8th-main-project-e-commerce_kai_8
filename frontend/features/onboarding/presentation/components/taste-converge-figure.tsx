@@ -60,7 +60,7 @@ function Fan({ src, className }: { src: string | undefined; className: string })
   if (src === undefined) return null;
   return (
     <div
-      className={`relative w-[34%] shrink-0 overflow-hidden rounded-[18px] bg-thumb neo ${className}`}
+      className={`relative w-[34%] shrink-0 overflow-hidden rounded-[18px] bg-thumb neo-sm ${className}`}
     >
       <div className="relative aspect-3/4">
         <Image src={src} alt="" fill sizes="160px" className="object-cover" />
@@ -81,7 +81,7 @@ function Fan({ src, className }: { src: string | undefined; className: string })
  */
 function TasteContourDisc() {
   return (
-    <div className="mx-auto -mt-3 h-[150px] w-[150px] overflow-hidden rounded-full bg-thumb neo">
+    <div className="mx-auto -mt-3 h-[150px] w-[150px] overflow-hidden rounded-full bg-thumb neo-sm">
       <svg viewBox="0 0 150 150" className="h-full w-full text-accent" fill="none">
         <g stroke="currentColor" strokeLinecap="round" fill="none">
           <path
