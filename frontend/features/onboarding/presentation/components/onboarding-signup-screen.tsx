@@ -47,10 +47,10 @@ export function OnboardingSignupScreen({
         </p>
       </div>
 
-      <section className="mt-7 rounded-[28px] bg-app px-5 pt-7 pb-3 neo">
+      <section className="mt-6 rounded-[28px] bg-app px-5 pt-6 pb-2 neo">
         <TasteConvergeFigure thumbnails={thumbnails} />
 
-        <ul className="mt-7">
+        <ul className="mt-4">
           <li className="flex items-center gap-4 py-4">
             <FigureIcon>
               <path
