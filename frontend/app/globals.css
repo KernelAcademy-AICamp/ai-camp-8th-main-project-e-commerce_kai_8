@@ -7,41 +7,41 @@
    ═══════════════════════════════════════════════════════════════════ */
 
 @theme {
-  /* 바탕·표면 — 뉴모피즘은 표면색이 모두 같고 그림자로만 층을 나눈다 */
-  --color-app: #e4e6eb;
-  --color-surface: #e4e6eb;
-  --color-well: #e4e6eb;
-  --color-chrome: #e4e6eb;
-  /* 들린 판 — 바탕보다 **밝은** 표면. 뉴모피즘 본체는 표면색이 모두 같지만,
-     온보딩 시안은 설명 카드만 밝게 띄운다(design/atee-taste-signup-sample.png에서
-     실측: 바탕 #e4e5ea · 카드 #f6f6f8). 그림자만으로 층을 나누기엔 카드가 커서
-     묻힌다. */
-  --color-raised: #f6f6f8;
+  /* 바탕·표면 — 순수 블랙. 뉴모피즘(표면색 통일 + 그림자 층 구분)을 버리고
+     플랫 다크 카드(테두리로 층 구분)로 바꿨다 — 순수 블랙에서는 그림자 짝이
+     거의 안 보인다. */
+  --color-app: #000000;
+  --color-surface: #000000;
+  --color-well: #000000;
+  --color-chrome: #050505;
+
+  /* 들린 판 — 카드 배경. 배경(#000)보다 밝혀서 경계를 만든다. */
+  --color-raised: #161616;
 
   /* 글자 */
-  --color-ink: #4e5563;
-  --color-ink-soft: #6b7280;
-  --color-ink-muted: #9aa1af;
+  --color-ink: #ededed;
+  --color-ink-soft: #b5b5b5;
+  --color-ink-muted: #7a7a7a;
 
-  --color-line: #d3d6de;
+  --color-line: #2a2a2a;
 
   /* 강조·역할색 */
-  --color-accent: #e8542f;
-  --color-accent-ink: #1c120b;
-  --color-slate: #8590a8; /* 주요 버튼 바탕 */
-  --color-on-slate: #f4f6fa; /* 주요 버튼 글자 */
+  --color-accent: #8fbf9f; /* 세이지그린 — 오렌지에서 교체 */
+  --color-accent-ink: #12231a; /* accent(초록) 위 글자 */
+  --color-slate: #3a3d42; /* 주요 버튼 바탕 — 어두운 회색 유지 */
+  --color-on-slate: #f2f3f5; /* 주요 버튼 글자 */
   --color-star: #e2b23f;
-  --color-danger: #c4574a; /* 삭제 확인 */
+  --color-danger: #e2665a; /* 삭제 확인 — 블랙 배경 대비를 위해 기존보다 밝게 */
 
   /* 채움·가림막 */
-  --color-thumb: #ffffff;
-  --color-skel-1: #dadde3; /* 뼈대(스켈레톤) 어두운 쪽 */
-  --color-skel-2: #eef0f4; /* 뼈대 밝은 쪽 */
-  --color-fill-soft: rgb(133 144 168 / 0.28);
-  --color-fill-deep: rgb(133 144 168 / 0.55);
-  --color-veil: rgb(228 230 235 / 0.85);
-  --color-dim: rgb(23 21 15 / 0.34); /* 시트·팝업 뒤 가림막 */
-  --color-dim-search: rgb(23 21 15 / 0.3); /* 검색창을 손으로 펼쳤을 때 */
+  --color-thumb: #1c1c1c;
+  --color-skel-1: #1a1a1a; /* 뼈대(스켈레톤) 어두운 쪽 */
+  --color-skel-2: #242424; /* 뼈대 밝은 쪽 */
+  --color-fill-soft: rgb(143 191 159 / 0.18);
+  --color-fill-deep: rgb(143 191 159 / 0.38);
+  --color-veil: rgb(0 0 0 / 0.85);
+  --color-dim: rgb(0 0 0 / 0.55); /* 시트·팝업 뒤 가림막 */
+  --color-dim-search: rgb(0 0 0 / 0.5); /* 검색창을 손으로 펼쳤을 때 */
 
   --radius-card: 10px;
   --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
@@ -56,34 +56,6 @@
 :root {
   --sh-d: rgb(166 175 195 / 0.62);
   --sh-l: rgb(255 255 255 / 0.95);
-}
-
-/* 어두운 버전 값 — 시안에 있는 그대로 적어만 둔다. 지금은 아무것도 이 속성을
-   붙이지 않으므로 동작하지 않는다. 밝기 토글을 넣기로 결정하면
-   (계획 "미정" 참고) 이 블록이 시작점이다. prefers-color-scheme으로 켜지
-   않는 이유는, 화면별 어두운 상태를 아직 한 번도 확인하지 않았기 때문이다. */
-:root[data-theme="dark"] {
-  --color-app: #24272e;
-  --color-surface: #24272e;
-  --color-well: #24272e;
-  --color-chrome: #24272e;
-  /* ⚠️ 어두운 시안이 없어 **실측이 아니라 유도한 값**이다 — 밝은 쪽의 바탕↔판
-     차이(+18/+16/+13)를 어두운 쪽 대비에 맞춰 줄였다. 어두운 시안이 생기면
-     거기서 다시 가져온다. */
-  --color-raised: #2c2f37;
-  --color-ink: #d6d9e0;
-  --color-ink-soft: #a8adba;
-  --color-ink-muted: #6f7583;
-  --color-line: #313540;
-  --color-slate: #8a94b0;
-  --color-thumb: #3b3b42;
-  --color-skel-1: #2a2d35;
-  --color-skel-2: #31353e;
-  --color-fill-soft: rgb(138 148 176 / 0.22);
-  --color-fill-deep: rgb(138 148 176 / 0.45);
-  --color-veil: rgb(36 39 46 / 0.85);
-  --sh-d: rgb(10 12 16 / 0.65);
-  --sh-l: rgb(255 255 255 / 0.05);
 }
 
 /* ── 뉴모피즘 유틸리티 ──────────────────────────────────────────────
