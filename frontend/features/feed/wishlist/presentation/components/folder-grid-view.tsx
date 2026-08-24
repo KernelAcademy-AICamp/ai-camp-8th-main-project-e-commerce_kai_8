@@ -81,7 +81,7 @@ export function FolderGridView() {
               type="button"
               onClick={view.startCreating}
               aria-label="새 폴더 만들기"
-              className="relative flex aspect-square w-full cursor-pointer flex-col items-start justify-start rounded-[18px] border-[1.6px] border-dashed border-[#B9C0CF] px-[15px] py-4 text-left"
+              className="relative flex aspect-square w-full cursor-pointer flex-col items-start justify-start rounded-[18px] border-[1.6px] border-dashed border-line px-[15px] py-4 text-left"
             >
               <strong className="block text-[14px] font-extrabold text-ink-soft">
                 새 폴더
@@ -89,7 +89,7 @@ export function FolderGridView() {
               <span className="mt-1 block text-[11px] font-[650] text-ink-muted">
                 탭해서 만들기
               </span>
-              <span className="absolute top-1/2 left-1/2 flex h-10 w-10 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-slate text-on-slate shadow-[0_2px_6px_rgb(30_38_55/0.25)]">
+              <span className="absolute top-1/2 left-1/2 flex h-10 w-10 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-slate text-on-slate shadow-[0_2px_6px_rgb(0_0_0/0.5)]">
                 <PlusIcon size={19} />
               </span>
             </button>
