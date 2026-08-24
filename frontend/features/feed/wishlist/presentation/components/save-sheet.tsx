@@ -7,6 +7,7 @@ import {
 } from "@/features/feed/wishlist/domain/wish-folders";
 import type { WishlistEntry } from "@/features/feed/wishlist/domain/wishlist";
 import { FolderThumbs } from "@/features/feed/wishlist/presentation/components/folder-thumbs";
+import { useSheetDragClose } from "@/features/feed/wishlist/presentation/view-model/use-sheet-drag-close";
 
 /**
  * 담기 바텀시트 — 하트를 누르면 올라와 폴더를 고르게 한다.
@@ -41,6 +42,8 @@ export function SaveSheet({
   onSubmitCreate: () => void;
 }) {
   const summaries = summarizeFolders(folders, entries);
+  // 위쪽 손잡이를 눌러 아래로 끌면 닫힌다(2026-08-25)
+  const { dragY, dragging, handleProps } = useSheetDragClose(onClose);
 
   return (
     <div className="fixed inset-0 z-[60]" role="dialog" aria-label="담을 폴더 고르기">
@@ -51,10 +54,19 @@ export function SaveSheet({
         onClick={onClose}
         className="absolute inset-0 cursor-pointer bg-black/60"
       />
-      <div className="absolute right-0 bottom-0 left-0 mx-auto max-w-md rounded-t-2xl bg-neutral-900 pb-[max(env(safe-area-inset-bottom),1rem)]">
+      <div
+        className="absolute right-0 bottom-0 left-0 mx-auto max-w-md rounded-t-2xl bg-neutral-900 pb-[max(env(safe-area-inset-bottom),1rem)]"
+        style={{
+          transform: dragY > 0 ? `translateY(${String(dragY)}px)` : undefined,
+          transition: dragging ? "none" : "transform 200ms ease",
+        }}
+      >
+        {/* 손잡이 — 누르고 끌면 닫힌다. touch-none으로 브라우저의 세로 스크롤·
+            바운스가 끼어들지 않게 한다(손잡이 자체는 스크롤할 내용이 없다) */}
         <div
           aria-hidden
-          className="mx-auto mt-2.5 h-1 w-9 rounded-full bg-neutral-700"
+          className="mx-auto mt-2.5 h-1 w-9 cursor-grab touch-none rounded-full bg-neutral-700 active:cursor-grabbing"
+          {...handleProps}
         />
         <h2 className="px-5 pt-4 pb-1 text-base font-semibold text-white">
           어디에 담을까요

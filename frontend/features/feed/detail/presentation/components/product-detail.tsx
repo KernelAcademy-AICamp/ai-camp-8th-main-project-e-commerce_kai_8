@@ -18,7 +18,10 @@ import type { Product } from "@/features/feed/domain/product";
 import { initialSlideIndex } from "@/features/feed/domain/similar";
 import { FeedError } from "@/features/feed/presentation/components/feed-error";
 import { FeedGrid } from "@/features/feed/presentation/components/feed-grid";
-import { FeedSkeletonSimple } from "@/features/feed/presentation/components/feed-skeleton-simple";
+import {
+  FeedSkeletonSimple,
+  SKELETON_COLUMN_HEIGHTS,
+} from "@/features/feed/presentation/components/feed-skeleton-simple";
 import {
   SIMILAR_PAGE_SIZE,
   useFeedViewModel,
@@ -32,6 +35,8 @@ import { rememberAfterLogin } from "@/shared/history/after-login";
 import { recordRecentProduct } from "@/shared/history/recent-products";
 import { ArrowUpIcon, BackIcon } from "@/shared/icons";
 import { logAction } from "@/shared/signals/signals";
+import { Snackbar } from "@/shared/ui/snackbar";
+import { useSnackbar } from "@/shared/ui/use-snackbar";
 
 interface ProductDetailProps {
   entry: DetailEntry;
@@ -94,7 +99,10 @@ export function ProductDetail({
   // 화면용으로 바꾼다 — 시트의 폴더별 개수·썸네일이 보관함 화면과 같아야 한다
   // (설계 "담기 시트는 경로가 다르다").
   const visibleWishes = useVisibleWishes(entries);
-  const sheet = useSaveSheet(save);
+  const snackbar = useSnackbar();
+  const sheet = useSaveSheet(save, () => {
+    snackbar.show("담았어요");
+  });
   const isWishedNow = wished(product.goodsNo);
   // 저장 버튼이 눌렸을 때 — 비회원이면 안내 없이 곧바로 로그인 화면으로
   // (저장은 동작이므로 설명을 한 단계 끼우지 않는다), 아니면 폴더 고르는 시트
@@ -257,7 +265,10 @@ export function ProductDetail({
                   rel="noopener noreferrer"
                   aria-label="판매처로 이동"
                   title="판매처로 이동"
-                  className="flex h-11 w-11 items-center justify-center text-2xl font-semibold text-ink"
+                  // text-3xl — "↗" 글자는 "♡"와 같은 24px에서 훨씬 작고 위쪽으로
+                  // 치우쳐 그려져(폰트 자체의 글리프 비례), 크기를 30px로 올려야
+                  // 두 버튼의 잉크량이 비슷해 보인다(2026-08-25 실측 비교).
+                  className="flex h-11 w-11 items-center justify-center text-3xl font-semibold text-ink"
                   onClick={() => {
                     logAction("outbound", product.goodsNo);
                   }}
@@ -290,6 +301,13 @@ export function ProductDetail({
                   scrollRef.current?.scrollTop ?? 0,
                 );
               }}
+              // 다음 배치를 받는 동안 각 칸 끝에 뼈대를 이어 붙인다 — 홈 피드와
+              // 같은 처리(2026-08-25, 예전엔 여기만 빠져 있었다).
+              trailingSkeletonHeights={
+                !explore.showSkeleton && explore.loadingMore
+                  ? SKELETON_COLUMN_HEIGHTS.map((column) => column.slice(0, 2))
+                  : undefined
+              }
             />
           </div>
         </div>
@@ -324,6 +342,8 @@ export function ProductDetail({
           }}
         />
       )}
+
+      <Snackbar message={snackbar.message} />
     </div>
   );
 }
