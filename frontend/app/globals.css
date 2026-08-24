@@ -12,6 +12,11 @@
   --color-surface: #e4e6eb;
   --color-well: #e4e6eb;
   --color-chrome: #e4e6eb;
+  /* 들린 판 — 바탕보다 **밝은** 표면. 뉴모피즘 본체는 표면색이 모두 같지만,
+     온보딩 시안은 설명 카드만 밝게 띄운다(design/atee-taste-signup-sample.png에서
+     실측: 바탕 #e4e5ea · 카드 #f6f6f8). 그림자만으로 층을 나누기엔 카드가 커서
+     묻힌다. */
+  --color-raised: #f6f6f8;
 
   /* 글자 */
   --color-ink: #4e5563;
@@ -62,6 +67,10 @@
   --color-surface: #24272e;
   --color-well: #24272e;
   --color-chrome: #24272e;
+  /* ⚠️ 어두운 시안이 없어 **실측이 아니라 유도한 값**이다 — 밝은 쪽의 바탕↔판
+     차이(+18/+16/+13)를 어두운 쪽 대비에 맞춰 줄였다. 어두운 시안이 생기면
+     거기서 다시 가져온다. */
+  --color-raised: #2c2f37;
   --color-ink: #d6d9e0;
   --color-ink-soft: #a8adba;
   --color-ink-muted: #6f7583;

@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 
 import { BackLink } from "@/shared/history/back-link";
-import { BackIcon } from "@/shared/icons";
+import { CloseIcon } from "@/shared/icons";
 
 /**
  * 공개 개인정보 처리방침.
@@ -26,14 +25,22 @@ const CONTACT_EMAIL = "likefry98@gmail.com";
 export default function PrivacyPolicyPage() {
   return (
     <main className="mx-auto max-w-md px-4 pb-6 text-ink">
-      {/* 뒤로가기 좌표를 마이페이지와 맞춘다 — 왼쪽 16px·위 8px (전 화면 공통) */}
-      <header className="mb-4 flex items-center gap-1 py-2">
+      {/* **뒤로가 아니라 닫기다**(제품 책임자 2026-08-24). 이 문서는 여러 자리에서
+          열린다 — 프로필, 온보딩 3단계의 동의 문구(O-41). 화살표는 "직전 화면으로"를
+          약속하는데 어디서 왔는지가 매번 다르고, 실제로 온보딩에서 열었을 때 프로필로
+          나가는 일이 있었다. ✕는 "이 문서를 덮는다"만 말하므로 어디서 열어도 맞다.
+
+          좌표는 전 화면 공통(왼쪽 16px·위 8px), 모양은 앱 표준 뉴모피즘 원형.
+
+          기록이 없으면(구글 OAuth 심사처럼 이 주소로 바로 들어온 경우) 홈으로
+          보낸다 — 프로필로 보내면 온보딩을 안 마친 사람이 엉뚱한 곳에 떨어진다. */}
+      <header className="mb-4 flex items-center gap-2 py-2">
         <BackLink
-          href="/my"
-          label="프로필로 돌아가기"
-          className="flex h-10 w-10 items-center justify-center rounded-full text-ink-soft"
+          href="/"
+          label="닫기"
+          className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-app text-ink-soft neo active:neo-in"
         >
-          <BackIcon />
+          <CloseIcon size={15} />
         </BackLink>
         <h1 className="text-lg font-semibold text-ink">개인정보 처리방침</h1>
       </header>
@@ -62,7 +69,11 @@ export default function PrivacyPolicyPage() {
           <li>
             <b className="text-ink">고른 성별과 옷은 이 기기에만 있습니다.</b> 로그인
             전에는 서버로 보내지 않고, 계정이 생길 때 그 계정으로 옮겨져 첫 추천의
-            시작점이 됩니다. 가입하지 않고 나가면 기기에만 남습니다.
+            시작점이 됩니다. 가입하지 않고 나가면 기기에만 남습니다. 옮겨지는 것은{" "}
+            <b className="text-ink">
+              상품 번호와 화면에서의 위치·고른 순서, 그리고 본 후보 목록의 판
+            </b>
+            뿐이고 상품 정보는 복사하지 않습니다.
           </li>
           <li>
             <b className="text-ink">탐색 행동은 기록하지 않습니다.</b> 카드가 화면에
@@ -96,8 +107,8 @@ export default function PrivacyPolicyPage() {
           </li>
           <li>
             저장되는 것: 계정 식별자와 이메일, 가입·마지막 로그인 시각, 연결된 구글
-            신원, 로그인 세션과 갱신 토큰, 그리고{" "}
-            <b className="text-ink">취향 프로필</b>.
+            신원, 로그인 세션과 갱신 토큰, <b className="text-ink">취향 프로필</b>,
+            그리고 <b className="text-ink">온보딩에서 고른 옷</b>.
           </li>
           <li>이 기기에는 로그인 세션 쿠키와 현재 신원 표시자가 남습니다.</li>
           <li>
@@ -132,6 +143,11 @@ export default function PrivacyPolicyPage() {
           <li>검색어 기록 — 90일 뒤 자동 삭제</li>
           <li>탐색 행동·익명 ID — 지울 때까지</li>
           <li>계정 · 취향 프로필 — 탈퇴할 때까지</li>
+          <li>
+            온보딩에서 고른 옷 — 탈퇴하거나 개인화 데이터를 지울 때까지 (지운 뒤에도{" "}
+            <b className="text-ink">&ldquo;온보딩을 마쳤다&rdquo;는 사실</b>은 남습니다
+            — 지울 때마다 처음 세 화면을 다시 보게 되지 않도록)
+          </li>
           <li>찜 목록 — 탈퇴하거나, 찜을 풀거나, 개인화 데이터를 지울 때까지</li>
         </ul>
       </section>
@@ -140,15 +156,16 @@ export default function PrivacyPolicyPage() {
         <h2 className="text-base font-semibold text-ink">어떻게 지우나요</h2>
         <p>
           <b className="text-ink">개인화 데이터 모두 지우기</b> — 이 기기의 익명 ID·취향
-          프로필·최근 본 제품·보여줄 상품의 성별, 서버에 기록된 탐색 행동·검색어, 그리고{" "}
-          <b className="text-ink">계정에 담긴 찜과 폴더</b>가 모두 지워지고 새 익명 ID로
+          프로필·최근 본 제품·보여줄 상품의 성별, 서버에 기록된 탐색 행동·검색어,{" "}
+          <b className="text-ink">계정에 담긴 찜과 폴더</b>, 그리고{" "}
+          <b className="text-ink">온보딩에서 고른 옷</b>이 모두 지워지고 새 익명 ID로
           처음 상태가 됩니다. <b className="text-ink">계정 자체는 남습니다</b> —
           계정까지 지우려면 아래 계정 삭제를 쓰세요.
         </p>
         <p>
           <b className="text-ink">계정 삭제</b> — 계정과 연결된 구글 신원, 로그인 세션,{" "}
-          <b className="text-ink">계정에 담긴 찜과 취향 프로필</b>이 지워지고, 이어서 이
-          기기의 탐색 행동·검색어 기록도 함께 지워집니다.
+          <b className="text-ink">계정에 담긴 찜과 취향 프로필, 온보딩 기록 전부</b>가
+          지워지고, 이어서 이 기기의 탐색 행동·검색어 기록도 함께 지워집니다.
         </p>
         <p>
           서버 삭제가 실패하면 이 기기가 그 사실을 적어 두고 다음 접속에서 다시
@@ -190,13 +207,16 @@ export default function PrivacyPolicyPage() {
         </p>
       </section>
 
-      {/* 설정이 프로필 안 팝오버가 되면서 이 화면은 프로필에서 열린다 */}
-      <Link
-        href="/my"
+      {/* 위 ✕와 **같은 동작**이다 — 긴 문서라 끝까지 읽고 위로 다시 올라가지
+          않아도 되게 둔다. 예전에는 `/my`로 곧장 갔는데, 온보딩 중에 누르면
+          프로필로 튀어 나갔다. */}
+      <BackLink
+        href="/"
+        label="닫기"
         className="mt-4 block rounded-xl bg-well neo py-3 text-center font-medium text-ink"
       >
-        프로필로 돌아가기
-      </Link>
+        닫기
+      </BackLink>
     </main>
   );
 }

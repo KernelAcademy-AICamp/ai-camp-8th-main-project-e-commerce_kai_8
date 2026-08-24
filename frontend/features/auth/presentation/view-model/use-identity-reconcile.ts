@@ -10,6 +10,10 @@ import { carryGender, shouldCarryGender } from "@/shared/identity/gender-carry";
 import { takeIdentityLanding } from "@/shared/identity/identity-landing";
 import { isIdentityTransition, markerFor } from "@/shared/identity/identity-marker";
 import { clearIdentityScopedData } from "@/shared/identity/identity-reset";
+import {
+  carryOnboarding,
+  shouldCarryOnboarding,
+} from "@/shared/identity/onboarding-carry";
 import { carryWishes, shouldCarryWishes } from "@/shared/identity/wish-carry";
 import { endSessionNow } from "@/shared/signals/signals";
 
@@ -73,6 +77,12 @@ export function useIdentityReconcile(): void {
           // 성별도 같은 자리에서 빼둔다 — 아래 정리가 설정 본체를 지운다.
           // 안 빼두면 비회원으로 고른 성별이 사라져 로그인 직후 다시 묻게 된다.
           if (shouldCarryGender(previous, current)) carryGender(localStorage);
+          // 온보딩에서 고른 옷도 같은 자리에서 빼둔다. **대상 계정을 함께 담는다** —
+          // A에 올리다 실패한 뒤 로그아웃하고 B가 로그인하면, 대상 없는 보관함은
+          // B에게 넘어간다. `current`가 곧 로그인이 확정된 사용자 식별자다.
+          if (shouldCarryOnboarding(previous, current)) {
+            carryOnboarding(localStorage, current);
+          }
 
           // **지우기 전에** 지금 세션을 끝낸다. 아래 정리가 세션 키를 지우므로,
           // 여기서 끝내지 않으면 직전 세션은 종료 줄 없이 사라진다 — 그 세션의
