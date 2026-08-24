@@ -59,7 +59,7 @@ describe("filterByGender", () => {
     expect(keys).not.toContain("women"); // 남성 0장
   });
 
-  it("원본을 건드리지 않는다 — 더보기를 펴도 목록이 갈리면 안 된다", () => {
+  it("원본을 건드리지 않는다 — 뒤 묶음이 붙어도 목록이 갈리면 안 된다", () => {
     filterByGender(CURATIONS, "남성");
     expect(CURATIONS[0].items).toHaveLength(5);
   });

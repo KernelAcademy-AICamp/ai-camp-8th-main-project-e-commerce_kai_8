@@ -128,7 +128,7 @@ export function scoreCurations(
  * 점수 순으로 앞자리를 채우고 **나머지는 기본 순서 그대로** 뒤에 잇는다.
  *
  * 걸린 큐레이션이 첫 화면 수보다 적어도 화면이 비지 않는다(계획 제약). 목록 전체를
- * 돌려주므로 "더보기"를 편 뒤에도 같은 배열 하나만 쓰면 된다.
+ * 돌려주므로 뒤 묶음이 붙은 뒤에도 같은 배열 하나만 쓰면 된다.
  */
 export function orderByTaste<T extends { key: string; n: number }>(
   curations: T[],
