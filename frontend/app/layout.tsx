@@ -8,6 +8,7 @@ import type { Metadata, Viewport } from "next";
 import { IdentityGuard } from "@/features/auth/presentation/components/identity-guard";
 import { GenderAccountGuard } from "@/shared/gender/gender-account-guard";
 import { NavMarkGuard } from "@/shared/history/nav-mark-guard";
+import { OnboardingAccountGuard } from "@/shared/onboarding/onboarding-account-guard";
 import { AccountProfileGuard } from "@/shared/profile/account-profile-guard";
 
 const TAGLINE = "취향으로 변하는 티셔츠 무한 탐색";
@@ -86,6 +87,7 @@ export default function RootLayout({
         <IdentityGuard />
         <AccountProfileGuard />
         <GenderAccountGuard />
+        <OnboardingAccountGuard />
         {children}
         {overlay}
       </body>

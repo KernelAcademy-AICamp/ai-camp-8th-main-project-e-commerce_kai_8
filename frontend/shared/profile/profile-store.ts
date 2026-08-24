@@ -1,6 +1,9 @@
 // 취향 프로필 저장소 (설계 §6): 장기 = localStorage(백업 슬롯 1개, 멀티탭 병합),
 // 세션 = sessionStorage(탭 단위). 규칙 계산은 profile-rules(순수)로 위임한다.
 
+import { seedAnchors } from "@/shared/onboarding/onboarding-pick";
+import { getPicksSnapshot } from "@/shared/onboarding/onboarding-store";
+
 import { clearAnchorTitles } from "./anchor-titles";
 import { clearCurationViews } from "./curation-views";
 import {
@@ -235,10 +238,29 @@ export interface ProfileSummary {
 export function getProfileSummary(sessionId: string, nowMs: number): ProfileSummary {
   const longTerm = readLongTerm();
   const session = readSessionProfile(sessionId, nowMs);
+  const real = longTerm.anchors.map(({ goodsNo, weight }) => ({ goodsNo, weight }));
+  const sessionAnchors = session.anchors.map(({ goodsNo, weight }) => ({
+    goodsNo,
+    weight,
+  }));
+  // **온보딩 선택은 요청에 실을 때 합친다 — 저장은 따로 둔다.**
+  //
+  // 계산된 장기 취향에 써 넣으면 감쇠·상한 같은 앵커 규칙이 사람이 명시적으로 고른
+  // 값에까지 적용되고, 정본이 금지한 "같은 데이터로 취급"이 된다. 읽는 자리에서만
+  // 합치면 계정에는 따로 남고 요청에는 함께 나간다.
+  //
+  // 실제 행동 앵커가 쌓일수록 씨앗의 무게가 줄어 결국 사라진다 — 처리방침은 이것을
+  // "첫 추천의 **시작점**"이라고 약속했지 종착점이라고 하지 않았다(seedAnchors).
+  // 이미 행동 앵커로 잡힌 상품은 두 번 싣지 않는다.
+  const known = new Set([...real, ...sessionAnchors].map((a) => a.goodsNo));
+  // **세션 앵커도 "실제 행동"이다.** 장기 앵커만 세면 첫 세션에서 스무 번을 반응해도
+  // 씨앗이 온전한 무게로 남아 있다가, 세션이 접히는 순간 계단식으로 사라진다 —
+  // "쌓일수록 선형으로 물러난다"는 설명과 다르다(교차 리뷰 ⑨).
+  const seeds = seedAnchors(getPicksSnapshot(), known.size);
   return {
     schemaVersion: longTerm.schemaVersion,
-    longAnchors: longTerm.anchors.map(({ goodsNo, weight }) => ({ goodsNo, weight })),
-    sessionAnchors: session.anchors.map(({ goodsNo, weight }) => ({ goodsNo, weight })),
+    longAnchors: [...real, ...seeds.filter((s) => !known.has(s.goodsNo))],
+    sessionAnchors,
     recentImpressions: session.recentImpressions,
     boostActive: session.boostRemaining > 0,
   };
