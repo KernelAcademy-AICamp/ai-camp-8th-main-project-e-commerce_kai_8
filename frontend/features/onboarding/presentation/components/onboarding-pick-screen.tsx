@@ -125,12 +125,14 @@ export function OnboardingPickScreen({
             저장하지 못했어요. 다시 시도해 주세요.
           </p>
         )}
+        {/* **판만 떠 있고 버튼은 평평하다**(시안). 버튼에도 그림자를 주면 떠 있는 것
+            위에 또 떠 있는 것이 되어 어느 쪽이 눌리는 자리인지 흐려진다. */}
         <div className="rounded-[26px] bg-app p-2.5 neo">
           <button
             type="button"
             onClick={onNext}
             disabled={!canGoNext || saving}
-            className="w-full cursor-pointer rounded-[18px] bg-slate py-4 text-[17px] font-bold text-on-slate neo-drop active:neo-in disabled:cursor-default disabled:opacity-45"
+            className="w-full cursor-pointer rounded-[18px] bg-slate py-4 text-[17px] font-bold text-on-slate transition-opacity active:opacity-80 disabled:cursor-default disabled:opacity-45"
           >
             {saving
               ? "저장하는 중…"
