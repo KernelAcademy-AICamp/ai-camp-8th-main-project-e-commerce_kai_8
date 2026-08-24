@@ -143,6 +143,8 @@ function baseEvent(
   sessionId: string,
   occurredAtMs: number,
   policy: FeedPolicy,
+  /** 발생 시점 상태를 호출부가 아는 경우. 생략하면 지금 상태를 읽는다. */
+  signedInAt?: boolean,
 ): SignalEvent {
   return {
     event_id: crypto.randomUUID(),
@@ -150,7 +152,7 @@ function baseEvent(
     event_type: type,
     occurred_at: new Date(occurredAtMs).toISOString(),
     // **여기서 박는다.** 이벤트를 만드는 순간이 곧 발생 시점이다.
-    signed_in: isSignedInNow(),
+    signed_in: signedInAt ?? isSignedInNow(),
     instr_ver: INSTRUMENTATION_VER,
     // touchSession이 방금 갱신해 둔 값을 읽는다
     away_ms: readSession()?.awayMs ?? 0,
@@ -223,11 +225,23 @@ export function touchSession(): string {
  * 미전송 큐는 신원 전환에도 살아남으므로, 여기서 넣어 두면 다시 불러온 뒤에
  * 전송된다.
  */
-export function endSessionNow(): void {
+export function endSessionNow(options?: { signedIn?: boolean }): void {
   if (!isBrowser()) return;
   const current = readSession();
   if (current === null) return;
-  enqueue(baseEvent("session_end", current.id, current.lastActivityMs, "random"));
+  // **끝나는 세션이 어떤 상태였는지를 받는다.** 로그아웃으로 세션을 끊을 때
+  // 이 함수가 도는 시점엔 이미 로그아웃된 뒤라, 지금 상태를 읽으면 회원
+  // 세션의 마지막 줄만 혼자 비회원으로 찍힌다. 그러면 한 세션 안에서
+  // "이 구간이 로그인 전인가"에 대한 답이 엇갈린다.
+  enqueue(
+    baseEvent(
+      "session_end",
+      current.id,
+      current.lastActivityMs,
+      "random",
+      options?.signedIn,
+    ),
+  );
   try {
     localStorage.removeItem(SESSION_KEY);
   } catch {

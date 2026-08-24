@@ -96,3 +96,37 @@ describe("useIdentityReconcile — 세션 경계", () => {
     expect(queued().map((event) => event.event_type)).not.toContain("session_end");
   });
 });
+
+describe("종료 줄의 로그인 상태", () => {
+  it("로그아웃할 때 종료 줄은 회원으로 남는다", async () => {
+    // 이 훅이 도는 시점엔 이미 로그아웃된 뒤다. 직전 신원을 넘기지 않으면
+    // 회원 세션의 마지막 줄만 혼자 비회원으로 찍힌다.
+    const { signals, hook } = await setup(null); // 지금은 비로그인
+    signals.logImpression({ goodsNo: 1120448 });
+    sessionStorage.setItem(TAB_MARKER_KEY, ME); // 직전엔 회원이었다
+
+    renderHook(() => {
+      hook.useIdentityReconcile();
+    });
+
+    await waitFor(() => {
+      const end = queued().find((event) => event.event_type === "session_end");
+      expect(end?.signed_in).toBe(true);
+    });
+  });
+
+  it("비회원이 로그인할 때 종료 줄은 비회원으로 남는다", async () => {
+    const { signals, hook } = await setup(ME); // 지금 막 로그인했다
+    signals.logImpression({ goodsNo: 1120448 });
+    sessionStorage.setItem(TAB_MARKER_KEY, "anon"); // 직전엔 비회원
+
+    renderHook(() => {
+      hook.useIdentityReconcile();
+    });
+
+    await waitFor(() => {
+      const end = queued().find((event) => event.event_type === "session_end");
+      expect(end?.signed_in).toBe(false);
+    });
+  });
+});

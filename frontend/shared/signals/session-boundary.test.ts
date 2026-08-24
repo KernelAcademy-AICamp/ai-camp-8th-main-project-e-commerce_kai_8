@@ -7,9 +7,12 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import type { SignalEvent } from "@/shared/signals/types";
+import { isSignedInNow } from "@/shared/supabase/session-state";
 
 vi.mock("@/shared/supabase-rpc", () => ({ rpcPost: vi.fn() }));
-vi.mock("@/shared/supabase/session-state", () => ({ isSignedInNow: () => true }));
+vi.mock("@/shared/supabase/session-state", () => ({
+  isSignedInNow: vi.fn(() => true),
+}));
 vi.mock("@/shared/profile/profile-store", () => ({
   recordProfileImpression: vi.fn(),
   recordProfileAction: vi.fn(),
@@ -38,6 +41,7 @@ function setVisibility(state: "visible" | "hidden"): void {
 }
 
 beforeEach(() => {
+  vi.mocked(isSignedInNow).mockReturnValue(true);
   localStorage.clear();
   vi.resetModules();
   vi.useFakeTimers();
@@ -125,5 +129,32 @@ describe("나가 있던 시간이 이벤트에 실린다", () => {
     const signals = await import("@/shared/signals/signals");
     signals.logImpression({ goodsNo: GOODS });
     expect(queued()[0]?.away_ms).toBe(0);
+  });
+});
+
+describe("세션 종료 줄의 로그인 상태", () => {
+  it("로그인 상태였던 세션의 종료 줄은 회원으로 남는다", async () => {
+    // 로그아웃을 감지하는 쪽이 이벤트를 만들 때는 이미 로그아웃된 뒤다.
+    // 그 자리에서 상태를 읽으면 회원 세션의 마지막 줄이 비회원으로 찍힌다.
+    const signals = await import("@/shared/signals/signals");
+    signals.logImpression({ goodsNo: GOODS });
+
+    // 로그아웃된 뒤에 종료를 남기는 상황
+    vi.mocked(isSignedInNow).mockReturnValue(false);
+    signals.endSessionNow({ signedIn: true });
+
+    const end = queued().find((event) => event.event_type === "session_end");
+    expect(end?.signed_in).toBe(true);
+  });
+
+  it("알려주지 않으면 지금 상태를 쓴다", async () => {
+    const signals = await import("@/shared/signals/signals");
+    signals.logImpression({ goodsNo: GOODS });
+
+    vi.mocked(isSignedInNow).mockReturnValue(false);
+    signals.endSessionNow();
+
+    const end = queued().find((event) => event.event_type === "session_end");
+    expect(end?.signed_in).toBe(false);
   });
 });
