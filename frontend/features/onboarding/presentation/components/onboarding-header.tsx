@@ -7,13 +7,11 @@ import { BackIcon } from "@/shared/icons";
  * (제품 결정) — 화면 수가 경로마다 달라(새 기기 3, 로그인 우선 2) 굳이 세게
  * 하느니 아예 안 보여주는 쪽을 택했다.
  *
- * 뒤로가기는 **큐레이션 상세와 같은 플랫 아이콘**이다(2026-08-25, 온보딩 한정
- * 재검토): 배경·테두리·그림자 없이 `BackIcon` · `text-ink-soft` · 이름은
- * `뒤로 가기`. 2026-08-24에는 상세·보관함류와 같은 neo 원형을 표준으로 정했지만,
- * 이후 홈 화면이 뉴모피즘 이전 플랫 디자인으로 되돌아가며(커밋 4c741d3) 앱의
- * 최신 방향이 플랫 쪽으로 굳어져 온보딩도 그쪽으로 다시 맞췄다. **이 결정은
- * 온보딩에 한정된다** — 상세·보관함·폴더 상세의 neo 원형 표준까지 이걸 근거로
- * 뒤집지 말 것.
+ * 뒤로가기는 **앱 전체와 같은 neo 원형**이다(2026-08-25, 재검토) — 상세·
+ * 보관함·설정과 같은 `bg-app`·`neo`·`active:neo-in`·40×40. 바로 전엔 온보딩만
+ * 배경·테두리 없는 플랫 아이콘이었는데, 화면마다 뒤로가기 생김새가 갈려
+ * 있다는 지적으로 앱 전체를 상세 화면 기준에 다시 맞췄다 — 이번엔 온보딩도
+ * 예외로 남기지 않는다.
  *
  * 좌표도 맞춘다 — **왼쪽 16px·위 8px가 전 화면 공통**이다. 본문이 `px-6`(24px)이라
  * `-mx-2`로 8px 당겨 버튼 상자를 16px에 놓는다(로그인 화면과 같은 방법).
@@ -31,7 +29,7 @@ export function OnboardingHeader({ onBack }: { onBack?: () => void }) {
           type="button"
           aria-label="뒤로 가기"
           onClick={onBack}
-          className="flex h-10 w-10 cursor-pointer items-center justify-center text-ink-soft transition-colors active:text-ink"
+          className="flex h-10 w-10 cursor-pointer items-center justify-center rounded-full bg-app text-ink-soft neo active:neo-in"
         >
           <BackIcon />
         </button>

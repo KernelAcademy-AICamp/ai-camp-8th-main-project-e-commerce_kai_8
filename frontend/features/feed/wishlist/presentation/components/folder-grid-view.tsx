@@ -46,7 +46,7 @@ export function FolderGridView() {
         <BackLink
           href="/"
           label="피드로 돌아가기"
-          className="flex h-10 w-10 items-center justify-center rounded-full text-neutral-400"
+          className="flex h-10 w-10 cursor-pointer items-center justify-center rounded-full bg-app text-ink-soft neo active:neo-in"
         >
           <BackIcon />
         </BackLink>
