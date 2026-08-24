@@ -39,7 +39,12 @@ CAND_N = 150
 MIN_BUY = 100      # 구매 100개 미만은 검증 안 된 것으로 본다 (12만 건 중 10만이 구매 0개)
 MIN_REVIEW = 30    # 리뷰 30개 미만의 평점 100점은 표본이 작아서 못 믿는다
 ORDER = "review_score desc nulls last, goods_no desc"
-MAX_APPEAR = 2    # 한 상품이 나갈 수 있는 큐레이션 수. 앞선 큐레이션이 우선권을 갖는다
+# 한 상품이 나갈 수 있는 큐레이션 수. 앞선 큐레이션이 우선권을 갖는다.
+# 예전엔 2였다("링거이면서 크롭인 티는 둘 다 맞다"). 그런데 실제로 걸린 사례는 취향이
+# 겹치는 게 아니라 색상 변형이 similar_no 없이 흩어져 다른 상품으로 오인된 것이었다
+# (워크웨어·아메카지에 디키즈 트리로고가 둘 다 실림, 2026-08-24 실측). 진짜 취향 중복보다
+# 카드가 겹쳐 보이는 문제가 더 눈에 띄어서 1로 낮췄다 — 사람 결정 2026-08-24.
+MAX_APPEAR = 1
 
 # 화면의 "N건"을 **하한 통과분**으로 세는 게시물 (사람 결정 2026-08-18).
 # 기본은 하한 전 숫자인데, 반팔 카탈로그의 8할이 구매 0건이라 체형 게시물은
@@ -787,11 +792,29 @@ def load(cur):
     return rows
 
 
+# 대괄호·괄호 안 색상은 위에서 지워지지만, similar_no 없는 상품은 색 이름이 괄호 없이
+# 끝에 그냥 붙는다("... White", "... 1% Melange"). 그 트레일링 색 토큰(최대 2개)도 지운다
+# — 안 지우면 같은 옷의 색상 변형이 서로 다른 상품으로 갈려 큐레이션이 "디키즈 색깔 3장"
+# 처럼 보인다 (워크웨어 실측 2026-08-24). 사람 결정 2026-08-24.
+_COLOR_SUFFIX = re.compile(
+    r"^(?:" + "|".join(re.escape(w) for w in sorted(
+        set(COLOR) | {
+            "white", "black", "grey", "gray", "brown", "beige", "green", "blue",
+            "purple", "yellow", "pink", "red", "orange", "silver", "gold", "denim",
+            "ivory", "camel", "sand", "khaki", "mint", "navy", "lavender", "burgundy",
+            "brick", "peach", "oatmeal", "mustard", "lime", "melange", "charcoal",
+            "camo", "camouflage", "ecru", "wine", "indigo", "stone", "cream", "olive",
+        }, key=len, reverse=True)) + r"|\d+%)$", re.I)
+
+
 def strip_variant(title):
     """상품명에서 색상·팩 수 같은 옵션 표기를 지운다. 색만 다른 옷을 한 옷으로 묶는 열쇠."""
     t = re.sub(r"\[[^\]]*\]|\([^)]*\)", " ", title)
     t = re.sub(r"[_\-]\s*\d*\s*(color|컬러|colors)\b", " ", t, flags=re.I)
-    return re.sub(r"\s+", " ", t).strip().lower()
+    words = re.sub(r"\s+", " ", t).strip().split(" ")
+    while words and _COLOR_SUFFIX.match(words[-1]):
+        words.pop()
+    return " ".join(words).strip().lower()
 
 
 def dedupe_variants(rows, limit, appear=None, seen=None):
@@ -801,10 +824,9 @@ def dedupe_variants(rows, limit, appear=None, seen=None):
     상품명으로 묶는다 ("... 티셔츠 [블랙]" 과 "... 티셔츠 (화이트)" 는 한 옷이다).
     rows 는 CARD_COLS 순서(0=goods_no, 10=similar_no)를 전제한다.
 
-    appear 를 넘기면 큐레이션을 가로질러 같은 상품이 MAX_APPEAR 개를 넘게
-    나오지 않도록 막는다. 겹침 자체는 정상이다 — 링거이면서 크롭인 티는 둘 다
-    맞다. 다만 리뷰 조건만 있는 큐레이션("안 덥다", "정사이즈")은 생김새를 안 봐서
-    좋은 상품을 전부 빨아들인다. 그래서 상한만 둔다.
+    appear 를 넘기면 큐레이션을 가로질러 같은 상품이 MAX_APPEAR(=1) 개를 넘게
+    나오지 않도록 막는다 — 한 상품은 먼저 실린 큐레이션 하나에만 남는다
+    (사람 결정 2026-08-24, MAX_APPEAR 정의 참고).
 
     seen 을 넘기면 **이어서** 고른다. 한 큐레이션에서 상위컷을 뽑은 뒤 모자란 성별만
     더 채울 때(fill_gender), 두 번째 호출이 첫 호출과 같은 옷의 다른 색을 집지
