@@ -24,7 +24,7 @@ import { SettingsHeader } from "@/features/settings/presentation/components/sett
 export default function SettingsOverlay() {
   return (
     <div className="fixed inset-0 z-50 overflow-y-auto overscroll-contain">
-      <main className="push-in relative min-h-dvh w-full bg-app text-ink shadow-[-12px_0_28px_rgb(20_26_40/0.25)]">
+      <main className="push-in relative min-h-dvh w-full bg-app text-ink">
         <div className="mx-auto max-w-md px-4 pb-6">
           <SettingsHeader />
           <GenderSettings />

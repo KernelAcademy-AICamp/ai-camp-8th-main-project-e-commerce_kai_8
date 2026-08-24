@@ -10,10 +10,9 @@ export const SIDE_BTN =
 /**
  * 마이페이지의 **틀** — 머리줄과 자리 배치만 안다.
  *
- * 시안 `.sidebar` 마크업을 따른다. 그 패널은 폭 100%에 불투명이라(3단계 저장
- * 패널과 같다) 주소를 가진 이 화면으로 두어도 보이는 결과가 같다. 오른쪽에서
- * 밀려 들어와 이전 화면을 완전히 덮는다(2026-08-25 push 스택 전환). 왼쪽에는
- * 색을 채운 세로 레일이 선다.
+ * 이전 화면을 완전히 덮으며 페이드로 나타난다(2026-08-25 push 스택 전환) —
+ * 상품상세·큐레이션상세와 같은 전체화면 언어다. 오른쪽에서 미끄러져 들어오던
+ * 판·왼쪽의 색 레일은 앱의 다른 화면과 결이 달라 걷어냈다(2026-08-25 재수정).
  *
  * **아바타와 취향 칩은 없다.** 시안의 옛 판에는 있었으나 지금 판에서 빠졌고,
  * 그 자리를 머리줄의 **인사말**이 대신한다. CSS에는 옛 규칙이 남아 있으므로
@@ -48,17 +47,14 @@ export function MyPageShell({
 
   return (
     <main
-      // **화면 끝까지 덮는다.** 시안 `.sidebar`는 폭 100%다 — 폭을 좁히면 열린
-      // 뒤에도 양옆으로 뒤 화면이 비어져 나온다. 배경도 자기가 갖는다(없으면 비친다).
-      className="push-in relative min-h-dvh w-full bg-app text-ink shadow-[-12px_0_28px_rgb(20_26_40/0.25)]"
+      // **화면 끝까지 덮는다.** 폭을 좁히면 열린 뒤에도 양옆으로 뒤 화면이
+      // 비어져 나온다. 배경도 자기가 갖는다(없으면 비친다).
+      className="push-in relative min-h-dvh w-full bg-app text-ink"
     >
       {/* 판은 끝까지 덮되, 읽는 내용은 폰 폭으로 모은다 */}
       <div className="relative mx-auto min-h-dvh max-w-md">
-        {/* 시안 `.side-rail` — 색을 채운 세로 띠. 바닥에 세로 워드마크가 선다. */}
-        <span aria-hidden className="side-rail" />
-
-        {/* 레일(46px)을 비켜 안쪽에 내용을 둔다 — 시안 `.side-scroll` 여백 */}
-        <div className="pt-[54px] pr-[22px] pb-[30px] pl-[68px]">
+        {/* 뒤로가기 좌표를 다른 전체화면과 맞춘다 — 왼쪽 16px·위 8px (전 화면 공통) */}
+        <div className="px-4 pt-2 pb-[30px]">
           {/* 시안 `.side-top` — 닫기 · 인사말 · 설정 · 로그아웃이 한 줄이다 */}
           <div className="flex items-center gap-2.5">
             <button

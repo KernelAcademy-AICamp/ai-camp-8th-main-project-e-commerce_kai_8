@@ -212,55 +212,23 @@ html.search-open .veil-band {
 }
 
 /* ── push 스택(프로필·설정) ──────────────────────────────────
-   새 화면이 오른쪽에서 밀려 들어와 이전 화면을 완전히 덮는다. 뒤 화면은
-   움직이거나 줄어들지 않는다(2026-08-25 push 스택 전환 — 그 전엔 뒤가
-   줄어드는 사이드시트였다). */
+   새 화면이 이전 화면을 완전히 덮으며 페이드로 나타난다 — 상품상세와 같은
+   언어(`transition-opacity duration-200`)다(2026-08-25 수정). 오른쪽에서
+   미끄러져 들어오는 동작은 앱의 다른 전체화면들과 결이 달라 걷어냈다 —
+   그 전엔 슬라이드였고, 그 전전엔 뒤가 줄어드는 사이드시트였다. */
 @media (prefers-reduced-motion: no-preference) {
   .push-in {
-    animation: push-in 340ms cubic-bezier(0.25, 0.9, 0.3, 1);
+    animation: push-in 200ms ease;
   }
 
   @keyframes push-in {
     from {
-      transform: translateX(103%);
+      opacity: 0;
     }
     to {
-      transform: none;
+      opacity: 1;
     }
   }
-}
-
-/* 왼쪽 색 레일 — 시안 `.side-rail`. 위는 밝게, 아래는 어둡게 얹어 곡면처럼 보이고
-   오른쪽 모서리만 둥글다. 바닥에는 세로로 선 워드마크가 있다. */
-.side-rail {
-  position: absolute;
-  top: 0;
-  left: 0;
-  bottom: 0;
-  width: 46px;
-  background:
-    linear-gradient(
-      180deg,
-      rgb(255 255 255 / 0.22) 0%,
-      rgb(255 255 255 / 0) 26%,
-      rgb(20 26 40 / 0.18) 100%
-    ),
-    var(--color-slate);
-  border-radius: 0 26px 26px 0;
-  box-shadow: 4px 0 14px rgb(20 26 40 / 0.18);
-}
-
-.side-rail::after {
-  content: "aTee";
-  position: absolute;
-  bottom: 26px;
-  left: 50%;
-  transform: translateX(-50%);
-  writing-mode: vertical-rl;
-  font-size: 13px;
-  font-weight: 800;
-  letter-spacing: 0.22em;
-  color: rgb(255 255 255 / 0.55);
 }
 
 /* 설정 팝오버 — 시안 `.set-menu`. 기어 바로 아래에서 펼쳐진다. */
