@@ -94,7 +94,7 @@ export function FloatingSearch({
       }}
     >
       <div
-        className={`relative h-[58px] max-w-full rounded-full bg-app shadow-dock transition-[width] duration-[340ms] ease-spring ${
+        className={`relative h-[58px] max-w-full rounded-full border border-line bg-app shadow-dock transition-[width] duration-[340ms] ease-spring ${
           collapsed ? "w-[58px]" : "w-[316px]"
         }`}
       >

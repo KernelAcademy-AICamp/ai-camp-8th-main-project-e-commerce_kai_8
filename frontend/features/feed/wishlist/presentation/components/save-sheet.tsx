@@ -52,7 +52,7 @@ export function SaveSheet({
         onClick={onClose}
         className="absolute inset-0 cursor-pointer bg-dim"
       />
-      <div className="absolute right-0 bottom-0 left-0 mx-auto max-w-md rounded-t-[22px] bg-surface shadow-[0_-4px_18px_rgb(30_38_55/0.22)] pb-[max(env(safe-area-inset-bottom),1rem)]">
+      <div className="absolute right-0 bottom-0 left-0 mx-auto max-w-md rounded-t-[22px] border-t border-line bg-surface shadow-[0_-4px_18px_rgb(30_38_55/0.22)] pb-[max(env(safe-area-inset-bottom),1rem)]">
         <div aria-hidden className="mx-auto mt-2.5 h-1 w-9 rounded-full bg-fill-deep" />
         <h2 className="px-6 pt-4 pb-2.5 text-[15px] font-extrabold text-ink">
           어디에 담을까요

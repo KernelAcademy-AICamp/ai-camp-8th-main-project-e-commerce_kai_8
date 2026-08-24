@@ -25,7 +25,7 @@ export function GoogleSignInButton({
       type="button"
       onClick={onClick}
       disabled={disabled}
-      className="flex h-12 w-full cursor-pointer items-center justify-center gap-3 rounded-full bg-thumb neo px-5 font-medium text-accent-ink disabled:opacity-60"
+      className="flex h-12 w-full cursor-pointer items-center justify-center gap-3 rounded-full bg-thumb neo px-5 font-medium text-on-thumb disabled:opacity-60"
     >
       <GoogleMark />
       <span className="text-[15px]">Google 계정으로 로그인</span>

@@ -202,7 +202,7 @@ export function ProductDetail({
                   ))}
                   {/* 지금 보고 있는 점 — 자리를 옮기며 미끄러진다 (점 5px + 사이 5px = 10px) */}
                   <span
-                    className="absolute top-0 left-0 h-[5px] w-[5px] rounded-full bg-thumb transition-transform duration-[260ms] ease-spring"
+                    className="absolute top-0 left-0 h-[5px] w-[5px] rounded-full bg-white transition-transform duration-[260ms] ease-spring"
                     style={{ transform: `translateX(${String(index * 10)}px)` }}
                   />
                 </span>

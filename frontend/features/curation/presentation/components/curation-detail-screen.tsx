@@ -92,7 +92,7 @@ export function CurationDetailScreen({
                       className="h-auto w-full rounded-xl bg-skel-1"
                     />
                     <span
-                      className="absolute flex size-6 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-thumb/95 text-accent-ink shadow"
+                      className="absolute flex size-6 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-thumb/95 text-on-thumb shadow"
                       style={{ left: `${String(x)}%`, top: `${String(y)}%` }}
                     >
                       {openInfo === i ? <CloseIcon /> : <PlusIcon />}
@@ -150,10 +150,10 @@ export function CurationDetailScreen({
                       />
                       <span className="min-w-0">
                         <span className="block text-[11px] text-ink">{item.b}</span>
-                        <span className="block truncate text-[12.5px] font-medium text-accent-ink">
+                        <span className="block truncate text-[12.5px] font-medium text-on-thumb">
                           {item.t}
                         </span>
-                        <span className="block text-[13px] font-semibold text-accent-ink tabular-nums">
+                        <span className="block text-[13px] font-semibold text-on-thumb tabular-nums">
                           {formatPrice(item.p)}
                         </span>
                       </span>

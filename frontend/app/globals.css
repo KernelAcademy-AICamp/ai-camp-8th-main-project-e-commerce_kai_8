@@ -1,9 +1,10 @@
 @import "tailwindcss";
 
 /* ═══════════════════════════════════════════════════════════════════
-   뉴모피즘 디자인 토큰 — 계획 docs/plans/2026-08-21-neo-design-port.md
-   기준 자료: design/atee-neo-mockup.html 의 :root 값을 그대로 옮겼다.
-   값을 손으로 고치지 않는다. 시안이 바뀌면 시안에서 다시 가져온다.
+   블랙 테마 디자인 토큰 — 스펙 docs/superpowers/specs/2026-08-24-black-theme-design.md
+   원래 뉴모피즘 값(design/atee-neo-mockup.html)을 블랙 테마로 손으로
+   고친 것이다. 아래 값들은 스펙의 "미정" 절에 따라 의도적으로 손으로
+   튜닝된 값이므로, 시안에서 그대로 다시 가져오면 라이트 테마로 되돌아간다.
    ═══════════════════════════════════════════════════════════════════ */
 
 @theme {
@@ -35,6 +36,7 @@
 
   /* 채움·가림막 */
   --color-thumb: #1c1c1c;
+  --color-on-thumb: #ededed; /* thumb(어두운 칩) 위 글자·아이콘 — --color-ink와 같은 값 */
   --color-skel-1: #1a1a1a; /* 뼈대(스켈레톤) 어두운 쪽 */
   --color-skel-2: #242424; /* 뼈대 밝은 쪽 */
   --color-fill-soft: rgb(143 191 159 / 0.18);
@@ -124,12 +126,15 @@ body {
    overflow와 달리 body에서 전파되지 않아 root(html)에 걸어야 먹는다 */
 html {
   overscroll-behavior-y: none;
+  color-scheme: dark;
 }
 
 /* ── 1단계(홈)에서 시안이 요구하는 나머지 값들 ─────────────────────────
    시안은 뉴모피즘 그림자만 쓰지 않는다. 검색 dock과 색이 찬 버튼은
    "큰 소프트 헤일로 제거 — 또렷한 외곽"이라는 주석과 함께 담백한 드롭
-   섀도를 쓴다. 그 둘을 섞지 않도록 이름을 따로 둔다. */
+   섀도를 쓴다. 그 둘을 섞지 않도록 이름을 따로 둔다. 블랙 배경에서는
+   이 그림자만으로는 경계가 잘 안 보이므로, 테두리가 없는 곳은 소비하는
+   컴포넌트 쪽에서 `border-line`을 함께 준다. */
 
 @utility shadow-dock {
   box-shadow: 0 2px 6px rgb(30 38 55 / 0.22);
@@ -139,11 +144,13 @@ html {
   box-shadow: 0 1px 4px rgb(30 38 55 / 0.28);
 }
 
-/* 워드마크 양각 — 밝은 쪽과 어두운 쪽 그림자를 글자에 반대로 넣어 새긴 듯이 */
+/* 워드마크 양각 — 밝은 쪽과 어두운 쪽 그림자를 글자에 반대로 넣어 새긴 듯이.
+   블랙 테마에는 배경보다 밝은 표면(--sh-l)이 없으므로, 밝은 쪽은 흰색
+   반투명으로 낮게 깔아 새긴 느낌만 남긴다. */
 @utility emboss {
   text-shadow:
-    1px 1px 1px var(--sh-l),
-    -1px -1px 1px var(--sh-d);
+    1px 1px 1px rgb(0 0 0 / 0.6),
+    -1px -1px 1px rgb(255 255 255 / 0.06);
 }
 
 /* 화면 맨 아래 흐림 띠 — 검색 dock 뒤로 피드가 그대로 비쳐 글자와 겹치는 것을 막는다.
@@ -242,21 +249,22 @@ html.search-open .veil-band {
 }
 
 .fc-b1 {
-  background: #c9cfda;
+  background: var(--color-raised);
   transform: rotate(6deg) translate(5px, -4px);
   box-shadow: 0 2px 6px rgb(30 38 55 / 0.1);
 }
 
 .fc-b2 {
-  background: #f3f4f8;
+  background: #0d0d0d;
   transform: rotate(-5deg) translate(-5px, 6px);
   box-shadow: 0 2px 6px rgb(30 38 55 / 0.1);
 }
 
 .fmain {
   overflow: hidden;
-  background: linear-gradient(180deg, #dfe2ea 0%, #cdd2de 100%);
+  background: linear-gradient(180deg, #161616 0%, #0d0d0d 100%);
   box-shadow: 0 4px 12px rgb(30 38 55 / 0.18);
+  border: 1px solid var(--color-line);
 }
 
 /* 사진 아래 흐린 띠 — 이름·개수가 어떤 사진 위에서도 읽히게. 위로 갈수록 사라진다. */

@@ -169,9 +169,10 @@ function PickCard({
         onToggle(candidate.goodsNo);
       }}
       // 테두리가 아니라 아웃라인이다 — 테두리로 하면 고를 때마다 카드가 2px씩
-      // 커졌다 작아져 격자가 흔들린다.
+      // 커졌다 작아져 격자가 흔들린다. `neo`는 border를 포함하므로 여기서는
+      // 쓰지 않는다 — 대신 outline-color만 바꿔 선택 여부를 표시한다.
       className={`relative block w-full cursor-pointer overflow-hidden rounded-[20px] bg-thumb outline-2 ${
-        checked ? "outline-accent" : "outline-transparent neo"
+        checked ? "outline-accent" : "outline-line"
       }`}
     >
       <div className="relative aspect-5/6">
@@ -192,12 +193,12 @@ function PickCard({
         {checked && (
           <span
             aria-hidden
-            className="absolute top-3 right-3 flex h-8 w-8 items-center justify-center rounded-full bg-accent"
+            className="absolute top-3 right-3 flex h-8 w-8 items-center justify-center rounded-full bg-accent text-accent-ink"
           >
             <svg viewBox="0 0 24 24" width="17" height="17" fill="none">
               <path
                 d="m5 12.5 4.5 4.5L19 7.5"
-                stroke="#fff"
+                stroke="currentColor"
                 strokeWidth="2.6"
                 strokeLinecap="round"
                 strokeLinejoin="round"

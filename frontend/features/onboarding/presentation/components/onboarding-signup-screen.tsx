@@ -111,7 +111,7 @@ export function OnboardingSignupScreen({
           type="button"
           onClick={onSignIn}
           disabled={busy}
-          className="flex h-15 w-full cursor-pointer items-center justify-center gap-3 rounded-full bg-thumb text-[17px] font-bold text-accent-ink neo active:neo-in disabled:opacity-60"
+          className="flex h-15 w-full cursor-pointer items-center justify-center gap-3 rounded-full bg-thumb text-[17px] font-bold text-on-thumb neo active:neo-in disabled:opacity-60"
         >
           <GoogleMark />
           Google로 계속하기
