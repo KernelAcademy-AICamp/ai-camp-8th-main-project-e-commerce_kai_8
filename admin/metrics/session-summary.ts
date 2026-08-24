@@ -9,7 +9,7 @@ import type { MetricDefinition } from "@/features/metrics/domain/metric";
  * "같은 자리를 얼마나 맴돌았나"다 (§2).
  *
  * ⚠️ 아래 `세션 집계` CTE는 session-funnel.ts와 **같아야 한다.** 한쪽만 고치면
- *    요약과 깔때기가 다른 정의로 계산돼 숫자가 어긋난다.
+ *    요약과 퍼널이 다른 정의로 계산돼 숫자가 어긋난다.
  */
 export const sessionSummary: MetricDefinition = {
   id: "session-summary",

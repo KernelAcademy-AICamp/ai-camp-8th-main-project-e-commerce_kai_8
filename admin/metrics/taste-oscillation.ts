@@ -25,8 +25,8 @@ import { BUCKET_GROUP_SQL, MIN_IMPRESSIONS_SQL } from "./bucket-groups";
  */
 export const tasteOscillation: MetricDefinition = {
   id: "taste-oscillation",
-  title: "오가며 탐색률 (익숙한 것과 새것을 둘 다 눌렀나)",
-  why: "컨셉의 '익숙한 취향과 예상 밖의 디자인을 오가며 탐색한다'를 그대로 센다. 분모는 양쪽 계열을 다 보여준 세션 — 새것을 안 보여준 세션은 실패가 아니라 기회가 없던 것이다",
+  title: "추천 유형별 탐색률 (취향 vs 비취향)",
+  why: "한 세션에서 취향(익숙한) 카드와 비취향(새로운) 카드를 둘 다 눌렀는지 본다. 취향 = longterm·session·similar, 비취향 = opposite·diversity. 분모는 양쪽을 다 본 세션이고(한쪽만 보여준 세션은 기회가 없던 것이라 뺀다), 그 안에서 둘 다 누른 비율이 탐색률이다. 컨셉대로면 이 값이 오른다",
   order: 36,
   sql: `
     with 유효세션 as (
@@ -73,16 +73,16 @@ export const tasteOscillation: MetricDefinition = {
       select * from 세션별 where 익숙_노출 > 0 and 새로움_노출 > 0
     )
     select
-      (select count(*) from 세션별)::int as "유효 세션 (노출 ${MIN_IMPRESSIONS_SQL}개 이상)",
-      count(*)::int as "양쪽 다 보여준 세션",
-      count(*) filter (where 익숙_탭 > 0 and 새로움_탭 > 0)::int as "둘 다 누름",
-      count(*) filter (where 익숙_탭 > 0 and 새로움_탭 = 0)::int as "익숙한 것만",
-      count(*) filter (where 익숙_탭 = 0 and 새로움_탭 > 0)::int as "새것만",
-      count(*) filter (where 익숙_탭 = 0 and 새로움_탭 = 0)::int as "아무것도 안 누름",
+      (select count(*) from 세션별)::int as "충분히 본 세션 (노출 ${MIN_IMPRESSIONS_SQL}개+)",
+      count(*)::int as "양쪽 다 본 세션 (분모)",
+      count(*) filter (where 익숙_탭 > 0 and 새로움_탭 > 0)::int as "둘 다 클릭",
+      count(*) filter (where 익숙_탭 > 0 and 새로움_탭 = 0)::int as "취향만 클릭",
+      count(*) filter (where 익숙_탭 = 0 and 새로움_탭 > 0)::int as "비취향만 클릭",
+      count(*) filter (where 익숙_탭 = 0 and 새로움_탭 = 0)::int as "둘 다 안 클릭",
       -- 분모가 0이면 0%가 아니라 값 없음(—)이다. 0%는 "아무도 안 눌렀다"로 읽히는데
       -- 실제로는 "양쪽을 다 보여준 세션이 아직 없다"이다.
       round(100.0 * count(*) filter (where 익숙_탭 > 0 and 새로움_탭 > 0)
-            / nullif(count(*), 0), 1) as "오가며 탐색률 %"
+            / nullif(count(*), 0), 1) as "탐색률"
     from 분모
   `,
 };

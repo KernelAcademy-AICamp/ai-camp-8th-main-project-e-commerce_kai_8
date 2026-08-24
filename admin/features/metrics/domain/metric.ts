@@ -17,6 +17,11 @@ export interface MetricDefinition {
   /** 대시보드에서의 순서. 작을수록 위 */
   order: number;
   /**
+   * true면 카드를 **접힌 채로** 그린다. 제목과 설명만 보이고 표는 눌러야 펼쳐진다.
+   * 대조용 낱개 기록처럼 평소엔 접어 두고 필요할 때만 여는 표에 쓴다.
+   */
+  collapsed?: boolean;
+  /**
    * 읽기 전용 SQL.
    *
    * **repo의 파일에서만 온다.** 브라우저 입력에서 오는 SQL은 실행하지 않는다

@@ -23,8 +23,8 @@ import type { MetricDefinition } from "@/features/metrics/domain/metric";
  */
 export const sessionList: MetricDefinition = {
   id: "session-list",
-  title: "세션 목록 (최근 30개)",
-  why: "세션 하나 = 한 행. 실기기에서 손으로 센 숫자와 대조하는 표. 전체 길이에서 백그라운드에 있던 시간을 뺀 것이 실제 탐색이다(§1)",
+  title: "세션 (최근 30개)",
+  why: "한 번 들어와서 나갈 때까지가 한 행. 아래 이벤트 표를 방문 단위로 묶은 것이다. 전체 길이에서 백그라운드에 있던 시간을 뺀 것이 실제 탐색이다(§1)",
   order: 40,
   sql: `
     select
