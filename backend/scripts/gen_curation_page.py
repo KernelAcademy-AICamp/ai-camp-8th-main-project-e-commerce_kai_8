@@ -27,6 +27,10 @@ _REPO = Path(__file__).resolve().parents[2]
 JSON_OUTS = [_REPO / "frontend/features/curation/data/curations.json"]
 ENV = Path(__file__).resolve().parents[1] / ".env.local"
 TOP_N = 9   # ponytail: 상위 9개만 노출. 상품마다 NOTES를 손으로 쓰는 비용이 크다.
+# 상위컷을 고를 때 DB에서 읽어오는 후보 수. 색만 다른 옷과 MAX_APPEAR로 걸러지는 몫이
+# 있어 넉넉히 읽는다. 예전엔 TOP_N * 5(45)였는데, 성별 보충(fill_gender)이 그 창 안에서
+# 한쪽 성별을 못 찾는 큐레이션이 많았다 — quiet_detail 은 45개 중 여성이 1개였다.
+CAND_N = 150
 
 # 누적 구매순으로 세우면 큐레이션이 전부 유명한 것만 보여준다. 반소매 12만 건 중
 # 구매 1만 이상은 384건(0.31%)인데 화면 슬롯의 60%가 거기서 나왔다.
@@ -57,14 +61,10 @@ CARD_RULE = {   # key -> (min_buy, min_review, order)
     "women_online_new":  (0, 0, NEW_ARRIVAL_ORDER),
 }
 
-# 성별마다 몇 장씩 뽑을지. key -> 장수. 없으면 TOP_N 상위컷(성별 안 봄).
-#
-# 화면은 **내 성별 것만** 남기고 공용까지 뺀다(curation-gender.ts, 사람 결정 2026-08-21).
-# 그런데 뽑을 때는 성별을 안 보고 평점 상위만 자르니, 한쪽으로 쏠린 큐레이션은 거른 뒤
-# 3장(MIN_SLIDES) 미달로 **목록에서 통째로 사라진다.** 링거가 그랬다 — 공용4·남성2·여성3
-# 이라 남성에게 안 보였다. 상위컷을 21장까지 늘려도 공용이 앞을 먹어 여성은 3장에서
-# 멈춘다(실측 2026-08-23). 그래서 개수가 아니라 **성별마다** 뽑는다.
-GENDER_QUOTA = {"ringer": 4}   # 공용4·남성4·여성4 = 12장
+# 성별마다 최소 이만큼은 남긴다. 상위컷(TOP_N)을 뽑은 뒤 **모자란 성별만** 더 채운다.
+# 왜 상한이 아니라 하한인지는 fill_gender 참고. 6장으로 올려도 3~4장짜리가 2개에서
+# 1개로 줄 뿐인데 손으로 쓸 장 제목이 57개 더 든다(실측 2026-08-24). 5장이 그 무릎이다.
+GENDER_FLOOR = 5
 
 # 반소매 티셔츠 = 일반(001001) + 스포츠(017016005). 긴팔·후드·나시는 뺀다.
 BASE_SCOPE = "base_cat in ('001001','017016005')"
@@ -730,7 +730,7 @@ def strip_variant(title):
     return re.sub(r"\s+", " ", t).strip().lower()
 
 
-def dedupe_variants(rows, limit, appear=None, per_gender=None):
+def dedupe_variants(rows, limit, appear=None, seen=None):
     """같은 옷 색상만 다른 것(similar_no 공유)은 앞선 하나만 남기고 다음 순위로 채운다.
 
     similar_no = 0 은 묶음이 없다는 뜻이라, 그때는 브랜드 + 색상 표기를 지운
@@ -741,23 +741,55 @@ def dedupe_variants(rows, limit, appear=None, per_gender=None):
     나오지 않도록 막는다. 겹침 자체는 정상이다 — 링거이면서 크롭인 티는 둘 다
     맞다. 다만 리뷰 조건만 있는 큐레이션("안 덥다", "정사이즈")은 생김새를 안 봐서
     좋은 상품을 전부 빨아들인다. 그래서 상한만 둔다.
+
+    seen 을 넘기면 **이어서** 고른다. 한 큐레이션에서 상위컷을 뽑은 뒤 모자란 성별만
+    더 채울 때(fill_gender), 두 번째 호출이 첫 호출과 같은 옷의 다른 색을 집지
+    않게 하려는 것이다.
     """
-    seen, out, per = set(), [], {}
+    if seen is None:
+        seen = set()
+    out = []
     for r in rows:
-        if per_gender is not None and per.get(r[11] or "", 0) >= per_gender:
-            continue
         ks = {("t", r[2] or r[3], strip_variant(r[1]))}
         if r[10]:
             ks.add(("s", r[10]))
         if ks & seen or (appear is not None and appear.get(r[0], 0) >= MAX_APPEAR):
             continue
         seen |= ks; out.append(r)
-        per[r[11] or ""] = per.get(r[11] or "", 0) + 1
         if appear is not None:
             appear[r[0]] = appear.get(r[0], 0) + 1
-        if per_gender is None and len(out) == limit:
+        if len(out) == limit:
             break
     return out
+
+
+def fill_gender(picked, rows, appear, seen):
+    """성별마다 GENDER_FLOOR 장이 남도록, **모자란 성별만** 뒤에 더 채운다.
+
+    화면은 내 성별 것만 남기고 공용까지 뺀다(curation-gender.ts). 그런데 위에서
+    상위컷을 자를 때는 성별을 안 보므로, 한쪽으로 쏠린 큐레이션은 거른 뒤 3장
+    (MIN_SLIDES) 미만이 되어 **목록에서 통째로 사라진다.** 2026-08-24 실측으로
+    여성은 57개 중 20개만 남았고, 사라진 것 중 상당수는 후보가 없어서가 아니었다
+    (crop 은 여성에게 1장 보이는데 조건에 맞는 여성 상품이 457개다).
+
+    ⚠️ **상한이 아니라 하한이다.** 예전에 ringer 에 쓴 성별 쿼터는 성별당 N 장을
+    넘기지 않는 상한이었는데, 그것을 전 큐레이션에 걸면 지금 두툼한 큐레이션까지
+    N 장으로 깎여 얕고 넓어진다(실측: 여성 7장 이상 9개 → 0개). 그래서 넉넉한
+    성별은 손대지 않고 미달인 성별만 채운다.
+
+    공용은 화면이 빼므로 어느 쪽에도 안 센다. 성별이 빈 상품은 애초에 후보에서
+    빠지므로(build 의 `gender <> ''`) 여기서 따로 다루지 않는다. 후보 풀이 없으면
+    그냥 덜 채워진다 — 억지로 끌어오지 않는다 (실측 잔여: dog_print·layered_tee 의
+    남성, rollup_sleeve 의 여성).
+    """
+    for g in ("남성", "여성"):
+        short = GENDER_FLOOR - sum(1 for r in picked if r[11] == g)
+        if short > 0:
+            picked += dedupe_variants([r for r in rows if r[11] == g], short, appear, seen)
+    # 뒤에 붙인 탓에 평점순이 깨진다. 화면이 "평점순"이라 적으므로 되돌린다.
+    rank = {r[0]: i for i, r in enumerate(rows)}
+    picked.sort(key=lambda r: rank[r[0]])
+    return picked
 
 
 def build(cur, curations):
@@ -770,11 +802,17 @@ def build(cur, curations):
                 if c["key"] in N_GATED else "")
         cur.execute(f"select count(*) from c_goods where {BASE_SCOPE} and {where}{gate}", params)
         n = cur.fetchone()[0]
+        # gender <> '' — 성별이 빈 상품은 안 싣는다. 화면의 성별 거르기는 성별이 없는
+        # 상품을 **양쪽 모두에게** 통과시키므로(curation-gender.ts), 실으면 남성에게
+        # 여성복이 조용히 다시 보인다. 반소매 12만 건 중 1,373건이 빈 값이다. 상위 45개만
+        # 보던 때는 한 번도 안 걸렸는데 CAND_N을 150으로 넓히자 걸렸다(2026-08-24).
+        # 위의 n(“N건”)은 안 거른다 — 그건 개념에 맞는 상품이 몇 개냐는 숫자다.
         cur.execute(f"""select {CARD_COLS} from c_goods where {BASE_SCOPE} and {where}
                         and purchase_total >= {min_buy} and review_count >= {min_rev}
-                        order by {order} limit {TOP_N * 5}""", params)
-        rows = dedupe_variants(cur.fetchall(), TOP_N, appear,
-                               per_gender=GENDER_QUOTA.get(c["key"]))
+                        and gender <> '' order by {order} limit {CAND_N}""", params)
+        cand = cur.fetchall()
+        seen = set()
+        rows = fill_gender(dedupe_variants(cand, TOP_N, appear, seen), cand, appear, seen)
         # g(성별)는 화면에서 "내 성별 것만" 거르는 데 쓴다
         # (계획 2026-08-21-curation-gender-filter). 빈 값은 안 싣는다 — 미상은 안 거른다.
         items = [{"t": r[1], "b": r[2] or r[3], "p": r[4], "img": r[5],
@@ -961,6 +999,16 @@ def demo():
                               row(4, "소로나 크롭 - 3COLOR", "테이크이지"),
                               row(5, "소로나 크롭", "테이크이지")], 9)
     assert [r[0] for r in picked] == [1, 3, 4], picked
+
+    # 성별 보충: 모자란 성별만 채우고 넉넉한 성별은 안 건드린다.
+    # 상위컷 9장이 전부 남성인 판 — 남성은 그대로 9장, 여성만 GENDER_FLOOR 만큼 붙는다.
+    cand = [row(i, f"티{i}", f"브랜드{i}") for i in range(1, 10)]
+    cand += [(i, f"티{i}", f"브랜드{i}", f"브랜드{i}", 0, "", 0, 0, 0, [], 0, "여성")
+             for i in range(11, 20)]
+    appear, seen = {}, set()
+    got = [r[11] for r in
+           fill_gender(dedupe_variants(cand, TOP_N, appear, seen), cand, appear, seen)]
+    assert got.count("남성") == TOP_N and got.count("여성") == GENDER_FLOOR, got
 
     w, p = compile_rules({"kw": ["래글런"]})
     assert "title ilike %s" in w and "unnest(tags)" in w, w
