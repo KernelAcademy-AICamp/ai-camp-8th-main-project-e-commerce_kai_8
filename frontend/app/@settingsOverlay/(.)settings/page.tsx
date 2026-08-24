@@ -16,9 +16,10 @@ import { SettingsHeader } from "@/features/settings/presentation/components/sett
  * — 그래서 이 자리가 루트 레이아웃의 슬롯이라 "항상 존재"해도 실제로는 프로필을
  * 거칠 때만 채워진다.
  *
- * 서버를 기다리지 않는다. 계정 삭제 알림(`?auth=`)은 로그인에서 돌아올 때만
- * 붙는데 그것은 주소로 들어오는 경로라 단독 화면이 맡는다 — 여기는 항상
- * `notice={null}`이다(`app/@overlay/(.)my/page.tsx`와 같은 이유).
+ * 서버를 기다리지 않는다. 계정 삭제 알림(`?auth=`)은 `window.location.replace`로
+ * 붙는 하드 내비게이션이라 이 인터셉트 오버레이를 아예 거치지 않는다 — 항상
+ * `app/settings/page.tsx`(단독 화면)가 그 알림을 받는다. 그래서 여기는 항상
+ * `notice={null}`이다.
  */
 export default function SettingsOverlay() {
   return (
