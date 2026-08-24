@@ -43,7 +43,8 @@ import {
 const SESSION_KEY = "atee-session";
 const QUEUE_KEY = "atee-signal-queue";
 const IMPRESSIONS_KEY = "atee-impressions";
-const FLUSH_INTERVAL_MS = 5_000;
+// 15초. 5초였을 때 자잘한 요청이 잦았다 — 묶어 보내면 그만큼 줄어든다.
+const FLUSH_INTERVAL_MS = 15_000;
 
 let queue: SignalQueue | null = null;
 let flushTimer: ReturnType<typeof setInterval> | null = null;
@@ -274,6 +275,12 @@ export interface ImpressionInput {
 export function logImpression(input: ImpressionInput): string | null {
   if (!isBrowser() || !isSignedInNow()) return null;
   const sessionId = touchSession();
+  // **같은 세션에서 이미 본 상품이면 다시 보내지 않는다.** 스크롤을 위아래로 하면
+  // 같은 카드가 다시 잡히는데, 그걸 또 보내면 요청만 늘고 지표는 나아지지 않는다.
+  // 앞선 노출 ID를 그대로 돌려줘야 클릭 귀속이 끊기지 않는다.
+  const seen = impressionIdFor(readImpressions(), input.goodsNo, sessionId);
+  if (seen !== undefined) return seen;
+
   const event: SignalEvent = {
     ...baseEvent("impression", sessionId, Date.now(), input.policy ?? "random"),
     goods_no: input.goodsNo,

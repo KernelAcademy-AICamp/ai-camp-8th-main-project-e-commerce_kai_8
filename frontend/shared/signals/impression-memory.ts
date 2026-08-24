@@ -45,3 +45,19 @@ export function impressionIdFor(
     (entry) => entry.goodsNo === goodsNo && entry.sessionId === sessionId,
   )?.impressionId;
 }
+
+/**
+ * 이 세션에서 이미 본 상품인가.
+ *
+ * 스크롤을 위아래로 하면 같은 카드가 다시 잡힌다. 그걸 또 보내면 요청만 늘고
+ * 지표는 나아지지 않는다 — 되돌아본 횟수로는 추천이 좋은지 나쁜지 가릴 수 없다.
+ *
+ * **세션이 바뀌면 다시 센다.** 방문이 달라졌으면 새로 본 것이다.
+ */
+export function alreadySeen(
+  memory: ImpressionMemory,
+  goodsNo: number,
+  sessionId: string,
+): boolean {
+  return impressionIdFor(memory, goodsNo, sessionId) !== undefined;
+}

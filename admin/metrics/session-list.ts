@@ -43,16 +43,11 @@ export const sessionList: MetricDefinition = {
           (max(occurred_at) - min(occurred_at)) - make_interval(secs => max(away_ms) / 1000.0)
         )::text
       end                       as "실제 탐색",
-      count(distinct goods_no) filter (where event_type = 'impression')::int as "노출개",
-      count(*)                 filter (where event_type = 'impression')::int as "노출번",
-      count(distinct goods_no) filter (where event_type = 'tap')::int        as "상세개",
-      count(*)                 filter (where event_type = 'tap')::int        as "상세번",
-      count(distinct goods_no) filter (where event_type = 'wish')::int       as "찜개",
-      count(*)                 filter (where event_type = 'wish')::int       as "찜번",
-      count(distinct goods_no) filter (where event_type = 'unwish')::int     as "해제개",
-      count(*)                 filter (where event_type = 'unwish')::int     as "해제번",
-      count(distinct goods_no) filter (where event_type = 'outbound')::int   as "이동개",
-      count(*)                 filter (where event_type = 'outbound')::int   as "이동번"
+      count(distinct goods_no) filter (where event_type = 'impression')::int as "본 상품",
+      count(distinct goods_no) filter (where event_type = 'tap')::int        as "상품 클릭",
+      count(*)                 filter (where event_type = 'wish')::int       as "찜",
+      count(*)                 filter (where event_type = 'unwish')::int     as "찜 해제",
+      count(*)                 filter (where event_type = 'outbound')::int   as "판매처 이동"
     from c_events
     where ${eventFilterSql()}
     group by device_id, session_id
