@@ -6,9 +6,13 @@ import { BackIcon } from "@/shared/icons";
  * 온보딩 공통 머리 — 왼쪽 뒤로, 오른쪽 단계 표시.
  *
  * 뒤로가기는 **앱의 다른 화면과 같은 것**을 쓴다(제품 책임자 2026-08-24):
- * 공용 `BackIcon` · 40×40 원형 · 배경도 그림자도 없음 · `text-ink-soft` ·
- * 이름은 `뒤로 가기`. 상세·큐레이션·설정이 모두 이 모양이다. 온보딩만 뉴모피즘
- * 사각 버튼을 쓰면 같은 동작이 화면마다 다르게 생긴 것이 된다.
+ * 공용 `BackIcon` · 40×40 원형 · `bg-app` · `neo` · 누르면 `neo-in` · `text-ink-soft` ·
+ * 이름은 `뒤로 가기`.
+ *
+ * ⚠️ **앱 안에서 갈려 있다.** 상세·보관함·폴더 상세가 이 뉴모피즘 원형이고
+ * (마이페이지는 같은 모양의 작은 판 `SIDE_BTN`), 설정·큐레이션 상세만 배경 없는
+ * 평평한 버튼이다. **다수이자 전체 화면 뒤로가기의 표준인 앞쪽**을 따랐다 —
+ * 평평한 쪽을 보고 "앱은 평평하다"고 단정했다가 되돌린 적이 있다.
  *
  * 좌표도 맞춘다 — **왼쪽 16px·위 8px가 전 화면 공통**이다. 본문이 `px-6`(24px)이라
  * `-mx-2`로 8px 당겨 버튼 상자를 16px에 놓고(로그인 화면과 같은 방법), 오른쪽
@@ -39,7 +43,7 @@ export function OnboardingHeader({
           type="button"
           aria-label="뒤로 가기"
           onClick={onBack}
-          className="flex h-10 w-10 cursor-pointer items-center justify-center rounded-full text-ink-soft"
+          className="flex h-10 w-10 cursor-pointer items-center justify-center rounded-full bg-app text-ink-soft neo active:neo-in"
         >
           <BackIcon />
         </button>
