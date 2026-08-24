@@ -49,14 +49,12 @@ export function CurationDetailScreen({
             <BackIcon />
           </button>
         </header>
-        <h2 className="px-4 text-base leading-tight font-semibold tracking-tight text-ink">
+        <h2 className="px-4 text-2xl leading-tight font-semibold tracking-tight text-ink">
           {curation.title}
         </h2>
 
-        <p className="px-4 pt-4 text-[13px] leading-relaxed text-ink-soft">
-          {curation.lede}
-        </p>
-        <p className="mx-4 mt-3 border-t border-line pt-3 text-[11px] leading-relaxed text-ink-muted">
+        <p className="px-4 pt-4 text-base leading-relaxed text-ink">{curation.lede}</p>
+        <p className="mx-4 mt-3 border-t border-line pt-3 text-sm leading-relaxed text-ink-soft">
           {curation.cond.join(" · ")}
         </p>
 
@@ -111,7 +109,7 @@ export function CurationDetailScreen({
 
                       정보 카드가 열리면 같은 자리를 카드가 쓴다 — 고른 이유 대신 상품 정보. */}
                   {openInfo !== i && (item.head ?? item.note) && (
-                    <span className="pointer-events-none absolute inset-x-0 bottom-0 rounded-b-xl bg-gradient-to-t from-black/92 from-10% via-black/55 via-45% to-transparent px-4 pt-10 pb-4 text-center">
+                    <span className="pointer-events-none absolute inset-x-0 bottom-0 rounded-b-xl bg-gradient-to-t from-black/75 via-black/25 via-50% to-transparent px-4 pt-16 pb-4 text-center">
                       {item.head && (
                         <span className="block text-xl leading-tight font-bold tracking-tight text-(--accent)">
                           {item.head}
