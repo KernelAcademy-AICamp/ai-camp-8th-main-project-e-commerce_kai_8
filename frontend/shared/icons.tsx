@@ -12,16 +12,8 @@ interface IconProps {
   size?: number;
 }
 
-/**
- * 사람 — 마이페이지.
- *
- * ⚠️ **원래 글립이 24×24 상자를 62~65%만 채웠다** — 같은 `size`로 나란히 두면
- * `HeartIcon`(약 70~78%)보다 눈에 띄게 작고 얇아 보였다(2026-08-24 실측,
- * 헤더에서 찜·마이페이지 아이콘 크기가 달라 보인다는 지적). 원 반지름·획
- * 굵기를 손대는 대신 안쪽 `<g>`를 중심(12, 14) 기준으로 15% 키워 다른
- * 아이콘과 채움 비율을 맞췄다 — 획 굵기도 변환에 딸려 같이 굵어진다.
- */
-export function PersonIcon({ size = 19 }: IconProps) {
+/** 사람 — 마이페이지 */
+export function PersonIcon({ size = 20 }: IconProps) {
   return (
     <svg
       viewBox="0 0 24 24"
@@ -34,10 +26,8 @@ export function PersonIcon({ size = 19 }: IconProps) {
       strokeLinejoin="round"
       aria-hidden="true"
     >
-      <g transform="translate(12 14) scale(1.15) translate(-12 -14)">
-        <circle cx="12" cy="8" r="3.6" />
-        <path d="M4.5 20c0-3.6 3.4-6 7.5-6s7.5 2.4 7.5 6" />
-      </g>
+      <circle cx="12" cy="8" r="3.6" />
+      <path d="M4.5 20c0-3.6 3.4-6 7.5-6s7.5 2.4 7.5 6" />
     </svg>
   );
 }
@@ -144,28 +134,6 @@ export function CloseIcon({ size = 13 }: IconProps) {
     >
       <path d="M6 6l12 12" />
       <path d="M18 6 6 18" />
-    </svg>
-  );
-}
-
-/** 하트 — 저장(찜). 시안 `#heartBtn`의 SVG 그대로. `filled`면 속을 채운다 */
-export function HeartIcon({
-  size = 19,
-  filled = false,
-}: IconProps & { filled?: boolean }) {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      width={size}
-      height={size}
-      fill={filled ? "currentColor" : "none"}
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden="true"
-    >
-      <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
     </svg>
   );
 }

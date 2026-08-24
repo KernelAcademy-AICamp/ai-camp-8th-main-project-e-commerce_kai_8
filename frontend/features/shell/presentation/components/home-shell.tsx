@@ -9,7 +9,7 @@ import {
   usePaneSwipe,
 } from "@/features/shell/presentation/view-model/use-pane-swipe";
 import { useTabBarVisibility } from "@/features/shell/presentation/view-model/use-tab-bar-visibility";
-import { HeartIcon, PersonIcon } from "@/shared/icons";
+import { PersonIcon } from "@/shared/icons";
 
 // 뉴모피즘 이식(#88) 이전 원본 표기(대문자). 칸의 식별자는 코드 곳곳이 쓰고
 // 있으므로 그대로 둔다 — 바뀌는 것은 사람이 읽는 이름뿐이다.
@@ -54,8 +54,12 @@ export function HomeShell({ forYou }: { forYou: ReactNode }) {
         <div className="mx-auto flex max-w-md items-center justify-between px-4 py-3">
           <h1 className="text-lg font-semibold tracking-tight text-ink">aTee</h1>
           <div className="flex items-center">
-            <Link href="/wishlist" aria-label="저장한 폴더 열기" className={MY_BTN}>
-              <HeartIcon />
+            <Link
+              href="/wishlist"
+              aria-label="저장한 폴더 열기"
+              className={`${MY_BTN} text-lg`}
+            >
+              ♡
             </Link>
             <Link href="/my" aria-label="마이 페이지 열기" className={MY_BTN}>
               <PersonIcon />
