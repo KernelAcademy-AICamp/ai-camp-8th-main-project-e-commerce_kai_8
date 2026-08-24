@@ -12,8 +12,16 @@ interface IconProps {
   size?: number;
 }
 
-/** 사람 — 마이페이지 */
-export function PersonIcon({ size = 20 }: IconProps) {
+/**
+ * 사람 — 마이페이지.
+ *
+ * ⚠️ **원래 글립이 24×24 상자를 62~65%만 채웠다** — 같은 `size`로 나란히 두면
+ * `HeartIcon`(약 70~78%)보다 눈에 띄게 작고 얇아 보였다(2026-08-24 실측,
+ * 헤더에서 찜·마이페이지 아이콘 크기가 달라 보인다는 지적). 원 반지름·획
+ * 굵기를 손대는 대신 안쪽 `<g>`를 중심(12, 14) 기준으로 15% 키워 다른
+ * 아이콘과 채움 비율을 맞췄다 — 획 굵기도 변환에 딸려 같이 굵어진다.
+ */
+export function PersonIcon({ size = 19 }: IconProps) {
   return (
     <svg
       viewBox="0 0 24 24"
@@ -26,8 +34,10 @@ export function PersonIcon({ size = 20 }: IconProps) {
       strokeLinejoin="round"
       aria-hidden="true"
     >
-      <circle cx="12" cy="8" r="3.6" />
-      <path d="M4.5 20c0-3.6 3.4-6 7.5-6s7.5 2.4 7.5 6" />
+      <g transform="translate(12 14) scale(1.15) translate(-12 -14)">
+        <circle cx="12" cy="8" r="3.6" />
+        <path d="M4.5 20c0-3.6 3.4-6 7.5-6s7.5 2.4 7.5 6" />
+      </g>
     </svg>
   );
 }
@@ -36,7 +46,7 @@ export function PersonIcon({ size = 20 }: IconProps) {
  * 왼쪽 갈매기 — 뒤로가기. 시안의 뒤로 버튼들과 같은 굵기·꼭짓점이다
  * (`.side-close`·`.backbtn`·`.fd-back`가 모두 이 모양을 쓴다).
  */
-export function BackIcon({ size = 20 }: IconProps) {
+export function BackIcon({ size = 19 }: IconProps) {
   return (
     <svg
       viewBox="0 0 24 24"
