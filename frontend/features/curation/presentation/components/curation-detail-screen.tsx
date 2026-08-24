@@ -34,7 +34,7 @@ export function CurationDetailScreen({
        z는 상품 상세(z-50)보다 아래 — 여기서 상품을 열면 그게 위로 와야 한다. */
     <div
       className="fixed inset-0 z-40 overflow-y-auto overscroll-contain bg-app"
-      style={{ "--accent": curation.accent ?? "#FAFAFA" } as CSSProperties}
+      style={{ "--accent": curation.accent ?? "#8FBF9F" } as CSSProperties}
     >
       <div className="mx-auto max-w-md pb-16">
         {/* 뒤로가기 좌표를 마이페이지와 맞춘다 — 왼쪽 16px·위 8px (전 화면 공통).
