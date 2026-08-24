@@ -3,6 +3,7 @@ import {
   GreetingSkeleton,
   MyPageShell,
 } from "@/features/auth/presentation/components/my-page-shell";
+import { ProfileActivityCardSkeleton } from "@/features/feed/presentation/components/profile-activity-card-skeleton";
 import { SettingsMenuButton } from "@/features/settings/presentation/components/settings-menu-button";
 import { TasteCardSkeleton } from "@/features/taste/presentation/components/taste-card-skeleton";
 
@@ -31,6 +32,7 @@ export default function MyLoading() {
       account={<AccountSkeleton />}
     >
       <TasteCardSkeleton />
+      <ProfileActivityCardSkeleton />
     </MyPageShell>
   );
 }
