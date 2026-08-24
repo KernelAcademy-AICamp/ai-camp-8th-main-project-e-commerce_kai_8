@@ -54,7 +54,7 @@ export function OnboardingFlow() {
     <OnboardingSignupScreen
       stepIndex={flow.stepIndex}
       stepCount={flow.stepCount}
-      pickCount={flow.selected.length}
+      thumbnails={flow.selectedThumbnails}
       busy={signIn.busy}
       failed={signIn.failed}
       onSignIn={signIn.signIn}

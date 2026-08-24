@@ -4,19 +4,19 @@ import Image from "next/image";
 
 import type { OnboardingCandidate } from "@/features/onboarding/domain/candidate";
 
-import { OnboardingProgress } from "./onboarding-progress";
+import { OnboardingHeader } from "./onboarding-header";
 
 /**
- * 온보딩 2단계 — 마음에 드는 옷 고르기.
+ * 온보딩 2단계 — 마음에 드는 옷 고르기. 시안: `design/atee-style-onboarding-sample.png`
  *
  * **최대 개수를 두지 않는다**(계획 §②). 후보가 12장이라 실질 상한이 12다.
  * 최소 3개는 서버도 같은 수로 거부한다 — 화면만 막으면 계약이 아니다.
  *
- * 선택 표시에 **색만 쓰지 않는다** — 주황 테두리와 체크 아이콘을 함께 쓴다.
+ * **카드는 사진뿐이다.** 브랜드·상품명을 쓰지 않는다 — 여기서 묻는 것은 "이 옷이
+ * 마음에 드나"이지 "이 브랜드를 아나"가 아니다. 글자가 없는 만큼 상품명은
+ * `aria-label`로 남긴다(안 그러면 보조기술이 "버튼"으로만 읽는다).
  *
- * **카드는 사진뿐이다** (2026-08-24 제품 책임자). 브랜드·상품명을 빼고 뉴모피즘 그림자도
- * 쓰지 않는다 — 여기서 물어보는 것은 "이 옷이 마음에 드나"이지 "이 브랜드를 아나"가
- * 아니다. 글자가 없어진 만큼 상품명은 `aria-label`로 남긴다.
+ * 선택 표시에 **색만 쓰지 않는다** — 주황 테두리와 체크 아이콘을 함께 쓴다.
  */
 export function OnboardingPickScreen({
   stepIndex,
@@ -54,22 +54,23 @@ export function OnboardingPickScreen({
   saveFailed: boolean;
 }) {
   return (
-    <main className="mx-auto flex min-h-svh max-w-md flex-col px-6 py-8 pb-32 text-ink">
-      <OnboardingProgress index={stepIndex} count={stepCount} />
+    <main className="mx-auto min-h-svh max-w-md px-6 pb-40 text-ink">
+      <OnboardingHeader index={stepIndex} count={stepCount} onBack={onBack} />
 
-      <div className="mt-8">
-        <h1 className="text-2xl font-semibold text-ink">마음에 드는 옷을 골라주세요</h1>
-        <p className="mt-3 text-[15px] leading-relaxed text-ink-soft">
-          고른 옷으로 첫 추천을 만듭니다.{" "}
-          <span className="text-ink">최소 {minPicks}개</span>, 많이 고를수록 좋습니다.
+      <div className="mt-6">
+        <h1 className="text-[26px] leading-tight font-bold text-ink">
+          마음에 드는 옷을 골라주세요
+        </h1>
+        <p className="mt-3 text-[15px] leading-relaxed text-ink-muted">
+          {minPicks}개 이상 고르면 취향에 맞춰 추천해드려요.
         </p>
       </div>
 
       {loading && <PickSkeleton />}
 
       {failed && (
-        <div role="status" className="mt-10 space-y-4 text-center">
-          <p className="text-[15px] text-ink-soft">옷을 불러오지 못했습니다.</p>
+        <div role="status" className="mt-12 space-y-4 text-center">
+          <p className="text-[15px] text-ink-soft">옷을 불러오지 못했어요.</p>
           <button
             type="button"
             onClick={onRetry}
@@ -82,12 +83,11 @@ export function OnboardingPickScreen({
 
       {/* 자격을 잃은 후보를 빼고 나니 고를 것이 부족하다. 사람이 후보를 갈아야 한다는
           신호다 — 조용히 최소 개수를 낮추면 그 사실이 아무 데도 안 남는다.
-          **"다시 시도"라고 쓰면 누를 것이 있어야 한다** — 예전에는 문구만 있고 버튼이
-          없어 「뒤로」밖에 못 눌렀다(재검증 ⑤). */}
+          **"다시 시도"라고 쓰면 누를 것이 있어야 한다.** */}
       {tooFew && (
-        <div role="status" className="mt-10 space-y-4">
+        <div role="status" className="mt-12 space-y-4 text-center">
           <p className="text-[15px] leading-relaxed text-ink-soft">
-            지금 보여드릴 옷이 부족합니다.
+            지금 보여드릴 옷이 부족해요.
           </p>
           <button
             type="button"
@@ -100,7 +100,7 @@ export function OnboardingPickScreen({
       )}
 
       {!loading && !failed && !tooFew && (
-        <ul className="mt-6 grid grid-cols-2 gap-3">
+        <ul className="mt-7 grid grid-cols-2 gap-4">
           {candidates.map((candidate) => (
             <li key={candidate.goodsNo}>
               <PickCard
@@ -114,34 +114,32 @@ export function OnboardingPickScreen({
         </ul>
       )}
 
-      <footer className="fixed inset-x-0 bottom-0 mx-auto max-w-md bg-app/95 px-6 pt-3 pb-6 backdrop-blur">
+      {/* 시안의 하단 판 — 떠 있는 판 위에 버튼 하나. 판이 있어야 스크롤되는 카드가
+          버튼 밑으로 지나갈 때 글자가 겹쳐 읽히지 않는다. */}
+      <div className="fixed inset-x-0 bottom-0 mx-auto max-w-md px-4 pb-5">
         {saveFailed && (
-          <p role="status" className="mb-3 text-sm text-danger">
-            저장하지 못했습니다. 다시 시도해 주세요.
+          <p
+            role="status"
+            className="mb-3 rounded-2xl bg-app px-4 py-3 text-center text-sm text-danger neo"
+          >
+            저장하지 못했어요. 다시 시도해 주세요.
           </p>
         )}
-        <div className="flex items-center gap-3">
-          <button
-            type="button"
-            onClick={onBack}
-            className="cursor-pointer rounded-full bg-app px-5 py-3 text-[15px] text-ink-soft neo active:neo-in"
-          >
-            뒤로
-          </button>
+        <div className="rounded-[26px] bg-app p-2.5 neo">
           <button
             type="button"
             onClick={onNext}
             disabled={!canGoNext || saving}
-            className="flex-1 cursor-pointer rounded-full bg-slate py-3 text-[15px] font-medium text-on-slate neo-drop active:neo-in disabled:cursor-default disabled:opacity-50"
+            className="w-full cursor-pointer rounded-[18px] bg-slate py-4 text-[17px] font-bold text-on-slate neo-drop active:neo-in disabled:cursor-default disabled:opacity-45"
           >
             {saving
               ? "저장하는 중…"
               : canGoNext
-                ? `${selected.length.toString()}개 골랐어요 · 다음`
+                ? `${selected.length.toString()}개 선택했어요 · 계속`
                 : `${minPicks}개 이상 골라주세요`}
           </button>
         </div>
-      </footer>
+      </div>
     </main>
   );
 }
@@ -161,7 +159,6 @@ function PickCard({
     <button
       type="button"
       aria-pressed={checked}
-      // 카드에 글자가 없다 — **이름이 여기 있어야** 보조기술이 "버튼"으로만 읽지 않는다.
       aria-label={
         candidate.brandName === null
           ? candidate.title
@@ -170,10 +167,10 @@ function PickCard({
       onClick={() => {
         onToggle(candidate.goodsNo);
       }}
-      className={`relative block w-full cursor-pointer overflow-hidden rounded-2xl bg-thumb transition-[outline-color,opacity] ${
-        checked
-          ? "outline outline-2 outline-accent"
-          : "outline outline-2 outline-transparent opacity-90"
+      // 테두리가 아니라 아웃라인이다 — 테두리로 하면 고를 때마다 카드가 2px씩
+      // 커졌다 작아져 격자가 흔들린다.
+      className={`relative block w-full cursor-pointer overflow-hidden rounded-[20px] bg-thumb outline-2 ${
+        checked ? "outline-accent" : "outline-transparent neo"
       }`}
     >
       <div className="relative aspect-5/6">
@@ -185,8 +182,8 @@ function PickCard({
           className="object-cover"
           // 이미지가 죽으면 **부모에게 알린다.** 여기서 혼자 숨기면 부모는 여전히
           // 12장으로 알고 있어, 보이는 카드가 2장뿐인데도 "3개 이상 골라주세요"만
-          // 남는 막다른 화면이 된다(교차 리뷰 ⑤). CDN 404는 클라이언트만 안다 —
-          // 전수 조사에서 285건이 그랬다.
+          // 남는 막다른 화면이 된다. CDN 404는 클라이언트만 안다 — 전수 조사에서
+          // 285건이 그랬다.
           onError={() => {
             onDead(candidate.goodsNo);
           }}
@@ -194,9 +191,17 @@ function PickCard({
         {checked && (
           <span
             aria-hidden
-            className="absolute top-2 right-2 flex h-7 w-7 items-center justify-center rounded-full bg-accent text-sm text-white"
+            className="absolute top-3 right-3 flex h-8 w-8 items-center justify-center rounded-full bg-accent"
           >
-            ✓
+            <svg viewBox="0 0 24 24" width="17" height="17" fill="none">
+              <path
+                d="m5 12.5 4.5 4.5L19 7.5"
+                stroke="#fff"
+                strokeWidth="2.6"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
           </span>
         )}
       </div>
@@ -206,13 +211,13 @@ function PickCard({
 
 /**
  * 뼈대는 **완성 레이아웃을 본뜬다** — 선 몇 개로 자리만 표시하면 화면이 바뀔 때
- * 형태가 튄다. 카드가 이미지뿐이므로 뼈대도 이미지 자리만 잡는다.
+ * 형태가 튄다. 카드가 사진뿐이므로 뼈대도 사진 자리만 잡는다.
  */
 function PickSkeleton() {
   return (
-    <ul aria-hidden className="mt-6 grid grid-cols-2 gap-3">
+    <ul aria-hidden className="mt-7 grid grid-cols-2 gap-4">
       {Array.from({ length: 6 }, (_, i) => (
-        <li key={i} className="overflow-hidden rounded-2xl">
+        <li key={i} className="overflow-hidden rounded-[20px] neo">
           <div className="aspect-5/6 animate-pulse bg-skel-1" />
         </li>
       ))}
