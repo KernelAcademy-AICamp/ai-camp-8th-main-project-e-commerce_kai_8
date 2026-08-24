@@ -3,7 +3,7 @@
 import { useRef } from "react";
 
 import curationData from "@/features/curation/data/curations.json";
-import { type Curation, FOR_YOU_VISIBLE } from "@/features/curation/domain/curation";
+import type { Curation } from "@/features/curation/domain/curation";
 import { CurationDetailScreen } from "@/features/curation/presentation/components/curation-detail-screen";
 import { CurationList } from "@/features/curation/presentation/components/curation-list";
 import { useCurationScreen } from "@/features/curation/presentation/view-model/use-curation-screen";
@@ -44,17 +44,17 @@ export function CurationPane() {
     openKey,
     open: openCuration,
     back,
-    showAll,
+    shownCount,
     showMore,
   } = useCurationScreen(rootRef);
   // 내 성별 상품만 남기고, 내가 반응한 상품이 걸리는 큐레이션을 앞으로 — 첫 화면
   // 6장이 그 사람 것이 된다. 걸린 것이 없으면(콜드스타트·비회원) 기본 순서 그대로다.
   const ranked = useForYouOrder(curations, rootRef);
   // 상세도 **거른 목록에서** 찾는다 — 전체에서 찾으면 슬라이드에 다른 성별이 되살아난다.
-  // 접힌 큐레이션도 여기 들어 있어 더보기 전에 연 것도 그대로 열린다.
+  // 아직 안 붙인 큐레이션도 여기 들어 있어, 뒤로 갔다 와도 열려 있던 것이 그대로 열린다.
   const open = ranked.find((c) => c.key === openKey) ?? null;
-  // 첫 화면은 앞의 몇 장만. 상세는 접힌 것도 열려야 해서 `curations` 전체에서 찾는다.
-  const visible = showAll ? ranked : ranked.slice(0, FOR_YOU_VISIBLE);
+  // 첫 화면은 앞의 몇 장만. 나머지는 바닥이 가까워질 때마다 한 묶음씩 붙는다.
+  const visible = ranked.slice(0, shownCount);
 
   return (
     <div ref={rootRef}>
