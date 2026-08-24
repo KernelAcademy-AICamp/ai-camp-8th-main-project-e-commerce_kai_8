@@ -1,7 +1,6 @@
 import { GuestLoginPopup } from "@/features/auth/presentation/components/guest-login-popup";
 import { MyPage } from "@/features/auth/presentation/components/my-page";
-import { RecentStrip } from "@/features/feed/presentation/components/recent-strip";
-import { ProfileStats } from "@/features/feed/wishlist/presentation/components/profile-stats";
+import { ProfileActivityCard } from "@/features/feed/presentation/components/profile-activity-card";
 import { TasteCard } from "@/features/taste/presentation/components/taste-card";
 
 /**
@@ -25,8 +24,7 @@ export default function ProfileOverlay() {
     <div className="fixed inset-0 z-40 overflow-y-auto overscroll-contain">
       <MyPage notice={null}>
         <TasteCard />
-        <RecentStrip />
-        <ProfileStats />
+        <ProfileActivityCard />
       </MyPage>
       {/* 비회원 안내는 판 바깥 — 판이 밀려 들어오는 동안의 변형에 끌려가지 않게 */}
       <GuestLoginPopup />
