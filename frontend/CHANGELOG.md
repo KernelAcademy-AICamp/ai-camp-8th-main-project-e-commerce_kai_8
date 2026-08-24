@@ -1,3 +1,9 @@
+## [0.1.27](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/compare/v0.1.26...v0.1.27) (2026-08-24)
+
+### Features
+
+* 사진 속 모델 성별을 전수 판정해 반대 성별 사진을 뺀다 (4,373개) ([#94](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/issues/94)) ([507ef99](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/commit/507ef99e57a3f38122dc13856d0fe917288af085))
+* 취향 발견 온보딩 1단계 — 핵심 세로 경로 ([#98](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/issues/98)) ([ad2d2b5](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/commit/ad2d2b5650748b2a28b132fc06ba445334a53e38)), closes [#96](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/issues/96) [#e4e5ea](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/issues/e4e5ea) [#fefefe](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/issues/fefefe) [#515760](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/issues/515760) [#f6f6f8](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/issues/f6f6f8)
 ## [0.1.26](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/compare/v0.1.25...v0.1.26) (2026-08-23)
 
 ### Features
