@@ -199,104 +199,21 @@ html.search-open .veil-band {
   }
 }
 
-/* ── 3단계: 저장 폴더 패널 ────────────────────────────────────────────
-   시안 `.savebar`는 화면 전체를 덮는 **불투명** 패널이라(inset 0 + bg-app)
-   뒤가 비치지 않는다. 그래서 지금처럼 주소를 가진 화면으로 두어도 보이는
-   결과가 같다 — 주소·뒤로가기·새로고침은 그대로 살고, 열리는 방식만 맞춘다. */
-
-@media (prefers-reduced-motion: no-preference) {
-  .panel-in {
-    animation: panel-in 240ms cubic-bezier(0.25, 0.9, 0.3, 1);
-  }
-
-  @keyframes panel-in {
-    from {
-      opacity: 0;
-      transform: scale(0.98);
-    }
-    to {
-      opacity: 1;
-      transform: none;
-    }
-  }
+/* 보관함 폴더 열림 — 브라우저 View Transitions API(useFolderOpen)가 전후 화면을
+   실제로 캡처해 직접 보간한다. 표지 하나와 도착 화면의 격자(전혀 다른 사진
+   여러 장)는 모양이 이어질 수 없어 수동으로 복제본을 날리던 이전 방식은
+   타이밍을 아무리 맞춰도 어색했다 — 대신 이 앱의 다른 전환과 결을 맞추는
+   지속시간·이징만 지정한다. 지원하지 않는 브라우저·움직임을 줄이도록 설정한
+   기기에서는 훅이 호출 자체를 건너뛴다. */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 320ms;
+  animation-timing-function: cubic-bezier(0.25, 0.9, 0.3, 1);
 }
 
-/* 폴더 표지 — 겹쳐진 카드 스택. 뒤 두 장은 사진이 아니라 톤 카드다(시안).
-   검은 배경 위에서는 그림자만으로 카드 경계가 안 보여 테두리를 더한다. */
-.fcard {
-  position: absolute;
-  inset: 0;
-  border-radius: 20px;
-  border: 1px solid var(--color-line);
-}
-
-.fc-b1 {
-  background: var(--color-raised);
-  transform: rotate(6deg) translate(5px, -4px);
-  box-shadow: 0 2px 6px rgb(30 38 55 / 0.1);
-}
-
-.fc-b2 {
-  background: #0d0d0d;
-  transform: rotate(-5deg) translate(-5px, 6px);
-  box-shadow: 0 2px 6px rgb(30 38 55 / 0.1);
-}
-
-.fmain {
-  overflow: hidden;
-  background: linear-gradient(180deg, #161616 0%, #0d0d0d 100%);
-  box-shadow: 0 4px 12px rgb(30 38 55 / 0.18);
-}
-
-/* 사진 아래 흐린 띠 — 이름·개수가 어떤 사진 위에서도 읽히게. 위로 갈수록 사라진다. */
-.fscrim {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  height: 78px;
-  background: linear-gradient(to top, rgb(23 25 32 / 0.55), rgb(23 25 32 / 0));
-  -webkit-backdrop-filter: blur(10px);
-  backdrop-filter: blur(10px);
-  -webkit-mask-image: linear-gradient(to top, black 55%, transparent 100%);
-  mask-image: linear-gradient(to top, black 55%, transparent 100%);
-}
-
-/* 폴더 열림 — 시안 `openFolderDetail`. 두 단계다.
-   ① 탭한 표지를 복제해 헤더 아래 중앙으로 날리고 목록은 사라진다.
-   ② 폴더 상세 격자가 작게 시작해 제 크기로 튕겨 퍼진다.
-   움직임을 줄이도록 설정한 기기에서는 연출 없이 곧바로 바뀐다(시안도 같다). */
-@media (prefers-reduced-motion: no-preference) {
-  .fly-clone {
-    position: absolute;
-    z-index: 6;
-    pointer-events: none;
-    transition: transform 330ms cubic-bezier(0.3, 0.8, 0.3, 1);
-  }
-
-  .fade-away {
-    opacity: 0 !important;
-    transition: opacity 200ms ease;
-  }
-
-  .grid-burst {
-    transform-origin: 50% 0;
-    animation: grid-burst 480ms var(--ease-spring);
-  }
-
-  @keyframes grid-burst {
-    from {
-      transform: translateY(-34px) scale(0.42);
-    }
-    to {
-      transform: none;
-    }
-  }
-}
-
-/* ── 4단계: 프로필 사이드바 ──────────────────────────────────────────
-   시안 `.sidebar`도 폭 100%에 불투명이라(3단계 패널과 같다) 주소를 가진 화면으로
-   두고 모양과 열리는 방식만 맞춘다. 오른쪽에서 밀려 들어온다. */
+/* ── 프로필 사이드바 ──────────────────────────────────────────
+   시안 `.sidebar`는 폭 100%에 불투명이라 주소를 가진 화면으로 두고 모양과
+   열리는 방식만 맞춘다. 오른쪽에서 밀려 들어온다. */
 @media (prefers-reduced-motion: no-preference) {
   .sidebar-in {
     animation: sidebar-in 340ms cubic-bezier(0.25, 0.9, 0.3, 1);
