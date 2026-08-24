@@ -114,20 +114,19 @@ export function OnboardingPickScreen({
         </ul>
       )}
 
-      {/* 시안의 하단 판 — 떠 있는 판 위에 버튼 하나. 판이 있어야 스크롤되는 카드가
-          버튼 밑으로 지나갈 때 글자가 겹쳐 읽히지 않는다. */}
-      <div className="fixed inset-x-0 bottom-0 mx-auto max-w-md px-4 pb-5">
+      {/* 시안의 하단 판 — **화면 아래에 붙은 평평한 판**이다. 떠 있는 카드가 아니다:
+          위 모서리만 둥글고 그림자가 없다. 판이 있어야 스크롤되는 카드가 버튼 밑으로
+          지나갈 때 글자가 겹쳐 읽히지 않는다.
+
+          ⚠️ 여기에 그림자를 주면 안 된다. 버튼이 잠겨 흐려진 상태에서는 판의 그림자가
+          유일하게 눈에 띄는 것이 되어, 판과 버튼이 하나의 뭉친 덩어리로 읽힌다. */}
+      <div className="fixed inset-x-0 bottom-0 mx-auto max-w-md rounded-t-[28px] bg-app px-4 pt-4 pb-6">
         {saveFailed && (
-          <p
-            role="status"
-            className="mb-3 rounded-2xl bg-app px-4 py-3 text-center text-sm text-danger neo"
-          >
+          <p role="status" className="mb-3 text-center text-sm text-danger">
             저장하지 못했어요. 다시 시도해 주세요.
           </p>
         )}
-        {/* **판만 떠 있고 버튼은 평평하다**(시안). 버튼에도 그림자를 주면 떠 있는 것
-            위에 또 떠 있는 것이 되어 어느 쪽이 눌리는 자리인지 흐려진다. */}
-        <div className="rounded-[26px] bg-app p-2.5 neo">
+        <div>
           <button
             type="button"
             onClick={onNext}
