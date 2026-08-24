@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 
 import { BackLink } from "@/shared/history/back-link";
-import { BackIcon } from "@/shared/icons";
+import { CloseIcon } from "@/shared/icons";
 
 /**
  * 공개 개인정보 처리방침.
@@ -25,19 +25,22 @@ const CONTACT_EMAIL = "likefry98@gmail.com";
 export default function PrivacyPolicyPage() {
   return (
     <main className="mx-auto max-w-md px-4 pb-6 text-ink">
-      {/* 뒤로가기 좌표를 마이페이지와 맞춘다 — 왼쪽 16px·위 8px (전 화면 공통).
-          모양도 앱 표준을 따른다 — 상세·보관함·온보딩과 같은 뉴모피즘 원형.
+      {/* **뒤로가 아니라 닫기다**(제품 책임자 2026-08-24). 이 문서는 여러 자리에서
+          열린다 — 프로필, 온보딩 3단계의 동의 문구(O-41). 화살표는 "직전 화면으로"를
+          약속하는데 어디서 왔는지가 매번 다르고, 실제로 온보딩에서 열었을 때 프로필로
+          나가는 일이 있었다. ✕는 "이 문서를 덮는다"만 말하므로 어디서 열어도 맞다.
 
-          **이름을 중립으로 둔다.** 이 화면은 프로필에서만 열리지 않는다 —
-          온보딩 3단계의 동의 문구에서도 열린다(O-41). "프로필로 돌아가기"라고
-          적으면 온보딩에서 온 사람에게 거짓말이 된다. */}
+          좌표는 전 화면 공통(왼쪽 16px·위 8px), 모양은 앱 표준 뉴모피즘 원형.
+
+          기록이 없으면(구글 OAuth 심사처럼 이 주소로 바로 들어온 경우) 홈으로
+          보낸다 — 프로필로 보내면 온보딩을 안 마친 사람이 엉뚱한 곳에 떨어진다. */}
       <header className="mb-4 flex items-center gap-2 py-2">
         <BackLink
-          href="/my"
-          label="뒤로 가기"
+          href="/"
+          label="닫기"
           className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-app text-ink-soft neo active:neo-in"
         >
-          <BackIcon />
+          <CloseIcon size={15} />
         </BackLink>
         <h1 className="text-lg font-semibold text-ink">개인정보 처리방침</h1>
       </header>
@@ -204,17 +207,15 @@ export default function PrivacyPolicyPage() {
         </p>
       </section>
 
-      {/* **왔던 자리로 되돌아간다.** 예전에는 `/my`로 곧장 갔는데, 이 화면이
-          온보딩 3단계에서도 열리게 되면서(O-41) 온보딩 중에 누르면 프로필로
-          튀어 나갔다 — 원하는 흐름이 아니다. 위 화살표와 같은 동작을 쓴다.
-          기록이 없을 때만(구글 OAuth 심사처럼 이 주소로 바로 들어온 경우)
-          프로필로 보낸다. */}
+      {/* 위 ✕와 **같은 동작**이다 — 긴 문서라 끝까지 읽고 위로 다시 올라가지
+          않아도 되게 둔다. 예전에는 `/my`로 곧장 갔는데, 온보딩 중에 누르면
+          프로필로 튀어 나갔다. */}
       <BackLink
-        href="/my"
-        label="돌아가기"
+        href="/"
+        label="닫기"
         className="mt-4 block rounded-xl bg-well neo py-3 text-center font-medium text-ink"
       >
-        돌아가기
+        닫기
       </BackLink>
     </main>
   );

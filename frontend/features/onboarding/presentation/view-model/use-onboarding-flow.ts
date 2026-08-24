@@ -11,11 +11,16 @@ import {
   MIN_PICKS,
   type OnboardingPick,
 } from "@/shared/onboarding/onboarding-pick";
+import {
+  clearFlowProgress,
+  type FlowScreen,
+  readFlowProgress,
+  writeFlowProgress,
+} from "@/shared/onboarding/onboarding-progress-store";
 import { markDone, setPicks } from "@/shared/onboarding/onboarding-store";
 import { useSignedIn } from "@/shared/supabase/use-signed-in";
 
-/** 온보딩 안의 화면. 게이트가 "온보딩을 보여줄까"를 정하고, 여기가 "어느 화면"을 정한다. */
-export type FlowScreen = "gender" | "picks" | "signup";
+export type { FlowScreen };
 
 export type SaveState = "idle" | "saving" | "failed";
 
@@ -73,16 +78,21 @@ export interface OnboardingFlowViewModel {
 export function useOnboardingFlow(): OnboardingFlowViewModel {
   const signedIn = useSignedIn();
 
-  const [screen, setScreen] = useState<FlowScreen>("gender");
-  const [gender, setGender] = useState<GenderChoice | null>(null);
+  // **어디까지 갔는지 이 탭에 적어 둔 것을 그대로 이어 받는다.** 처리방침을 열었다가
+  // 돌아오면 온보딩이 새로 마운트되는데, 기억이 없으면 1단계부터 다시 시작한다.
+  const [restored] = useState(readFlowProgress);
+  const [screen, setScreen] = useState<FlowScreen>(restored.screen);
+  const [gender, setGender] = useState<GenderChoice | null>(restored.gender);
   const [received, setReceived] = useState<OnboardingCandidate[]>([]);
   const [version, setVersion] = useState<string | null>(null);
   const [dead, setDead] = useState<number[]>([]);
-  const [loadingCandidates, setLoading] = useState(false);
+  // 이어 받은 성별이 있으면 아래 effect가 곧바로 후보를 부른다 — 그 사이에 CTA가
+  // 열려 있으면 화면에 없는 카드로 저장이 나간다. 처음부터 불러오는 중으로 둔다.
+  const [loadingCandidates, setLoading] = useState(restored.gender !== null);
   const [candidatesFailed, setFailed] = useState(false);
   const [attempt, setAttempt] = useState(0);
   // 고른 순서를 그대로 들고 있는다 — `pick_seq`가 여기서 나온다.
-  const [selected, setSelected] = useState<number[]>([]);
+  const [selected, setSelected] = useState<number[]>(restored.selected);
   const [saveState, setSaveState] = useState<SaveState>("idle");
 
   // 로그인한 사람은 로그인 화면이 없다 — 없는 단계를 세지 않는다.
@@ -150,6 +160,11 @@ export function useOnboardingFlow(): OnboardingFlowViewModel {
 
   const candidates = received.filter((c) => !dead.includes(c.goodsNo));
 
+  // 화면·성별·선택이 바뀔 때마다 적어 둔다. 저장소는 바깥 세계이므로 effect가 맞다.
+  useEffect(() => {
+    writeFlowProgress({ screen, gender, selected });
+  }, [screen, gender, selected]);
+
   const toggle = useCallback((goodsNo: number) => {
     setSelected((current) =>
       current.includes(goodsNo)
@@ -191,6 +206,8 @@ export function useOnboardingFlow(): OnboardingFlowViewModel {
         setPicks(confirmed.candidatesVersion, confirmed.picks);
         // 계정에 담긴 것을 확인한 뒤에만 기기 표식을 남긴다.
         markDone();
+        // 마쳤으므로 진행 기록을 지운다 — 남기면 다음 방문이 중간 화면에서 열린다.
+        clearFlowProgress();
         setSaveState("idle");
         // 게이트가 계정 상태를 다시 읽게 한다. 화면을 직접 옮기지 않는 이유는
         // 진입 판정이 한 곳(게이트)에만 있어야 하기 때문이다.

@@ -16,6 +16,7 @@ import {
   putAccountOnboarding,
 } from "./account-onboarding-api";
 import type { OnboardingPick } from "./onboarding-pick";
+import { clearFlowProgress } from "./onboarding-progress-store";
 import { resolveOnboardingOnLogin } from "./onboarding-resolve";
 import { markDone, setPicks } from "./onboarding-store";
 
@@ -95,7 +96,12 @@ function install(
   setPicks(version, picks);
   // 계정이 마친 적이 있다면 이 기기도 "마친 적 있는 기기"다 — 로그아웃 뒤 재방문이
   // 온보딩이 아니라 로그인 화면부터 시작한다(§1-0).
-  if (account !== null) markDone();
+  if (account !== null) {
+    markDone();
+    // 진행 기록도 지운다. 새 기기 경로는 승계가 끝나는 이 자리에서 완료되므로
+    // 화면 쪽(use-onboarding-flow)의 정리만으로는 이 탭에 기록이 남는다.
+    clearFlowProgress();
+  }
 }
 
 /**
