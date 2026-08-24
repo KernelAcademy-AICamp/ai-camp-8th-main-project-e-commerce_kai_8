@@ -1,9 +1,9 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 
 import { OnboardingHeader } from "./onboarding-header";
-import { TasteConvergeFigure } from "./taste-converge-figure";
 
 /**
  * 온보딩 3단계 — 계정 만들기. **새 기기 경로에만 있다**(로그인한 사람은 2화면).
@@ -18,7 +18,6 @@ import { TasteConvergeFigure } from "./taste-converge-figure";
 export function OnboardingSignupScreen({
   stepIndex,
   stepCount,
-  thumbnails,
   busy,
   failed,
   onSignIn,
@@ -26,7 +25,6 @@ export function OnboardingSignupScreen({
 }: {
   stepIndex: number;
   stepCount: number;
-  thumbnails: readonly string[];
   busy: boolean;
   failed: boolean;
   onSignIn: () => void;
@@ -47,8 +45,23 @@ export function OnboardingSignupScreen({
         </p>
       </div>
 
-      <section className="mt-6 rounded-[28px] bg-raised px-5 pt-6 pb-2 neo-sm">
-        <TasteConvergeFigure thumbnails={thumbnails} />
+      <section className="mt-6 rounded-[28px] bg-raised px-5 pt-5 pb-2 neo-sm">
+        {/* 시안에서 그림 영역을 그대로 잘라 쓴다(제품 책임자 결정 2026-08-24).
+            DOM으로 다시 그린 판은 걷어냈다 — 부채꼴 겹침·연결선·등고선을 코드로
+            근사하는 것보다 시안을 그대로 두는 편이 낫다고 판단했다.
+
+            ⚠️ **여기 보이는 옷은 이 사람이 고른 것이 아니다.** 시안에 담긴 예시
+            사진이다. 위 문구("방금 고른 옷에서 시작해")와 그림이 가리키는 대상이
+            다르므로, 이 그림을 계속 쓰기로 하면 문구를 손보거나 그림을 다시
+            사용자 선택으로 되돌려야 한다. */}
+        <Image
+          src="/onboarding/taste-converge.jpg"
+          alt=""
+          width={710}
+          height={672}
+          priority
+          className="w-full"
+        />
 
         <ul className="mt-4">
           <li className="flex items-center gap-4 py-4">

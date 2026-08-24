@@ -46,8 +46,6 @@ export interface OnboardingFlowViewModel {
 
   /** 고른 상품 번호 (고른 순서대로) */
   selected: number[];
-  /** 고른 것의 썸네일 — 3단계 그림이 **실제로 고른 사진**을 써야 설명이 참이 된다 */
-  selectedThumbnails: string[];
   toggle: (goodsNo: number) => void;
   minPicks: number;
   canGoNext: boolean;
@@ -151,11 +149,6 @@ export function useOnboardingFlow(): OnboardingFlowViewModel {
   }, []);
 
   const candidates = received.filter((c) => !dead.includes(c.goodsNo));
-  // 파생값은 콜백보다 **앞에** 둔다 — 뒤에 두면 React 컴파일러가 콜백의 기억을
-  // 유지하지 못한다고 판단해 lint가 막는다.
-  const selectedThumbnails = selected
-    .map((no) => candidates.find((c) => c.goodsNo === no)?.thumbnail)
-    .filter((url): url is string => url !== undefined);
 
   const toggle = useCallback((goodsNo: number) => {
     setSelected((current) =>
@@ -228,7 +221,6 @@ export function useOnboardingFlow(): OnboardingFlowViewModel {
     retryCandidates,
     tooFewCandidates,
     selected,
-    selectedThumbnails,
     toggle,
     minPicks: MIN_PICKS,
     canGoNext: canProceed(picks),
