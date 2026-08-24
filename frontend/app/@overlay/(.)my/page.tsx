@@ -2,6 +2,7 @@ import { GuestLoginPopup } from "@/features/auth/presentation/components/guest-l
 import { MyPage } from "@/features/auth/presentation/components/my-page";
 import { ProfileActivityCard } from "@/features/feed/presentation/components/profile-activity-card";
 import { TasteCard } from "@/features/taste/presentation/components/taste-card";
+import { OverlaySlotGuard } from "@/shared/history/overlay-slot-guard";
 
 /**
  * 홈에서 프로필을 열었을 때 — **홈 위에 겹쳐** 그린다.
@@ -18,16 +19,23 @@ import { TasteCard } from "@/features/taste/presentation/components/taste-card";
  * 서버에서 `/my`로 리다이렉트할 때만 붙는 하드 내비게이션이라 이 인터셉트 오버레이를
  * 아예 거치지 않는다 — 항상 `app/my/page.tsx`(단독 화면)가 그 안내를 받는다. 그래서
  * 여기는 항상 `notice={null}`이다(`app/@settingsOverlay/(.)settings/page.tsx`와 같은 이유).
+ *
+ * `OverlaySlotGuard`로 감싼다(2026-08-25) — 설정 화면에서 `/privacy`처럼 이
+ * 슬롯도 `@settingsOverlay`도 모르는 주소로 옮기면, 슬롯이 자동으로 비지
+ * 않고 이 화면을 그대로 들고 있어 뒤에 새로 그려진 화면을 가린다. 자세한
+ * 이유는 그 컴포넌트 주석 참고.
  */
 export default function ProfileOverlay() {
   return (
-    <div className="fixed inset-0 z-40 overflow-y-auto overscroll-contain">
-      <MyPage notice={null}>
-        <TasteCard />
-        <ProfileActivityCard />
-      </MyPage>
-      {/* 비회원 안내는 판 바깥 — 판이 밀려 들어오는 동안의 변형에 끌려가지 않게 */}
-      <GuestLoginPopup />
-    </div>
+    <OverlaySlotGuard expectedPath="/my">
+      <div className="fixed inset-0 z-40 overflow-y-auto overscroll-contain">
+        <MyPage notice={null}>
+          <TasteCard />
+          <ProfileActivityCard />
+        </MyPage>
+        {/* 비회원 안내는 판 바깥 — 판이 밀려 들어오는 동안의 변형에 끌려가지 않게 */}
+        <GuestLoginPopup />
+      </div>
+    </OverlaySlotGuard>
   );
 }

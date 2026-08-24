@@ -4,6 +4,7 @@ import { AppVersionLine } from "@/features/settings/presentation/components/app-
 import { GenderSettings } from "@/features/settings/presentation/components/gender-settings";
 import { PrivacySettings } from "@/features/settings/presentation/components/privacy-settings";
 import { SettingsHeader } from "@/features/settings/presentation/components/settings-header";
+import { OverlaySlotGuard } from "@/shared/history/overlay-slot-guard";
 
 /**
  * 프로필 위에서 설정을 열었을 때 — **프로필 위에 겹쳐** 그린다.
@@ -22,20 +23,28 @@ import { SettingsHeader } from "@/features/settings/presentation/components/sett
  * 붙는 하드 내비게이션이라 이 인터셉트 오버레이를 아예 거치지 않는다 — 항상
  * `app/settings/page.tsx`(단독 화면)가 그 알림을 받는다. 그래서 여기는 항상
  * `notice={null}`이다.
+ *
+ * `OverlaySlotGuard`로 감싼다(2026-08-25 버그 수정) — 안의 `PrivacySettings`가
+ * 여는 `/privacy`처럼 이 슬롯도 `@overlay`도 모르는 주소로 옮기면, 슬롯이
+ * 자동으로 비지 않고 이 화면을 그대로 들고 있어(z-50, `fixed inset-0`) 뒤에
+ * 새로 그려진 화면이 안 보였다 — 주소는 바뀌는데 화면은 그대로인 버그였다.
+ * 자세한 이유는 그 컴포넌트 주석 참고.
  */
 export default function SettingsOverlay() {
   return (
-    <div className="fixed inset-0 z-50 overflow-y-auto overscroll-contain">
-      <main className="push-in relative min-h-dvh w-full bg-app text-ink">
-        <div className="mx-auto max-w-md px-4 pb-6">
-          <SettingsHeader />
-          <GenderSettings />
-          <PrivacySettings />
-          <LogoutSection />
-          <AccountDeleteSection notice={null} />
-          <AppVersionLine />
-        </div>
-      </main>
-    </div>
+    <OverlaySlotGuard expectedPath="/settings">
+      <div className="fixed inset-0 z-50 overflow-y-auto overscroll-contain">
+        <main className="push-in relative min-h-dvh w-full bg-app text-ink">
+          <div className="mx-auto max-w-md px-4 pb-6">
+            <SettingsHeader />
+            <GenderSettings />
+            <PrivacySettings />
+            <LogoutSection />
+            <AccountDeleteSection notice={null} />
+            <AppVersionLine />
+          </div>
+        </main>
+      </div>
+    </OverlaySlotGuard>
   );
 }
