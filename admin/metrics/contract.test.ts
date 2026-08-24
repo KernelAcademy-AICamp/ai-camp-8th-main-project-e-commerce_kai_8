@@ -7,6 +7,8 @@
 
 import { describe, expect, it } from "vitest";
 
+import { activeDays } from "./active-days";
+import { returnCurve } from "./return-curve";
 import { sessionFunnel } from "./session-funnel";
 import { sessionSummary } from "./session-summary";
 
@@ -42,5 +44,40 @@ describe("퍼널 — 세션률 계약", () => {
   it("분자와 분모를 함께 보여준다", () => {
     // 비율만 있으면 표본이 몇인지 몰라 해석할 수 없다
     expect(sessionFunnel.sql).toMatch(/as\s+"분모"/);
+  });
+});
+
+describe("재방문 곡선 — 계약", () => {
+  it("첫 활동일 기준으로 며칠째인지 센다", () => {
+    // 달력 주가 아니라 각 기기의 첫날부터 끊어야 시작일이 다른 기기를
+    // 같은 기준으로 비교할 수 있다
+    expect(returnCurve.sql).toContain("첫날");
+  });
+
+  it("분자와 분모를 함께 보여준다", () => {
+    expect(returnCurve.sql).toMatch(/as\s+"기준 기기"/);
+  });
+
+  it("습관 단계로 판정하지 않는다", () => {
+    // 습관 판정선("주 2일이면 습관")은 근거 없이 정할 수 없다. 사실만 내고
+    // 해석은 사람이 한다. 컬럼 이름에 단계가 등장하면 그 순간 결론이 된다.
+    const 컬럼 = returnCurve.sql.match(/as\s+"([^"]+)"/g) ?? [];
+    expect(컬럼.join(" ")).not.toMatch(/습관|형성|강화|정착/);
+  });
+});
+
+describe("활동 일수 분포 — 계약", () => {
+  it("활동일은 클릭이 있었던 날로 센다", () => {
+    // 스크롤만 한 날은 세지 않는다 — 개인화가 배울 신호가 없다
+    expect(activeDays.sql).toContain("'tap'");
+  });
+
+  it("같은 날 여러 번 열어도 하루로 센다", () => {
+    expect(activeDays.sql).toMatch(/::date/);
+  });
+
+  it("습관 단계로 판정하지 않는다", () => {
+    const 컬럼 = activeDays.sql.match(/as\s+"([^"]+)"/g) ?? [];
+    expect(컬럼.join(" ")).not.toMatch(/습관|형성|강화|정착/);
   });
 });
