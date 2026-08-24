@@ -19,8 +19,6 @@ import { OnboardingHeader } from "./onboarding-header";
  * 선택 표시에 **색만 쓰지 않는다** — 주황 테두리와 체크 아이콘을 함께 쓴다.
  */
 export function OnboardingPickScreen({
-  stepIndex,
-  stepCount,
   candidates,
   onDead,
   loading,
@@ -36,8 +34,6 @@ export function OnboardingPickScreen({
   saving,
   saveFailed,
 }: {
-  stepIndex: number;
-  stepCount: number;
   candidates: OnboardingCandidate[];
   onDead: (goodsNo: number) => void;
   loading: boolean;
@@ -55,7 +51,7 @@ export function OnboardingPickScreen({
 }) {
   return (
     <main className="mx-auto min-h-svh max-w-md px-6 pb-40 text-ink">
-      <OnboardingHeader index={stepIndex} count={stepCount} onBack={onBack} />
+      <OnboardingHeader onBack={onBack} />
 
       <div className="mt-6">
         <h1 className="text-[26px] leading-tight font-bold text-ink">
@@ -74,7 +70,7 @@ export function OnboardingPickScreen({
           <button
             type="button"
             onClick={onRetry}
-            className="cursor-pointer rounded-full bg-app px-6 py-3 text-[15px] text-ink neo active:neo-in"
+            className="cursor-pointer rounded-full border border-line bg-thumb px-6 py-3 text-[15px] text-ink transition-colors active:bg-raised"
           >
             다시 시도
           </button>
@@ -92,7 +88,7 @@ export function OnboardingPickScreen({
           <button
             type="button"
             onClick={onRetry}
-            className="cursor-pointer rounded-full bg-app px-6 py-3 text-[15px] text-ink neo active:neo-in"
+            className="cursor-pointer rounded-full border border-line bg-thumb px-6 py-3 text-[15px] text-ink transition-colors active:bg-raised"
           >
             다시 시도
           </button>

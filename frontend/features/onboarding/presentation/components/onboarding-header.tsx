@@ -3,57 +3,39 @@
 import { BackIcon } from "@/shared/icons";
 
 /**
- * 온보딩 공통 머리 — 왼쪽 뒤로, 오른쪽 단계 표시.
+ * 온보딩 공통 머리 — 뒤로가기만 있다. 단계 표시(`1 / 3`)는 2026-08-25에 없앴다
+ * (제품 결정) — 화면 수가 경로마다 달라(새 기기 3, 로그인 우선 2) 굳이 세게
+ * 하느니 아예 안 보여주는 쪽을 택했다.
  *
- * 뒤로가기는 **앱의 다른 화면과 같은 것**을 쓴다(제품 책임자 2026-08-24):
- * 공용 `BackIcon` · 40×40 원형 · `bg-app` · `neo` · 누르면 `neo-in` · `text-ink-soft` ·
- * 이름은 `뒤로 가기`.
- *
- * ⚠️ **앱 안에서 갈려 있다.** 상세·보관함·폴더 상세가 이 뉴모피즘 원형이고
- * (마이페이지는 같은 모양의 작은 판 `SIDE_BTN`), 설정·큐레이션 상세만 배경 없는
- * 평평한 버튼이다. **다수이자 전체 화면 뒤로가기의 표준인 앞쪽**을 따랐다 —
- * 평평한 쪽을 보고 "앱은 평평하다"고 단정했다가 되돌린 적이 있다.
+ * 뒤로가기는 **큐레이션 상세와 같은 플랫 아이콘**이다(2026-08-25, 온보딩 한정
+ * 재검토): 배경·테두리·그림자 없이 `BackIcon` · `text-ink-soft` · 이름은
+ * `뒤로 가기`. 2026-08-24에는 상세·보관함류와 같은 neo 원형을 표준으로 정했지만,
+ * 이후 홈 화면이 뉴모피즘 이전 플랫 디자인으로 되돌아가며(커밋 4c741d3) 앱의
+ * 최신 방향이 플랫 쪽으로 굳어져 온보딩도 그쪽으로 다시 맞췄다. **이 결정은
+ * 온보딩에 한정된다** — 상세·보관함·폴더 상세의 neo 원형 표준까지 이걸 근거로
+ * 뒤집지 말 것.
  *
  * 좌표도 맞춘다 — **왼쪽 16px·위 8px가 전 화면 공통**이다. 본문이 `px-6`(24px)이라
- * `-mx-2`로 8px 당겨 버튼 상자를 16px에 놓고(로그인 화면과 같은 방법), 오른쪽
- * 단계 표시는 `pr-2`로 되돌려 본문과 같은 24px에 둔다.
+ * `-mx-2`로 8px 당겨 버튼 상자를 16px에 놓는다(로그인 화면과 같은 방법).
  *
- * 진행 표시는 막대가 아니라 **숫자**이고, **그 경로의 실제 화면 수**를 센다 —
- * 새 기기는 3, 로그인 우선 경로는 2다(계획 §1-0). 없는 단계를 세면 마지막 화면에서
- * `2 / 3`으로 끝나 사람이 한 단계를 잃어버렸다고 읽는다.
- *
- * 첫 화면에는 돌아갈 곳이 없어 뒤로 버튼을 그리지 않는다 — 단계 표시가 오른쪽에
- * 그대로 있도록 자리는 비워 둔다.
+ * 첫 화면에는 돌아갈 곳이 없어 뒤로 버튼을 그리지 않는다 — 그래도 다른 화면과
+ * 머리 높이가 같도록 자리는 비워 둔다.
  */
-export function OnboardingHeader({
-  index,
-  count,
-  onBack,
-}: {
-  index: number;
-  count: number;
-  onBack?: () => void;
-}) {
+export function OnboardingHeader({ onBack }: { onBack?: () => void }) {
   return (
-    <header className="-mx-2 flex items-center justify-between py-2">
+    <header className="-mx-2 py-2">
       {onBack === undefined ? (
-        <span aria-hidden className="h-10 w-10" />
+        <span aria-hidden className="block h-10 w-10" />
       ) : (
         <button
           type="button"
           aria-label="뒤로 가기"
           onClick={onBack}
-          className="flex h-10 w-10 cursor-pointer items-center justify-center rounded-full bg-app text-ink-soft neo active:neo-in"
+          className="flex h-10 w-10 cursor-pointer items-center justify-center text-ink-soft transition-colors active:text-ink"
         >
           <BackIcon />
         </button>
       )}
-      <span
-        className="pr-2 text-[15px] font-medium text-ink-muted tabular-nums"
-        aria-label={`${count.toString()}단계 중 ${index.toString()}단계`}
-      >
-        {index} / {count}
-      </span>
     </header>
   );
 }

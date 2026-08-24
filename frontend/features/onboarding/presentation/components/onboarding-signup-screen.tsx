@@ -7,24 +7,27 @@ import { OnboardingHeader } from "./onboarding-header";
 
 /**
  * 온보딩 3단계 — 계정 만들기. **새 기기 경로에만 있다**(로그인한 사람은 2화면).
- * 시안: `design/atee-taste-signup-sample.png`
+ * 시안: `design/atee-taste-signup-sample.png` — 단, 그림 영역은 아래 참고.
  *
  * 이 화면은 "가입해 주세요"가 아니라 **"방금 고른 것이 어디로 가는지"**를 말한다.
- * 그래서 고른 사진 세 장이 하나로 모이는 그림이 본문이고, 버튼은 그 뒤에 온다.
+ * 그래서 카드 세 장이 하나로 모이는 그림이 본문이고, 버튼은 그 뒤에 온다.
+ *
+ * 2026-08-25: 시안 사진(오렌지 포인트)을 걷어내고 한 번은 DOM 도형(`neo` 없는
+ * 단순 SVG)으로 바꿨다가, 다시 **세이지그린으로 새로 생성한 사진**으로 되돌렸다.
+ * 2026-08-24 결정("부채꼴 겹침·연결선·등고선을 코드로 근사하기보다 사진이 낫다")이
+ * 원래 다뤘던 것은 구도 재현 비용이었지 색은 아니었다 — 이번엔 같은 구도를 색만
+ * 바꿔 다시 생성해서, 사진의 질감은 유지하면서 색은 앱과 맞췄다(codex+imagen,
+ * `frontend/public/onboarding/taste-converge.jpg`, 710×672).
  *
  * ⚠️ 시안에는 처리방침 링크가 없는데 **넣었다.** 구글 OAuth 심사가 동의 화면에서
  * 접근 가능한 처리방침을 요구한다(app/privacy/page.tsx 머리주석).
  */
 export function OnboardingSignupScreen({
-  stepIndex,
-  stepCount,
   busy,
   failed,
   onSignIn,
   onBack,
 }: {
-  stepIndex: number;
-  stepCount: number;
   busy: boolean;
   failed: boolean;
   onSignIn: () => void;
@@ -32,7 +35,7 @@ export function OnboardingSignupScreen({
 }) {
   return (
     <main className="mx-auto min-h-svh max-w-md px-6 pb-10 text-ink">
-      <OnboardingHeader index={stepIndex} count={stepCount} onBack={onBack} />
+      <OnboardingHeader onBack={onBack} />
 
       <div className="mt-6">
         <h1 className="text-[26px] leading-tight font-bold text-ink">
@@ -45,26 +48,22 @@ export function OnboardingSignupScreen({
         </p>
       </div>
 
-      <section className="mt-6 rounded-[28px] bg-raised px-5 pt-5 pb-2 neo-sm">
-        {/* 시안에서 그림 영역을 그대로 잘라 쓴다(제품 책임자 결정 2026-08-24).
-            DOM으로 다시 그린 판은 걷어냈다 — 부채꼴 겹침·연결선·등고선을 코드로
-            근사하는 것보다 시안을 그대로 두는 편이 낫다고 판단했다.
+      <div className="mt-6">
+        {/* 카드 감싸기 없이 edge-to-edge로 배경 위에 바로 놓는다(2026-08-25,
+            홈·큐레이션상세와 같은 "카드 없이 배경 위에 직접" 컨셉). `-mx-6`로
+            본문 좌우 여백(px-6=24px)을 상쇄해 컨테이너 폭 전체로 넓힌다.
 
-            **여기 보이는 옷은 이 사람이 고른 것이 아니다** — 시안에 담긴 예시
-            사진이고, **그대로 두기로 했다**(2026-08-24 제품 책임자). 위 문구
-            ("방금 고른 옷에서 시작해")는 앞으로 무엇이 일어나는지를 말하는 것이지
-            이 그림을 가리키는 것이 아니다. 시안도 같은 예시 사진을 썼다.
-
-            ⚠️ **고치려 들지 말 것.** 이 어긋남은 몰라서 남은 것이 아니라 보고
-            넘어가기로 한 것이다. 사용자가 고른 사진으로 바꾸려면 문구까지 함께
-            보는 별도 결정이 필요하다. */}
+            **여기 보이는 옷은 이 사람이 고른 것이 아니다** — 생성한 예시
+            사진이고, 그대로 두기로 했다(2026-08-24 제품 책임자 결정 유지). 위
+            문구("방금 고른 옷에서 시작해")는 앞으로 무엇이 일어나는지를 말하는
+            것이지 이 그림을 가리키는 것이 아니다. */}
         <Image
           src="/onboarding/taste-converge.jpg"
           alt=""
           width={710}
           height={672}
           priority
-          className="w-full"
+          className="-mx-6 w-[calc(100%+3rem)] max-w-none"
         />
 
         <ul className="mt-4">
@@ -104,14 +103,14 @@ export function OnboardingSignupScreen({
             </span>
           </li>
         </ul>
-      </section>
+      </div>
 
       <div className="mt-7">
         <button
           type="button"
           onClick={onSignIn}
           disabled={busy}
-          className="flex h-15 w-full cursor-pointer items-center justify-center gap-3 rounded-full bg-thumb text-[17px] font-bold text-on-thumb neo active:neo-in disabled:opacity-60"
+          className="flex h-15 w-full cursor-pointer items-center justify-center gap-3 rounded-full border border-line bg-thumb text-[17px] font-bold text-on-thumb transition-colors active:bg-raised disabled:opacity-60"
         >
           <GoogleMark />
           Google로 계속하기
