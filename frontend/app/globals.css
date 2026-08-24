@@ -241,11 +241,13 @@ html.search-open .veil-band {
   }
 }
 
-/* 폴더 표지 — 겹쳐진 카드 스택. 뒤 두 장은 사진이 아니라 톤 카드다(시안). */
+/* 폴더 표지 — 겹쳐진 카드 스택. 뒤 두 장은 사진이 아니라 톤 카드다(시안).
+   검은 배경 위에서는 그림자만으로 카드 경계가 안 보여 테두리를 더한다. */
 .fcard {
   position: absolute;
   inset: 0;
   border-radius: 20px;
+  border: 1px solid var(--color-line);
 }
 
 .fc-b1 {
@@ -264,7 +266,6 @@ html.search-open .veil-band {
   overflow: hidden;
   background: linear-gradient(180deg, #161616 0%, #0d0d0d 100%);
   box-shadow: 0 4px 12px rgb(30 38 55 / 0.18);
-  border: 1px solid var(--color-line);
 }
 
 /* 사진 아래 흐린 띠 — 이름·개수가 어떤 사진 위에서도 읽히게. 위로 갈수록 사라진다. */
