@@ -24,6 +24,7 @@ export const activeDays: MetricDefinition = {
   title: "활동 일수 분포 (기기 단위)",
   why: "기기마다 며칠이나 클릭했나. 습관 임계값을 근거 없이 정하는 대신 실제 분포를 보고 정하려는 표다. 관측 기간이 짧은 기기는 아무리 써도 일수가 작게 나오므로 관측 일수를 함께 본다",
   order: 61,
+  screen: "retention",
   sql: `
     with 활동일 as (
       select

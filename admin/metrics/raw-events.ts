@@ -31,6 +31,7 @@ export const rawEvents: MetricDefinition = {
   title: "이벤트 (최근 40줄)",
   why: "행동이 일어날 때마다 한 줄씩 쌓인 낱개 기록. 위 집계가 맞는지 손으로 대조하는 근거다 — 집계만 있고 낱개가 없으면 틀린 숫자를 틀린 줄 모른다",
   order: 50,
+  screen: "raw",
   collapsed: true, // 대조용 낱개 기록 — 평소엔 접어 둔다
   sql: `
     select

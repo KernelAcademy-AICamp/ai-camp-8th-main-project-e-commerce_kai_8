@@ -26,6 +26,7 @@ export const returnCurve: MetricDefinition = {
   title: "재방문 곡선 (기기 단위)",
   why: "처음 클릭한 날부터 며칠째에 다시 와서 클릭했나. 분모는 그날까지 관측될 만큼 시간이 지난 기기만 센다 — 어제 처음 온 기기를 3일차 분모에 넣으면 아직 안 지난 것이 실패로 잡힌다. 기기 단위라 실제 사람의 재방문율보다 낮게 나온다",
   order: 60,
+  screen: "retention",
   sql: `
     with 활동일 as (
       select

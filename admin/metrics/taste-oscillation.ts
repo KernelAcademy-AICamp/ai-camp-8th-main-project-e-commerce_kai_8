@@ -28,6 +28,7 @@ export const tasteOscillation: MetricDefinition = {
   title: "추천 유형별 탐색률 (취향 vs 비취향)",
   why: "한 세션에서 취향(익숙한) 카드와 비취향(새로운) 카드를 둘 다 눌렀는지 본다. 취향 = longterm·session·similar, 비취향 = opposite·diversity. 분모는 양쪽을 다 본 세션이고(한쪽만 보여준 세션은 기회가 없던 것이라 뺀다), 그 안에서 둘 다 누른 비율이 탐색률이다. 컨셉대로면 이 값이 오른다",
   order: 36,
+  screen: "recommendation",
   sql: `
     with 유효세션 as (
       select device_id, session_id

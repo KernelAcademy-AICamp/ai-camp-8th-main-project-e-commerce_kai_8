@@ -26,6 +26,7 @@ export const sessionList: MetricDefinition = {
   title: "세션 (최근 30개)",
   why: "한 번 들어와서 나갈 때까지가 한 행. 아래 이벤트 표를 방문 단위로 묶은 것이다. 전체 길이에서 백그라운드에 있던 시간을 뺀 것이 실제 탐색이다(§1)",
   order: 40,
+  screen: "raw",
   sql: `
     select
       left(device_id::text, 8)  as "기기",

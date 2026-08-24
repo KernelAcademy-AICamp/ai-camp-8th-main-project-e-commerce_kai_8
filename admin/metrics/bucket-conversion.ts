@@ -45,6 +45,7 @@ export const bucketConversion: MetricDefinition = {
   title: "추천 유형별 전환",
   why: "장기 취향 카드는 실제로 눌리는가, 반대 제안은 노이즈인가. 계열마다 '전체' 줄이 있어 익숙함 대 새로움을 바로 비교한다. 비율의 분모는 노출, 분자는 '눌린 노출 수'다 — 같은 카드를 두 번 열어도 한 번으로 센다",
   order: 35,
+  screen: "recommendation",
   sql: `
     with 노출 as (
       select

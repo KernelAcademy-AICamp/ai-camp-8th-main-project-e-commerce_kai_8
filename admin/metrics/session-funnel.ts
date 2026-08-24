@@ -23,6 +23,7 @@ export const sessionFunnel: MetricDefinition = {
   title: "퍼널",
   why: "들어온 세션 중 몇 %가 다음 단계로 갔나. 분모가 상품 수가 아니라 세션 수다 — 상품 수로 세면 한 세션이 200장을 훑고 아무것도 안 눌렀을 때 그 200이 전체 비율을 끌어내린다. 카드 단위 전환율은 추천 유형별 전환 카드가 따로 잰다",
   order: 30,
+  screen: "overview",
   sql: `
     with 세션 as (
       select

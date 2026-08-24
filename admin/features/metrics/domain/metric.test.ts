@@ -7,6 +7,8 @@ import {
   formatCell,
   isReadOnlyStart,
   type MetricDefinition,
+  metricsForScreen,
+  parseScreen,
   sortMetrics,
   toTable,
 } from "./metric";
@@ -163,5 +165,37 @@ describe("asLink", () => {
   it("공백이 섞인 문장은 주소로 보지 않는다", () => {
     // "https://... 참고" 같은 설명 문구가 통째로 링크가 되면 안 된다
     expect(asLink("https://example.com 참고")).toBeNull();
+  });
+});
+
+describe("화면 나누기", () => {
+  it("화면 이름으로 지표를 고른다", () => {
+    const 지표 = [
+      { ...definition("a", 1), screen: "overview" as const },
+      { ...definition("b", 2), screen: "retention" as const },
+      { ...definition("c", 3), screen: "overview" as const },
+    ];
+    expect(metricsForScreen(지표, "overview").map((m) => m.id)).toEqual(["a", "c"]);
+  });
+
+  it("고른 화면의 순서는 그대로 지킨다", () => {
+    const 지표 = [
+      { ...definition("늦은", 9), screen: "overview" as const },
+      { ...definition("이른", 1), screen: "overview" as const },
+    ];
+    expect(metricsForScreen(지표, "overview").map((m) => m.id)).toEqual([
+      "이른",
+      "늦은",
+    ]);
+  });
+
+  it("모르는 화면 이름이면 개요로 본다", () => {
+    // 주소를 손으로 고치다 오타가 나도 빈 화면이 뜨면 안 된다
+    expect(parseScreen("없는화면")).toBe("overview");
+    expect(parseScreen(undefined)).toBe("overview");
+  });
+
+  it("아는 화면 이름은 그대로 쓴다", () => {
+    expect(parseScreen("retention")).toBe("retention");
   });
 });
