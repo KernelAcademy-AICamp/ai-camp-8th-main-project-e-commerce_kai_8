@@ -13,6 +13,10 @@ import { OnboardingProgress } from "./onboarding-progress";
  * 최소 3개는 서버도 같은 수로 거부한다 — 화면만 막으면 계약이 아니다.
  *
  * 선택 표시에 **색만 쓰지 않는다** — 주황 테두리와 체크 아이콘을 함께 쓴다.
+ *
+ * **카드는 사진뿐이다** (2026-08-24 제품 책임자). 브랜드·상품명을 빼고 뉴모피즘 그림자도
+ * 쓰지 않는다 — 여기서 물어보는 것은 "이 옷이 마음에 드나"이지 "이 브랜드를 아나"가
+ * 아니다. 글자가 없어진 만큼 상품명은 `aria-label`로 남긴다.
  */
 export function OnboardingPickScreen({
   stepIndex,
@@ -157,11 +161,19 @@ function PickCard({
     <button
       type="button"
       aria-pressed={checked}
+      // 카드에 글자가 없다 — **이름이 여기 있어야** 보조기술이 "버튼"으로만 읽지 않는다.
+      aria-label={
+        candidate.brandName === null
+          ? candidate.title
+          : `${candidate.brandName} ${candidate.title}`
+      }
       onClick={() => {
         onToggle(candidate.goodsNo);
       }}
-      className={`block w-full cursor-pointer overflow-hidden rounded-2xl bg-thumb text-left ${
-        checked ? "ring-2 ring-accent" : "neo"
+      className={`relative block w-full cursor-pointer overflow-hidden rounded-2xl bg-thumb transition-[outline-color,opacity] ${
+        checked
+          ? "outline outline-2 outline-accent"
+          : "outline outline-2 outline-transparent opacity-90"
       }`}
     >
       <div className="relative aspect-5/6">
@@ -188,28 +200,20 @@ function PickCard({
           </span>
         )}
       </div>
-      <div className="px-3 py-2">
-        <p className="truncate text-xs text-ink-muted">{candidate.brandName ?? " "}</p>
-        <p className="truncate text-[13px] text-ink">{candidate.title}</p>
-      </div>
     </button>
   );
 }
 
 /**
  * 뼈대는 **완성 레이아웃을 본뜬다** — 선 몇 개로 자리만 표시하면 화면이 바뀔 때
- * 형태가 튄다. 카드 비율·격자·글줄 위치를 실제와 같게 둔다.
+ * 형태가 튄다. 카드가 이미지뿐이므로 뼈대도 이미지 자리만 잡는다.
  */
 function PickSkeleton() {
   return (
     <ul aria-hidden className="mt-6 grid grid-cols-2 gap-3">
       {Array.from({ length: 6 }, (_, i) => (
-        <li key={i} className="overflow-hidden rounded-2xl bg-thumb neo">
+        <li key={i} className="overflow-hidden rounded-2xl">
           <div className="aspect-5/6 animate-pulse bg-skel-1" />
-          <div className="space-y-1.5 px-3 py-2">
-            <div className="h-3 w-1/2 animate-pulse rounded bg-skel-1" />
-            <div className="h-3.5 w-4/5 animate-pulse rounded bg-skel-1" />
-          </div>
         </li>
       ))}
     </ul>
