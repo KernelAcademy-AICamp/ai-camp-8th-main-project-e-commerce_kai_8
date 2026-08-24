@@ -180,27 +180,6 @@ export function AteeMark({ size = 26 }: IconProps) {
   );
 }
 
-/** 상자 밖 화살표 — 판매처(외부 사이트)로 이동. 시안 `#detailLink`의 SVG 그대로 */
-export function ExternalLinkIcon({ size = 18 }: IconProps) {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      width={size}
-      height={size}
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden="true"
-    >
-      <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
-      <polyline points="15 3 21 3 21 9" />
-      <line x1="10" y1="14" x2="21" y2="3" />
-    </svg>
-  );
-}
-
 /** 위 갈매기 — 맨 위로. 시안 `.ddock-fab`의 SVG 그대로 */
 export function ArrowUpIcon({ size = 20 }: IconProps) {
   return (
@@ -216,27 +195,6 @@ export function ArrowUpIcon({ size = 20 }: IconProps) {
       aria-hidden="true"
     >
       <polyline points="5 14.5 12 7.5 19 14.5" />
-    </svg>
-  );
-}
-
-/** 문 밖으로 나가는 화살표 — 로그아웃. 시안 `#logoutBtn`의 SVG 그대로 */
-export function LogoutIcon({ size = 15 }: IconProps) {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      width={size}
-      height={size}
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden="true"
-    >
-      <path d="M9 21H6a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h3" />
-      <polyline points="15 17 20 12 15 7" />
-      <line x1="20" y1="12" x2="9" y2="12" />
     </svg>
   );
 }

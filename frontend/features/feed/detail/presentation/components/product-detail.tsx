@@ -10,7 +10,6 @@ import type {
   OriginRect,
 } from "@/features/feed/detail/domain/detail-stack";
 import { sellerUrl } from "@/features/feed/detail/domain/seller-link";
-import { DetailDock } from "@/features/feed/detail/presentation/components/detail-dock";
 import { useDetailScroll } from "@/features/feed/detail/presentation/view-model/use-detail-scroll";
 import { useExpandTransition } from "@/features/feed/detail/presentation/view-model/use-expand-transition";
 import { useSlideIndex } from "@/features/feed/detail/presentation/view-model/use-slide-index";
@@ -19,7 +18,7 @@ import type { Product } from "@/features/feed/domain/product";
 import { initialSlideIndex } from "@/features/feed/domain/similar";
 import { FeedError } from "@/features/feed/presentation/components/feed-error";
 import { FeedGrid } from "@/features/feed/presentation/components/feed-grid";
-import { FeedSkeleton } from "@/features/feed/presentation/components/feed-skeleton";
+import { FeedSkeletonSimple } from "@/features/feed/presentation/components/feed-skeleton-simple";
 import {
   SIMILAR_PAGE_SIZE,
   useFeedViewModel,
@@ -31,7 +30,7 @@ import { useVisibleWishes } from "@/features/feed/wishlist/presentation/view-mod
 import { useWishlist } from "@/features/feed/wishlist/presentation/view-model/use-wishlist";
 import { rememberAfterLogin } from "@/shared/history/after-login";
 import { recordRecentProduct } from "@/shared/history/recent-products";
-import { BackIcon, ExternalLinkIcon } from "@/shared/icons";
+import { ArrowUpIcon, BackIcon } from "@/shared/icons";
 import { logAction } from "@/shared/signals/signals";
 
 interface ProductDetailProps {
@@ -81,7 +80,7 @@ export function ProductDetail({
     onClosed,
     !entry.revealed,
   );
-  const { scrollRef, heroEndRef, pastHero, nearTop, scrollToTop } = useDetailScroll(
+  const { scrollRef, heroEndRef, pastHero, scrollToTop } = useDetailScroll(
     entry.savedScrollTop,
   );
   const explore = useFeedViewModel({
@@ -224,25 +223,46 @@ export function ProductDetail({
             <h2 className="mt-1.5 text-[19px] font-extrabold tracking-[-0.01em] text-ink">
               {product.title}
             </h2>
-            {/* 시안 `.detail-price-row` — 가격 옆에 아이콘이 나란히. 버튼 틀 없이 아이콘만 */}
-            <div className="mt-3 flex items-center gap-4">
+            {/*
+              가격 옆에 찜·판매처 이동 — Rajinwoo 이전 형태로 되돌린다
+              (2026-08-25). 저장은 더는 하단 dock이 아니라 여기 하트가 맡는다:
+              채워진 하트는 곧바로 해제, 빈 하트는 requestSave()(비회원이면
+              로그인, 회원이면 폴더 시트)로 이어진다.
+            */}
+            <div className="mt-3 flex items-center justify-between gap-3">
               <p className="text-[18px] font-extrabold text-ink tabular-nums">
                 {formatPrice(product.priceFinal)}
               </p>
-              {/* 시안의 가격줄에는 판매처 링크만 있다 — 저장은 하단 dock이 맡는다 */}
               <div className="flex shrink-0 items-center">
+                <button
+                  type="button"
+                  aria-label={isWishedNow ? "찜 해제" : "찜"}
+                  aria-pressed={isWishedNow}
+                  className={`flex h-11 w-11 cursor-pointer items-center justify-center text-2xl ${
+                    isWishedNow ? "text-danger" : "text-ink"
+                  }`}
+                  onClick={() => {
+                    if (isWishedNow) {
+                      remove(product);
+                    } else {
+                      requestSave();
+                    }
+                  }}
+                >
+                  {isWishedNow ? "♥" : "♡"}
+                </button>
                 <a
                   href={sellerUrl(product.goodsNo)}
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label="판매처로 이동"
                   title="판매처로 이동"
-                  className="relative -top-px flex items-center justify-center p-1.5 text-ink-soft transition-transform active:scale-[0.88] active:text-ink"
+                  className="flex h-11 w-11 items-center justify-center text-2xl font-semibold text-ink"
                   onClick={() => {
                     logAction("outbound", product.goodsNo);
                   }}
                 >
-                  <ExternalLinkIcon />
+                  ↗
                 </a>
               </div>
             </div>
@@ -256,7 +276,7 @@ export function ProductDetail({
           </div>
 
           <div className="px-3 pt-[22px] pb-[120px]">
-            {explore.showSkeleton && <FeedSkeleton fillMs={explore.lastLoadMs} />}
+            {explore.showSkeleton && <FeedSkeletonSimple />}
             {explore.failed && <FeedError onRetry={explore.retry} />}
             <FeedGrid
               columns={explore.columns}
@@ -273,19 +293,18 @@ export function ProductDetail({
             />
           </div>
         </div>
-        {/*
-          하단 dock — 시안 `.ddock`. 맨 위에서는 저장 알약, 내리면 원버튼(맨 위로).
-          저장 흐름은 가격줄에 있던 찜과 같다 — 비회원이면 로그인, 아니면 폴더 시트.
-        */}
-        <DetailDock
-          saved={isWishedNow}
-          expanded={nearTop}
-          onSave={requestSave}
-          onUnsave={() => {
-            remove(product);
-          }}
-          onToTop={scrollToTop}
-        />
+        {/* 맨 위로 — Rajinwoo 이전 형태(2026-08-25). 저장 알약은 없앴다, 찜은
+            가격줄의 하트가 맡는다. 히어로를 지나 탐색 그리드에 들어왔을 때만 뜬다 */}
+        {pastHero && (
+          <button
+            type="button"
+            aria-label="맨 위로"
+            onClick={scrollToTop}
+            className="absolute bottom-6 left-1/2 flex h-12 w-12 -translate-x-1/2 cursor-pointer items-center justify-center rounded-full bg-slate text-on-slate shadow-[0_4px_12px_rgb(30_38_55/0.32)]"
+          >
+            <ArrowUpIcon size={20} />
+          </button>
+        )}
       </div>
 
       {sheet.pending !== null && (
