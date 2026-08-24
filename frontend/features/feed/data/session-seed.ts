@@ -21,3 +21,18 @@ export function getSessionSeed(): number {
     return createSeed();
   }
 }
+
+/**
+ * 새 시드를 만들어 저장하고 돌려준다 — 당겨서 새로고침처럼 사람이 명시적으로
+ * "다른 순서를 보고 싶다"고 한 순간에만 부른다. 이후 getSessionSeed는 이
+ * 새 값을 세션 내내 이어간다(기존 규칙 그대로).
+ */
+export function regenerateSessionSeed(): number {
+  const seed = createSeed();
+  try {
+    sessionStorage.setItem(STORAGE_KEY, String(seed));
+  } catch {
+    // 프라이빗 모드 등 — 다음 getSessionSeed 호출도 어차피 매번 새로 만든다
+  }
+  return seed;
+}

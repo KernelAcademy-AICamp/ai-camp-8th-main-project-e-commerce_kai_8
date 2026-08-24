@@ -4,7 +4,10 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import { fetchFeedPage } from "@/features/feed/data/feed-api";
 import { fetchMixPage, type MixCursor } from "@/features/feed/data/mix-api";
-import { getSessionSeed } from "@/features/feed/data/session-seed";
+import {
+  getSessionSeed,
+  regenerateSessionSeed,
+} from "@/features/feed/data/session-seed";
 import { fetchSimilarPage } from "@/features/feed/data/similar-api";
 import { deriveSeed } from "@/features/feed/domain/derive-seed";
 import { appendFeedPage, type FeedItem } from "@/features/feed/domain/feed-page";
@@ -91,10 +94,19 @@ export function useFeedViewModel(options?: FeedOptions) {
   useEffect(() => {
     surfaceRef.current = surface;
   }, [surface]);
-  const seed = useMemo(() => {
-    const sessionSeed = getSessionSeed();
-    return exploreFrom == null ? sessionSeed : deriveSeed(sessionSeed, exploreFrom);
-  }, [exploreFrom]);
+  // 당겨서 새로고침이 이 값을 올려 시드를 다시 읽게 만든다 — regenerateSessionSeed가
+  // 이미 저장소에 새 값을 써 둔 뒤라, seedTick만 바뀌면 getSessionSeed가 그 값을
+  // 그대로 돌려준다.
+  const [seedTick, setSeedTick] = useState(0);
+  const seed = useMemo(
+    () => {
+      const sessionSeed = getSessionSeed();
+      return exploreFrom == null ? sessionSeed : deriveSeed(sessionSeed, exploreFrom);
+    },
+    // seedTick은 몸통에서 읽지 않는다 — "저장소를 다시 읽어라"는 신호로만 쓴다.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [exploreFrom, seedTick],
+  );
   const [items, setItems] = useState<FeedItem[]>([]);
   // 첫 페이지가 도착하기 전 = 스켈레톤 표시 구간 (실패 재시도 중에도 유지)
   const [ready, setReady] = useState(false);
@@ -137,6 +149,11 @@ export function useFeedViewModel(options?: FeedOptions) {
   const policyRef = useRef<FeedPolicy>("random");
   // 이미 받은 상품 — 개인화 페이지의 같은 세션 중복 방지 요청에 실어 보낸다
   const loadedGoodsRef = useRef<number[]>([]);
+  // 당겨서 새로고침 뒤 첫 성공 응답은 **이어붙이지 않고 통째로 바꾼다.** items를
+  // refresh() 시점에 바로 비우면 새 응답이 오기 전까지 화면이 스켈레톤으로
+  // 빈다 — 그 대신 응답이 실제로 도착했을 때만 이 표시를 보고 교체한다.
+  const pendingReplaceRef = useRef(false);
+  const [refreshing, setRefreshing] = useState(false);
   // **늦은 응답 폐기의 기준.** 검색 훅에는 제출 단위 세대가 있었지만 여기엔 없어서,
   // 성별을 바꾸면 이전 성별의 늦은 응답이 새 목록에 그대로 붙었다.
   //
@@ -195,14 +212,21 @@ export function useFeedViewModel(options?: FeedOptions) {
     const applyPage = (products: Product[], advanceCursor: boolean) => {
       // 이 요청을 보낸 뒤 성별이 바뀌었으면 버린다 — 안 버리면 옛 성별 상품이 섞인다.
       if (generation !== generationRef.current) return;
+      // 새로고침이 걸어 둔 표시 — 이 응답으로 실제 교체가 일어나므로 여기서 소비하고
+      // (setItems 업데이터 밖에서, StrictMode 이중 호출에도 한 번만 읽히게) 새로고침
+      // 중 표시도 이 응답에서만 끈다. 재시도가 도는 동안은 계속 돌아야 한다.
+      const isRefreshReplace = pendingReplaceRef.current;
+      pendingReplaceRef.current = false;
       setReady(true);
       setItems((prev) => {
-        const page = appendFeedPage(prev, products, exploreFrom);
+        const base = isRefreshReplace ? [] : prev;
+        const page = appendFeedPage(base, products, exploreFrom);
         if (advanceCursor) afterRef.current = page.after ?? afterRef.current;
         exhaustedRef.current = page.exhausted;
         loadedGoodsRef.current = page.items.map((item) => item.product.goodsNo);
         return page.items;
       });
+      if (isRefreshReplace) setRefreshing(false);
     };
 
     // gender: 요청 시점에 판정된 우세 성별 하드 필터 (설계: 성별 피드 하드
@@ -307,6 +331,11 @@ export function useFeedViewModel(options?: FeedOptions) {
           // 다시 해도 같거나, 상한을 다 썼다 — 스켈레톤을 붙잡지 않고 드러낸다.
           console.error("피드 로드 실패 — 재시도하지 않는다", error);
           setFailed(true);
+          // 새로고침이 걸어 둔 표시를 여기서도 반드시 정리한다 — 안 그러면 다음
+          // 성공(예: 사람이 재시도 버튼을 누른 뒤)이 뜬금없이 기존 목록을 통째로
+          // 바꾸고, 화살표도 실패 화면 위에서 계속 도는 채로 남는다.
+          pendingReplaceRef.current = false;
+          setRefreshing(false);
           return;
         }
         retriesRef.current += 1;
@@ -335,6 +364,31 @@ export function useFeedViewModel(options?: FeedOptions) {
     setFailed(false);
     setRetryTick((tick) => tick + 1);
   }, []);
+
+  /**
+   * 당겨서 새로고침 — 새 시드로 커서를 처음부터 다시 연다.
+   *
+   * **items·ready는 여기서 건드리지 않는다.** 성별 변경 때와 달리, 당기는 동안
+   * 화면이 스켈레톤으로 비면 안 된다 — 기존 카드를 그대로 둔 채 새 첫 페이지가
+   * 실제로 도착했을 때만(pendingReplaceRef를 applyPage가 봄) 통째로 바꾼다.
+   */
+  const refresh = useCallback(() => {
+    regenerateSessionSeed();
+    generationRef.current += 1;
+    afterRef.current = null;
+    mixAfterRef.current = null;
+    mixRotationRef.current = 0;
+    mixExhaustedRef.current = false;
+    exhaustedRef.current = false;
+    loadingRef.current = false;
+    retriesRef.current = 0;
+    setFailed(false);
+    loadedGoodsRef.current = [];
+    similarPendingRef.current = options?.similarFirst === true && exploreFrom != null;
+    pendingReplaceRef.current = true;
+    setRefreshing(true);
+    setSeedTick((tick) => tick + 1);
+  }, [exploreFrom, options?.similarFirst]);
 
   const sentinelRef = useRef<HTMLDivElement | null>(null);
 
@@ -416,5 +470,7 @@ export function useFeedViewModel(options?: FeedOptions) {
     lastLoadMs,
     failed,
     retry,
+    refresh,
+    refreshing,
   };
 }

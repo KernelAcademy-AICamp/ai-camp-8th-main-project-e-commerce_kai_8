@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef } from "react";
 
 import { DetailLayers } from "@/features/feed/detail/presentation/components/detail-layers";
 import { useDetailState } from "@/features/feed/detail/presentation/view-model/use-detail-state";
@@ -11,6 +11,7 @@ import {
   SKELETON_COLUMN_HEIGHTS,
 } from "@/features/feed/presentation/components/feed-skeleton-simple";
 import { useFeedViewModel } from "@/features/feed/presentation/view-model/use-feed-view-model";
+import { usePullToRefresh } from "@/features/feed/presentation/view-model/use-pull-to-refresh";
 import { FloatingSearch } from "@/features/feed/search/presentation/components/floating-search";
 import { SearchResults } from "@/features/feed/search/presentation/components/search-results";
 import { useKeyboardInset } from "@/features/feed/search/presentation/view-model/use-keyboard-inset";
@@ -49,13 +50,22 @@ export function MosaicFeed({ active = true }: { active?: boolean }) {
   // 훅을 새로 만들지 않고 이것을 쓰는 이유: 개인화·콜드스타트 폴백·실패 폴백·
   // 제외 목록·무한 스크롤이 이미 여기 다 있고, 사용자가 보던 피드가 그대로
   // 이어져 대기 시간도 없다.
-  const { columns, sentinelRef, onImpress, showSkeleton, loadingMore, failed, retry } =
-    useFeedViewModel({
-      paused: detailOpen || (searching && !showReplacement),
-      // 같은 훅이 메인 피드와 대체 피드 양쪽을 맡는다(둘은 동시에 렌더되지 않는다).
-      // 지금 어느 자리인지만 알려 주면 노출 기록이 갈린다 — 훅을 복제하면 두 벌이 갈린다.
-      surface: showReplacement ? "search_replacement" : undefined,
-    });
+  const {
+    columns,
+    sentinelRef,
+    onImpress,
+    showSkeleton,
+    loadingMore,
+    failed,
+    retry,
+    refresh,
+    refreshing,
+  } = useFeedViewModel({
+    paused: detailOpen || (searching && !showReplacement),
+    // 같은 훅이 메인 피드와 대체 피드 양쪽을 맡는다(둘은 동시에 렌더되지 않는다).
+    // 지금 어느 자리인지만 알려 주면 노출 기록이 갈린다 — 훅을 복제하면 두 벌이 갈린다.
+    surface: showReplacement ? "search_replacement" : undefined,
+  });
 
   // 대체 피드를 실제로 띄웠다고 검색 로그에 남긴다.
   //
@@ -90,6 +100,18 @@ export function MosaicFeed({ active = true }: { active?: boolean }) {
   // 지난번 서버 삭제가 실패했다면 조용히 다시 시도한다 (방침 O-32 삭제 계약)
   useRetryPendingForget();
 
+  // 당겨서 새로고침 — 검색 중이거나 상세가 덮은 동안은 지금 화면에 안 보이는
+  // 기본 피드를 당기는 셈이라 건드리지 않는다.
+  const handlePullRefresh = useCallback(() => {
+    if (searching || detailOpen) return;
+    refresh();
+  }, [searching, detailOpen, refresh]);
+  const { height: pullHeight, rotationDeg: pullRotationDeg } = usePullToRefresh(
+    rootRef,
+    handlePullRefresh,
+    refreshing,
+  );
+
   return (
     <div ref={rootRef} className="mx-auto max-w-md px-3 pt-4 pb-[130px]">
       {search.submittedQuery != null ? (
@@ -110,6 +132,28 @@ export function MosaicFeed({ active = true }: { active?: boolean }) {
         />
       ) : (
         <>
+          {/*
+            당겨서 새로고침 화살표 — 높이가 당긴 만큼 늘어나며 카드를 아래로
+            밀어낸다. 당기는 동안은 각도가 당긴 만큼 돌고, 임계값을 넘겨 놓으면
+            계속 돈다(animate-spin). 새 결과가 오면 높이가 다시 0으로 접히며
+            화면이 위로 올라가듯 사라진다.
+          */}
+          <div
+            aria-hidden
+            className="flex items-center justify-center overflow-hidden transition-[height] duration-200 ease-out"
+            style={{ height: pullHeight }}
+          >
+            <span
+              className={`text-2xl ${refreshing ? "animate-spin" : ""}`}
+              style={
+                refreshing
+                  ? undefined
+                  : { transform: `rotate(${String(pullRotationDeg)}deg)` }
+              }
+            >
+              🔄
+            </span>
+          </div>
           {showSkeleton && <FeedSkeletonSimple />}
           {failed && <FeedError onRetry={retry} />}
           <FeedGrid
