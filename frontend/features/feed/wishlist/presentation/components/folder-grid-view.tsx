@@ -9,6 +9,7 @@ import { FolderCover } from "@/features/feed/wishlist/presentation/components/fo
 import { NewFolderPopup } from "@/features/feed/wishlist/presentation/components/new-folder-popup";
 import { useFolderOpen } from "@/features/feed/wishlist/presentation/view-model/use-folder-open";
 import { useWishlistFolders } from "@/features/feed/wishlist/presentation/view-model/use-wishlist-folders";
+import { rememberAfterLogin } from "@/shared/history/after-login";
 import { BackLink } from "@/shared/history/back-link";
 import { BackIcon, PlusIcon } from "@/shared/icons";
 
@@ -29,7 +30,11 @@ export function FolderGridView() {
   // 훅을 쓰는 프로필의 통계 칸까지 로그인으로 끌고 갔다(2026-08-22).
   const { access } = view;
   useEffect(() => {
-    if (access === "out") router.replace("/login");
+    if (access !== "out") return;
+    // /login으로 넘어가기 전에 지금 자리를 적어 둔다 — signIn()이 부를 때는
+    // 이미 /login이라 "돌아올 자리"를 모른다(2026-08-25, 보관함 복귀 버그 수정).
+    rememberAfterLogin(window.location.pathname + window.location.search);
+    router.replace("/login");
   }, [access, router]);
 
   const message = wishlistNoticeMessage(view.notice);
