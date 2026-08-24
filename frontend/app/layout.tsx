@@ -72,13 +72,20 @@ export const viewport: Viewport = {
  * `overlay`는 지금 화면 **위에 겹쳐** 띄우는 자리다(`app/@overlay`). 앱 안에서
  * `/my`·`/login`으로 넘어올 때만 채워지고, 주소로 직접 들어오면 비어 있다 —
  * 그때는 `children` 쪽이 단독 화면을 그린다.
+ *
+ * `settingsOverlay`는 그 프로필 **위에 또 겹쳐** 띄우는 자리다(`app/@settingsOverlay`,
+ * 2026-08-25 push 스택 전환). `overlay`와 같은 층위(루트)에 형제로 둔 이유는, `/my`
+ * 자신의 렌더 트리 안에 중첩했을 때는 인터셉션이 동작하지 않았기 때문이다(설계서
+ * "아키텍처" 절 참고) — 안정적인 공통 조상인 루트에 두어야 인터셉션이 걸린다.
  */
 export default function RootLayout({
   children,
   overlay,
+  settingsOverlay,
 }: {
   children: React.ReactNode;
   overlay: React.ReactNode;
+  settingsOverlay: React.ReactNode;
 }) {
   return (
     <html lang="ko">
@@ -90,6 +97,7 @@ export default function RootLayout({
         <OnboardingAccountGuard />
         {children}
         {overlay}
+        {settingsOverlay}
       </body>
     </html>
   );

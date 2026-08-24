@@ -13,7 +13,7 @@ import { TasteCard } from "@/features/taste/presentation/components/taste-card";
  *
  * 새 화면이 이전 화면을 **완전히 덮는다** — 뒤의 홈은 줄어들거나 움직이지 않는다
  * (2026-08-25 push 스택 전환, 그 전엔 살짝 줄어드는 사이드시트였다). 프로필 위에
- * 설정을 더 열 때도 같은 방식으로 쌓인다 — `layout.tsx`의 `settingsOverlay` 자리.
+ * 설정을 더 열 때도 같은 방식으로 쌓인다 — 루트 레이아웃의 `settingsOverlay` 자리.
  *
  * 서버를 기다리지 않는다. `?auth=` 안내는 로그인에서 돌아올 때만 붙는데 그것은
  * 주소로 들어오는 경로라 단독 화면이 맡는다.
