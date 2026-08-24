@@ -1,4 +1,5 @@
 import { parseFilter } from "@/features/metrics/domain/filters";
+import { parseScreen } from "@/features/metrics/domain/metric";
 import { Dashboard } from "@/features/metrics/presentation/components/dashboard";
 
 /**
@@ -21,5 +22,12 @@ export default async function Page({
 }: {
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 }) {
-  return <Dashboard filter={parseFilter(await searchParams)} />;
+  const params = await searchParams;
+  const screen = params.screen;
+  return (
+    <Dashboard
+      filter={parseFilter(params)}
+      screen={parseScreen(typeof screen === "string" ? screen : undefined)}
+    />
+  );
 }

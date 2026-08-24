@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import {
+  alreadySeen,
   IMPRESSION_MEMORY_LIMIT,
   impressionIdFor,
   rememberImpression,
@@ -49,5 +50,23 @@ describe("노출 기억 (행동 이벤트의 노출 귀속)", () => {
     expect(impressionIdFor(memory, IMPRESSION_MEMORY_LIMIT + 1, "s1")).toBe(
       `imp-${String(IMPRESSION_MEMORY_LIMIT + 1)}`,
     );
+  });
+});
+
+describe("같은 세션에서 이미 본 상품인가", () => {
+  it("처음 보는 상품이면 아니다", () => {
+    expect(alreadySeen([], 100, "s1")).toBe(false);
+  });
+
+  it("같은 세션에서 이미 봤으면 맞다", () => {
+    // 스크롤을 위아래로 하면 같은 카드가 다시 잡힌다. 그걸 또 보내지 않는다.
+    const memory = rememberImpression([], 100, "imp-1", "s1");
+    expect(alreadySeen(memory, 100, "s1")).toBe(true);
+  });
+
+  it("세션이 다르면 아니다", () => {
+    // 방문이 바뀌면 다시 본 것이다 — 그건 새 노출로 센다
+    const memory = rememberImpression([], 100, "imp-1", "s1");
+    expect(alreadySeen(memory, 100, "s2")).toBe(false);
   });
 });

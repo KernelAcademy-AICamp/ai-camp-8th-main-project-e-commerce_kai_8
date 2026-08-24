@@ -3,8 +3,13 @@
 
 import type { SignalEvent } from "./types";
 
-/** 이만큼 쌓이면 즉시 전송을 권한다 (서버 RPC 상한 50의 절반) */
-export const FLUSH_SIZE = 25;
+/**
+ * 이만큼 쌓이면 즉시 전송을 권한다.
+ *
+ * **서버 상한과 같은 값이다.** 25였을 때는 한 요청에 50건까지 실을 수 있는데도
+ * 절반만 채워 보내, 같은 이벤트를 두 배의 요청으로 나르고 있었다.
+ */
+export const FLUSH_SIZE = 50;
 
 /** 미전송 보관 상한 — 초과 시 오래된 것부터 버린다 (최종 유실 허용, 설계 §9) */
 export const MAX_PENDING = 500;

@@ -264,7 +264,7 @@
         <div class="body">
           <div id="flow"></div>
           <p class="note-inline">
-            <b>직선 깔때기를 쓰지 않는다.</b> 상세에서 둘로 갈라지고, 한 세션이 찜과 이동을
+            <b>직선 퍼널을 쓰지 않는다.</b> 상세에서 둘로 갈라지고, 한 세션이 찜과 이동을
             <b>둘 다</b> 할 수 있다 — 아래 둘을 더해도 위가 되지 않는다.
           </p>
           <details><summary>표로 보기</summary><div class="scroll"><table id="flow-table"></table></div></details>
@@ -325,6 +325,11 @@
         <p class="note-inline">
           식별자는 <b>가명으로만</b> 보여준다. 이메일·이름은 별도 권한이 있는 상세 화면의 몫이다.
         </p>
+        <p class="note-inline">
+          <b>전체 길이</b>는 첫 기록부터 마지막 기록까지고, <b>실제 탐색</b>은 거기서 백그라운드에
+          있던 시간을 뺀 값이다. 5분 넘게 나가면 세션이 갈리지만 <b>4분 나갔다 온 것은 한 세션 안에
+          남기 때문에</b>, 그 시간을 누적해서 빼야 몰입한 시간이 나온다.
+        </p>
       </div>
     </section>
   </section>
@@ -383,24 +388,24 @@ const RAW = {
   // 세션 하나 = 한 줄. 요약·비율·분포가 전부 여기서 나온다.
   // impressions=고유 상품 수, details=고유 상품 수, wishes=시도 횟수, outbound=클릭 횟수
   sessions: [
-    { acct: "a91c04d2", dev: "3f2a8c1e", kind: "organic", start: "08-21 21:14", len: "0:18:42", impressions: 210, details: 12, wishes: 3, wishFails: 1, outbound: 2 },
-    { acct: null,       dev: "c7e12a55", kind: "organic", start: "08-21 20:02", len: "0:06:11", impressions: 34,  details: 5,  wishes: 0, wishFails: 0, outbound: 0 },
-    { acct: "2f0a91ce", dev: "91bd004f", kind: "observed",start: "08-21 13:47", len: "0:41:09", impressions: 26,  details: 4,  wishes: 2, wishFails: 0, outbound: 1 },
-    { acct: null,       dev: "7b20ef58", kind: "organic", start: "08-20 23:31", len: "0:03:55", impressions: 11,  details: 1,  wishes: 0, wishFails: 0, outbound: 0 },
-    { acct: "a91c04d2", dev: "3f2a8c1e", kind: "organic", start: "08-20 09:12", len: "0:12:20", impressions: 47,  details: 8,  wishes: 2, wishFails: 1, outbound: 1 },
-    { acct: "5b7e2200", dev: "ac33b1d0", kind: "organic", start: "08-19 22:58", len: "0:01:04", impressions: 8,   details: 0,  wishes: 0, wishFails: 0, outbound: 0 },
-    { acct: "5b7e2200", dev: "ac33b1d0", kind: "organic", start: "08-19 20:30", len: "0:09:41", impressions: 63,  details: 6,  wishes: 1, wishFails: 0, outbound: 0 },
-    { acct: "2f0a91ce", dev: "91bd004f", kind: "organic", start: "08-19 08:15", len: "0:05:02", impressions: 25,  details: 3,  wishes: 0, wishFails: 0, outbound: 0 },
-    { acct: null,       dev: "0ab93d71", kind: "organic", start: "08-18 22:11", len: "0:02:30", impressions: 17,  details: 0,  wishes: 0, wishFails: 0, outbound: 0 },
-    { acct: "a91c04d2", dev: "3f2a8c1e", kind: "organic", start: "08-18 12:40", len: "0:15:55", impressions: 88,  details: 9,  wishes: 4, wishFails: 0, outbound: 3 },
-    { acct: "d41c99a3", dev: "5e6f2210", kind: "organic", start: "08-18 07:55", len: "0:04:12", impressions: 22,  details: 2,  wishes: 0, wishFails: 0, outbound: 0 },
-    { acct: "2f0a91ce", dev: "91bd004f", kind: "organic", start: "08-17 21:03", len: "0:11:38", impressions: 52,  details: 7,  wishes: 1, wishFails: 0, outbound: 1 },
-    { acct: null,       dev: "12ff8e64", kind: "organic", start: "08-17 19:20", len: "0:01:48", impressions: 12,  details: 1,  wishes: 0, wishFails: 0, outbound: 0 },
-    { acct: "d41c99a3", dev: "5e6f2210", kind: "organic", start: "08-17 13:12", len: "0:07:26", impressions: 38,  details: 4,  wishes: 1, wishFails: 0, outbound: 0 },
-    { acct: "5b7e2200", dev: "ac33b1d0", kind: "observed",start: "08-16 15:00", len: "0:22:04", impressions: 104, details: 11, wishes: 2, wishFails: 0, outbound: 1 },
-    { acct: "a91c04d2", dev: "3f2a8c1e", kind: "organic", start: "08-16 09:31", len: "0:03:19", impressions: 15,  details: 1,  wishes: 0, wishFails: 0, outbound: 0 },
-    { acct: null,       dev: "7b20ef58", kind: "organic", start: "08-15 23:47", len: "0:06:55", impressions: 29,  details: 3,  wishes: 0, wishFails: 0, outbound: 0 },
-    { acct: "d41c99a3", dev: "5e6f2210", kind: "organic", start: "08-15 18:02", len: "0:09:10", impressions: 41,  details: 5,  wishes: 1, wishFails: 0, outbound: 1 },
+    { acct: "a91c04d2", dev: "3f2a8c1e", kind: "organic", start: "08-21 21:14", len: "0:18:42", away: 108, impressions: 210, details: 12, wishes: 3, wishFails: 1, outbound: 2 },
+    { acct: null,       dev: "c7e12a55", kind: "organic", start: "08-21 20:02", len: "0:06:11", away: 36, impressions: 34,  details: 5,  wishes: 0, wishFails: 0, outbound: 0 },
+    { acct: "2f0a91ce", dev: "91bd004f", kind: "observed",start: "08-21 13:47", len: "0:41:09", away: 246, impressions: 26,  details: 4,  wishes: 2, wishFails: 0, outbound: 1 },
+    { acct: null,       dev: "7b20ef58", kind: "organic", start: "08-20 23:31", len: "0:03:55", away: 18, impressions: 11,  details: 1,  wishes: 0, wishFails: 0, outbound: 0 },
+    { acct: "a91c04d2", dev: "3f2a8c1e", kind: "organic", start: "08-20 09:12", len: "0:12:20", away: 72, impressions: 47,  details: 8,  wishes: 2, wishFails: 1, outbound: 1 },
+    { acct: "5b7e2200", dev: "ac33b1d0", kind: "organic", start: "08-19 22:58", len: "0:01:04", away: 6, impressions: 8,   details: 0,  wishes: 0, wishFails: 0, outbound: 0 },
+    { acct: "5b7e2200", dev: "ac33b1d0", kind: "organic", start: "08-19 20:30", len: "0:09:41", away: 54, impressions: 63,  details: 6,  wishes: 1, wishFails: 0, outbound: 0 },
+    { acct: "2f0a91ce", dev: "91bd004f", kind: "organic", start: "08-19 08:15", len: "0:05:02", away: 30, impressions: 25,  details: 3,  wishes: 0, wishFails: 0, outbound: 0 },
+    { acct: null,       dev: "0ab93d71", kind: "organic", start: "08-18 22:11", len: "0:02:30", away: 12, impressions: 17,  details: 0,  wishes: 0, wishFails: 0, outbound: 0 },
+    { acct: "a91c04d2", dev: "3f2a8c1e", kind: "organic", start: "08-18 12:40", len: "0:15:55", away: 90, impressions: 88,  details: 9,  wishes: 4, wishFails: 0, outbound: 3 },
+    { acct: "d41c99a3", dev: "5e6f2210", kind: "organic", start: "08-18 07:55", len: "0:04:12", away: 24, impressions: 22,  details: 2,  wishes: 0, wishFails: 0, outbound: 0 },
+    { acct: "2f0a91ce", dev: "91bd004f", kind: "organic", start: "08-17 21:03", len: "0:11:38", away: 66, impressions: 52,  details: 7,  wishes: 1, wishFails: 0, outbound: 1 },
+    { acct: null,       dev: "12ff8e64", kind: "organic", start: "08-17 19:20", len: "0:01:48", away: 6, impressions: 12,  details: 1,  wishes: 0, wishFails: 0, outbound: 0 },
+    { acct: "d41c99a3", dev: "5e6f2210", kind: "organic", start: "08-17 13:12", len: "0:07:26", away: 42, impressions: 38,  details: 4,  wishes: 1, wishFails: 0, outbound: 0 },
+    { acct: "5b7e2200", dev: "ac33b1d0", kind: "observed",start: "08-16 15:00", len: "0:22:04", away: 132, impressions: 104, details: 11, wishes: 2, wishFails: 0, outbound: 1 },
+    { acct: "a91c04d2", dev: "3f2a8c1e", kind: "organic", start: "08-16 09:31", len: "0:03:19", away: 18, impressions: 15,  details: 1,  wishes: 0, wishFails: 0, outbound: 0 },
+    { acct: null,       dev: "7b20ef58", kind: "organic", start: "08-15 23:47", len: "0:06:55", away: 36, impressions: 29,  details: 3,  wishes: 0, wishFails: 0, outbound: 0 },
+    { acct: "d41c99a3", dev: "5e6f2210", kind: "organic", start: "08-15 18:02", len: "0:09:10", away: 54, impressions: 41,  details: 5,  wishes: 1, wishFails: 0, outbound: 1 },
   ],
   // 추천 유형별 — 노출된 (상품, 세션) 쌍과 그중 상세를 연 쌍
   buckets: [
@@ -749,6 +754,14 @@ function renderBuckets() {
     rows.map((b) => [b.name, String(b.shown), String(b.opened), b.rate.toFixed(1) + "%"]));
 }
 
+/** 전체 길이에서 백그라운드에 있던 초를 뺀다. 4분 나갔다 온 것도 여기서 빠진다. */
+function minusAway(len, awaySec) {
+  const [h, m, sec] = len.split(":").map(Number);
+  const left = Math.max(0, h * 3600 + m * 60 + sec - awaySec);
+  const pad = (n) => String(n).padStart(2, "0");
+  return `${Math.floor(left / 3600)}:${pad(Math.floor((left % 3600) / 60))}:${pad(left % 60)}`;
+}
+
 /* ══════════ 세션 목록 ══════════ */
 function renderSessions() {
   const rows = scoped();
@@ -756,12 +769,12 @@ function renderSessions() {
   const maxDet = Math.max(...rows.map((s) => s.details), 1);
   const bar = (v, max) => `<span class="cellbar" style="width:${Math.max(3, (v / max) * 46)}px"></span>`;
   tableFrom("sessions",
-    ["계정", "기기", "구분", "시작(KST)", "길이(자리 비운 시간 포함)", "본 상품(개)", "상세(개)", "찜 시도(회)", "찜 실패(회)", "아웃바운드(회)"],
+    ["계정", "기기", "구분", "시작(KST)", "전체 길이", "실제 탐색", "본 상품(개)", "상세(개)", "찜 시도(회)", "찜 실패(회)", "아웃바운드(회)"],
     rows.map((s) => [
       s.acct ? `<span class="id">acct_${s.acct.slice(0, 4)}…</span>` : '<span class="none">비회원</span>',
       `<span class="id">dev_${s.dev.slice(0, 4)}…</span>`,
       `<span class="pill${s.kind === "observed" ? " obs" : ""}">${s.kind === "observed" ? "관찰" : "자발"}</span>`,
-      s.start, s.len,
+      s.start, s.len, minusAway(s.len, s.away),
       s.impressions + bar(s.impressions, maxImp),
       s.details + bar(s.details, maxDet),
       String(s.wishes), String(s.wishFails), String(s.outbound),

@@ -7,6 +7,34 @@
  * 새 지표를 넣는 방법 = 이 모양의 파일을 하나 만들고 `metrics/index.ts` 명단에
  * 추가하는 것. 화면 코드는 건드리지 않는다.
  */
+/**
+ * 대시보드 화면. 주소의 `?screen=`으로 고른다.
+ *
+ * 분석 종류를 축으로 나눴다 — 카드를 만든 순서가 아니라 **무엇을 묻는가**로
+ * 묶어야 찾는 사람이 어디를 볼지 안다.
+ */
+export const SCREENS = [
+  { name: "overview", label: "개요" },
+  { name: "retention", label: "리텐션" },
+  { name: "recommendation", label: "추천" },
+  { name: "raw", label: "원본" },
+] as const;
+
+export type ScreenName = (typeof SCREENS)[number]["name"];
+
+/** 주소에서 온 값을 화면 이름으로 읽는다. 모르는 값이면 개요다 — 오타로 빈 화면이 뜨면 안 된다 */
+export function parseScreen(raw: string | undefined): ScreenName {
+  return SCREENS.some((s) => s.name === raw) ? (raw as ScreenName) : "overview";
+}
+
+/** 그 화면에 속한 지표만, 정해진 순서로 */
+export function metricsForScreen(
+  definitions: readonly MetricDefinition[],
+  screen: ScreenName,
+): MetricDefinition[] {
+  return sortMetrics(definitions.filter((d) => (d.screen ?? "overview") === screen));
+}
+
 export interface MetricDefinition {
   /** 파일마다 고유. 화면 키와 오류 표시에 쓴다 */
   id: string;
@@ -16,6 +44,18 @@ export interface MetricDefinition {
   why: string;
   /** 대시보드에서의 순서. 작을수록 위 */
   order: number;
+  /**
+   * 이 지표가 속한 화면. 생략하면 개요다.
+   *
+   * 화면을 나누면 **그 화면의 질의만 돈다.** 한 페이지에 다 두면 열 때마다
+   * 아홉 개가 전부 데이터베이스에 나간다.
+   */
+  screen?: ScreenName;
+  /**
+   * true면 카드를 **접힌 채로** 그린다. 제목과 설명만 보이고 표는 눌러야 펼쳐진다.
+   * 대조용 낱개 기록처럼 평소엔 접어 두고 필요할 때만 여는 표에 쓴다.
+   */
+  collapsed?: boolean;
   /**
    * 읽기 전용 SQL.
    *
