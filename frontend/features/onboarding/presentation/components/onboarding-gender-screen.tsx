@@ -14,17 +14,13 @@ import { OnboardingHeader } from "./onboarding-header";
  * 스위치가 아니라 **대등한 두 선택지**다. "꺼짐"에 해당하는 상태가 없다.
  */
 export function OnboardingGenderScreen({
-  stepIndex,
-  stepCount,
   onChoose,
 }: {
-  stepIndex: number;
-  stepCount: number;
   onChoose: (gender: GenderChoice) => void;
 }) {
   return (
     <main className="mx-auto flex min-h-svh max-w-md flex-col px-6 pb-10 text-ink">
-      <OnboardingHeader index={stepIndex} count={stepCount} />
+      <OnboardingHeader />
 
       <div className="mt-8">
         <h1 className="text-[26px] leading-tight font-bold text-ink">
@@ -50,7 +46,7 @@ export function OnboardingGenderScreen({
             onClick={() => {
               onChoose(gender);
             }}
-            className="cursor-pointer rounded-3xl bg-app py-7 text-lg font-semibold text-ink neo active:neo-in"
+            className="cursor-pointer rounded-3xl border border-line bg-thumb py-7 text-lg font-semibold text-ink transition-colors active:bg-raised"
           >
             {gender}
           </button>

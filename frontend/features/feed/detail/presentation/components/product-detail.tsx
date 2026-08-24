@@ -29,6 +29,7 @@ import { SaveSheet } from "@/features/feed/wishlist/presentation/components/save
 import { useSaveSheet } from "@/features/feed/wishlist/presentation/view-model/use-save-sheet";
 import { useVisibleWishes } from "@/features/feed/wishlist/presentation/view-model/use-visible-wishes";
 import { useWishlist } from "@/features/feed/wishlist/presentation/view-model/use-wishlist";
+import { rememberAfterLogin } from "@/shared/history/after-login";
 import { recordRecentProduct } from "@/shared/history/recent-products";
 import { BackIcon, ExternalLinkIcon } from "@/shared/icons";
 import { logAction } from "@/shared/signals/signals";
@@ -101,6 +102,9 @@ export function ProductDetail({
   // (docs/plans/2026-08-20-wishlist-folders.md)
   const requestSave = () => {
     if (access === "out") {
+      // /login으로 넘어가기 전에 지금 자리를 적어 둔다 — signIn()이 부를 때는
+      // 이미 /login이라 "돌아올 자리"를 모른다(2026-08-25, 상품상세 복귀 버그 수정).
+      rememberAfterLogin(window.location.pathname + window.location.search);
       router.push("/login");
       return;
     }
