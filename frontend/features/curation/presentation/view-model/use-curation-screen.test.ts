@@ -2,6 +2,7 @@
 import { act, renderHook } from "@testing-library/react";
 import { beforeEach, describe, expect, it } from "vitest";
 
+import { FOR_YOU_VISIBLE } from "@/features/curation/domain/curation";
 import { useCurationScreen } from "@/features/curation/presentation/view-model/use-curation-screen";
 import { withEntryValue } from "@/shared/history/history-state";
 
@@ -114,19 +115,22 @@ describe("useCurationScreen", () => {
     expect(result.current.openKey).toBeNull();
   });
 
-  it("처음에는 접혀 있고, 더보기를 누르면 펴진다", () => {
+  it("처음에는 한 묶음만 붙어 있고, 부를 때마다 한 묶음씩 늘어난다", () => {
     const { result } = renderHook(() => useCurationScreen(documentAnchor));
-    expect(result.current.showAll).toBe(false);
+    expect(result.current.shownCount).toBe(FOR_YOU_VISIBLE);
 
     act(() => {
       result.current.showMore();
     });
+    act(() => {
+      result.current.showMore();
+    });
 
-    expect(result.current.showAll).toBe(true);
+    expect(result.current.shownCount).toBe(FOR_YOU_VISIBLE * 3);
   });
 
-  it("더보기는 히스토리를 쌓지 않는다", () => {
-    // 쌓으면 시스템 뒤로가기가 목록을 도로 접는다 — 화면을 떠난 것처럼 보인다.
+  it("묶음을 붙이는 것은 히스토리를 쌓지 않는다", () => {
+    // 쌓으면 시스템 뒤로가기가 목록을 도로 줄인다 — 화면을 떠난 것처럼 보인다.
     const { result } = renderHook(() => useCurationScreen(documentAnchor));
     const before = window.history.length;
 
@@ -137,7 +141,7 @@ describe("useCurationScreen", () => {
     expect(window.history.length).toBe(before);
   });
 
-  it("편 뒤에 큐레이션을 열었다 돌아와도 펴진 채로 남는다", () => {
+  it("더 붙인 뒤에 큐레이션을 열었다 돌아와도 길이가 그대로 남는다", () => {
     const { result } = renderHook(() => useCurationScreen(documentAnchor));
     act(() => {
       result.current.showMore();
@@ -149,6 +153,6 @@ describe("useCurationScreen", () => {
     goTo(ROUTER_STATE);
 
     expect(result.current.openKey).toBeNull();
-    expect(result.current.showAll).toBe(true);
+    expect(result.current.shownCount).toBe(FOR_YOU_VISIBLE * 2);
   });
 });

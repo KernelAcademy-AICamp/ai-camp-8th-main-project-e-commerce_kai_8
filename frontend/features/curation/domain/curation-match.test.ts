@@ -120,7 +120,7 @@ describe("orderByTaste", () => {
     expect(ordered).toEqual(CURATIONS);
   });
 
-  it("목록 전체를 돌려준다 — 더보기가 같은 배열을 쓴다", () => {
+  it("목록 전체를 돌려준다 — 뒤 묶음이 같은 배열을 쓴다", () => {
     const ordered = orderByTaste(CURATIONS, RULES, [{ title: "고양이 티", weight: 4 }]);
     expect(ordered).toHaveLength(CURATIONS.length);
   });

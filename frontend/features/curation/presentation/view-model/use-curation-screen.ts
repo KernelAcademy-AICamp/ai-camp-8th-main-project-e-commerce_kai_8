@@ -2,6 +2,7 @@
 
 import { type RefObject, useCallback, useEffect, useRef, useState } from "react";
 
+import { FOR_YOU_VISIBLE } from "@/features/curation/domain/curation";
 import { readEntryValue, withEntryValue } from "@/shared/history/history-state";
 import { scrollHostFor } from "@/shared/scroll/scroll-host";
 
@@ -27,11 +28,13 @@ function readCurationKey(state: unknown): string | null {
 export function useCurationScreen(anchorRef: RefObject<HTMLElement | null>) {
   const [openKey, setOpenKey] = useState<string | null>(null);
   /**
-   * "더보기"를 폈는가. 히스토리에 적지 않는다 — 화면이 바뀌는 것이 아니라 같은
-   * 화면이 길어지는 것이라, 시스템 뒤로가기가 여기서 접히면 오히려 화면을 떠난
-   * 것처럼 보인다. 큐레이션 상세를 열었다 돌아와도 이 훅은 살아 있어 유지된다.
+   * 지금까지 붙인 큐레이션 수. 바닥이 가까워지면 한 묶음씩 늘어난다.
+   *
+   * 히스토리에 적지 않는다 — 화면이 바뀌는 것이 아니라 같은 화면이 길어지는 것이라,
+   * 시스템 뒤로가기가 여기서 도로 줄면 오히려 화면을 떠난 것처럼 보인다. 큐레이션
+   * 상세를 열었다 돌아와도 이 훅은 살아 있어 늘어난 길이가 그대로 유지된다.
    */
-  const [showAll, setShowAll] = useState(false);
+  const [shownCount, setShownCount] = useState(FOR_YOU_VISIBLE);
   /** 목록으로 돌아왔을 때 보던 자리로 — 굴리는 것은 이 화면이 놓인 칸이다(shared/scroll) */
   const listScrollY = useRef(0);
 
@@ -83,8 +86,8 @@ export function useCurationScreen(anchorRef: RefObject<HTMLElement | null>) {
   }, [openKey, anchorRef]);
 
   const showMore = useCallback(() => {
-    setShowAll(true);
+    setShownCount((count) => count + FOR_YOU_VISIBLE);
   }, []);
 
-  return { openKey, open, back, showAll, showMore };
+  return { openKey, open, back, shownCount, showMore };
 }

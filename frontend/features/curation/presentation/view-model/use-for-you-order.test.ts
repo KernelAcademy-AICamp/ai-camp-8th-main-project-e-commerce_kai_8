@@ -106,7 +106,7 @@ describe("useForYouOrder", () => {
     await waitFor(() => {
       expect(result.current[0].key).toBe("cat_print");
     });
-    // 목록이 잘리지 않는다 — 더보기가 같은 배열을 쓴다
+    // 목록이 잘리지 않는다 — 뒤 묶음이 같은 배열을 쓴다
     expect(result.current).toHaveLength(curations.length);
   });
 
