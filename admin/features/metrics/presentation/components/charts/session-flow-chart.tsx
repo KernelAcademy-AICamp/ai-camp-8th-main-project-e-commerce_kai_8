@@ -129,11 +129,9 @@ export function SessionFlowChart({
 
       <svg
         viewBox={`0 0 ${W} ${H}`}
-        width="100%"
-        height={H}
+        className="h-auto w-full overflow-visible"
         role="img"
         aria-label={ariaLabel(model)}
-        className="overflow-visible"
       >
         {/* 띠를 먼저 그린다 — 마디가 위로 오게 */}
         <Ribbon

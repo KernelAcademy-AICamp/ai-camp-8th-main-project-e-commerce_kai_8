@@ -38,7 +38,7 @@ export const returnCurve: MetricDefinition = {
   order: 60,
   screen: "retention",
   chart: "retention-curve",
-  span: 8,
+  span: 7,
   sql: `
     with 활동일 as (
       -- 방문일 = starting event(= return event)가 있었던 날. 하루에 여러 번 와도 1일.

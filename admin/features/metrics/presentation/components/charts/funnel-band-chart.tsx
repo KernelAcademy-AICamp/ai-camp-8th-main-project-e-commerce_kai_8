@@ -59,12 +59,10 @@ export function FunnelBandChart({ table }: { table: MetricTable }) {
 
       <svg
         viewBox={`0 0 ${W} ${H}`}
-        width="100%"
-        height={H}
+        className="h-auto w-full mt-2.5"
         preserveAspectRatio="none"
         role="img"
         aria-label={ariaLabel(model)}
-        className="mt-2.5"
       >
         {model.steps.map((step, i) => {
           const x0 = i === 0 ? 0 : i * colW;

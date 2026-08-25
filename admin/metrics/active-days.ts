@@ -26,11 +26,11 @@ import type { MetricDefinition } from "@/features/metrics/domain/metric";
 export const activeDays: MetricDefinition = {
   id: "active-days",
   title: "활동 일수 분포 · Active days (기기 단위)",
-  why: "「기기 하나가 며칠에 걸쳐 방문」했는지 측정. 같은 날 여러 번 와도 1일\n기간을 고정하지 않는다 — 기기마다 첫 방문부터 오늘까지",
+  why: "기기 단위로 첫 방문부터 며칠 방문했는지 측정",
   order: 61,
   screen: "retention",
   chart: "hbars",
-  span: 4,
+  span: 5,
   cumulative: true,
   sql: `
     with 활동일 as (

@@ -256,10 +256,6 @@ function FilterBar({ filter }: { filter: DashboardFilter }) {
           이 조건은 걸리지 않았습니다.
         </p>
       )}
-      <p className="mt-2 text-xs text-amber-400/80">
-        맨 위 &ldquo;이벤트 유입&rdquo; 카드만 항상 전체 기준입니다 — 데이터가 지금도
-        들어오는지 보는 카드라 좁히면 뜻을 잃습니다.
-      </p>
     </div>
   );
 }

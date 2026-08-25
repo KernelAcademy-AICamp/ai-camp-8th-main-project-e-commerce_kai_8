@@ -72,11 +72,9 @@ export function BoxplotChart({ table }: { table: MetricTable }) {
 
       <svg
         viewBox={`0 0 ${W} ${H}`}
-        width="100%"
-        height={H}
+        className="h-auto w-full overflow-visible"
         role="img"
         aria-label={ariaLabel(model.rows)}
-        className="overflow-visible"
       >
         {model.rows.map((row, index) => {
           const top = PAD_T + index * ROW_H;

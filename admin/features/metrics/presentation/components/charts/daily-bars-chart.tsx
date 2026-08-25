@@ -46,11 +46,9 @@ export function DailyBarsChart({ table }: { table: MetricTable }) {
     <div>
       <svg
         viewBox={`0 0 ${W} ${H}`}
-        width="100%"
-        height={H}
+        className="h-auto w-full overflow-visible"
         role="img"
         aria-label={ariaLabel(model)}
-        className="overflow-visible"
       >
         <text
           x={PAD_L - 8}
