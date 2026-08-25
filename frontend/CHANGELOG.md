@@ -1,3 +1,8 @@
+## [0.1.34](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/compare/v0.1.33...v0.1.34) (2026-08-25)
+
+### Features
+
+* 어드민 대시보드 차트화 · 기간 필터 · 조회 색인 · 90일 보존 ([#113](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/issues/113)) ([e4c5972](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/commit/e4c5972604787a98b9748783d531466d8440b753))
 ## [0.1.33](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/compare/v0.1.32...v0.1.33) (2026-08-25)
 ## [0.1.32](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/compare/v0.1.31...v0.1.32) (2026-08-25)
 
