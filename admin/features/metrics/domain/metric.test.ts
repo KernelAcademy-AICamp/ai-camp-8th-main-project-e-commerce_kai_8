@@ -10,6 +10,7 @@ import {
   isReadOnlyStart,
   type MetricDefinition,
   metricsForScreen,
+  needsCumulativeNote,
   parseScreen,
   sortMetrics,
   spanClass,
@@ -122,6 +123,32 @@ describe("카드 너비", () => {
       expect(spanClass(span)).toContain("col-span-12");
       expect(spanClass(span)).toContain("lg:");
     }
+  });
+});
+
+describe("누적 경고", () => {
+  const card = (cumulative?: boolean): MetricDefinition => ({
+    id: "a",
+    order: 1,
+    sql: "select 1",
+    title: "a",
+    cumulative,
+  });
+
+  it("누적 지표를 시간 창 없이 보면 알린다", () => {
+    // 「전체」는 처음부터 다 합친 값이라 **좋아져도 안 보인다.** 실측:
+    // 앞 5일 80.9% → 뒤 5일 63.2%로 좋아졌는데 누적으로는 74.7%다.
+    expect(needsCumulativeNote(card(true), false)).toBe(true);
+  });
+
+  it("기간이나 날짜를 고르면 안 알린다", () => {
+    expect(needsCumulativeNote(card(true), true)).toBe(false);
+  });
+
+  it("누적이 아닌 지표는 알리지 않는다", () => {
+    // 세션 퍼널·일별 막대는 창을 안 골라도 뜻이 흐려지지 않는다
+    expect(needsCumulativeNote(card(false), false)).toBe(false);
+    expect(needsCumulativeNote(card(), false)).toBe(false);
   });
 });
 

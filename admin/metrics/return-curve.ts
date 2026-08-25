@@ -33,8 +33,8 @@ import type { MetricDefinition } from "@/features/metrics/domain/metric";
  */
 export const returnCurve: MetricDefinition = {
   id: "return-curve",
-  title: "재방문 곡선 · N-Day Retention (device 단위)",
-  why: "「첫 방문(Day 0) 이후 Day N에 방문」여부 측정\nCohort size = 측정 가능한 device 수",
+  title: "재방문 곡선 · N-Day Retention (기기 단위)",
+  why: "「첫 방문(Day 0) 이후 Day N에 방문」여부 측정\nCohort size = 측정 가능한 기기 수",
   order: 60,
   screen: "retention",
   chart: "retention-curve",
