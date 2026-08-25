@@ -1,19 +1,31 @@
 import Link from "next/link";
 
-import { type DashboardFilter, isNarrowed, NO_FILTER } from "../../domain/filters";
+import {
+  type DashboardFilter,
+  isNarrowed,
+  NO_FILTER,
+  PERIOD_DAYS,
+} from "../../domain/filters";
 import { type ScreenName, SCREENS } from "../../domain/metric";
+import type { FlowView } from "../../domain/session-flow";
 import { loadDashboard } from "../view-model/load-dashboard";
-import { MetricCard } from "./metric-card";
+import { type ChartContext, MetricCard } from "./metric-card";
 
 /** 대시보드 화면. 상태를 만드는 일은 view-model이 하고 여기는 표시만 한다 */
 export async function Dashboard({
   filter = NO_FILTER,
   screen = "overview",
+  flow = "all",
 }: {
   filter?: DashboardFilter;
   screen?: ScreenName;
+  flow?: FlowView;
 }) {
   const state = await loadDashboard(filter, screen);
+  const chartContext: ChartContext = {
+    flow,
+    flowHref: (view) => queryHref({ screen, filter, flow: view }),
+  };
   return (
     <main className="mx-auto max-w-4xl px-5 py-10">
       <header className="mb-8">
@@ -25,6 +37,8 @@ export async function Dashboard({
 
       <ScreenTabs current={screen} filter={filter} />
 
+      <PeriodPicker filter={filter} screen={screen} />
+
       <FilterBar filter={filter} />
 
       {state.kind === "connection-failed" ? (
@@ -32,7 +46,11 @@ export async function Dashboard({
       ) : (
         <div className="flex flex-col gap-5">
           {state.results.map((result) => (
-            <MetricCard key={result.definition.id} result={result} />
+            <MetricCard
+              key={result.definition.id}
+              result={result}
+              chartContext={chartContext}
+            />
           ))}
         </div>
       )}
@@ -54,14 +72,7 @@ function ScreenTabs({
   current: ScreenName;
   filter: DashboardFilter;
 }) {
-  function hrefFor(screen: ScreenName): string {
-    const params = new URLSearchParams();
-    if (screen !== "overview") params.set("screen", screen);
-    if (filter.date !== null) params.set("date", filter.date);
-    if (filter.session !== null) params.set("session", filter.session);
-    const query = params.toString();
-    return query === "" ? "/" : `/?${query}`;
-  }
+  const hrefFor = (next: ScreenName): string => queryHref({ screen: next, filter });
   return (
     <nav className="mb-6 flex gap-1 border-b border-neutral-800" aria-label="화면">
       {SCREENS.map((screen) => {
@@ -83,6 +94,95 @@ function ScreenTabs({
       })}
     </nav>
   );
+}
+
+/**
+ * 기간 선택기. **링크다** — 탭과 같은 이유로 버튼이 아니라 링크로 둔다.
+ *
+ * **왜 필요한가** — 전체 기간만 보면 두 가지가 동시에 망가진다.
+ *
+ * ① **그림이 못 읽게 된다.** 일별 막대는 63일째에 막대 폭이 0이 되고, 날짜
+ *    이름표는 16일째부터 겹친다(2026-08-25 계산).
+ * ② **변화가 뭉개진다.** 세션 요약과 퍼널이 전체 기간 평균이라, 이번 주에
+ *    좋아져도 지난 두 달 평균에 묻혀 안 움직인다.
+ *
+ * 그리고 빨라진다. `occurred_at` 색인이 생긴 뒤 실측으로 세션 요약 43ms →
+ * 11ms, 퍼널 16ms → 5ms였다(하루로 좁혔을 때).
+ *
+ * **날짜 하나를 고른 상태에서는 숨긴다.** 「최근 7일」과 「8월 24일」을 동시에
+ * 걸면 교집합이 되는데, 화면만 보고는 어느 쪽이 이겼는지 알 수 없다.
+ * 좁혀 보기는 한 번에 한 방향이라야 읽힌다.
+ */
+function PeriodPicker({
+  filter,
+  screen,
+}: {
+  filter: DashboardFilter;
+  screen: ScreenName;
+}) {
+  if (filter.date !== null) return null;
+
+  const hrefFor = (days: number | null): string =>
+    queryHref({ screen, filter: { ...filter, days } });
+
+  const options: { days: number | null; label: string }[] = [
+    ...PERIOD_DAYS.map((days) => ({ days, label: `최근 ${days}일` })),
+    { days: null, label: "전체" },
+  ];
+
+  return (
+    <div
+      className="mb-6 flex flex-wrap items-center gap-1.5"
+      role="group"
+      aria-label="기간"
+    >
+      <span className="text-xs text-neutral-500">기간</span>
+      {options.map((option) => {
+        const on = filter.days === option.days;
+        return (
+          <Link
+            key={option.label}
+            href={hrefFor(option.days)}
+            aria-current={on ? "true" : undefined}
+            // 최소 44x44 CSS px. WCAG 2.2 AA(24px)는 넘지만 AAA·Apple HIG는 44를 권한다.
+            className={
+              (on
+                ? "bg-sky-600 font-medium text-white "
+                : "border border-neutral-800 text-neutral-400 hover:text-neutral-200 ") +
+              "flex min-h-11 items-center rounded-md px-4 text-[13px]"
+            }
+          >
+            {option.label}
+          </Link>
+        );
+      })}
+    </div>
+  );
+}
+
+/**
+ * 지금 보고 있는 것을 주소로 만든다.
+ *
+ * **한 곳에 모아 둔다.** 탭·기간·흐름도가 각자 주소를 만들면, 어느 하나가 다른 값을
+ * 안 실어 옮겨서 누를 때마다 조용히 필터가 풀린다. 실제로 탭이 기간을 잃은 적이 있다.
+ */
+function queryHref({
+  screen,
+  filter,
+  flow,
+}: {
+  screen: ScreenName;
+  filter: DashboardFilter;
+  flow?: FlowView;
+}): string {
+  const params = new URLSearchParams();
+  if (screen !== "overview") params.set("screen", screen);
+  if (filter.session !== null) params.set("session", filter.session);
+  if (filter.date !== null) params.set("date", filter.date);
+  if (filter.days !== null) params.set("days", String(filter.days));
+  if (flow !== undefined && flow !== "all") params.set("flow", flow);
+  const query = params.toString();
+  return query === "" ? "/" : `/?${query}`;
 }
 
 /**
@@ -120,6 +220,7 @@ function FilterBar({ filter }: { filter: DashboardFilter }) {
       {isNarrowed(filter) && (
         <p className="text-sm text-amber-200">
           <strong>좁혀 보는 중</strong>
+          {filter.days !== null && <> · 최근 {filter.days}일</>}
           {filter.date !== null && <> · 날짜 {filter.date}</>}
           {filter.session !== null && <> · 세션 {filter.session}</>}
           <Link

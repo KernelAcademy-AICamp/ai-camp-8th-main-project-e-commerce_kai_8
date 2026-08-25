@@ -9,11 +9,26 @@ export interface DashboardFilter {
   session: string | null;
   /** 한국 시간 기준 날짜 `YYYY-MM-DD` */
   date: string | null;
+  /**
+   * 최근 며칠만 볼지. `null`이면 전체 기간.
+   *
+   * **왜 자유 입력이 아니라 허용 목록인가** — `days=99999`는 전체 스캔인데 화면은
+   * 좁혀진 것처럼 보인다. 그리고 값마다 다른 질의 계획이 생겨 재보기 어려워진다.
+   */
+  days: number | null;
   /** 형식이 틀려서 버린 파라미터 이름들. 화면이 이 사실을 알려야 한다 */
   ignored: string[];
 }
 
-export const NO_FILTER: DashboardFilter = { session: null, date: null, ignored: [] };
+export const NO_FILTER: DashboardFilter = {
+  session: null,
+  date: null,
+  days: null,
+  ignored: [],
+};
+
+/** 고를 수 있는 기간. 화면의 버튼과 **같아야 한다** */
+export const PERIOD_DAYS = [7, 14, 30] as const;
 
 const SESSION_RE = /^[0-9a-f]{8}$/;
 const DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
@@ -60,20 +75,29 @@ export function parseFilter(
     else ignored.push("date");
   }
 
-  return { session, date, ignored };
+  const rawDays = firstValue(params.days);
+  let days: number | null = null;
+  if (rawDays !== null) {
+    const parsed = Number(rawDays);
+    // `Number("7; drop table")`은 NaN이라 여기서 걸린다. 그래도 허용 목록이 본 방어다.
+    if (PERIOD_DAYS.some((allowed) => allowed === parsed)) days = parsed;
+    else ignored.push("days");
+  }
+
+  return { session, date, days, ignored };
 }
 
 /** 좁혀 보는 중인가 */
 export function isNarrowed(filter: DashboardFilter): boolean {
-  return filter.session !== null || filter.date !== null;
+  return filter.session !== null || filter.date !== null || filter.days !== null;
 }
 
 /**
  * SQL에 넘길 값. **순서가 `EVENT_FILTER_SQL`의 `$1`·`$2`와 묶여 있다.**
  * 순서를 바꾸면 세션 자리에 날짜가 들어가 조용히 0건이 된다.
  */
-export function toParams(filter: DashboardFilter): (string | null)[] {
-  return [filter.session, filter.date];
+export function toParams(filter: DashboardFilter): (string | number | null)[] {
+  return [filter.session, filter.date, filter.days];
 }
 
 /**
@@ -89,6 +113,14 @@ export function toParams(filter: DashboardFilter): (string | null)[] {
  * 8자리 앞맞춤이라 이론상 다른 세션과 겹칠 수 있다. 세션이 수만 개가 되면
  * 전체 uuid로 바꾼다 — 그때 고칠 곳은 이 조각과 링크를 내는 SQL뿐이다.
  *
+ * **날짜는 범위로 자른다.** 예전에는 `(occurred_at at time zone 'Asia/Seoul')::date = $2`
+ * 였는데, 컬럼을 가공하면 `c_events_occurred_idx`를 못 탄다. 실측으로 같은 답에
+ * **17.07ms 대 1.71ms** — 10배 차이였다(2026-08-25, 27,950행 기준). 행이 늘수록
+ * 이 격차도 같이 커진다. 범위 형태는 색인의 시작점을 바로 찾아간다.
+ *
+ * 경계는 **시작 이상 · 다음 날 미만**이다. `between`이나 `<=`을 쓰면 자정 정각의
+ * 기록이 이틀 모두에 들어간다.
+ *
  * @param alias 컬럼 앞에 붙일 테이블 별칭. 테이블이 하나뿐이면 생략한다.
  */
 export function eventFilterSql(alias = ""): string {
@@ -96,5 +128,8 @@ export function eventFilterSql(alias = ""): string {
   return `
       (($1)::text is null or left(${q}session_id::text, 8) = ($1)::text)
       and (($2)::text is null
-           or (${q}occurred_at at time zone 'Asia/Seoul')::date = ($2)::date)`;
+           or (${q}occurred_at >= (($2)::date + time '00:00') at time zone 'Asia/Seoul'
+               and ${q}occurred_at < (($2)::date + 1 + time '00:00') at time zone 'Asia/Seoul'))
+      and (($3)::int is null
+           or ${q}occurred_at >= now() - make_interval(days => ($3)::int))`;
 }

@@ -1,5 +1,6 @@
 import { parseFilter } from "@/features/metrics/domain/filters";
 import { parseScreen } from "@/features/metrics/domain/metric";
+import { parseFlowView } from "@/features/metrics/domain/session-flow";
 import { Dashboard } from "@/features/metrics/presentation/components/dashboard";
 
 /**
@@ -24,10 +25,14 @@ export default async function Page({
 }) {
   const params = await searchParams;
   const screen = params.screen;
+  const flow = params.flow;
   return (
     <Dashboard
       filter={parseFilter(params)}
       screen={parseScreen(typeof screen === "string" ? screen : undefined)}
+      // 세션 흐름도의 좁혀 보기. **SQL은 안 바꾼다** — 다섯 갈래를 다 가져와
+      // 그리는 쪽에서 합치므로 질의는 한 번만 돈다. 그래서 `filter`가 아니다.
+      flow={parseFlowView(typeof flow === "string" ? flow : undefined)}
     />
   );
 }

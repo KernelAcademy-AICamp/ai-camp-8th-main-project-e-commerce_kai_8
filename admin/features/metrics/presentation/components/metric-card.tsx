@@ -1,12 +1,29 @@
-import { asLink, type MetricResult } from "../../domain/metric";
+import { asLink, type MetricResult, type MetricTable } from "../../domain/metric";
+import type { FlowView } from "../../domain/session-flow";
+import { SessionFlowChart } from "./charts/session-flow-chart";
+
+/** 차트를 그리는 데 필요한, 카드 바깥에서 오는 것들 */
+export interface ChartContext {
+  /** 세션 흐름도가 지금 보고 있는 갈래 */
+  flow: FlowView;
+  /** 그 갈래를 바꾸는 주소를 만든다 */
+  flowHref: (view: FlowView) => string;
+}
 
 /**
  * 카드 한 장.
  *
  * **세 상태를 서로 다르게 보여준다** — 값이 있음 / 정상인데 0건 / 실패.
  * 셋을 뭉뚱그리면 "데이터가 없다"와 "못 읽었다"를 구분할 수 없다 (설계 §7).
+ * **차트가 붙어도 이 규칙은 그대로다** — 0건일 때 빈 그림을 그리면 고장으로 보인다.
  */
-export function MetricCard({ result }: { result: MetricResult }) {
+export function MetricCard({
+  result,
+  chartContext,
+}: {
+  result: MetricResult;
+  chartContext?: ChartContext;
+}) {
   const { definition, outcome } = result;
   const body =
     outcome.kind === "failed" ? (
@@ -14,7 +31,7 @@ export function MetricCard({ result }: { result: MetricResult }) {
     ) : outcome.table.rows.length === 0 ? (
       <Empty columns={outcome.table.columns} />
     ) : (
-      <Table columns={outcome.table.columns} rows={outcome.table.rows} />
+      <Body definition={definition} table={outcome.table} chartContext={chartContext} />
     );
 
   // 접힌 카드는 제목·설명만 보이고 표는 눌러야 펼쳐진다. 브라우저 기본
@@ -40,6 +57,50 @@ export function MetricCard({ result }: { result: MetricResult }) {
       <p className="mt-1 text-sm text-neutral-400">{definition.why}</p>
       <div className="mt-4">{body}</div>
     </section>
+  );
+}
+
+/**
+ * 그림이 붙은 카드는 **그림 + 접힌 표**, 아니면 지금처럼 표.
+ *
+ * **표는 그림이 붙어도 사라지지 않는다.** 마크에 `tabindex`를 안 붙이므로 이 표가
+ * 키보드로 값을 읽는 유일한 경로이고, 얇은 마크가 터치 영역 기준을 면제받는
+ * 근거이기도 하다(WCAG 2.2 SC 2.5.8의 「Equivalent」 예외).
+ */
+function Body({
+  definition,
+  table,
+  chartContext,
+}: {
+  definition: MetricResult["definition"];
+  table: MetricTable;
+  chartContext?: ChartContext;
+}) {
+  const chart =
+    definition.chart === "session-flow" && chartContext !== undefined ? (
+      <SessionFlowChart
+        table={table}
+        view={chartContext.flow}
+        hrefFor={chartContext.flowHref}
+      />
+    ) : null;
+
+  // 그릴 수 없으면(모양이 안 맞거나 값이 전부 0) 조용히 표로 떨어진다.
+  // 빈 그림을 그리는 것보다 표를 보여주는 편이 낫다.
+  if (chart === null) return <Table columns={table.columns} rows={table.rows} />;
+
+  return (
+    <>
+      {chart}
+      <details className="mt-5 border-t border-neutral-800 pt-3">
+        <summary className="cursor-pointer list-none text-xs text-neutral-400 hover:text-neutral-200">
+          숫자로 보기 ({table.rows.length}줄)
+        </summary>
+        <div className="mt-3">
+          <Table columns={table.columns} rows={table.rows} />
+        </div>
+      </details>
+    </>
   );
 }
 
