@@ -2,6 +2,8 @@ import { describe, expect, it } from "vitest";
 
 import {
   asLink,
+  CARD_SPANS,
+  cardSpan,
   findDuplicateIds,
   findWriteKeywords,
   formatCell,
@@ -10,6 +12,7 @@ import {
   metricsForScreen,
   parseScreen,
   sortMetrics,
+  spanClass,
   toTable,
 } from "./metric";
 
@@ -91,6 +94,37 @@ describe("isReadOnlyStart", () => {
   });
 });
 
+describe("카드 너비", () => {
+  it("안 정하면 통칸이다", () => {
+    // 지금까지 모든 카드가 통칸이었다. 값을 안 넣은 카드가 갑자기 좁아지면 안 된다.
+    expect(cardSpan({ id: "a", order: 1, sql: "select 1", title: "a", why: "" })).toBe(
+      12,
+    );
+  });
+
+  it("정한 만큼 차지한다", () => {
+    expect(
+      cardSpan({ id: "a", order: 1, sql: "select 1", title: "a", why: "", span: 7 }),
+    ).toBe(7);
+  });
+
+  it("쓸 수 있는 너비마다 클래스가 있다", () => {
+    // Tailwind는 글자를 이어붙여 만든 클래스를 못 알아본다. 미리 적어 둔 것만 나온다.
+    for (const span of CARD_SPANS) {
+      expect(spanClass(span)).toContain(`col-span-${String(span)}`);
+    }
+  });
+
+  it("좁은 화면에서는 전부 통칸이 된다", () => {
+    // 상자수염과 흐름도는 좁으면 못 읽는다. 나란히 두느니 세로로 쌓는다.
+    for (const span of CARD_SPANS) {
+      if (span === 12) continue;
+      expect(spanClass(span)).toContain("col-span-12");
+      expect(spanClass(span)).toContain("lg:");
+    }
+  });
+});
+
 describe("toTable", () => {
   it("컬럼 이름을 그대로 머리글로 쓴다", () => {
     const table = toTable(
@@ -111,6 +145,52 @@ describe("toTable", () => {
   it("컬럼 순서대로 값을 배치한다", () => {
     const table = toTable(["b", "a"], [{ a: "1", b: "2" }]);
     expect(table.rows).toEqual([["2", "1"]]);
+  });
+});
+
+describe("toTable — 차트가 쓸 원본 숫자", () => {
+  it("글자와 숫자를 함께 담는다", () => {
+    // 차트는 길이와 좌표를 계산해야 하므로 숫자가 필요하다. 글자 "1,457"을 되돌려
+    // 읽는 방식은 쓰지 않는다 — 쉼표·단위·로케일이 섞이면 조용히 틀린다.
+    const table = toTable(["본 상품"], [{ "본 상품": 1457 }]);
+    expect(table.rows).toEqual([["1,457"]]);
+    expect(table.values).toEqual([[1457]]);
+  });
+
+  it("숫자가 아닌 칸은 값이 없다", () => {
+    const table = toTable(["기기", "건수"], [{ 기기: "4eb3aac8", 건수: 6 }]);
+    expect(table.values).toEqual([[null, 6]]);
+  });
+
+  it("데이터베이스가 큰 수를 글자로 주면 숫자로 읽는다", () => {
+    // pg는 bigint·numeric을 문자열로 준다. 그대로 두면 차트가 못 그린다.
+    const table = toTable(["세션 수", "비율"], [{ "세션 수": "260", 비율: "53.5" }]);
+    expect(table.values).toEqual([[260, 53.5]]);
+  });
+
+  it("숫자로 보이지 않는 글자는 숫자로 읽지 않는다", () => {
+    // "08-25"를 8빼기25로 읽거나 "4eb3aac8"을 지수로 읽으면 그림이 조용히 틀린다
+    const table = toTable(
+      ["날짜", "기기", "빈칸"],
+      [{ 날짜: "2026-08-25", 기기: "4eb3aac8", 빈칸: "" }],
+    );
+    expect(table.values).toEqual([[null, null, null]]);
+  });
+
+  it("값이 없으면 숫자도 없다", () => {
+    const table = toTable(["건수"], [{ 건수: null }]);
+    expect(table.rows).toEqual([["—"]]);
+    expect(table.values).toEqual([[null]]);
+  });
+
+  it("0은 값이 없는 것과 다르다", () => {
+    // 0을 null로 뭉개면 "안 했다"와 "모른다"가 같아진다
+    const table = toTable(["찜"], [{ 찜: 0 }]);
+    expect(table.values).toEqual([[0]]);
+  });
+
+  it("행이 0개여도 터지지 않는다", () => {
+    expect(toTable(["건수"], []).values).toEqual([]);
   });
 });
 

@@ -22,8 +22,9 @@ export const sessionSummary: MetricDefinition = {
   id: "session-summary",
   title: "세션 요약 (기기 단위)",
   why: "한 번 들어와서 몇 개를 보고 몇 번 눌렀나. 대표값은 중앙값이고 사분위는 가운데 절반이 있는 구간이다 — 중앙값만으로는 다들 비슷한지 편차가 큰지 알 수 없다. 평균은 한 세션이 흔들 수 있어 참고값으로만 둔다. 유저가 아니라 기기 단위라 브라우저를 바꾸면 다른 기기로 세어진다",
-  order: 20,
+  order: 25,
   screen: "overview",
+  chart: "boxplot",
   sql: `
     with 세션 as (
       select
@@ -51,10 +52,12 @@ export const sessionSummary: MetricDefinition = {
     select
       지표 as "지표",
       -- 연속 백분위수. 방식을 정하지 않으면 같은 표본에서 서로 다른 답이 나온다.
+      -- **사분위를 두 칸으로 나눈다.** 예전에는 6.0 - 77.3처럼 한 글자로 붙였는데,
+      -- 그러면 그림이 숫자로 읽을 수 없다. 사람이 읽기엔 붙은 편이 낫지만
+      -- 그건 화면이 다시 붙이면 된다 — 나누는 쪽이 되돌리기 쉽다.
+      round(percentile_cont(0.25) within group (order by 값)::numeric, 1) as "하위 25%",
       round(percentile_cont(0.5)  within group (order by 값)::numeric, 1) as "중앙값",
-      round(percentile_cont(0.25) within group (order by 값)::numeric, 1)
-        || ' – ' ||
-      round(percentile_cont(0.75) within group (order by 값)::numeric, 1) as "사분위 (가운데 절반)",
+      round(percentile_cont(0.75) within group (order by 값)::numeric, 1) as "상위 25%",
       round(avg(값), 1)  as "평균 (참고값)",
       max(값)::int       as "최댓값"
     from 긴표

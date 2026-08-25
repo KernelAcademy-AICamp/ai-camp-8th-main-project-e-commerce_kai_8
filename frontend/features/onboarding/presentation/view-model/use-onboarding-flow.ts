@@ -215,13 +215,9 @@ export function useOnboardingFlow(): OnboardingFlowViewModel {
         // 계정에 담긴 것을 확인한 뒤에만 기기 표식을 남긴다.
         markDone();
         // 마쳤다고 알리고 진행 표식을 지운다 (O-42).
-        finishReach(
-          window.localStorage,
-          () => crypto.randomUUID(),
-          (mark, step) => {
-            void reportReach(mark, step);
-          },
-        );
+        finishReach(window.localStorage, (mark, step) => {
+          void reportReach(mark, step);
+        });
         // 마쳤으므로 진행 기록을 지운다 — 남기면 다음 방문이 중간 화면에서 열린다.
         clearFlowProgress();
         setSaveState("idle");

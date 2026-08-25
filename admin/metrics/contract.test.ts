@@ -41,9 +41,22 @@ describe("퍼널 — 세션률 계약", () => {
     expect(sessionFunnel.sql).not.toMatch(/sum\(노출개\)/);
   });
 
-  it("분자와 분모를 함께 보여준다", () => {
-    // 비율만 있으면 표본이 몇인지 몰라 해석할 수 없다
-    expect(sessionFunnel.sql).toMatch(/as\s+"분모"/);
+  it("갈래가 겹치지 않는다 — 「둘 다」가 독립된 행이다", () => {
+    // 찜과 판매처 이동은 한 세션이 **둘 다** 할 수 있다. 나란히 세면 합이 노출
+    // 세션 수를 넘는다. 「둘 다」를 갈래로 뽑아야 모든 세션이 정확히 한 곳에만 속한다.
+    // 실측 검산: 클릭없음 121 + 찜만 36 + 둘 다 6 + 판매처만 8 + 행동없음 89 = 260
+    expect(sessionFunnel.sql).toContain("both");
+    expect(sessionFunnel.sql).toContain("wish_only");
+    expect(sessionFunnel.sql).toContain("outbound_only");
+  });
+
+  it("갈래를 그림이 알아볼 수 있는 열쇠로 낸다", () => {
+    // 그리는 쪽이 이름(한글)으로 갈래를 알아보면 이름을 다듬는 순간 그림이 깨진다
+    expect(sessionFunnel.sql).toMatch(/as\s+"갈래"/);
+  });
+
+  it("차트로 그린다고 선언한다", () => {
+    expect(sessionFunnel.chart).toBe("session-flow");
   });
 });
 
@@ -54,8 +67,16 @@ describe("재방문 곡선 — 계약", () => {
     expect(returnCurve.sql).toContain("첫날");
   });
 
+  it("starting event와 return event가 방문이다", () => {
+    // 리텐션의 표준 정의는 "다시 왔나"지 "다시 클릭했나"가 아니다.
+    // 클릭으로 재면 코호트가 절반으로 줄어 곡선이 표본 부족으로 튄다.
+    expect(returnCurve.sql).toContain("'session_start'");
+    expect(returnCurve.sql).not.toContain("'tap'");
+  });
+
   it("분자와 분모를 함께 보여준다", () => {
-    expect(returnCurve.sql).toMatch(/as\s+"기준 기기"/);
+    // Mixpanel 리텐션 리포트의 Size 열에 해당한다
+    expect(returnCurve.sql).toMatch(/as\s+"Cohort size"/);
   });
 
   it("습관 단계로 판정하지 않는다", () => {
@@ -67,9 +88,10 @@ describe("재방문 곡선 — 계약", () => {
 });
 
 describe("활동 일수 분포 — 계약", () => {
-  it("활동일은 클릭이 있었던 날로 센다", () => {
-    // 스크롤만 한 날은 세지 않는다 — 개인화가 배울 신호가 없다
-    expect(activeDays.sql).toContain("'tap'");
+  it("활동일은 방문이 있었던 날로 센다", () => {
+    // 재방문 곡선과 같은 기준이어야 두 카드를 나란히 읽을 수 있다
+    expect(activeDays.sql).toContain("'session_start'");
+    expect(activeDays.sql).not.toContain("'tap'");
   });
 
   it("같은 날 여러 번 열어도 하루로 센다", () => {
