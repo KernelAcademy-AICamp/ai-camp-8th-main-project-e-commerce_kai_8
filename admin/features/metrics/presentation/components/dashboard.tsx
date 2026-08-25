@@ -6,7 +6,7 @@ import {
   NO_FILTER,
   PERIOD_DAYS,
 } from "../../domain/filters";
-import { type ScreenName, SCREENS } from "../../domain/metric";
+import { cardSpan, type ScreenName, SCREENS, spanClass } from "../../domain/metric";
 import type { FlowView } from "../../domain/session-flow";
 import { loadDashboard } from "../view-model/load-dashboard";
 import { type ChartContext, MetricCard } from "./metric-card";
@@ -27,7 +27,7 @@ export async function Dashboard({
     flowHref: (view) => queryHref({ screen, filter, flow: view }),
   };
   return (
-    <main className="mx-auto max-w-4xl px-5 py-10">
+    <main className="mx-auto max-w-[1120px] px-5 py-10">
       <header className="mb-8">
         <h1 className="text-xl font-semibold text-neutral-100">aTee 이벤트 대시보드</h1>
         <p className="mt-1 text-sm text-neutral-500">
@@ -44,13 +44,16 @@ export async function Dashboard({
       {state.kind === "connection-failed" ? (
         <ConnectionFailed message={state.message} />
       ) : (
-        <div className="flex flex-col gap-5">
+        // 12칸 격자. 너비는 **카드가 정한다**(`span`) — 얼마나 넓어야 읽히는지는
+        // 그림이 안다. 좁은 화면(lg 미만)에서는 전부 통칸이 된다.
+        <div className="grid grid-cols-12 items-start gap-5">
           {state.results.map((result) => (
-            <MetricCard
+            <div
               key={result.definition.id}
-              result={result}
-              chartContext={chartContext}
-            />
+              className={spanClass(cardSpan(result.definition))}
+            >
+              <MetricCard result={result} chartContext={chartContext} />
+            </div>
           ))}
         </div>
       )}

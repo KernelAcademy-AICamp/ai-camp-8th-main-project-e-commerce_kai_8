@@ -68,6 +68,7 @@ export const onboardingFunnel: MetricDefinition = {
   order: 15,
   screen: "overview",
   chart: "funnel-band",
+  span: 5,
   sql: `
     with 단계 as (
       select * from (values

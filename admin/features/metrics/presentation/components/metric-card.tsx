@@ -63,7 +63,7 @@ export function MetricCard({
             {definition.title}
           </span>
           <span className="ml-2 text-xs text-neutral-500">(눌러서 펼치기)</span>
-          <p className="mt-1 text-sm text-neutral-400">{definition.why}</p>
+          <Why text={definition.why} />
         </summary>
         <div className="mt-4">{body}</div>
       </details>
@@ -73,7 +73,7 @@ export function MetricCard({
   return (
     <section className="rounded-lg border border-neutral-800 bg-neutral-900/60 p-5">
       <h2 className="text-base font-semibold text-neutral-100">{definition.title}</h2>
-      <p className="mt-1 text-sm text-neutral-400">{definition.why}</p>
+      <Why text={definition.why} />
       <div className="mt-4">{body}</div>
     </section>
   );
@@ -143,6 +143,25 @@ function Body({
         </div>
       </details>
     </>
+  );
+}
+
+/**
+ * 카드 설명. **줄바꿈으로 나눠 문단을 만든다.**
+ *
+ * 한 줄로 길게 이어 쓰면 읽는 사람이 어디까지가 한 뜻인지 못 가른다.
+ * 지표 파일이 줄바꿈으로 끊으면 그대로 문단이 된다.
+ */
+function Why({ text }: { text: string }) {
+  const lines = text.split("\n").filter((line) => line.trim() !== "");
+  return (
+    <div className="mt-1 space-y-0.5">
+      {lines.map((line) => (
+        <p key={line} className="text-sm text-neutral-400">
+          {line}
+        </p>
+      ))}
+    </div>
   );
 }
 

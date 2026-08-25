@@ -2,6 +2,8 @@ import { describe, expect, it } from "vitest";
 
 import {
   asLink,
+  CARD_SPANS,
+  cardSpan,
   findDuplicateIds,
   findWriteKeywords,
   formatCell,
@@ -10,6 +12,7 @@ import {
   metricsForScreen,
   parseScreen,
   sortMetrics,
+  spanClass,
   toTable,
 } from "./metric";
 
@@ -88,6 +91,37 @@ describe("isReadOnlyStart", () => {
   it("그 외는 막는다", () => {
     expect(isReadOnlyStart("delete from c_events")).toBe(false);
     expect(isReadOnlyStart("")).toBe(false);
+  });
+});
+
+describe("카드 너비", () => {
+  it("안 정하면 통칸이다", () => {
+    // 지금까지 모든 카드가 통칸이었다. 값을 안 넣은 카드가 갑자기 좁아지면 안 된다.
+    expect(cardSpan({ id: "a", order: 1, sql: "select 1", title: "a", why: "" })).toBe(
+      12,
+    );
+  });
+
+  it("정한 만큼 차지한다", () => {
+    expect(
+      cardSpan({ id: "a", order: 1, sql: "select 1", title: "a", why: "", span: 7 }),
+    ).toBe(7);
+  });
+
+  it("쓸 수 있는 너비마다 클래스가 있다", () => {
+    // Tailwind는 글자를 이어붙여 만든 클래스를 못 알아본다. 미리 적어 둔 것만 나온다.
+    for (const span of CARD_SPANS) {
+      expect(spanClass(span)).toContain(`col-span-${String(span)}`);
+    }
+  });
+
+  it("좁은 화면에서는 전부 통칸이 된다", () => {
+    // 상자수염과 흐름도는 좁으면 못 읽는다. 나란히 두느니 세로로 쌓는다.
+    for (const span of CARD_SPANS) {
+      if (span === 12) continue;
+      expect(spanClass(span)).toContain("col-span-12");
+      expect(spanClass(span)).toContain("lg:");
+    }
   });
 });
 

@@ -17,7 +17,7 @@ export const eventVolume: MetricDefinition = {
   id: "event-volume",
   title: "이벤트 유입",
   why: "행동 신호가 지금도 들어오고 있는가 — 끊겼으면 아래 지표는 전부 낡은 값이다",
-  order: 10,
+  order: 1,
   screen: "overview",
   chart: "kpi-strip",
   sql: `

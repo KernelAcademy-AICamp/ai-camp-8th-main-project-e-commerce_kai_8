@@ -33,11 +33,12 @@ import type { MetricDefinition } from "@/features/metrics/domain/metric";
  */
 export const returnCurve: MetricDefinition = {
   id: "return-curve",
-  title: "재방문 곡선 · N-Day Retention (기기 단위)",
-  why: "첫 방문일(Day 0)로부터 Day N 당일에 다시 왔나. Cohort size는 그 Day를 물어볼 수 있을 만큼 시간이 지난 기기만 센다 — 어제 처음 온 기기를 Day 3 분모에 넣으면 아직 안 지난 것이 이탈로 잡힌다. Day N 당일만 세므로 곡선은 톱니 모양이 된다. 기기 단위라 실제 사람의 retention보다 낮게 나온다",
+  title: "재방문 곡선 · N-Day Retention (device 단위)",
+  why: "「첫 방문(Day 0) 이후 Day N에 방문」여부 측정\nCohort size = 측정 가능한 device 수",
   order: 60,
   screen: "retention",
   chart: "retention-curve",
+  span: 8,
   sql: `
     with 활동일 as (
       -- 방문일 = starting event(= return event)가 있었던 날. 하루에 여러 번 와도 1일.

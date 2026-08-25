@@ -27,6 +27,7 @@ export const dailyVolume: MetricDefinition = {
   order: 5,
   screen: "overview",
   chart: "daily-bars",
+  span: 7,
   sql: `
     with 일별 as (
       select

@@ -49,6 +49,39 @@ export type ChartKind =
   | "hbars"
   | "session-flow";
 
+/**
+ * 카드가 12칸 격자에서 차지하는 너비.
+ *
+ * **쓸 수 있는 값을 미리 정해 둔다.** Tailwind는 글자를 이어붙여 만든 클래스를
+ * 못 알아본다 — `col-span-${n}`처럼 쓰면 그 클래스가 CSS에 안 나온다.
+ * 그러면 격자가 조용히 무너져 전부 통칸이 된다.
+ */
+export const CARD_SPANS = [4, 5, 7, 8, 12] as const;
+
+export type CardSpan = (typeof CARD_SPANS)[number];
+
+/** 정하지 않았으면 통칸. 지금까지 모든 카드가 통칸이었다 */
+export function cardSpan(definition: MetricDefinition): CardSpan {
+  return definition.span ?? 12;
+}
+
+/**
+ * 너비에 해당하는 클래스.
+ *
+ * **좁은 화면에서는 전부 통칸이 된다.** 상자수염과 흐름도는 좁으면 못 읽는다 —
+ * 나란히 두느니 세로로 쌓는 편이 낫다. 기준은 `lg`(1024px)다.
+ */
+export function spanClass(span: CardSpan): string {
+  const byWidth: Record<CardSpan, string> = {
+    4: "col-span-12 lg:col-span-4",
+    5: "col-span-12 lg:col-span-5",
+    7: "col-span-12 lg:col-span-7",
+    8: "col-span-12 lg:col-span-8",
+    12: "col-span-12",
+  };
+  return byWidth[span];
+}
+
 export interface MetricDefinition {
   /** 파일마다 고유. 화면 키와 오류 표시에 쓴다 */
   id: string;
@@ -76,6 +109,14 @@ export interface MetricDefinition {
    * 붙이지 않으므로 그 표가 키보드로 값을 읽는 유일한 경로다.
    */
   chart?: ChartKind;
+  /**
+   * 12칸 격자에서 차지하는 너비. 안 정하면 통칸(12).
+   *
+   * **왜 카드가 정하나** — 얼마나 넓어야 읽히는지는 그림이 안다. 상자수염은
+   * 줄마다 축이 있어 넓어야 하고, 온보딩 퍼널은 단계가 셋이라 좁아도 된다.
+   * 화면 코드가 카드별로 예외를 두면 새 지표를 넣을 때 화면도 고쳐야 한다.
+   */
+  span?: CardSpan;
   /**
    * true면 카드를 **접힌 채로** 그린다. 제목과 설명만 보이고 표는 눌러야 펼쳐진다.
    * 대조용 낱개 기록처럼 평소엔 접어 두고 필요할 때만 여는 표에 쓴다.

@@ -14,7 +14,7 @@ export function KpiStripChart({ table }: { table: MetricTable }) {
   const row = table.rows[0];
 
   return (
-    <div className="grid gap-0.5 sm:grid-cols-2 lg:grid-cols-4">
+    <div className="grid gap-0.5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
       {table.columns.map((column, index) => (
         <div key={column} className="rounded-md bg-neutral-950/60 px-4 py-3.5">
           <div className="text-[11.5px] text-neutral-500">{column}</div>

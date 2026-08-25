@@ -75,7 +75,7 @@ export function RetentionCurveChart({ table }: { table: MetricTable }) {
               fillOpacity={0.45}
             />
           </svg>
-          Cohort size — 그 Day를 물어볼 수 있는 기기 수
+          Cohort size
         </span>
         <span className="inline-flex items-center gap-1.5">
           <svg width="14" height="12" aria-hidden="true">
@@ -89,7 +89,7 @@ export function RetentionCurveChart({ table }: { table: MetricTable }) {
               fillOpacity={0.55}
             />
           </svg>
-          코호트 {THIN_COHORT}개 미만 — 비율을 결론으로 읽으면 안 된다
+          코호트 {THIN_COHORT} 미만
         </span>
       </p>
 
@@ -228,16 +228,9 @@ export function RetentionCurveChart({ table }: { table: MetricTable }) {
           textAnchor="middle"
           className="fill-neutral-500 text-[11px]"
         >
-          Day (첫 방문일 = Day 0) · Day N 당일에 왔나를 센다
+          Day
         </text>
       </svg>
-
-      {points.some((point) => point.thin) && (
-        <p className="mt-2 text-center text-[11px] text-neutral-500">
-          코호트가 {THIN_COHORT}개 미만인 Day는 막대를 노랗게 뒀다 — 표본이 얇아서
-          비율을 결론으로 읽으면 안 된다.
-        </p>
-      )}
     </div>
   );
 }
