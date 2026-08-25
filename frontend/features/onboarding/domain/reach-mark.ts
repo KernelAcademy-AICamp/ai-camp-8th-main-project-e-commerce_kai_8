@@ -38,6 +38,22 @@ export function readReachMark(storage: Storage, newId: () => string): string {
   return made;
 }
 
+/**
+ * 표식을 **만들지 않고** 읽기만 한다. 없으면 `null`.
+ *
+ * `readReachMark`와 나뉘어 있는 이유가 이 함수의 전부다. 완료를 알릴 때는
+ * 표식을 만들면 안 된다 — 표식이 없다는 건 이 브라우저에서 온보딩 화면을
+ * 지나온 적이 없다는 뜻이고, 지나오지 않았다면 마친 것도 아니다.
+ */
+export function peekReachMark(storage: Storage): string | null {
+  try {
+    const saved = storage.getItem(KEY);
+    return saved !== null && saved !== "" ? saved : null;
+  } catch {
+    return null;
+  }
+}
+
 /** 온보딩이 끝나면 지운다. */
 export function clearReachMark(storage: Storage): void {
   try {
@@ -50,17 +66,29 @@ export function clearReachMark(storage: Storage): void {
 /**
  * 온보딩을 마쳤다고 알리고 표식을 지운다.
  *
- * **보고가 먼저다.** 지우고 보내면 표식이 없어 중복 거르기가 안 되고, 새로고침
- * 같은 것이 done을 여러 번 세게 만든다.
+ * **표식이 없으면 아무것도 보내지 않는다.** 이게 이 함수의 핵심 규칙이다.
+ * 완료 지점 중 하나인 계정 승계 경로(`shared/onboarding/onboarding-account-sync`)는
+ * **앱을 켤 때마다** 돈다. 예전에는 여기서 표식을 새로 만들어 보고했기 때문에,
+ * 이미 온보딩을 마친 사람이 앱을 켤 때마다 done이 한 번씩 더 세어졌다.
+ * 그래서 done(8)이 그 앞 단계인 picks(6)보다 커졌다 — 있을 수 없는 값이다.
  *
- * 완료 지점이 둘이라(로그인한 사람 경로, 가입 후 승계 경로) 여기 한 곳에 모은다.
- * 한쪽만 고치면 그 경로의 done이 안 세어져 마지막 칸이 틀어진다.
+ * 표식은 온보딩 **화면을 지나갈 때** 만들어진다(`use-onboarding-flow`).
+ * 따라서 표식이 있다는 것은 이 브라우저에서 온보딩을 시작했다는 증거이고,
+ * 없다는 것은 지나온 적이 없다는 뜻이다. 지나오지 않았으면 마친 것도 아니다.
+ *
+ * **보고가 먼저고 지우는 게 나중이다.** 지우고 보내면 표식이 없어 서버의 중복
+ * 거르기가 안 되고, 새로고침 같은 것이 done을 여러 번 세게 만든다.
+ *
+ * 표식을 지우므로 **두 번째 호출부터는 조용히 넘어간다.** 완료 지점이 둘이라
+ * (화면 경로, 계정 승계 경로) 같은 완료에 두 번 불릴 수 있는데, 이 성질이
+ * 그걸 그대로 막는다.
  */
 export function finishReach(
   storage: Storage,
-  newId: () => string,
   report: (mark: string, step: OnboardingStep) => void,
 ): void {
-  report(readReachMark(storage, newId), "done");
+  const mark = peekReachMark(storage);
+  if (mark === null) return;
+  report(mark, "done");
   clearReachMark(storage);
 }

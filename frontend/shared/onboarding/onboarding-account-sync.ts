@@ -106,13 +106,9 @@ function install(
     // 마쳤다고 알리고 진행 표식을 지운다 (O-42). 완료 지점이 둘이라 양쪽에 붙인다 —
     // 한쪽만 붙이면 그 경로로 끝낸 사람의 done이 안 세어져 마지막 칸이 틀어진다.
     if (typeof window !== "undefined") {
-      finishReach(
-        window.localStorage,
-        () => crypto.randomUUID(),
-        (mark, step) => {
-          void reportReach(mark, step);
-        },
-      );
+      finishReach(window.localStorage, (mark, step) => {
+        void reportReach(mark, step);
+      });
     }
   }
 }
