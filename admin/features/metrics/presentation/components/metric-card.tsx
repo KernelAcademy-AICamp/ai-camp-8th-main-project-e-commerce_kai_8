@@ -185,8 +185,8 @@ function Why({ text }: { text?: string }) {
 function CumulativeNote() {
   return (
     <p className="mt-2 rounded border border-amber-800/60 bg-amber-950/30 px-3 py-2 text-xs text-amber-200">
-      처음부터 <strong>누적한 값</strong>입니다 — 좋아져도 과거에 묻혀 안 보입니다.
-      기간끼리 비교하려면 위에서 최근 7 · 14 · 30일을 고르세요.
+      <strong>처음부터 지금까지를 전부 합친 값</strong>입니다. 최근에 나아졌는지
+      나빠졌는지는 이 숫자로 알 수 없습니다 — 위에서 기간을 고르면 그 기간만 봅니다.
     </p>
   );
 }

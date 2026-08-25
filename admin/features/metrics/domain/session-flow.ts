@@ -55,9 +55,7 @@ export interface FlowModel {
 }
 
 /** 표에서 열쇠별 세션 수와 이름을 뽑는다. 없으면 null */
-function readCounts(
-  table: MetricTable,
-): {
+function readCounts(table: MetricTable): {
   counts: Record<Key, number>;
   labels: Record<Key, string>;
   unknown: string[];
@@ -70,9 +68,11 @@ function readCounts(
   const counts = { no_tap: 0, wish_only: 0, both: 0, outbound_only: 0, tap_only: 0 };
   const labels: Record<Key, string> = {
     no_tap: "클릭 없음",
-    wish_only: "찜만",
+    // 「찜만」이 아니라 「찜」이다 — 「둘 다」가 옆 갈래로 있어서
+    // 겹치지 않는다는 것이 그림에서 이미 보인다.
+    wish_only: "찜",
     both: "둘 다",
-    outbound_only: "판매처만",
+    outbound_only: "판매처 이동",
     tap_only: "행동 없음",
   };
   const unknown: string[] = [];
