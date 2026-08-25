@@ -1,4 +1,4 @@
-"""큐레이션 JSON에 상품별 한마디(note)와 아쉬운 점(con)을 채운다.
+"""큐레이션 JSON에 상품별 한마디(note)를 채운다.
 
 문장을 쓰지 않는다. 무신사가 만들어 둔 리뷰 AI 요약에서 **문장 하나를 고른다.**
 같은 데이터를 gen_curation_page.py가 이미 조건(`neg_free`·`pos_kw`)으로 쓰고 있다 —
@@ -8,8 +8,6 @@
   note  긍정 요약을 문장으로 쪼갠 뒤, 그 게시물의 조건 라벨과 겹치는 문장을 먼저 쓴다.
         같은 게시물에서 이미 쓴 문장과 겹치면 다음 후보로 넘어간다 — 안 그러면
         아홉 장이 전부 "재질이 탄탄해요"가 된다(표본 9개 중 5개가 그랬다).
-  con   불만 요약에서 상품과 무관한 것(배송·포장·품절)을 뺀 첫 문장.
-        깔 게 없는 상품은 "전반적으로 만족도가 높아요"가 그대로 오므로 라벨만 바꾼다.
 
 이미 채워진 값은 건드리지 않는다(손으로 고른 것을 덮어쓰지 않기 위해).
 
@@ -39,11 +37,6 @@ DEFAULT_JSON = (
 # 손으로 정한 것(고른 상품·장 제목·버튼 자리·상황 색). 생성기가 JSON을 다시 뽑으면
 # 그 값들이 지워지므로 여기 따로 두고 매번 되씌운다.
 DEFAULT_OVERLAY = Path(__file__).with_name("curation_overlay.json")
-
-# 상품이 아니라 주문 경험에 대한 문장 — 아쉬운 점으로 내보내면 상품 얘기가 아니게 된다.
-OFF_TOPIC = ("배송", "포장", "과배송", "품절", "교환", "반품", "재입고")
-# 불만이 없을 때 무신사가 대신 넣는 문장. gen_curation_page.py 의 no_complaint 와 같은 신호다.
-NO_COMPLAINT = "만족도가 높"
 
 
 def sentences(text: str) -> list[str]:
@@ -75,16 +68,6 @@ def pick_note(pos: str, cond: list[str], used: set[str]) -> str:
         cands, key=lambda s: -sum(1 for w in words if w in s)
     )
     return scored[0]
-
-
-def pick_con(neg: str) -> tuple[str, str]:
-    """(라벨, 문장). 상품과 무관한 문장은 뺀다."""
-    for s in sentences(neg):
-        if NO_COMPLAINT in s:
-            return "불만 요약", s
-        if not any(w in s for w in OFF_TOPIC):
-            return "아쉬운 점", s
-    return "", ""
 
 
 def write_worksheet(data: list[dict], out: Path) -> int:
@@ -242,9 +225,6 @@ def main() -> int:
                 continue
             it["note"] = note
             used.add(note)
-            label, con = pick_con(sentiment.get("negative", ""))
-            if con:
-                it["conLabel"], it["con"] = label, con
             filled += 1
 
     print(f"채움 {filled}개 · 요약이 없어 못 채운 것 {missing}개")
