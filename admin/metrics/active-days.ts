@@ -29,6 +29,7 @@ export const activeDays: MetricDefinition = {
   why: "기기 하나가 며칠에 걸쳐 방문했나. 같은 날 여러 번 와도 1일로 센다. 습관 임계값을 근거 없이 정하는 대신 실제 분포를 보고 정하려는 표다. 관측 기간이 짧은 기기는 아무리 써도 일수가 작게 나오므로 관측 일수를 함께 본다. Lx 계열이지만 창이 28일 고정이 아니라 관측 전 기간이다",
   order: 61,
   screen: "retention",
+  chart: "hbars",
   sql: `
     with 활동일 as (
       -- 방문일. 하루에 여러 번 와도 1일.

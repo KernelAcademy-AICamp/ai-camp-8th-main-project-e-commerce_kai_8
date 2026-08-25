@@ -41,7 +41,13 @@ export function metricsForScreen(
  * 범용으로 만들면 설정 칸이 늘어나 SQL이 아니라 설정이 정본이 된다.
  */
 export type ChartKind =
-  "kpi-strip" | "daily-bars" | "funnel-band" | "boxplot" | "session-flow";
+  | "kpi-strip"
+  | "daily-bars"
+  | "funnel-band"
+  | "boxplot"
+  | "retention-curve"
+  | "hbars"
+  | "session-flow";
 
 export interface MetricDefinition {
   /** 파일마다 고유. 화면 키와 오류 표시에 쓴다 */

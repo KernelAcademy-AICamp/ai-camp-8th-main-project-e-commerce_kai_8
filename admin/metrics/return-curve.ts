@@ -37,6 +37,7 @@ export const returnCurve: MetricDefinition = {
   why: "첫 방문일(Day 0)로부터 Day N 당일에 다시 왔나. Cohort size는 그 Day를 물어볼 수 있을 만큼 시간이 지난 기기만 센다 — 어제 처음 온 기기를 Day 3 분모에 넣으면 아직 안 지난 것이 이탈로 잡힌다. Day N 당일만 세므로 곡선은 톱니 모양이 된다. 기기 단위라 실제 사람의 retention보다 낮게 나온다",
   order: 60,
   screen: "retention",
+  chart: "retention-curve",
   sql: `
     with 활동일 as (
       -- 방문일 = starting event(= return event)가 있었던 날. 하루에 여러 번 와도 1일.

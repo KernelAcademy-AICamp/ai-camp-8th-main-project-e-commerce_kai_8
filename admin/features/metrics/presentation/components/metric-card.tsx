@@ -3,7 +3,9 @@ import type { FlowView } from "../../domain/session-flow";
 import { BoxplotChart } from "./charts/boxplot-chart";
 import { DailyBarsChart } from "./charts/daily-bars-chart";
 import { FunnelBandChart } from "./charts/funnel-band-chart";
+import { HBarsChart } from "./charts/hbars-chart";
 import { KpiStripChart } from "./charts/kpi-strip-chart";
+import { RetentionCurveChart } from "./charts/retention-curve-chart";
 import { SessionFlowChart } from "./charts/session-flow-chart";
 
 /**
@@ -102,6 +104,10 @@ function Body({
       <FunnelBandChart table={table} />
     ) : definition.chart === "boxplot" ? (
       <BoxplotChart table={table} />
+    ) : definition.chart === "retention-curve" ? (
+      <RetentionCurveChart table={table} />
+    ) : definition.chart === "hbars" ? (
+      <HBarsChart table={table} />
     ) : definition.chart === "session-flow" && chartContext !== undefined ? (
       <SessionFlowChart
         table={table}
