@@ -4,7 +4,10 @@ import type { MetricDefinition } from "@/features/metrics/domain/metric";
 import { BUCKET_GROUP_SQL, MIN_IMPRESSIONS_SQL } from "./bucket-groups";
 
 /**
- * 오가며 탐색률 — 「한 번 들어와서 익숙한 것도 누르고 새것도 눌렀나」.
+ * 양쪽 다 누른 세션 비율 — 「한 번 들어와서 익숙한 것도 누르고 새것도 눌렀나」.
+ *
+ * 예전 이름은 「추천 유형별 탐색률」이었다. **유형별이 아니라 세션 단위 비율 하나**라
+ * 이름이 표와 어긋났고, 「탐색률」만 봐서는 무엇을 세는지 알 수 없었다.
  *
  * PRD §5 사용자 결과 ③ **"익숙한 취향과 예상 밖의 디자인을 무한히 오가며 탐색한다"**를
  * 그대로 세는 표다. 컨셉이 맞으면 이 비율이 올라간다.
@@ -25,8 +28,8 @@ import { BUCKET_GROUP_SQL, MIN_IMPRESSIONS_SQL } from "./bucket-groups";
  */
 export const tasteOscillation: MetricDefinition = {
   id: "taste-oscillation",
-  title: "추천 유형별 탐색률 (취향 vs 비취향)",
-  why: "한 세션에서 취향(익숙한) 카드와 비취향(새로운) 카드를 둘 다 눌렀는지 본다. 취향 = longterm·session·similar, 비취향 = opposite·diversity. 분모는 양쪽을 다 본 세션이고(한쪽만 보여준 세션은 기회가 없던 것이라 뺀다), 그 안에서 둘 다 누른 비율이 탐색률이다. 컨셉대로면 이 값이 오른다",
+  title: "양쪽 다 누른 세션 비율 (취향 vs 비취향)",
+  why: "한 세션에서 취향(익숙한) 카드와 비취향(새로운) 카드를 둘 다 눌렀는지 본다. 취향 = longterm·session·similar, 비취향 = opposite·diversity. 분모는 양쪽을 다 본 세션이고(한쪽만 보여준 세션은 기회가 없던 것이라 뺀다), 그 안에서 양쪽을 다 누른 비율이다. 컨셉대로면 이 값이 오른다",
   order: 36,
   screen: "recommendation",
   sql: `
@@ -83,7 +86,7 @@ export const tasteOscillation: MetricDefinition = {
       -- 분모가 0이면 0%가 아니라 값 없음(—)이다. 0%는 "아무도 안 눌렀다"로 읽히는데
       -- 실제로는 "양쪽을 다 보여준 세션이 아직 없다"이다.
       round(100.0 * count(*) filter (where 익숙_탭 > 0 and 새로움_탭 > 0)
-            / nullif(count(*), 0), 1) as "탐색률"
+            / nullif(count(*), 0), 1) as "양쪽 다 누른 비율 (%)"
     from 분모
   `,
 };

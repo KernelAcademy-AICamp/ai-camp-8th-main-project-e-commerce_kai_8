@@ -22,7 +22,7 @@ export const sessionSummary: MetricDefinition = {
   id: "session-summary",
   title: "세션 요약 (기기 단위)",
   why: "한 번 들어와서 몇 개를 보고 몇 번 눌렀나. 대표값은 중앙값이고 사분위는 가운데 절반이 있는 구간이다 — 중앙값만으로는 다들 비슷한지 편차가 큰지 알 수 없다. 평균은 한 세션이 흔들 수 있어 참고값으로만 둔다. 유저가 아니라 기기 단위라 브라우저를 바꾸면 다른 기기로 세어진다",
-  order: 20,
+  order: 25,
   screen: "overview",
   chart: "boxplot",
   sql: `

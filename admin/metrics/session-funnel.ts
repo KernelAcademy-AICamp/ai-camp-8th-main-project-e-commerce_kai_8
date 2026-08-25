@@ -39,7 +39,7 @@ export const sessionFunnel: MetricDefinition = {
   id: "session-funnel",
   title: "세션 퍼널",
   why: "한 세션이 어디까지 갔나. 분모가 상품 수가 아니라 세션 수다 — 상품 수로 세면 한 세션이 200장을 훑고 아무것도 안 눌렀을 때 그 200이 전체 비율을 끌어내린다. 찜과 판매처 이동은 한 세션이 둘 다 할 수 있어서 「둘 다」를 독립된 갈래로 뒀다. 그래서 갈래를 더하면 노출 세션 수와 정확히 같다",
-  order: 30,
+  order: 20,
   screen: "overview",
   chart: "session-flow",
   sql: `
