@@ -81,7 +81,7 @@ export function CurationDetailScreen({
           {curation.cond.map((label) => (
             <span
               key={label}
-              className="rounded-md bg-white/80 px-2 py-1 text-[13px] leading-tight font-semibold text-(--accent)"
+              className="rounded-md bg-white px-2 py-1 text-[13px] leading-tight font-semibold text-(--accent)"
             >
               {label}
             </span>
