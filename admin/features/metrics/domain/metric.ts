@@ -17,7 +17,7 @@ export const SCREENS = [
   { name: "overview", label: "개요" },
   { name: "retention", label: "리텐션" },
   { name: "recommendation", label: "추천" },
-  { name: "raw", label: "원본" },
+  { name: "raw", label: "로그" },
 ] as const;
 
 export type ScreenName = (typeof SCREENS)[number]["name"];
