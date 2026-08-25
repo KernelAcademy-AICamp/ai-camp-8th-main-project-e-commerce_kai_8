@@ -1,3 +1,4 @@
+## [0.1.36](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/compare/v0.1.35...v0.1.36) (2026-08-25)
 ## [0.1.35](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/compare/v0.1.34...v0.1.35) (2026-08-25)
 
 ### Features
