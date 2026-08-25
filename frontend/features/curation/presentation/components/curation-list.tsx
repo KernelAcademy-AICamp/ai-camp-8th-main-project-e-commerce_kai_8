@@ -99,7 +99,7 @@ export function CurationList({
                     {curation.title}
                   </span>
                   {curation.reason && (
-                    <span className="mt-1 block line-clamp-1 text-[11px] font-medium text-accent-ink">
+                    <span className="mt-1 block line-clamp-1 text-[11px] font-medium text-accent">
                       {curation.reason}
                     </span>
                   )}
