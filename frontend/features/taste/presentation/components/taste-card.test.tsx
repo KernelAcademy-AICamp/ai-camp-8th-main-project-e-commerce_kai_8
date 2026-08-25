@@ -13,7 +13,12 @@ vi.mock("@/shared/supabase/use-signed-in", () => ({
 
 vi.mock("@/features/taste/data/taste-summary-api", () => ({
   fetchTasteSummary: () => Promise.resolve(readTasteSummary(summary.current)),
-  refreshTasteSummary: () => Promise.resolve(readTasteSummary(summary.current)),
+  // 반환 형태가 { summary, fold }다 — 계측이 접기 결과로 결과값을 가른다
+  refreshTasteSummary: () =>
+    Promise.resolve({
+      summary: readTasteSummary(summary.current),
+      fold: "no_changes",
+    }),
 }));
 
 /** 서버가 보내는 모양 그대로 준다 — 화면까지 오는 길을 통째로 지난다. */

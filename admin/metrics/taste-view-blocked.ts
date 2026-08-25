@@ -22,7 +22,7 @@ import type { MetricDefinition } from "@/features/metrics/domain/metric";
  */
 export const tasteViewBlocked: MetricDefinition = {
   id: "taste-view-blocked",
-  title: "조회 안 된 이유 · Why the card showed nothing (기기 단위)",
+  title: "조회 안 된 이유 (기기 단위)",
   why: "취향 부족은 정상이고 로딩 실패는 고장이다. 이 두 줄과 퍼널의 「조회됨」을 더하면 카드 열림과 맞는다",
   order: 20,
   screen: "taste",

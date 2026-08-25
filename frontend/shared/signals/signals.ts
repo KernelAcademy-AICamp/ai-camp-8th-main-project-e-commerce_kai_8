@@ -45,6 +45,8 @@ import {
 const SESSION_KEY = "atee-session";
 const QUEUE_KEY = "atee-signal-queue";
 const IMPRESSIONS_KEY = "atee-impressions";
+/** 이 세션에서 취향 조회를 이미 셌는지 — 값은 그 세션 ID다 */
+const TASTE_VIEW_KEY = "atee-taste-viewed";
 // 15초. 5초였을 때 자잘한 요청이 잦았다 — 묶어 보내면 그만큼 줄어든다.
 const FLUSH_INTERVAL_MS = 15_000;
 
@@ -375,6 +377,20 @@ export function logAction(
 export function logTasteView(outcome: TasteViewOutcome): void {
   if (!isBrowser() || !isSignedInNow()) return;
   const sessionId = touchSession();
+
+  // **한 세션에 한 번만 센다.** 마이페이지를 나갔다 들어오면 카드가 다시
+  // 마운트되는데, 그때마다 세면 13초 동안 오간 것이 「조회 5번」이 되어 열람
+  // 횟수가 부풀어 오른다(2026-08-25 실측: 2번 방문이 7건으로 기록됐다).
+  // 노출(`logImpression`)이 같은 세션의 같은 상품을 걸러내는 것과 같은 규칙이다.
+  //
+  // 컴포넌트 안의 ref로는 못 막는다 — 다시 마운트되면 ref가 함께 초기화된다.
+  try {
+    if (localStorage.getItem(TASTE_VIEW_KEY) === sessionId) return;
+    localStorage.setItem(TASTE_VIEW_KEY, sessionId);
+  } catch {
+    // 저장 불가 — 걸러내지 못하고 매번 센다. 기록이 없는 것보다는 낫다.
+  }
+
   enqueue({
     ...baseEvent("taste_view", sessionId, Date.now(), "random"),
     outcome,
@@ -498,6 +514,7 @@ export async function clearSignals(): Promise<number | null> {
     localStorage.removeItem(SESSION_KEY);
     localStorage.removeItem(QUEUE_KEY);
     localStorage.removeItem(IMPRESSIONS_KEY);
+    localStorage.removeItem(TASTE_VIEW_KEY);
   } catch {
     // 저장소 접근 불가면 지울 것도 없다
   }

@@ -27,8 +27,7 @@ import type { MetricDefinition } from "@/features/metrics/domain/metric";
  */
 export const tasteFunnel: MetricDefinition = {
   id: "taste-funnel",
-  title: "취향 분석 퍼널 · Taste analysis funnel (기기 단위)",
-  why: "취향 카드가 뜬 기기 중 몇 대가 취향을 실제로 봤고, 그중 몇 대가 새로고침까지 눌렀나. 조회 안 된 기기는 아래 「조회 안 된 이유」에서 본다",
+  title: "취향 분석 퍼널 (기기 단위)",
   order: 10,
   screen: "taste",
   chart: "funnel-band",
