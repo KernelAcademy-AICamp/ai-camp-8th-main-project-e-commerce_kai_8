@@ -17,6 +17,7 @@ export const SCREENS = [
   { name: "overview", label: "개요" },
   { name: "retention", label: "리텐션" },
   { name: "recommendation", label: "추천" },
+  { name: "taste", label: "취향" },
   { name: "raw", label: "로그" },
 ] as const;
 

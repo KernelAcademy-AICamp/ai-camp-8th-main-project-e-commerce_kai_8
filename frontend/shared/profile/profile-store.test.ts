@@ -1,5 +1,5 @@
 // @vitest-environment jsdom
-import { beforeEach, describe, expect, it } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { emptySession, type SessionProfile } from "./profile-rules";
 import { foldSessionProfileNow, readLongTerm } from "./profile-store";
@@ -28,7 +28,7 @@ describe("foldSessionProfileNow — 마이페이지 새로고침의 즉시 접�
       JSON.stringify(sessionWith([{ goodsNo: 1, weight: 2 }])),
     );
 
-    expect(foldSessionProfileNow(1000)).toBe(true);
+    expect(foldSessionProfileNow(1000)).toBe("folded");
     expect(readLongTerm().anchors).toEqual([{ goodsNo: 1, weight: 2, lastMs: 100 }]);
   });
 
@@ -60,12 +60,25 @@ describe("foldSessionProfileNow — 마이페이지 새로고침의 즉시 접�
     );
     sessionStorage.setItem(SESSION_KEY, JSON.stringify(sessionWith([])));
 
-    expect(foldSessionProfileNow(1000)).toBe(false);
+    expect(foldSessionProfileNow(1000)).toBe("no_changes");
     expect(readLongTerm().anchors[0].weight).toBe(1); // 0.9로 깎이지 않았다
   });
 
-  it("세션 프로필이 아예 없어도 false", () => {
-    expect(foldSessionProfileNow(1000)).toBe(false);
+  it("세션 프로필이 아예 없으면 no_changes — 오류가 아니라 접을 게 없는 것이다", () => {
+    expect(foldSessionProfileNow(1000)).toBe("no_changes");
+  });
+
+  it("저장소가 막히면 local_error — no_changes와 섞이면 오류가 「변화 없음」으로 보인다", () => {
+    // 계측이 이 둘을 구분해 기록한다. 한 값으로 뭉치면 관리자 화면에서
+    // 기기 저장소 고장이 「새 행동이 없었음」 막대에 섞여 영영 안 보인다.
+    const blocked = vi.spyOn(Storage.prototype, "getItem").mockImplementation(() => {
+      throw new DOMException("blocked", "SecurityError");
+    });
+    try {
+      expect(foldSessionProfileNow(1000)).toBe("local_error");
+    } finally {
+      blocked.mockRestore();
+    }
   });
 
   it("접기의 감쇠가 저장까지 살아남는다", () => {
@@ -114,7 +127,7 @@ describe("foldSessionProfileNow — 마이페이지 새로고침의 즉시 접�
     const s = { ...sessionWith([]), removed: [9] };
     sessionStorage.setItem(SESSION_KEY, JSON.stringify(s));
 
-    expect(foldSessionProfileNow(1000)).toBe(true);
+    expect(foldSessionProfileNow(1000)).toBe("folded");
     expect(readLongTerm().anchors).toEqual([]);
   });
 });

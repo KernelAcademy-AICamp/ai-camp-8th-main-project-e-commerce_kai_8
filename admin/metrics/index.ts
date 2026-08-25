@@ -21,7 +21,10 @@ import { returnCurve } from "./return-curve";
 import { sessionFunnel } from "./session-funnel";
 import { sessionList } from "./session-list";
 import { sessionSummary } from "./session-summary";
+import { tasteFunnel } from "./taste-funnel";
 import { tasteOscillation } from "./taste-oscillation";
+import { tasteRefreshOutcome } from "./taste-refresh-outcome";
+import { tasteViewBlocked } from "./taste-view-blocked";
 
 export const METRICS: readonly MetricDefinition[] = [
   eventVolume,
@@ -32,6 +35,9 @@ export const METRICS: readonly MetricDefinition[] = [
   sessionList,
   bucketConversion,
   tasteOscillation,
+  tasteFunnel,
+  tasteViewBlocked,
+  tasteRefreshOutcome,
   returnCurve,
   activeDays,
   rawEvents,

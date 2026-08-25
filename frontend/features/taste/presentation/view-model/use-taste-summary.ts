@@ -2,10 +2,12 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 
+import { logTasteRefresh, logTasteView } from "@/shared/signals/signals";
+import type { TasteViewOutcome } from "@/shared/signals/types";
 import { useSignedIn } from "@/shared/supabase/use-signed-in";
 
 import { fetchTasteSummary, refreshTasteSummary } from "../../data/taste-summary-api";
-import type { TasteSummary } from "../../domain/taste-summary";
+import { isStillCollecting, type TasteSummary } from "../../domain/taste-summary";
 
 export type TasteCardState =
   /** 로그인 여부를 아직 모르거나 불러오는 중 */
@@ -40,16 +42,29 @@ export function useTasteSummary(): TasteCardViewModel {
   const [loaded, setLoaded] = useState<Loaded>({ kind: "loading" });
   const [refreshing, setRefreshing] = useState(false);
 
+  // **마운트당 한 번만 조회를 센다.** 새로고침으로 다시 그려질 때 또 세면
+  // 새로고침을 많이 누른 사람일수록 조회를 많이 한 것처럼 보인다.
+  const viewLoggedRef = useRef(false);
+  const logViewOnce = useCallback((outcome: TasteViewOutcome) => {
+    if (viewLoggedRef.current) return;
+    viewLoggedRef.current = true;
+    logTasteView(outcome);
+  }, []);
+
   useEffect(() => {
     if (signedIn !== "in") return;
 
     let alive = true;
     void fetchTasteSummary().then(
       (summary) => {
-        if (alive) setLoaded({ kind: "ready", summary });
+        if (!alive) return;
+        setLoaded({ kind: "ready", summary });
+        logViewOnce(isStillCollecting(summary) ? "insufficient_data" : "rendered");
       },
       () => {
-        if (alive) setLoaded({ kind: "failed" });
+        if (!alive) return;
+        setLoaded({ kind: "failed" });
+        logViewOnce("error");
       },
     );
     return () => {
@@ -58,21 +73,37 @@ export function useTasteSummary(): TasteCardViewModel {
       // 전체 내비게이션을 거치지만, 남의 취향을 메모리에 들고 있을 이유가 없다.
       setLoaded({ kind: "loading" });
     };
-  }, [signedIn]);
+    // logViewOnce는 useCallback으로 고정돼 있어 넣어도 다시 돌지 않는다
+  }, [signedIn, logViewOnce]);
 
   // 도는 중의 재클릭은 무시 — 접기는 한 번이면 충분하고, 겹치면 올리기 순서가 섞인다
   const busyRef = useRef(false);
   const refresh = useCallback(() => {
-    if (busyRef.current) return;
+    // **막힌 클릭도 기록한다.** 화면상 아무 일도 안 일어나지만 누른 것은 누른
+    // 것이라, 빼면 연타하는 사람이 한 번만 누른 것으로 보인다.
+    if (busyRef.current) {
+      logTasteRefresh("ignored_duplicate");
+      return;
+    }
     busyRef.current = true;
     setRefreshing(true);
     void refreshTasteSummary()
       .then(
-        (summary) => {
+        ({ summary, fold }) => {
           setLoaded({ kind: "ready", summary });
+          // 접기가 기기 저장소에서 실패한 것도 오류다 — 반영할 게 없던 것과
+          // 뭉치면 고장이 「변화 없음」에 섞여 영영 안 보인다.
+          logTasteRefresh(
+            fold === "folded"
+              ? "updated"
+              : fold === "local_error"
+                ? "error"
+                : "no_new_activity",
+          );
         },
         () => {
           setLoaded({ kind: "failed" });
+          logTasteRefresh("error");
         },
       )
       .finally(() => {
