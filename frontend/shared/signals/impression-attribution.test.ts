@@ -64,3 +64,32 @@ describe("노출 귀속", () => {
     expect(tap?.impression_id).toBe(impressionId);
   });
 });
+
+describe("중복 노출은 보내지 않는다", () => {
+  it("같은 세션에서 같은 상품을 다시 보면 한 번만 남는다", async () => {
+    // 스크롤을 위아래로 하면 같은 카드가 다시 잡힌다. 요청만 늘고 지표는 그대로다.
+    const signals = await import("@/shared/signals/signals");
+    signals.logImpression({ goodsNo: GOODS });
+    signals.logImpression({ goodsNo: GOODS });
+    signals.logImpression({ goodsNo: GOODS });
+
+    const 노출 = queued().filter((e) => e.event_type === "impression");
+    expect(노출).toHaveLength(1);
+  });
+
+  it("다시 봐도 앞선 노출 ID를 그대로 돌려준다", async () => {
+    // 클릭 귀속이 끊기면 안 된다 — 두 번째 호출도 첫 노출을 가리켜야 한다
+    const signals = await import("@/shared/signals/signals");
+    const first = signals.logImpression({ goodsNo: GOODS });
+    const again = signals.logImpression({ goodsNo: GOODS });
+    expect(again).toBe(first);
+  });
+
+  it("다른 상품은 따로 남는다", async () => {
+    const signals = await import("@/shared/signals/signals");
+    signals.logImpression({ goodsNo: GOODS });
+    signals.logImpression({ goodsNo: GOODS + 1 });
+
+    expect(queued().filter((e) => e.event_type === "impression")).toHaveLength(2);
+  });
+});

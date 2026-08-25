@@ -1,3 +1,8 @@
+## [0.1.29](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/compare/v0.1.28...v0.1.29) (2026-08-24)
+
+### Features
+
+* 어드민 분석 2단계 — 지표 정의 교정·리텐션·화면 분리·온보딩 전환 ([#106](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/issues/106)) ([ca28509](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/commit/ca285092a66a8902f80ccc76f04bab9ce7ba56ea))
 ## [0.1.28](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/compare/v0.1.27...v0.1.28) (2026-08-24)
 
 ### Features

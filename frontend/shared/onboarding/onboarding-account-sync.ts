@@ -7,6 +7,8 @@
 // 실패는 값 없음이 아니다. 읽기에 실패하면 다시 묻지 않고 넘어간다 — 다만 **영원히
 // 막지는 않는다.** 못 읽었으면 기기 값으로 진행하고 다음 기회에 다시 맞춘다.
 
+import { reportReach } from "@/features/onboarding/data/reach-api";
+import { finishReach } from "@/features/onboarding/domain/reach-mark";
 import { type GenderChoice, setGenderSetting } from "@/shared/gender/gender-setting";
 import type { CarriedBox } from "@/shared/identity/onboarding-carry";
 
@@ -101,6 +103,17 @@ function install(
     // 진행 기록도 지운다. 새 기기 경로는 승계가 끝나는 이 자리에서 완료되므로
     // 화면 쪽(use-onboarding-flow)의 정리만으로는 이 탭에 기록이 남는다.
     clearFlowProgress();
+    // 마쳤다고 알리고 진행 표식을 지운다 (O-42). 완료 지점이 둘이라 양쪽에 붙인다 —
+    // 한쪽만 붙이면 그 경로로 끝낸 사람의 done이 안 세어져 마지막 칸이 틀어진다.
+    if (typeof window !== "undefined") {
+      finishReach(
+        window.localStorage,
+        () => crypto.randomUUID(),
+        (mark, step) => {
+          void reportReach(mark, step);
+        },
+      );
+    }
   }
 }
 

@@ -1,12 +1,19 @@
 import Link from "next/link";
 
 import { type DashboardFilter, isNarrowed, NO_FILTER } from "../../domain/filters";
+import { type ScreenName, SCREENS } from "../../domain/metric";
 import { loadDashboard } from "../view-model/load-dashboard";
 import { MetricCard } from "./metric-card";
 
 /** 대시보드 화면. 상태를 만드는 일은 view-model이 하고 여기는 표시만 한다 */
-export async function Dashboard({ filter = NO_FILTER }: { filter?: DashboardFilter }) {
-  const state = await loadDashboard(filter);
+export async function Dashboard({
+  filter = NO_FILTER,
+  screen = "overview",
+}: {
+  filter?: DashboardFilter;
+  screen?: ScreenName;
+}) {
+  const state = await loadDashboard(filter, screen);
   return (
     <main className="mx-auto max-w-4xl px-5 py-10">
       <header className="mb-8">
@@ -15,6 +22,8 @@ export async function Dashboard({ filter = NO_FILTER }: { filter?: DashboardFilt
           화면을 열 때마다 데이터베이스에서 다시 계산합니다.
         </p>
       </header>
+
+      <ScreenTabs current={screen} filter={filter} />
 
       <FilterBar filter={filter} />
 
@@ -28,6 +37,51 @@ export async function Dashboard({ filter = NO_FILTER }: { filter?: DashboardFilt
         </div>
       )}
     </main>
+  );
+}
+
+/**
+ * 화면 탭. **링크다** — 서버 컴포넌트라 자바스크립트 없이 동작하고, 주소를
+ * 복사해 넘기면 같은 화면이 열린다.
+ *
+ * 좁혀 보기 값을 탭 링크에 그대로 실어 옮긴다. 안 실으면 탭을 누르는 순간
+ * 날짜·세션 좁혀 보기가 조용히 풀린다.
+ */
+function ScreenTabs({
+  current,
+  filter,
+}: {
+  current: ScreenName;
+  filter: DashboardFilter;
+}) {
+  function hrefFor(screen: ScreenName): string {
+    const params = new URLSearchParams();
+    if (screen !== "overview") params.set("screen", screen);
+    if (filter.date !== null) params.set("date", filter.date);
+    if (filter.session !== null) params.set("session", filter.session);
+    const query = params.toString();
+    return query === "" ? "/" : `/?${query}`;
+  }
+  return (
+    <nav className="mb-6 flex gap-1 border-b border-neutral-800" aria-label="화면">
+      {SCREENS.map((screen) => {
+        const on = screen.name === current;
+        return (
+          <Link
+            key={screen.name}
+            href={hrefFor(screen.name)}
+            aria-current={on ? "page" : undefined}
+            className={
+              on
+                ? "border-b-2 border-sky-500 px-4 py-2 text-sm font-medium text-neutral-100"
+                : "border-b-2 border-transparent px-4 py-2 text-sm text-neutral-500 hover:text-neutral-300"
+            }
+          >
+            {screen.label}
+          </Link>
+        );
+      })}
+    </nav>
   );
 }
 

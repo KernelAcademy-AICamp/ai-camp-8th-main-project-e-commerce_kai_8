@@ -11,6 +11,7 @@ function makeEvent(id: string): SignalEvent {
     occurred_at: "2026-08-16T00:00:00Z",
     signed_in: true,
     instr_ver: INSTRUMENTATION_VER,
+    away_ms: 0,
     policy: "random",
     model_ver: "siglip2-base",
     profile_ver: 0,

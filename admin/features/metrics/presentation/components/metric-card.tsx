@@ -8,19 +8,37 @@ import { asLink, type MetricResult } from "../../domain/metric";
  */
 export function MetricCard({ result }: { result: MetricResult }) {
   const { definition, outcome } = result;
+  const body =
+    outcome.kind === "failed" ? (
+      <Failure message={outcome.message} />
+    ) : outcome.table.rows.length === 0 ? (
+      <Empty columns={outcome.table.columns} />
+    ) : (
+      <Table columns={outcome.table.columns} rows={outcome.table.rows} />
+    );
+
+  // 접힌 카드는 제목·설명만 보이고 표는 눌러야 펼쳐진다. 브라우저 기본
+  // <details>라 자바스크립트가 필요 없다.
+  if (definition.collapsed) {
+    return (
+      <details className="rounded-lg border border-neutral-800 bg-neutral-900/60 p-5">
+        <summary className="cursor-pointer list-none">
+          <span className="text-base font-semibold text-neutral-100">
+            {definition.title}
+          </span>
+          <span className="ml-2 text-xs text-neutral-500">(눌러서 펼치기)</span>
+          <p className="mt-1 text-sm text-neutral-400">{definition.why}</p>
+        </summary>
+        <div className="mt-4">{body}</div>
+      </details>
+    );
+  }
+
   return (
     <section className="rounded-lg border border-neutral-800 bg-neutral-900/60 p-5">
       <h2 className="text-base font-semibold text-neutral-100">{definition.title}</h2>
       <p className="mt-1 text-sm text-neutral-400">{definition.why}</p>
-      <div className="mt-4">
-        {outcome.kind === "failed" ? (
-          <Failure message={outcome.message} />
-        ) : outcome.table.rows.length === 0 ? (
-          <Empty columns={outcome.table.columns} />
-        ) : (
-          <Table columns={outcome.table.columns} rows={outcome.table.rows} />
-        )}
-      </div>
+      <div className="mt-4">{body}</div>
     </section>
   );
 }

@@ -8,10 +8,15 @@ import { METRICS } from "@/metrics";
 
 import { checkConnection, runMetrics } from "../../data/metric-repository";
 import { type DashboardFilter, NO_FILTER } from "../../domain/filters";
-import { type DashboardState, sortMetrics } from "../../domain/metric";
+import {
+  type DashboardState,
+  metricsForScreen,
+  type ScreenName,
+} from "../../domain/metric";
 
 export async function loadDashboard(
   filter: DashboardFilter = NO_FILTER,
+  screen: ScreenName = "overview",
 ): Promise<DashboardState> {
   // 접속을 먼저 확인한다. 안 되는 상태로 카드를 돌리면 전부 실패로 떠서
   // "지표가 다 깨졌다"처럼 보이고 진짜 원인이 가려진다 (설계 §7).
@@ -19,5 +24,10 @@ export async function loadDashboard(
   if (connectionError !== null) {
     return { kind: "connection-failed", message: connectionError };
   }
-  return { kind: "loaded", results: await runMetrics(sortMetrics(METRICS), filter) };
+  // **그 화면의 질의만 돈다.** 한 페이지에 다 두면 열 때마다 아홉 개가 전부
+  // 데이터베이스에 나간다.
+  return {
+    kind: "loaded",
+    results: await runMetrics(metricsForScreen(METRICS, screen), filter),
+  };
 }

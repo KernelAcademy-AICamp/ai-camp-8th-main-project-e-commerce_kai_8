@@ -1,4 +1,4 @@
-import { EVENT_FILTER_SQL } from "@/features/metrics/domain/filters";
+import { eventFilterSql } from "@/features/metrics/domain/filters";
 import type { MetricDefinition } from "@/features/metrics/domain/metric";
 
 import { BUCKET_GROUP_SQL } from "./bucket-groups";
@@ -36,7 +36,7 @@ import { BUCKET_GROUP_SQL } from "./bucket-groups";
  * `count(distinct impression_id)`로 세면 "노출 중 몇 개가 눌렸나"가 되어 뜻이 분명하다.
  * (원본 §1은 행동 이벤트 수를 셌다 — 여기서 바뀐 부분이다.)
  *
- * **찜률·이동률의 분모도 노출이다.** 세션 깔때기(session-funnel)는 상세 열기를 분모로
+ * **찜률·이동률의 분모도 노출이다.** 세션 퍼널(session-funnel)은 상세 열기를 분모로
  * 쓰는데, 저 표는 "연 사람 중 몇이 찜했나"를 보고 이 표는 "이 유형을 보여준 것이
  * 얼마나 성과를 냈나"를 본다. 목적이 달라 분모도 다르다.
  */
@@ -45,6 +45,7 @@ export const bucketConversion: MetricDefinition = {
   title: "추천 유형별 전환",
   why: "장기 취향 카드는 실제로 눌리는가, 반대 제안은 노이즈인가. 계열마다 '전체' 줄이 있어 익숙함 대 새로움을 바로 비교한다. 비율의 분모는 노출, 분자는 '눌린 노출 수'다 — 같은 카드를 두 번 열어도 한 번으로 센다",
   order: 35,
+  screen: "recommendation",
   sql: `
     with 노출 as (
       select
@@ -53,14 +54,14 @@ export const bucketConversion: MetricDefinition = {
         ${BUCKET_GROUP_SQL} as 계열
       from c_events
       where event_type = 'impression'
-        and ${EVENT_FILTER_SQL}
+        and ${eventFilterSql()}
     ),
     행동 as (
       select impression_id, event_type
       from c_events
       where event_type in ('tap', 'wish', 'outbound')
         and impression_id is not null
-        and ${EVENT_FILTER_SQL}
+        and ${eventFilterSql()}
     ),
     집계 as (
       select
@@ -88,8 +89,8 @@ export const bucketConversion: MetricDefinition = {
       계열 as "계열",
       유형 as "추천 유형",
       노출::int as "노출",
-      탭::int   as "탭된 노출",
-      탭률      as "탭률 %",
+      탭::int   as "클릭",
+      탭률      as "클릭률",
       -- ⭐ 기준선. 무작위(diversity) 탭률로 나눈 값을 같은 줄에 둔다.
       case
         when 유형 = 'diversity' then '기준'
@@ -98,10 +99,10 @@ export const bucketConversion: MetricDefinition = {
             ::text || '배',
           '—')
       end as "무작위 대비",
-      찜::int   as "찜된 노출",
-      찜률      as "찜률 %",
-      이동::int as "이동된 노출",
-      이동률    as "이동률 %"
+      찜::int   as "찜",
+      찜률      as "찜률",
+      이동::int as "이동",
+      이동률    as "이동률"
     from 비율
     order by 1, 2
   `,
