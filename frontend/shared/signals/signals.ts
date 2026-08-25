@@ -330,12 +330,7 @@ export async function flushSignalsNow(): Promise<void> {
  * 들어갈 수 있게 된다. 실제로 그런 일이 한 번 있었다.
  */
 export type ActionType =
-  | "tap"
-  | "wish"
-  | "wish_failed"
-  | "unwish"
-  | "style_explore"
-  | "outbound";
+  "tap" | "wish" | "wish_failed" | "unwish" | "style_explore" | "outbound";
 
 /**
  * 탭·찜·스타일 탐색·판매처 이동 — 해당 상품의 최근 노출에 귀속된다.

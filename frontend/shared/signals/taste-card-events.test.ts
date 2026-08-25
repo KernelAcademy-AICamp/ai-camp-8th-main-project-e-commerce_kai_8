@@ -62,10 +62,7 @@ describe("logTasteView — 취향 카드가 최종 상태에 도달했다", () =
     signals.logTasteView("insufficient_data");
     signals.logTasteView("error");
 
-    expect(tasteEvents().map((e) => e.outcome)).toEqual([
-      "insufficient_data",
-      "error",
-    ]);
+    expect(tasteEvents().map((e) => e.outcome)).toEqual(["insufficient_data", "error"]);
   });
 
   it("상품 번호를 싣지 않는다 — 카드는 한 상품에 대한 것이 아니다", async () => {

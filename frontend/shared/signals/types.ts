@@ -34,10 +34,7 @@ export type TasteViewOutcome = "rendered" | "insufficient_data" | "error";
  * 횟수"와 "실제로 돈 횟수"가 둘 다 나온다.
  */
 export type TasteRefreshOutcome =
-  | "updated"
-  | "no_new_activity"
-  | "ignored_duplicate"
-  | "error";
+  "updated" | "no_new_activity" | "ignored_duplicate" | "error";
 
 export type FeedPolicy = "random" | "personalized" | "fallback";
 
