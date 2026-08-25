@@ -19,14 +19,20 @@ const DEFAULT_Y = 52;
 
 export function CurationDetailScreen({
   curation,
+  next,
   onBack,
+  onOpenNext,
 }: {
   curation: Curation;
+  /** 다 본 뒤 이어볼 큐레이션. 없으면(다 봤거나 후보가 없으면) 마지막 장에서 끝난다 */
+  next: Curation | null;
   onBack: () => void;
+  onOpenNext: (key: string) => void;
 }) {
   const { trackRef, index, openInfo, onScroll, step, toggleInfo } = useCurationSlides();
 
-  const last = curation.items.length - 1;
+  // 이어보기 자리도 슬라이드 한 장이다 — 마지막 상품에서 › 를 눌러도 그리 간다.
+  const last = curation.items.length - (next ? 0 : 1);
 
   return (
     /* 셸 헤더·탭바까지 덮는다 — 상품 상세와 같은 전체화면. 안 덮으면 로고줄과
@@ -59,8 +65,10 @@ export function CurationDetailScreen({
         </p>
 
         <p className="pt-4 pb-2 text-center font-mono text-xs tracking-wider text-ink-muted tabular-nums">
-          <b className="text-sm font-semibold text-(--accent)">{index + 1}</b> /{" "}
-          {curation.items.length}
+          <b className="text-sm font-semibold text-(--accent)">
+            {Math.min(index + 1, curation.items.length)}
+          </b>{" "}
+          / {curation.items.length}
         </p>
 
         <div
@@ -188,6 +196,59 @@ export function CurationDetailScreen({
               </div>
             );
           })}
+
+          {/* 다 본 사람에게 다음 한 장. 목록으로 돌아가 뒤섞인 카드를 다시 훑지 않아도
+              방금 본 것과 닮은 큐레이션으로 곧장 넘어간다.
+              **자동으로 넘기지 않는다** — 마지막 장에서 손이 한 번 더 미끄러졌을 뿐인데
+              화면이 통째로 바뀌면 방금 보던 것을 잃는다. 눌러야 넘어간다.
+              카드 모양은 목록(curation-list)과 같게 둔다 — 같은 것을 고르는 자리다. */}
+          {next && (
+            <div className="w-full flex-none snap-center px-9">
+              <p className="pb-2 text-center text-[13px] text-ink-soft">
+                여기까지. 비슷한 걸 이어서 볼까요?
+              </p>
+              <div className="relative">
+                <button
+                  type="button"
+                  onClick={() => {
+                    onOpenNext(next.key);
+                  }}
+                  className="relative block w-full cursor-pointer overflow-hidden rounded-xl bg-surface text-left"
+                >
+                  <Image
+                    src={next.items[0].img}
+                    alt={next.title}
+                    width={next.items[0].w ?? 500}
+                    height={next.items[0].h ?? 600}
+                    sizes="100vw"
+                    className="h-auto w-full"
+                  />
+                  <span className="absolute inset-x-0 top-1/2 bottom-0 bg-gradient-to-t from-black/75 via-black/25 via-55% to-transparent" />
+                  <span className="absolute inset-x-0 bottom-0 px-4 pb-4">
+                    <span className="block text-xl leading-tight font-bold tracking-tight break-keep text-white">
+                      {next.title}
+                    </span>
+                    <span className="mt-1.5 block text-[12px] text-white/70">
+                      {next.items.length}개 · {next.cond.join(" · ")}
+                    </span>
+                  </span>
+                </button>
+
+                {index === curation.items.length && (
+                  <button
+                    type="button"
+                    aria-label="이전"
+                    onClick={() => {
+                      step(-1);
+                    }}
+                    className="absolute top-1/2 -left-8 h-11 w-8 -translate-y-1/2 cursor-pointer text-3xl leading-none text-ink-muted"
+                  >
+                    ‹
+                  </button>
+                )}
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>

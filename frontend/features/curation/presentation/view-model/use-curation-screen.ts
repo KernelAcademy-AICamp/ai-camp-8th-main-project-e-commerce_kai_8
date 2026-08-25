@@ -37,6 +37,15 @@ export function useCurationScreen(anchorRef: RefObject<HTMLElement | null>) {
   const [shownCount, setShownCount] = useState(FOR_YOU_VISIBLE);
   /** 목록으로 돌아왔을 때 보던 자리로 — 굴리는 것은 이 화면이 놓인 칸이다(shared/scroll) */
   const listScrollY = useRef(0);
+  /**
+   * 이번 방문에 연 큐레이션들. 상세 끝의 "이어보기"가 본 것을 다시 권하지 않게 하는
+   * 재료다(curation-next). 히스토리가 아니라 여기에 모으는 이유 — 뒤로 갔다 다른
+   * 가지로 들어가도 그 전에 본 것은 여전히 본 것이다.
+   *
+   * 화면에 쓰이는 값이라 ref가 아니라 상태다 — 이것이 바뀌면 이어보기 자리도
+   * 다시 그려져야 한다.
+   */
+  const [seen, setSeen] = useState<ReadonlySet<string>>(() => new Set());
 
   // 항목만 남고 화면 쪽 기억이 사라진 자리에서 시작할 수 있다.
   //
@@ -62,6 +71,8 @@ export function useCurationScreen(anchorRef: RefObject<HTMLElement | null>) {
     (key: string) => {
       listScrollY.current = scrollHostFor(anchorRef.current).top();
       setOpenKey(key);
+      // 뒤로가기(popstate)로 되돌아온 것은 적지 않는다 — 이미 여기서 적혔다.
+      setSeen((keys) => new Set(keys).add(key));
       window.history.pushState(
         withEntryValue(window.history.state, CURATION_KEY, key),
         "",
@@ -89,5 +100,5 @@ export function useCurationScreen(anchorRef: RefObject<HTMLElement | null>) {
     setShownCount((count) => count + FOR_YOU_VISIBLE);
   }, []);
 
-  return { openKey, open, back, shownCount, showMore };
+  return { openKey, open, back, shownCount, showMore, seen };
 }
