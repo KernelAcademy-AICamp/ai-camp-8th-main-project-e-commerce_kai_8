@@ -236,3 +236,53 @@ def test_하루를_넘는_값은_버린다(db_with_away):
     device = uuid.uuid4()
     event = base_event(occurred_at=now_iso(db_with_away), away_ms=86_400_001)
     assert log(db_with_away, device, event) == 0
+
+
+# ── 큐레이션 자리 표식 (2026-08-25) ─────────────────────────────────────────
+#
+# 표 제약과 기록 함수 허용 목록을 **둘 다** 고쳐야 통과한다. 한쪽만 고치면
+# 이 이벤트는 오류가 아니라 조용히 사라진다 — 계측이 도는 줄 알게 된다.
+
+CURATION_SQL = "20260825100000_events_curation_surface.sql"
+
+
+@pytest.fixture(scope="module")
+def db_with_curation(db_with_away):
+    with db_with_away.cursor() as cur:
+        cur.execute(migration_text(CURATION_SQL))
+    return db_with_away
+
+
+def surface_of(db, event_id: str):
+    with db.cursor() as cur:
+        cur.execute("select surface from c_events where event_id = %s", (event_id,))
+        return cur.fetchone()[0]
+
+
+def test_큐레이션_자리를_받는다(db_with_curation):
+    device = uuid.uuid4()
+    event = base_event(occurred_at=now_iso(db_with_curation), surface="curation")
+    assert log(db_with_curation, device, event) == 1
+    assert surface_of(db_with_curation, event["event_id"]) == "curation"
+
+
+def test_검색_대체_자리는_그대로_받는다(db_with_curation):
+    device = uuid.uuid4()
+    event = base_event(
+        occurred_at=now_iso(db_with_curation), surface="search_replacement"
+    )
+    assert log(db_with_curation, device, event) == 1
+    assert surface_of(db_with_curation, event["event_id"]) == "search_replacement"
+
+
+def test_자리가_없는_메인_피드는_그대로다(db_with_curation):
+    device = uuid.uuid4()
+    event = base_event(occurred_at=now_iso(db_with_curation))
+    assert log(db_with_curation, device, event) == 1
+    assert surface_of(db_with_curation, event["event_id"]) is None
+
+
+def test_모르는_자리는_여전히_버린다(db_with_curation):
+    device = uuid.uuid4()
+    event = base_event(occurred_at=now_iso(db_with_curation), surface="not_a_place")
+    assert log(db_with_curation, device, event) == 0

@@ -4,14 +4,14 @@
 // 세로로 쌓으면 훑고 지나가서 한마디를 안 읽는다. 한 장씩이어야 한 개씩 본다.
 // 상품 정보(브랜드·상품명·가격)는 사진 위 버튼을 눌러야 나온다 — 감추는 게 아니라 순서를 정하는 것이다.
 import Image from "next/image";
-import type { CSSProperties } from "react";
+import { type CSSProperties, useEffect } from "react";
 
 import type { Curation } from "@/features/curation/domain/curation";
 import { curationGoodsNo } from "@/features/curation/domain/curation-product";
 import { useCurationSlides } from "@/features/curation/presentation/view-model/use-curation-slides";
 import { formatPrice } from "@/features/feed/domain/format-price";
 import { BackIcon, CloseIcon, PlusIcon } from "@/shared/icons";
-import { logAction } from "@/shared/signals/signals";
+import { logAction, logImpression } from "@/shared/signals/signals";
 
 /** pos가 없거나 짝이 안 맞는 상품의 버튼 자리 */
 const DEFAULT_X = 50;
@@ -33,6 +33,22 @@ export function CurationDetailScreen({
 
   // 이어보기 자리도 슬라이드 한 장이다 — 마지막 상품에서 › 를 눌러도 그리 간다.
   const last = curation.items.length - (next ? 0 : 1);
+
+  // 지금 보이는 한 장을 자리 표식과 함께 기록한다. 첫 장(index 0)이 곧 **이 큐레이션을
+  // 열었다**는 뜻이고, 쌓인 장수가 **몇 장까지 넘겼나**다 — 두 질문에 이벤트 하나로 답한다.
+  //
+  // **취향은 가르치지 않는다**(teachProfile: false) — 여긴 무엇이 쓰이는지 재는 자리다.
+  // 여기서 프로필을 건드리면 다음 주 숫자가 계측 때문인지 추천이 바뀐 탓인지 못 가른다.
+  //
+  // 같은 세션에서 이미 본 상품은 logImpression이 한 번만 보낸다. 앞뒤로 넘겨도 안 늘지만,
+  // 그 상품을 피드에서 먼저 봤다면 그 장은 안 세어진다(9장 중 한 장은 대개 새것이라 열람
+  // 자체는 남는다).
+  const currentUrl = curation.items[index]?.u;
+  useEffect(() => {
+    const goodsNo = curationGoodsNo(currentUrl);
+    if (goodsNo === null) return;
+    logImpression({ goodsNo, surface: "curation", teachProfile: false, rank: index });
+  }, [currentUrl, index]);
 
   return (
     /* 셸 헤더·탭바까지 덮는다 — 상품 상세와 같은 전체화면. 안 덮으면 로고줄과
@@ -144,7 +160,10 @@ export function CurationDetailScreen({
                         // 나가는 것도 취향 신호다. 앱 안 상세를 거치지 않게 되면서
                         // 여기가 큐레이션에서 상품에 대한 행동을 잡는 유일한 지점이다.
                         const goodsNo = curationGoodsNo(item.u);
-                        if (goodsNo !== null) logAction("outbound", goodsNo);
+                        // 자리를 달지 않으면 메인 피드에서 나간 것과 섞여 큐레이션의
+                        // 성적을 따로 볼 수 없다.
+                        if (goodsNo !== null)
+                          logAction("outbound", goodsNo, { surface: "curation" });
                       }}
                     >
                       {/* size-auto 계열을 쓰면 next/image의 width·height 속성이 무시돼

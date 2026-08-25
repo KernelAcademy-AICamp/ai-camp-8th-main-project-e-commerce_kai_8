@@ -21,8 +21,11 @@ export type FeedPolicy = "random" | "personalized" | "fallback";
  * `search_replacement`는 검색 결과가 없거나 소진돼 이어 붙인 취향 피드다.
  * 화면에서는 경계를 지우지만 계측은 구분한다 — 그러지 않으면 나중에
  * "검색이 답을 준 것인가 피드가 대신한 것인가"를 물을 수 없다.
+ *
+ * `curation`은 FOR YOU 큐레이션 상세의 슬라이드다. 이걸 달지 않으면 큐레이션에서
+ * 나간 것이 메인 피드에서 나간 것과 섞여, "큐레이션을 여는 사람이 있는가"를 물을 수 없다.
  */
-export type Surface = "search_replacement";
+export type Surface = "search_replacement" | "curation";
 
 /** 노출의 포트폴리오 유형. similar = 상세 하단 유사 탐색 그리드 */
 export type SourceBucket =
