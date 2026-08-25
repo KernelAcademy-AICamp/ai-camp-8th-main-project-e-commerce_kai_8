@@ -76,9 +76,17 @@ export function CurationDetailScreen({
         </h2>
 
         <p className="px-4 pt-4 text-base leading-relaxed text-ink">{curation.lede}</p>
-        <p className="mx-4 mt-3 border-t border-line pt-3 text-sm leading-relaxed text-ink-soft">
-          {curation.cond.join(" · ")}
-        </p>
+        {/* 선별 조건 — 사진 위 제목과 같은 accent 글씨를 흰 칸에 담는다 */}
+        <div className="mx-4 mt-3 flex flex-wrap gap-1.5 border-t border-line pt-3">
+          {curation.cond.map((label) => (
+            <span
+              key={label}
+              className="rounded-md bg-white px-2 py-1 text-[13px] leading-tight font-semibold text-(--accent)"
+            >
+              {label}
+            </span>
+          ))}
+        </div>
 
         <p className="pt-4 pb-2 text-center font-mono text-xs tracking-wider text-ink-muted tabular-nums">
           <b className="text-sm font-semibold text-(--accent)">
@@ -224,7 +232,7 @@ export function CurationDetailScreen({
           {next && (
             <div className="w-full flex-none snap-center px-9">
               <p className="pb-2 text-center text-[13px] text-ink-soft">
-                여기까지. 비슷한 걸 이어서 볼까요?
+                여기까지. 다른 추천도 볼까요?
               </p>
               <div className="relative">
                 <button
@@ -248,7 +256,7 @@ export function CurationDetailScreen({
                       {next.title}
                     </span>
                     <span className="mt-1.5 block text-[12px] text-white/70">
-                      {next.items.length}개 · {next.cond.join(" · ")}
+                      {next.cond.join(" · ")}
                     </span>
                   </span>
                 </button>
