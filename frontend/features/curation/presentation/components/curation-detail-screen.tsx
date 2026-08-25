@@ -34,7 +34,7 @@ export function CurationDetailScreen({
        z는 상품 상세(z-50)보다 아래 — 여기서 상품을 열면 그게 위로 와야 한다. */
     <div
       className="fixed inset-0 z-40 overflow-y-auto overscroll-contain bg-app"
-      style={{ "--accent": curation.accent ?? "#FAFAFA" } as CSSProperties}
+      style={{ "--accent": curation.accent ?? "#8FBF9F" } as CSSProperties}
     >
       <div className="mx-auto max-w-md pb-16">
         {/* 뒤로가기 좌표를 마이페이지와 맞춘다 — 왼쪽 16px·위 8px (전 화면 공통).
@@ -44,7 +44,7 @@ export function CurationDetailScreen({
             type="button"
             aria-label="뒤로 가기"
             onClick={onBack}
-            className="flex h-10 w-10 cursor-pointer items-center justify-center rounded-full text-ink-soft"
+            className="flex h-9 w-9 cursor-pointer items-center justify-center text-ink-soft transition-colors active:text-ink"
           >
             <BackIcon />
           </button>
@@ -92,7 +92,7 @@ export function CurationDetailScreen({
                       className="h-auto w-full rounded-xl bg-skel-1"
                     />
                     <span
-                      className="absolute flex size-6 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-thumb/95 text-accent-ink shadow"
+                      className="absolute flex size-6 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-thumb/95 text-on-thumb shadow"
                       style={{ left: `${String(x)}%`, top: `${String(y)}%` }}
                     >
                       {openInfo === i ? <CloseIcon /> : <PlusIcon />}
@@ -150,10 +150,10 @@ export function CurationDetailScreen({
                       />
                       <span className="min-w-0">
                         <span className="block text-[11px] text-ink">{item.b}</span>
-                        <span className="block truncate text-[12.5px] font-medium text-accent-ink">
+                        <span className="block truncate text-[12.5px] font-medium text-on-thumb">
                           {item.t}
                         </span>
-                        <span className="block text-[13px] font-semibold text-accent-ink tabular-nums">
+                        <span className="block text-[13px] font-semibold text-on-thumb tabular-nums">
                           {formatPrice(item.p)}
                         </span>
                       </span>

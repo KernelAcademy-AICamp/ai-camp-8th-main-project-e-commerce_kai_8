@@ -1,47 +1,53 @@
 @import "tailwindcss";
 
 /* ═══════════════════════════════════════════════════════════════════
-   뉴모피즘 디자인 토큰 — 계획 docs/plans/2026-08-21-neo-design-port.md
-   기준 자료: design/atee-neo-mockup.html 의 :root 값을 그대로 옮겼다.
-   값을 손으로 고치지 않는다. 시안이 바뀌면 시안에서 다시 가져온다.
+   블랙 테마 디자인 토큰 — 스펙 docs/superpowers/specs/2026-08-24-black-theme-design.md
+   원래 뉴모피즘 값(design/atee-neo-mockup.html)을 블랙 테마로 손으로
+   고친 것이다. 아래 값들은 스펙의 "미정" 절에 따라 의도적으로 손으로
+   튜닝된 값이므로, 시안에서 그대로 다시 가져오면 라이트 테마로 되돌아간다.
    ═══════════════════════════════════════════════════════════════════ */
 
 @theme {
-  /* 바탕·표면 — 뉴모피즘은 표면색이 모두 같고 그림자로만 층을 나눈다 */
-  --color-app: #e4e6eb;
-  --color-surface: #e4e6eb;
-  --color-well: #e4e6eb;
-  --color-chrome: #e4e6eb;
-  /* 들린 판 — 바탕보다 **밝은** 표면. 뉴모피즘 본체는 표면색이 모두 같지만,
-     온보딩 시안은 설명 카드만 밝게 띄운다(design/atee-taste-signup-sample.png에서
-     실측: 바탕 #e4e5ea · 카드 #f6f6f8). 그림자만으로 층을 나누기엔 카드가 커서
-     묻힌다. */
-  --color-raised: #f6f6f8;
+  /* 바탕·표면 — 순수 블랙. 뉴모피즘(표면색 통일 + 그림자 층 구분)을 버리고
+     플랫 다크 카드(테두리로 층 구분)로 바꿨다 — 순수 블랙에서는 그림자 짝이
+     거의 안 보인다. */
+  --color-app: #000000;
+  --color-surface: #000000;
+  --color-well: #000000;
+  --color-chrome: #050505;
+
+  /* 들린 판 — 카드 배경. 배경(#000)보다 밝혀서 경계를 만든다. */
+  --color-raised: #161616;
 
   /* 글자 */
-  --color-ink: #4e5563;
-  --color-ink-soft: #6b7280;
-  --color-ink-muted: #9aa1af;
+  --color-ink: #ededed;
+  --color-ink-soft: #b5b5b5;
+  --color-ink-muted: #7a7a7a;
 
-  --color-line: #d3d6de;
+  --color-line: #2a2a2a;
 
   /* 강조·역할색 */
-  --color-accent: #e8542f;
-  --color-accent-ink: #1c120b;
-  --color-slate: #8590a8; /* 주요 버튼 바탕 */
-  --color-on-slate: #f4f6fa; /* 주요 버튼 글자 */
+  --color-accent: #8fbf9f; /* 세이지그린 — 오렌지에서 교체 */
+  --color-accent-ink: #12231a; /* accent(초록) 위 글자 */
+  --color-slate: #3a3d42; /* 주요 버튼 바탕 — 어두운 회색 유지 */
+  --color-on-slate: #f2f3f5; /* 주요 버튼 글자 */
   --color-star: #e2b23f;
-  --color-danger: #c4574a; /* 삭제 확인 */
+  --color-danger: #e2665a; /* 삭제 확인 — 블랙 배경 대비를 위해 기존보다 밝게 */
 
   /* 채움·가림막 */
-  --color-thumb: #ffffff;
-  --color-skel-1: #dadde3; /* 뼈대(스켈레톤) 어두운 쪽 */
-  --color-skel-2: #eef0f4; /* 뼈대 밝은 쪽 */
-  --color-fill-soft: rgb(133 144 168 / 0.28);
-  --color-fill-deep: rgb(133 144 168 / 0.55);
-  --color-veil: rgb(228 230 235 / 0.85);
-  --color-dim: rgb(23 21 15 / 0.34); /* 시트·팝업 뒤 가림막 */
-  --color-dim-search: rgb(23 21 15 / 0.3); /* 검색창을 손으로 펼쳤을 때 */
+  --color-thumb: #1c1c1c;
+  --color-on-thumb: #ededed; /* thumb(어두운 칩) 위 글자·아이콘 — --color-ink와 같은 값 */
+  /* 뼈대(스켈레톤) 색 — sRGB는 감마 보정이 있어 낮은 값일수록 수치 차이보다
+     훨씬 어둡게 보인다(36/255는 수치로 14%지만 선형 휘도로는 약 1.7%).
+     순수 검정(#000000) 배경 위에서는 예전 값(#1a1a1a·#242424)이 사실상
+     안 보였다 — 실측(2026-08-24, 픽셀 샘플링) 후 눈에 띄게 밝혔다. */
+  --color-skel-1: #242424; /* 어두운 쪽 — 작은 글자 자리 표시 */
+  --color-skel-2: #363636; /* 밝은 쪽 — 카드 크기 채움 */
+  --color-fill-soft: rgb(143 191 159 / 0.18);
+  --color-fill-deep: rgb(143 191 159 / 0.38);
+  --color-veil: rgb(0 0 0 / 0.85);
+  --color-dim: rgb(0 0 0 / 0.55); /* 시트·팝업 뒤 가림막 */
+  --color-dim-search: rgb(0 0 0 / 0.5); /* 검색창을 손으로 펼쳤을 때 */
 
   --radius-card: 10px;
   --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
@@ -51,96 +57,65 @@
     "Apple SD Gothic Neo", "Noto Sans KR", "Segoe UI", sans-serif;
 }
 
-/* 그림자 짝. 뉴모피즘은 색이 아니라 "어두운 그림자 + 밝은 그림자"의 짝으로
-   만들어진다. 그래서 한 곳에서만 정의하고 아래 유틸리티로만 쓴다. */
+/* 플랫 다크 카드의 elevation 그림자 — 층 구분은 주로 border(--color-line)가
+   맡고, 이 그림자는 카드가 배경 위에 살짝 떠 보이게 하는 보조 역할만 한다. */
 :root {
-  --sh-d: rgb(166 175 195 / 0.62);
-  --sh-l: rgb(255 255 255 / 0.95);
+  --sh-d: rgb(0 0 0 / 0.6);
 }
 
-/* 어두운 버전 값 — 시안에 있는 그대로 적어만 둔다. 지금은 아무것도 이 속성을
-   붙이지 않으므로 동작하지 않는다. 밝기 토글을 넣기로 결정하면
-   (계획 "미정" 참고) 이 블록이 시작점이다. prefers-color-scheme으로 켜지
-   않는 이유는, 화면별 어두운 상태를 아직 한 번도 확인하지 않았기 때문이다. */
-:root[data-theme="dark"] {
-  --color-app: #24272e;
-  --color-surface: #24272e;
-  --color-well: #24272e;
-  --color-chrome: #24272e;
-  /* ⚠️ 어두운 시안이 없어 **실측이 아니라 유도한 값**이다 — 밝은 쪽의 바탕↔판
-     차이(+18/+16/+13)를 어두운 쪽 대비에 맞춰 줄였다. 어두운 시안이 생기면
-     거기서 다시 가져온다. */
-  --color-raised: #2c2f37;
-  --color-ink: #d6d9e0;
-  --color-ink-soft: #a8adba;
-  --color-ink-muted: #6f7583;
-  --color-line: #313540;
-  --color-slate: #8a94b0;
-  --color-thumb: #3b3b42;
-  --color-skel-1: #2a2d35;
-  --color-skel-2: #31353e;
-  --color-fill-soft: rgb(138 148 176 / 0.22);
-  --color-fill-deep: rgb(138 148 176 / 0.45);
-  --color-veil: rgb(36 39 46 / 0.85);
-  --sh-d: rgb(10 12 16 / 0.65);
-  --sh-l: rgb(255 255 255 / 0.05);
-}
-
-/* ── 뉴모피즘 유틸리티 ──────────────────────────────────────────────
-   시안이 쓰는 크기는 2/5 · 3/7 · 6/14 세 단계뿐이다. 이 밖의 값을 새로
-   만들지 않는다. 솟음(raised)은 누를 수 있는 것, 눌림(inset)은 담는 칸. */
+/* ── 플랫 다크 카드 유틸리티 ────────────────────────────────────────
+   순수 블랙 배경에서는 "밝은 쪽 그림자"로 층을 못 나눈다(배경보다 밝힐 곳이
+   없다) — 그래서 이중 그림자 뉴모피즘 대신 테두리(--color-line)로 경계를
+   만들고, 그림자는 살짝 뜬 느낌만 보조한다. 클래스 이름(neo*)은 기존
+   컴포넌트가 그대로 쓰므로 바꾸지 않는다. */
 
 @utility neo {
-  box-shadow:
-    3px 3px 7px var(--sh-d),
-    -3px -3px 7px var(--sh-l);
+  border: 1px solid var(--color-line);
+  box-shadow: 0 2px 6px var(--sh-d);
 }
 
 @utility neo-sm {
-  box-shadow:
-    2px 2px 5px var(--sh-d),
-    -2px -2px 5px var(--sh-l);
+  border: 1px solid var(--color-line);
+  box-shadow: 0 1px 3px var(--sh-d);
 }
 
 @utility neo-lg {
-  box-shadow:
-    6px 6px 14px var(--sh-d),
-    -6px -6px 14px var(--sh-l);
+  border: 1px solid var(--color-line);
+  box-shadow: 0 4px 12px var(--sh-d);
 }
 
 @utility neo-in {
-  box-shadow:
-    inset 3px 3px 7px var(--sh-d),
-    inset -3px -3px 7px var(--sh-l);
+  border: 1px solid var(--color-line);
+  box-shadow: inset 0 1px 4px var(--sh-d);
 }
 
 @utility neo-in-sm {
-  box-shadow:
-    inset 2px 2px 5px var(--sh-d),
-    inset -2px -2px 5px var(--sh-l);
+  border: 1px solid var(--color-line);
+  box-shadow: inset 0 1px 3px var(--sh-d);
 }
 
-/* 한쪽 그림자만 — 시안에서 색이 찬 버튼(slate)에 쓴다. 밝은 그림자를 같이
-   주면 색 위에서 테두리처럼 떠 보인다. */
+/* 한쪽 그림자만 — 시안에서 색이 찬 버튼(slate)에 쓴다. 테두리를 더하면
+   색 위에서 테두리처럼 떠 보이므로 그림자만 남긴다. */
 @utility neo-drop {
-  box-shadow: 3px 3px 7px var(--sh-d);
+  box-shadow: 0 2px 6px var(--sh-d);
 }
 
-/* 상세 하단 dock — 표시될 때마다 아래에서 떠오른다 (시안 `@keyframes dockIn`).
-   자리를 잡는 translate가 애니메이션에 들어 있어 유틸리티로 겹치지 않게 여기서 함께 준다. */
+/* 스낵바 — 뜰 때마다 아래에서 떠오른다(2026-08-25, 예전 상세 하단 저장
+   dock의 dock-in을 재사용 — 그 dock 자체는 걷어냈지만 이 뜨는 결은 스낵바에도
+   맞는다). */
 @media (prefers-reduced-motion: no-preference) {
-  .dock-in {
-    animation: dock-in 320ms cubic-bezier(0.3, 0.8, 0.3, 1);
+  .snackbar-in {
+    animation: snackbar-in 320ms cubic-bezier(0.3, 0.8, 0.3, 1);
   }
 
-  @keyframes dock-in {
+  @keyframes snackbar-in {
     from {
       opacity: 0;
-      transform: translate(-50%, 14px);
+      transform: translateY(14px);
     }
     to {
       opacity: 1;
-      transform: translate(-50%, 0);
+      transform: translateY(0);
     }
   }
 }
@@ -156,26 +131,7 @@ body {
    overflow와 달리 body에서 전파되지 않아 root(html)에 걸어야 먹는다 */
 html {
   overscroll-behavior-y: none;
-}
-
-/* ── 1단계(홈)에서 시안이 요구하는 나머지 값들 ─────────────────────────
-   시안은 뉴모피즘 그림자만 쓰지 않는다. 검색 dock과 색이 찬 버튼은
-   "큰 소프트 헤일로 제거 — 또렷한 외곽"이라는 주석과 함께 담백한 드롭
-   섀도를 쓴다. 그 둘을 섞지 않도록 이름을 따로 둔다. */
-
-@utility shadow-dock {
-  box-shadow: 0 2px 6px rgb(30 38 55 / 0.22);
-}
-
-@utility shadow-fab {
-  box-shadow: 0 1px 4px rgb(30 38 55 / 0.28);
-}
-
-/* 워드마크 양각 — 밝은 쪽과 어두운 쪽 그림자를 글자에 반대로 넣어 새긴 듯이 */
-@utility emboss {
-  text-shadow:
-    1px 1px 1px var(--sh-l),
-    -1px -1px 1px var(--sh-d);
+  color-scheme: dark;
 }
 
 /* 화면 맨 아래 흐림 띠 — 검색 dock 뒤로 피드가 그대로 비쳐 글자와 겹치는 것을 막는다.
@@ -244,148 +200,36 @@ html.search-open .veil-band {
   }
 }
 
-/* ── 3단계: 저장 폴더 패널 ────────────────────────────────────────────
-   시안 `.savebar`는 화면 전체를 덮는 **불투명** 패널이라(inset 0 + bg-app)
-   뒤가 비치지 않는다. 그래서 지금처럼 주소를 가진 화면으로 두어도 보이는
-   결과가 같다 — 주소·뒤로가기·새로고침은 그대로 살고, 열리는 방식만 맞춘다. */
+/* 보관함 폴더 열림 — 브라우저 View Transitions API(useFolderOpen)가 전후 화면을
+   실제로 캡처해 직접 보간한다. 표지 하나와 도착 화면의 격자(전혀 다른 사진
+   여러 장)는 모양이 이어질 수 없어 수동으로 복제본을 날리던 이전 방식은
+   타이밍을 아무리 맞춰도 어색했다 — 대신 이 앱의 다른 전환과 결을 맞추는
+   지속시간·이징만 지정한다. 지원하지 않는 브라우저·움직임을 줄이도록 설정한
+   기기에서는 훅이 호출 자체를 건너뛴다. */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 320ms;
+  animation-timing-function: cubic-bezier(0.25, 0.9, 0.3, 1);
+}
 
+/* ── push 스택(프로필·설정) ──────────────────────────────────
+   새 화면이 이전 화면을 완전히 덮으며 페이드로 나타난다 — 상품상세와 같은
+   언어(`transition-opacity duration-200`)다(2026-08-25 수정). 오른쪽에서
+   미끄러져 들어오는 동작은 앱의 다른 전체화면들과 결이 달라 걷어냈다 —
+   그 전엔 슬라이드였고, 그 전전엔 뒤가 줄어드는 사이드시트였다. */
 @media (prefers-reduced-motion: no-preference) {
-  .panel-in {
-    animation: panel-in 240ms cubic-bezier(0.25, 0.9, 0.3, 1);
+  .push-in {
+    animation: push-in 200ms ease;
   }
 
-  @keyframes panel-in {
+  @keyframes push-in {
     from {
       opacity: 0;
-      transform: scale(0.98);
     }
     to {
       opacity: 1;
-      transform: none;
     }
   }
-}
-
-/* 폴더 표지 — 겹쳐진 카드 스택. 뒤 두 장은 사진이 아니라 톤 카드다(시안). */
-.fcard {
-  position: absolute;
-  inset: 0;
-  border-radius: 20px;
-}
-
-.fc-b1 {
-  background: #c9cfda;
-  transform: rotate(6deg) translate(5px, -4px);
-  box-shadow: 0 2px 6px rgb(30 38 55 / 0.1);
-}
-
-.fc-b2 {
-  background: #f3f4f8;
-  transform: rotate(-5deg) translate(-5px, 6px);
-  box-shadow: 0 2px 6px rgb(30 38 55 / 0.1);
-}
-
-.fmain {
-  overflow: hidden;
-  background: linear-gradient(180deg, #dfe2ea 0%, #cdd2de 100%);
-  box-shadow: 0 4px 12px rgb(30 38 55 / 0.18);
-}
-
-/* 사진 아래 흐린 띠 — 이름·개수가 어떤 사진 위에서도 읽히게. 위로 갈수록 사라진다. */
-.fscrim {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  height: 78px;
-  background: linear-gradient(to top, rgb(23 25 32 / 0.55), rgb(23 25 32 / 0));
-  -webkit-backdrop-filter: blur(10px);
-  backdrop-filter: blur(10px);
-  -webkit-mask-image: linear-gradient(to top, black 55%, transparent 100%);
-  mask-image: linear-gradient(to top, black 55%, transparent 100%);
-}
-
-/* 폴더 열림 — 시안 `openFolderDetail`. 두 단계다.
-   ① 탭한 표지를 복제해 헤더 아래 중앙으로 날리고 목록은 사라진다.
-   ② 폴더 상세 격자가 작게 시작해 제 크기로 튕겨 퍼진다.
-   움직임을 줄이도록 설정한 기기에서는 연출 없이 곧바로 바뀐다(시안도 같다). */
-@media (prefers-reduced-motion: no-preference) {
-  .fly-clone {
-    position: absolute;
-    z-index: 6;
-    pointer-events: none;
-    transition: transform 330ms cubic-bezier(0.3, 0.8, 0.3, 1);
-  }
-
-  .fade-away {
-    opacity: 0 !important;
-    transition: opacity 200ms ease;
-  }
-
-  .grid-burst {
-    transform-origin: 50% 0;
-    animation: grid-burst 480ms var(--ease-spring);
-  }
-
-  @keyframes grid-burst {
-    from {
-      transform: translateY(-34px) scale(0.42);
-    }
-    to {
-      transform: none;
-    }
-  }
-}
-
-/* ── 4단계: 프로필 사이드바 ──────────────────────────────────────────
-   시안 `.sidebar`도 폭 100%에 불투명이라(3단계 패널과 같다) 주소를 가진 화면으로
-   두고 모양과 열리는 방식만 맞춘다. 오른쪽에서 밀려 들어온다. */
-@media (prefers-reduced-motion: no-preference) {
-  .sidebar-in {
-    animation: sidebar-in 340ms cubic-bezier(0.25, 0.9, 0.3, 1);
-  }
-
-  @keyframes sidebar-in {
-    from {
-      transform: translateX(103%);
-    }
-    to {
-      transform: none;
-    }
-  }
-}
-
-/* 왼쪽 색 레일 — 시안 `.side-rail`. 위는 밝게, 아래는 어둡게 얹어 곡면처럼 보이고
-   오른쪽 모서리만 둥글다. 바닥에는 세로로 선 워드마크가 있다. */
-.side-rail {
-  position: absolute;
-  top: 0;
-  left: 0;
-  bottom: 0;
-  width: 46px;
-  background:
-    linear-gradient(
-      180deg,
-      rgb(255 255 255 / 0.22) 0%,
-      rgb(255 255 255 / 0) 26%,
-      rgb(20 26 40 / 0.18) 100%
-    ),
-    var(--color-slate);
-  border-radius: 0 26px 26px 0;
-  box-shadow: 4px 0 14px rgb(20 26 40 / 0.18);
-}
-
-.side-rail::after {
-  content: "aTee";
-  position: absolute;
-  bottom: 26px;
-  left: 50%;
-  transform: translateX(-50%);
-  writing-mode: vertical-rl;
-  font-size: 13px;
-  font-weight: 800;
-  letter-spacing: 0.22em;
-  color: rgb(255 255 255 / 0.55);
 }
 
 /* 설정 팝오버 — 시안 `.set-menu`. 기어 바로 아래에서 펼쳐진다. */
@@ -405,19 +249,4 @@ html.search-open .veil-band {
       transform: scale(1) translateY(0);
     }
   }
-}
-
-/* 프로필이 홈 위에 겹쳐 열리면 뒤의 홈이 살짝 줄어들며 물러난다
-   (시안 `.screen.side-open .scroll`). 겹침이 아닌 단독 화면에서는 이 표시가
-   붙지 않으므로 아무 일도 일어나지 않는다. */
-html.profile-open > body > main {
-  transform: scale(0.92);
-  border-radius: 28px;
-  overflow: hidden;
-}
-
-html > body > main {
-  transition:
-    transform 340ms cubic-bezier(0.25, 0.9, 0.3, 1),
-    border-radius 340ms ease;
 }

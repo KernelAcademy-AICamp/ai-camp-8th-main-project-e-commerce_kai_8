@@ -10,7 +10,6 @@ import type {
   OriginRect,
 } from "@/features/feed/detail/domain/detail-stack";
 import { sellerUrl } from "@/features/feed/detail/domain/seller-link";
-import { DetailDock } from "@/features/feed/detail/presentation/components/detail-dock";
 import { useDetailScroll } from "@/features/feed/detail/presentation/view-model/use-detail-scroll";
 import { useExpandTransition } from "@/features/feed/detail/presentation/view-model/use-expand-transition";
 import { useSlideIndex } from "@/features/feed/detail/presentation/view-model/use-slide-index";
@@ -19,7 +18,10 @@ import type { Product } from "@/features/feed/domain/product";
 import { initialSlideIndex } from "@/features/feed/domain/similar";
 import { FeedError } from "@/features/feed/presentation/components/feed-error";
 import { FeedGrid } from "@/features/feed/presentation/components/feed-grid";
-import { FeedSkeleton } from "@/features/feed/presentation/components/feed-skeleton";
+import {
+  FeedSkeletonSimple,
+  SKELETON_COLUMN_HEIGHTS,
+} from "@/features/feed/presentation/components/feed-skeleton-simple";
 import {
   SIMILAR_PAGE_SIZE,
   useFeedViewModel,
@@ -29,9 +31,12 @@ import { SaveSheet } from "@/features/feed/wishlist/presentation/components/save
 import { useSaveSheet } from "@/features/feed/wishlist/presentation/view-model/use-save-sheet";
 import { useVisibleWishes } from "@/features/feed/wishlist/presentation/view-model/use-visible-wishes";
 import { useWishlist } from "@/features/feed/wishlist/presentation/view-model/use-wishlist";
+import { rememberAfterLogin } from "@/shared/history/after-login";
 import { recordRecentProduct } from "@/shared/history/recent-products";
-import { BackIcon, ExternalLinkIcon } from "@/shared/icons";
+import { ArrowUpIcon, BackIcon } from "@/shared/icons";
 import { logAction } from "@/shared/signals/signals";
+import { Snackbar } from "@/shared/ui/snackbar";
+import { useSnackbar } from "@/shared/ui/use-snackbar";
 
 interface ProductDetailProps {
   entry: DetailEntry;
@@ -80,7 +85,7 @@ export function ProductDetail({
     onClosed,
     !entry.revealed,
   );
-  const { scrollRef, heroEndRef, pastHero, nearTop, scrollToTop } = useDetailScroll(
+  const { scrollRef, heroEndRef, pastHero, scrollToTop } = useDetailScroll(
     entry.savedScrollTop,
   );
   const explore = useFeedViewModel({
@@ -94,13 +99,19 @@ export function ProductDetail({
   // 화면용으로 바꾼다 — 시트의 폴더별 개수·썸네일이 보관함 화면과 같아야 한다
   // (설계 "담기 시트는 경로가 다르다").
   const visibleWishes = useVisibleWishes(entries);
-  const sheet = useSaveSheet(save);
+  const snackbar = useSnackbar();
+  const sheet = useSaveSheet(save, () => {
+    snackbar.show("담았어요");
+  });
   const isWishedNow = wished(product.goodsNo);
   // 저장 버튼이 눌렸을 때 — 비회원이면 안내 없이 곧바로 로그인 화면으로
   // (저장은 동작이므로 설명을 한 단계 끼우지 않는다), 아니면 폴더 고르는 시트
   // (docs/plans/2026-08-20-wishlist-folders.md)
   const requestSave = () => {
     if (access === "out") {
+      // /login으로 넘어가기 전에 지금 자리를 적어 둔다 — signIn()이 부를 때는
+      // 이미 /login이라 "돌아올 자리"를 모른다(2026-08-25, 상품상세 복귀 버그 수정).
+      rememberAfterLogin(window.location.pathname + window.location.search);
       router.push("/login");
       return;
     }
@@ -129,11 +140,11 @@ export function ProductDetail({
     >
       <div className="relative mx-auto flex h-full max-w-md flex-col">
         {/* 뒤로가기 좌표를 마이페이지와 맞춘다 — 왼쪽 16px·위 8px (전 화면 공통) */}
-        <header className="relative flex items-center px-4 pt-4 pb-2">
+        <header className="relative flex items-center px-4 py-2">
           <button
             type="button"
             aria-label="뒤로 가기"
-            className="flex h-10 w-10 cursor-pointer items-center justify-center rounded-full bg-app text-ink-soft neo active:neo-in"
+            className="flex h-9 w-9 cursor-pointer items-center justify-center text-ink-soft transition-colors active:text-ink"
             onClick={onRequestClose}
           >
             <BackIcon />
@@ -202,7 +213,7 @@ export function ProductDetail({
                   ))}
                   {/* 지금 보고 있는 점 — 자리를 옮기며 미끄러진다 (점 5px + 사이 5px = 10px) */}
                   <span
-                    className="absolute top-0 left-0 h-[5px] w-[5px] rounded-full bg-thumb transition-transform duration-[260ms] ease-spring"
+                    className="absolute top-0 left-0 h-[5px] w-[5px] rounded-full bg-white transition-transform duration-[260ms] ease-spring"
                     style={{ transform: `translateX(${String(index * 10)}px)` }}
                   />
                 </span>
@@ -220,25 +231,49 @@ export function ProductDetail({
             <h2 className="mt-1.5 text-[19px] font-extrabold tracking-[-0.01em] text-ink">
               {product.title}
             </h2>
-            {/* 시안 `.detail-price-row` — 가격 옆에 아이콘이 나란히. 버튼 틀 없이 아이콘만 */}
-            <div className="mt-3 flex items-center gap-4">
+            {/*
+              가격 옆에 찜·판매처 이동 — Rajinwoo 이전 형태로 되돌린다
+              (2026-08-25). 저장은 더는 하단 dock이 아니라 여기 하트가 맡는다:
+              채워진 하트는 곧바로 해제, 빈 하트는 requestSave()(비회원이면
+              로그인, 회원이면 폴더 시트)로 이어진다.
+            */}
+            <div className="mt-3 flex items-center justify-between gap-3">
               <p className="text-[18px] font-extrabold text-ink tabular-nums">
                 {formatPrice(product.priceFinal)}
               </p>
-              {/* 시안의 가격줄에는 판매처 링크만 있다 — 저장은 하단 dock이 맡는다 */}
               <div className="flex shrink-0 items-center">
+                <button
+                  type="button"
+                  aria-label={isWishedNow ? "찜 해제" : "찜"}
+                  aria-pressed={isWishedNow}
+                  className={`flex h-11 w-11 cursor-pointer items-center justify-center text-2xl ${
+                    isWishedNow ? "text-danger" : "text-ink"
+                  }`}
+                  onClick={() => {
+                    if (isWishedNow) {
+                      remove(product);
+                    } else {
+                      requestSave();
+                    }
+                  }}
+                >
+                  {isWishedNow ? "♥" : "♡"}
+                </button>
                 <a
                   href={sellerUrl(product.goodsNo)}
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label="판매처로 이동"
                   title="판매처로 이동"
-                  className="relative -top-px flex items-center justify-center p-1.5 text-ink-soft transition-transform active:scale-[0.88] active:text-ink"
+                  // text-3xl — "↗" 글자는 "♡"와 같은 24px에서 훨씬 작고 위쪽으로
+                  // 치우쳐 그려져(폰트 자체의 글리프 비례), 크기를 30px로 올려야
+                  // 두 버튼의 잉크량이 비슷해 보인다(2026-08-25 실측 비교).
+                  className="flex h-11 w-11 items-center justify-center text-3xl font-semibold text-ink"
                   onClick={() => {
                     logAction("outbound", product.goodsNo);
                   }}
                 >
-                  <ExternalLinkIcon />
+                  ↗
                 </a>
               </div>
             </div>
@@ -252,7 +287,7 @@ export function ProductDetail({
           </div>
 
           <div className="px-3 pt-[22px] pb-[120px]">
-            {explore.showSkeleton && <FeedSkeleton fillMs={explore.lastLoadMs} />}
+            {explore.showSkeleton && <FeedSkeletonSimple />}
             {explore.failed && <FeedError onRetry={explore.retry} />}
             <FeedGrid
               columns={explore.columns}
@@ -266,22 +301,28 @@ export function ProductDetail({
                   scrollRef.current?.scrollTop ?? 0,
                 );
               }}
+              // 다음 배치를 받는 동안 각 칸 끝에 뼈대를 이어 붙인다 — 홈 피드와
+              // 같은 처리(2026-08-25, 예전엔 여기만 빠져 있었다).
+              trailingSkeletonHeights={
+                !explore.showSkeleton && explore.loadingMore
+                  ? SKELETON_COLUMN_HEIGHTS.map((column) => column.slice(0, 2))
+                  : undefined
+              }
             />
           </div>
         </div>
-        {/*
-          하단 dock — 시안 `.ddock`. 맨 위에서는 저장 알약, 내리면 원버튼(맨 위로).
-          저장 흐름은 가격줄에 있던 찜과 같다 — 비회원이면 로그인, 아니면 폴더 시트.
-        */}
-        <DetailDock
-          saved={isWishedNow}
-          expanded={nearTop}
-          onSave={requestSave}
-          onUnsave={() => {
-            remove(product);
-          }}
-          onToTop={scrollToTop}
-        />
+        {/* 맨 위로 — Rajinwoo 이전 형태(2026-08-25). 저장 알약은 없앴다, 찜은
+            가격줄의 하트가 맡는다. 히어로를 지나 탐색 그리드에 들어왔을 때만 뜬다 */}
+        {pastHero && (
+          <button
+            type="button"
+            aria-label="맨 위로"
+            onClick={scrollToTop}
+            className="absolute bottom-6 left-1/2 flex h-12 w-12 -translate-x-1/2 cursor-pointer items-center justify-center rounded-full bg-slate text-on-slate shadow-[0_4px_12px_rgb(30_38_55/0.32)]"
+          >
+            <ArrowUpIcon size={20} />
+          </button>
+        )}
       </div>
 
       {sheet.pending !== null && (
@@ -301,6 +342,8 @@ export function ProductDetail({
           }}
         />
       )}
+
+      <Snackbar message={snackbar.message} />
     </div>
   );
 }

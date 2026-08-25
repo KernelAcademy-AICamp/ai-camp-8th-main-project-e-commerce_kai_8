@@ -113,7 +113,7 @@ describe("FloatingSearch", () => {
    */
   it("입력 글자 크기는 iOS 자동 확대 임계값(16px) 아래로 내려가지 않는다", () => {
     render(<FloatingSearch {...base} collapsed={false} />);
-    const input = screen.getByLabelText("검색어 입력");
+    const input = screen.getByLabelText("티셔츠 검색");
 
     expect(input.className).toContain("text-base");
     expect(input.className).not.toContain("text-sm");
@@ -131,7 +131,7 @@ describe("FloatingSearch", () => {
         onInputBlur={onInputBlur}
       />,
     );
-    const input = screen.getByLabelText("검색어 입력");
+    const input = screen.getByLabelText("티셔츠 검색");
 
     fireEvent.focus(input);
     expect(onInputFocus).toHaveBeenCalledTimes(1);

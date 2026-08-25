@@ -1,8 +1,8 @@
 import {
-  AccountSkeleton,
   GreetingSkeleton,
   MyPageShell,
 } from "@/features/auth/presentation/components/my-page-shell";
+import { ProfileActivityCardSkeleton } from "@/features/feed/presentation/components/profile-activity-card-skeleton";
 import { SettingsMenuButton } from "@/features/settings/presentation/components/settings-menu-button";
 import { TasteCardSkeleton } from "@/features/taste/presentation/components/taste-card-skeleton";
 
@@ -22,15 +22,24 @@ import { TasteCardSkeleton } from "@/features/taste/presentation/components/tast
  *
  * 취향 카드를 여기서 조립하는 것도 `app/my/page.tsx`와 같은 이유다 — 화면끼리
  * import하지 않고 라우트가 조립한다(frontend/AGENTS.md).
+ *
+ * **계정 자리(`account`)는 비워 둔다.** 로그인 상태에서는 그 자리가 원래
+ * 빈다(로그아웃은 설정 화면 안으로 옮겼다) — 대다수가 이미 로그인한 채
+ * 마이페이지로 돌아오는 경우라, 빈 자리를 기준으로 맞춘다. 예전에 여기
+ * 뼈대(원 30px)를 그렸다가, 로그인 상태로 판명나 그 자리가 사라지는 순간
+ * `mr-auto`로 오른쪽에 붙어 있던 톱니(설정) 버튼까지 같이 밀려 위치가
+ * 튀었다(2026-08-25 버그 수정) — 톱니가 계정 자리 바로 앞이라 계정 자리
+ * 너비가 통째로 톱니 위치에 영향을 준다.
  */
 export default function MyLoading() {
   return (
     <MyPageShell
       greeting={<GreetingSkeleton />}
       settings={<SettingsMenuButton />}
-      account={<AccountSkeleton />}
+      account={null}
     >
       <TasteCardSkeleton />
+      <ProfileActivityCardSkeleton />
     </MyPageShell>
   );
 }

@@ -1,13 +1,17 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef } from "react";
 
 import { DetailLayers } from "@/features/feed/detail/presentation/components/detail-layers";
 import { useDetailState } from "@/features/feed/detail/presentation/view-model/use-detail-state";
 import { FeedError } from "@/features/feed/presentation/components/feed-error";
 import { FeedGrid } from "@/features/feed/presentation/components/feed-grid";
-import { FeedSkeleton } from "@/features/feed/presentation/components/feed-skeleton";
+import {
+  FeedSkeletonSimple,
+  SKELETON_COLUMN_HEIGHTS,
+} from "@/features/feed/presentation/components/feed-skeleton-simple";
 import { useFeedViewModel } from "@/features/feed/presentation/view-model/use-feed-view-model";
+import { usePullToRefresh } from "@/features/feed/presentation/view-model/use-pull-to-refresh";
 import { FloatingSearch } from "@/features/feed/search/presentation/components/floating-search";
 import { SearchResults } from "@/features/feed/search/presentation/components/search-results";
 import { useKeyboardInset } from "@/features/feed/search/presentation/view-model/use-keyboard-inset";
@@ -15,6 +19,7 @@ import { useSearchCollapse } from "@/features/feed/search/presentation/view-mode
 import { useSearchFeed } from "@/features/feed/search/presentation/view-model/use-search-feed";
 import { useSearchScroll } from "@/features/feed/search/presentation/view-model/use-search-scroll";
 import { useSearchState } from "@/features/feed/search/presentation/view-model/use-search-state";
+import { RefreshIcon } from "@/shared/icons";
 import { useRetryPendingForget } from "@/shared/signals/use-retry-pending-forget";
 
 // active=false 면 다른 칸을 보고 있다는 뜻 — 화면은 그대로 두고(스크롤 위치·검색
@@ -52,9 +57,10 @@ export function MosaicFeed({ active = true }: { active?: boolean }) {
     onImpress,
     showSkeleton,
     loadingMore,
-    lastLoadMs,
     failed,
     retry,
+    refresh,
+    refreshing,
   } = useFeedViewModel({
     paused: detailOpen || (searching && !showReplacement),
     // 같은 훅이 메인 피드와 대체 피드 양쪽을 맡는다(둘은 동시에 렌더되지 않는다).
@@ -95,6 +101,18 @@ export function MosaicFeed({ active = true }: { active?: boolean }) {
   // 지난번 서버 삭제가 실패했다면 조용히 다시 시도한다 (방침 O-32 삭제 계약)
   useRetryPendingForget();
 
+  // 당겨서 새로고침 — 검색 중이거나 상세가 덮은 동안은 지금 화면에 안 보이는
+  // 기본 피드를 당기는 셈이라 건드리지 않는다.
+  const handlePullRefresh = useCallback(() => {
+    if (searching || detailOpen) return;
+    refresh();
+  }, [searching, detailOpen, refresh]);
+  const { height: pullHeight, rotationDeg: pullRotationDeg } = usePullToRefresh(
+    rootRef,
+    handlePullRefresh,
+    refreshing,
+  );
+
   return (
     <div ref={rootRef} className="mx-auto max-w-md px-3 pt-4 pb-[130px]">
       {search.submittedQuery != null ? (
@@ -115,7 +133,29 @@ export function MosaicFeed({ active = true }: { active?: boolean }) {
         />
       ) : (
         <>
-          {showSkeleton && <FeedSkeleton fillMs={lastLoadMs} />}
+          {/*
+            당겨서 새로고침 화살표 — 높이가 당긴 만큼 늘어나며 카드를 아래로
+            밀어낸다. 당기는 동안은 각도가 당긴 만큼 돌고, 임계값을 넘겨 놓으면
+            계속 돈다(animate-spin). 새 결과가 오면 높이가 다시 0으로 접히며
+            화면이 위로 올라가듯 사라진다.
+          */}
+          <div
+            aria-hidden
+            className="flex items-center justify-center overflow-hidden transition-[height] duration-200 ease-out"
+            style={{ height: pullHeight }}
+          >
+            <span
+              className={`text-ink ${refreshing ? "animate-spin" : ""}`}
+              style={
+                refreshing
+                  ? undefined
+                  : { transform: `rotate(${String(pullRotationDeg)}deg)` }
+              }
+            >
+              <RefreshIcon size={22} />
+            </span>
+          </div>
+          {showSkeleton && <FeedSkeletonSimple />}
           {failed && <FeedError onRetry={retry} />}
           <FeedGrid
             columns={columns}
@@ -124,17 +164,15 @@ export function MosaicFeed({ active = true }: { active?: boolean }) {
             onSelect={(card, originRect) => {
               open(card.product, originRect);
             }}
+            // 다음 배치를 받는 동안 각 칸 끝에 뼈대를 이어 붙인다(배치 크기만큼,
+            // 열당 2장) — 첫 로딩(showSkeleton)일 때는 위에서 이미 화면을
+            // 채우므로 겹치지 않게 뺀다.
+            trailingSkeletonHeights={
+              !showSkeleton && loadingMore
+                ? SKELETON_COLUMN_HEIGHTS.map((column) => column.slice(0, 2))
+                : undefined
+            }
           />
-          {/*
-            다음 배치를 받는 동안 피드 끝에 뼈대를 이어 붙인다 — 시안은 배치마다
-            뼈대를 놓고 물이 다 차오르면 그 자리에서 실제 카드로 바뀐다.
-            첫 로딩(showSkeleton)일 때는 위에서 이미 화면을 채우므로 겹치지 않게 뺀다.
-          */}
-          {!showSkeleton && loadingMore && (
-            <div className="mt-3.5">
-              <FeedSkeleton perColumn={2} fillMs={lastLoadMs} />
-            </div>
-          )}
         </>
       )}
 

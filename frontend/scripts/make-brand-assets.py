@@ -1,9 +1,10 @@
 """앱 아이콘과 공유 카드를 **홈 화면 로고에서** 만든다.
 
-정본은 화면에 쓰는 컴포넌트다 — `shared/icons.tsx`의 `AteeMark`(원 + 티셔츠 글립)와
-`home-shell.tsx`의 `aTee` 워드마크. 여기서 그 SVG 경로와 색을 그대로 가져다 쓴다.
-아이콘과 카드가 앱 화면과 어긋나지 않게 하려는 것이다. **로고를 고치면 이 파일의
-GLYPH·색 상수도 같이 고치고 다시 돌린다.**
+정본은 화면에 쓰는 컴포넌트다 — `shared/icons.tsx`의 `AteeMark`(모자이크 조각 네 개,
+스펙 `docs/superpowers/specs/2026-08-25-mosaic-logo-mark.md`)와 `home-shell.tsx`의
+`aTee` 워드마크. 여기서 그 SVG 좌표와 색을 그대로 가져다 쓴다. 아이콘과 카드가 앱
+화면과 어긋나지 않게 하려는 것이다. **로고를 고치면 이 파일의 PIECES·색 상수도
+같이 고치고 다시 돌린다.**
 
 만드는 것 (public/)
     icon-192.png            안드로이드·매니페스트
@@ -21,7 +22,7 @@ import io
 import pathlib
 
 import cairosvg
-from PIL import Image, ImageDraw, ImageFilter, ImageFont
+from PIL import Image, ImageDraw, ImageFont
 
 HERE = pathlib.Path(__file__).resolve().parent
 FRONTEND = HERE.parent
@@ -29,18 +30,19 @@ FONTS = FRONTEND / "node_modules/pretendard/dist/public/static"
 PUBLIC = FRONTEND / "public"
 ICONS = PUBLIC / "icons"
 
-# globals.css 토큰과 같은 값
-APP = "#e4e6eb"  # --color-app
-SLATE = "#8590a8"  # --color-slate (로고 심볼·워드마크 색)
-SH_D = (166, 175, 195)  # --sh-d
-SH_L = (255, 255, 255)  # --sh-l
+# globals.css 토큰과 같은 값 (검은 테마, 2026-08-24)
+APP = "#000000"  # --color-app
+ACCENT = "#8fbf9f"  # --color-accent (로고 심볼·워드마크 색)
+INK = "#ededed"  # --color-ink (워드마크 글자)
+INK_SOFT = "#b5b5b5"  # --color-ink-soft (부제)
 
-# shared/icons.tsx AteeMark의 티셔츠 경로 (viewBox 26x26) — 그대로 옮긴 것
-GLYPH = (
-    "M13 6.5C11.9 6.5 11 7.4 11 8.5C11 9.2 11.4 9.8 12 10.2V11L5.8 15.4"
-    "C5.3 15.7 5.5 16.5 6.1 16.5H19.9C20.5 16.5 20.7 15.7 20.2 15.4L14 11V10.2"
-    "C14.6 9.8 15 9.2 15 8.5H13.6C13.6 8.8 13.3 9.1 13 9.1C12.7 9.1 12.4 8.8 12.4 8.5"
-    "C12.4 8.2 12.7 7.9 13 7.9V6.5Z"
+# shared/icons.tsx AteeMark의 조각 네 개 (viewBox 56x56) — 그대로 옮긴 것.
+# (x, y, width, height, 불투명도)
+PIECES = (
+    (8, 8, 20, 26, 1.0),
+    (31, 8, 17, 14, 0.55),
+    (31, 25, 17, 23, 0.8),
+    (8, 37, 20, 11, 0.4),
 )
 
 
@@ -50,53 +52,38 @@ def render_svg(svg: str, px: int) -> Image.Image:
     return Image.open(io.BytesIO(png)).convert("RGBA")
 
 
-def mark_svg(circle: str, glyph: str) -> str:
-    """AteeMark와 같은 구성 — 색이 찬 원에 옷걸이를 뚫는다."""
-    return (
-        '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 26 26">'
-        f'<circle cx="13" cy="13" r="12" fill="{circle}"/>'
-        f'<path d="{GLYPH}" fill="{glyph}"/>'
-        "</svg>"
+def mark_svg(color: str) -> str:
+    """AteeMark와 같은 구성 — 조각 네 개, 색 하나에 불투명도로 층을 나눈다."""
+    rects = "".join(
+        f'<rect x="{x}" y="{y}" width="{w}" height="{h}" rx="4" '
+        f'fill="{color}" fill-opacity="{opacity}"/>'
+        for x, y, w, h, opacity in PIECES
     )
+    return f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 56 56">{rects}</svg>'
 
 
-def glyph_only(width: int, color: str) -> Image.Image:
-    """옷걸이 글립만 — **실제 잉크 영역으로 잘라서** 돌려준다.
+def app_icon(px: int, scale: float) -> Image.Image:
+    """홈 화면 아이콘 — 검은 배경 위에 마크를 얹는다. 화면 헤더와 같은 배색이다.
 
-    경로가 viewBox(26x26) 안에서 y 6.5~16.5에만 있어, 그대로 쓰면 위아래 빈칸이
-    절반을 먹어 아이콘에서 작아 보인다. 알파 경계로 잘라 크기를 실제 글립 기준으로 잡는다.
+    `scale`은 아이콘 캔버스 대비 마크 크기 비율. 마크 자체가 56 viewBox 안에서
+    이미 여백(8px)을 갖고 있어 일반 아이콘은 1.0(추가 축소 없음)이면 되지만,
+    마스크 대응은 안드로이드가 모서리를 깎으므로 더 줄인다.
     """
-    big = render_svg(
-        '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 26 26">'
-        f'<path d="{GLYPH}" fill="{color}"/>'
-        "</svg>",
-        1024,
-    )
-    cropped = big.crop(big.getbbox())
-    h = round(cropped.height * width / cropped.width)
-    return cropped.resize((width, h), Image.LANCZOS)
-
-
-def app_icon(px: int, glyph_ratio: float) -> Image.Image:
-    """홈 화면 아이콘 — 슬레이트 바탕에 옷걸이를 앱 색으로 뚫는다.
-
-    화면의 심볼은 옅은 회색 위 옅은 파랑이라 대비가 낮다. 60px로 줄어드는
-    홈 화면에서는 그대로 쓰면 뭉개져서, **원을 판 전체로 키워** 대비를 얻는다.
-    색 관계(슬레이트 ↔ 앱 배경)는 로고 그대로다.
-    """
-    icon = Image.new("RGBA", (px, px), SLATE)
-    g = glyph_only(round(px * glyph_ratio), APP)
-    icon.paste(g, ((px - g.width) // 2, (px - g.height) // 2), g)
+    icon = Image.new("RGBA", (px, px), APP)
+    mark_px = round(px * scale)
+    m = render_svg(mark_svg(ACCENT), mark_px)
+    icon.paste(m, ((px - mark_px) // 2, (px - mark_px) // 2), m)
     return icon
 
 
 def og_card() -> Image.Image:
-    """공유 카드 — 홈 화면 로고줄(.brandrow)을 그대로 옮긴 구성."""
+    """공유 카드 — 홈 화면 로고줄을 그대로 옮긴 구성. 검은 배경, 양각 효과 없음
+    (검은 테마 작업에서 emboss 자체를 없앴다 — globals.css 참고)."""
     W, H = 1200, 630
     card = Image.new("RGB", (W, H), APP)
 
     mark_px = 190
-    mark = render_svg(mark_svg(SLATE, APP), mark_px)
+    mark = render_svg(mark_svg(ACCENT), mark_px)
 
     f_title = ImageFont.truetype(str(FONTS / "Pretendard-ExtraBold.otf"), 168)
     f_sub = ImageFont.truetype(str(FONTS / "Pretendard-SemiBold.otf"), 44)
@@ -109,15 +96,12 @@ def og_card() -> Image.Image:
     row_x = (W - row_w) / 2
     row_cy = H / 2 - 46
 
-    # 워드마크 — .emboss (밝은 그림자 왼위, 어두운 그림자 오른아래)
     tx = row_x + mark_px + gap
-    for dx, dy, color in ((-3, -3, SH_L), (3, 3, SH_D)):
-        probe.text((tx + dx, row_cy + dy), "aTee", font=f_title, fill=color, anchor="lm")
-    probe.text((tx, row_cy), "aTee", font=f_title, fill=SLATE, anchor="lm")
+    probe.text((tx, row_cy), "aTee", font=f_title, fill=INK, anchor="lm")
 
     card.paste(mark, (round(row_x), round(row_cy - mark_px / 2)), mark)
 
-    probe.text((W / 2, row_cy + 152), tagline, font=f_sub, fill="#6b7280", anchor="mm")
+    probe.text((W / 2, row_cy + 152), tagline, font=f_sub, fill=INK_SOFT, anchor="mm")
     return card
 
 
@@ -126,16 +110,16 @@ made = []
 
 for px in (192, 512):
     p = ICONS / f"icon-{px}.png"
-    app_icon(px, 0.56).convert("RGB").save(p, optimize=True)
+    app_icon(px, 1.0).convert("RGB").save(p, optimize=True)
     made.append(p)
 
-# 마스크 대응 — 안드로이드가 모서리를 깎아도 글립이 안 잘리게 안전 영역(중앙 80%) 안에
+# 마스크 대응 — 안드로이드가 모서리를 깎아도 조각이 안 잘리게 안전 영역(중앙) 안에
 p = ICONS / "icon-512-maskable.png"
-app_icon(512, 0.42).convert("RGB").save(p, optimize=True)
+app_icon(512, 0.68).convert("RGB").save(p, optimize=True)
 made.append(p)
 
 p = ICONS / "apple-touch-icon.png"
-app_icon(180, 0.56).convert("RGB").save(p, optimize=True)
+app_icon(180, 1.0).convert("RGB").save(p, optimize=True)
 made.append(p)
 
 p = PUBLIC / "og.png"

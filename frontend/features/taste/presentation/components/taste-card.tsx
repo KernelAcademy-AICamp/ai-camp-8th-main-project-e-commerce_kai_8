@@ -54,10 +54,12 @@ function AxisBar({ axis }: { axis: TasteAxis }) {
       >
         {/* 막대 **위**에서 아래를 가리키는 삼각형. 막대에 얹힌 동그라미는 막대를
             덮어 어디까지가 눈금인지 흐렸다 — 표시를 밖으로 빼면 막대가 온전히
-            보이고, 뾰족한 끝이 한 점을 정확히 짚는다 (2026-08-22 제품 책임자). */}
+            보이고, 뾰족한 끝이 한 점을 정확히 짚는다 (2026-08-22 제품 책임자).
+            색은 포인트 컬러(accent)를 쓴다(2026-08-25) — 회색이던 슬레이트는
+            바탕과 대비가 약해 눈에 잘 안 띄었다. */}
         <span
           aria-hidden
-          className="absolute bottom-[calc(100%+2px)] h-0 w-0 -translate-x-1/2 border-x-[5px] border-t-[7px] border-solid border-x-transparent border-t-slate"
+          className="absolute bottom-[calc(100%+2px)] h-0 w-0 -translate-x-1/2 border-x-[5px] border-t-[7px] border-solid border-x-transparent border-t-accent"
           style={{ left: `${String(axis.value * 100)}%` }}
         />
       </div>
