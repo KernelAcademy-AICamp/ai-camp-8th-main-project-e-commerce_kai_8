@@ -23,10 +23,10 @@ import type { MetricDefinition } from "@/features/metrics/domain/metric";
 export const dailyVolume: MetricDefinition = {
   id: "daily-volume",
   title: "일별 이벤트 개수",
-  order: 5,
+  order: 10,
   screen: "overview",
   chart: "daily-bars",
-  span: 7,
+  span: 5,
   sql: `
     with 일별 as (
       select

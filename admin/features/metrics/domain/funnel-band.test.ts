@@ -63,11 +63,11 @@ describe("일렬 퍼널 — 뒤 단계가 더 큰 경우", () => {
       [
         { 단계: "성별 화면", 도달: 10 },
         { 단계: "옷 고르기", 도달: 7 },
-        { 단계: "홈 진입", 도달: 24 },
+        { 단계: "회원가입 완료", 도달: 24 },
       ],
     );
     const model = must(table);
-    expect(model.impossible).toEqual(["홈 진입"]);
+    expect(model.impossible).toEqual(["회원가입 완료"]);
   });
 
   it("정상이면 알릴 것이 없다", () => {
