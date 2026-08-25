@@ -140,11 +140,11 @@ export function ProductDetail({
     >
       <div className="relative mx-auto flex h-full max-w-md flex-col">
         {/* 뒤로가기 좌표를 마이페이지와 맞춘다 — 왼쪽 16px·위 8px (전 화면 공통) */}
-        <header className="relative flex items-center px-4 pt-4 pb-2">
+        <header className="relative flex items-center px-4 py-2">
           <button
             type="button"
             aria-label="뒤로 가기"
-            className="flex h-10 w-10 cursor-pointer items-center justify-center rounded-full bg-app text-ink-soft neo active:neo-in"
+            className="flex h-9 w-9 cursor-pointer items-center justify-center text-ink-soft transition-colors active:text-ink"
             onClick={onRequestClose}
           >
             <BackIcon />

@@ -57,13 +57,16 @@ export function MyPageShell({
         <div className="px-4 pt-2 pb-[30px]">
           {/* 시안 `.side-top` — 닫기 · 인사말 · 설정 · 로그아웃이 한 줄이다 */}
           <div className="flex items-center gap-2.5">
+            {/* 원형(neo-sm) 대신 다른 화면과 같은 플랫 갈매기(2026-08-25) —
+                이 자리만 30px 원이라 유독 작아 보였다. 옆의 설정·로그아웃
+                원버튼(SIDE_BTN)은 뒤로가기가 아니라 손대지 않는다. */}
             <button
               type="button"
               aria-label="마이 페이지 닫기"
               onClick={close}
-              className={SIDE_BTN}
+              className="flex h-9 w-9 cursor-pointer items-center justify-center text-ink-soft transition-colors active:text-ink"
             >
-              <BackIcon size={15} />
+              <BackIcon />
             </button>
             <p className="mr-auto ml-1 min-w-0 truncate text-[15px] font-[650] text-ink-soft">
               {greeting}

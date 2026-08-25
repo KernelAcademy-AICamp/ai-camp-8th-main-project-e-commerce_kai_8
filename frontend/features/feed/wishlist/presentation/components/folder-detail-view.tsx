@@ -22,7 +22,7 @@ export function FolderDetailView({ folderParam }: { folderParam: string }) {
         <BackLink
           href="/wishlist"
           label="보관함으로 돌아가기"
-          className="flex h-10 w-10 shrink-0 cursor-pointer items-center justify-center rounded-full bg-app text-ink-soft neo active:neo-in"
+          className="flex h-9 w-9 shrink-0 cursor-pointer items-center justify-center text-ink-soft transition-colors active:text-ink"
         >
           <BackIcon />
         </BackLink>

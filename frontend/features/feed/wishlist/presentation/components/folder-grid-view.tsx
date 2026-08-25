@@ -41,12 +41,13 @@ export function FolderGridView() {
 
   return (
     <div className="mx-auto max-w-md px-4 pb-10">
-      {/* 뒤로가기 좌표를 마이페이지와 맞춘다 — 왼쪽 16px·위 8px (전 화면 공통) */}
-      <header className="-mx-2 flex items-center gap-1 py-2">
+      {/* 뒤로가기 좌표를 마이페이지와 맞춘다 — 왼쪽 16px·위 8px (전 화면 공통).
+          바깥 div가 이미 px-4(16px)를 주므로 여기는 추가 여백이 없다. */}
+      <header className="flex items-center gap-1 py-2">
         <BackLink
           href="/"
           label="피드로 돌아가기"
-          className="flex h-10 w-10 cursor-pointer items-center justify-center rounded-full bg-app text-ink-soft neo active:neo-in"
+          className="flex h-9 w-9 cursor-pointer items-center justify-center text-ink-soft transition-colors active:text-ink"
         >
           <BackIcon />
         </BackLink>

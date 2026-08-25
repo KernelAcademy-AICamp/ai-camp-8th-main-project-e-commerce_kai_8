@@ -35,8 +35,12 @@ export function PersonIcon({ size = 20 }: IconProps) {
 /**
  * 왼쪽 갈매기 — 뒤로가기. 시안의 뒤로 버튼들과 같은 굵기·꼭짓점이다
  * (`.side-close`·`.backbtn`·`.fd-back`가 모두 이 모양을 쓴다).
+ *
+ * 기본 크기 20은 홈 헤더의 `PersonIcon` 기본값과 같다(2026-08-25) — 화면마다
+ * 뒤로가기 아이콘 크기가 갈리던 것을, 앱 전체가 참조하는 이 기본값 하나로
+ * 통일한다.
  */
-export function BackIcon({ size = 19 }: IconProps) {
+export function BackIcon({ size = 20 }: IconProps) {
   return (
     <svg
       viewBox="0 0 24 24"

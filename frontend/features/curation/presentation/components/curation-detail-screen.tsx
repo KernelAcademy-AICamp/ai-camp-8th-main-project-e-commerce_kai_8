@@ -44,7 +44,7 @@ export function CurationDetailScreen({
             type="button"
             aria-label="뒤로 가기"
             onClick={onBack}
-            className="flex h-10 w-10 cursor-pointer items-center justify-center rounded-full bg-app text-ink-soft neo active:neo-in"
+            className="flex h-9 w-9 cursor-pointer items-center justify-center text-ink-soft transition-colors active:text-ink"
           >
             <BackIcon />
           </button>
