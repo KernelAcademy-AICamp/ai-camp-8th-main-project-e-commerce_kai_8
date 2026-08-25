@@ -43,4 +43,7 @@ export interface Curation {
   items: CurationItem[];
   /** 작성일 YYYY.MM.DD — DB created_at */ date: string;
   /** 상황 색. 상세의 번호와 장 제목에만 쓴다 (없으면 흰색) */ accent?: string;
+  /** FOR YOU 추천 이유 한 줄 — 키워드 근거로 개인화됐을 때만 화면에 노출한다
+   *  (curation-match.ts의 withGroundedReasons). 계획 2026-08-25. */
+  reason?: string;
 }
