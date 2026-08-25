@@ -31,7 +31,7 @@ AI가 대신할 수 없다. 되돌리기 기록을 **바꾸기 전에** 남긴�
 2. 누가 어느 Google Cloud 프로젝트·OAuth 클라이언트를 소유하는지, 지금 설정 상태가 어떤지, 되돌릴 때 무엇을 어떤 순서로 끄는지 문서에 적는다.
 3. Google Cloud Console에서 OAuth 클라이언트를 만든다 — 승인된 리디렉션 주소, 승인된 JavaScript 원본, 요청 범위, 동의 화면 브랜딩과 개인정보 처리방침 주소, 테스트 사용자 또는 프로덕션 전환.
 4. Supabase에서 Google provider를 켜고 클라이언트 ID·시크릿을 넣는다.
-5. redirect 허용 목록에 **정확한 주소 두 개만** 등록한다 — 로컬용 하나, 프로덕션용 하나. **preview 주소는 등록하지 않는다.**
+5. redirect 허용 목록에 **정확한 주소만** 등록한다 — 로컬용 하나, 프로덕션용 하나, develop 별칭 하나. **와일드카드와 무작위 preview 주소는 등록하지 않는다.** (2026-08-18에는 두 개였다. 별칭을 더한 경위는 아래 표 밑 주석 참고.)
 6. 로컬 Supabase 설정 파일의 기준 주소를 개발 서버 접속 주소와 **같은 호스트**로 맞춘다. 지금은 개발 서버와 다른 호스트이고 프로토콜도 다르며 콜백 경로도 없어서, 그대로 두면 로그인이 실패한다.
 
 **확정값 (2026-08-18)**
@@ -41,10 +41,29 @@ AI가 대신할 수 없다. 되돌리기 기록을 **바꾸기 전에** 남긴�
 | Supabase 프로젝트 | `ngmgpuvvbmrfpluajibi` |
 | 구글에 넣는 리디렉션 URI | `https://ngmgpuvvbmrfpluajibi.supabase.co/auth/v1/callback` (하나뿐) |
 | 구글 JavaScript 원본 | `http://localhost:3000` · `https://ai-camp-8th-main-project-e-commerce.vercel.app` |
-| Supabase Redirect URLs | `http://localhost:3000/auth/callback` · `https://ai-camp-8th-main-project-e-commerce.vercel.app/auth/callback` — **정확히 두 줄, 와일드카드·preview 없음** |
+| Supabase Redirect URLs | `http://localhost:3000/auth/callback` · `https://ai-camp-8th-main-project-e-commerce.vercel.app/auth/callback` · `https://ai-camp-8th-main-project-e-commerce-kai-8-git-develop-kyo5.vercel.app/auth/callback` — **정확히 세 줄, 와일드카드 없음** (셋째 줄은 2026-08-25 추가) |
 | Supabase Site URL | 개발 중에는 `http://localhost:3000`. **노출 게이트 통과 시 프로덕션 주소로 변경** |
 | 로컬 기준 호스트 | `localhost`로 통일 (`127.0.0.1` 사용 금지 — 서로 다른 호스트로 취급돼 로그인이 깨진다) |
 | 구글 앱 게시 상태 | **테스트** 유지. 테스트 사용자에 확인용 계정을 등록한다. 프로덕션 게시는 5단계의 공개 처리방침이 생긴 뒤 |
+
+> **develop 별칭을 더한 이유 (2026-08-25)**
+>
+> 프로덕션으로 승격하기 전에 `develop` 상태를 확인할 경로가 없었다. 로그인이 걸린 화면은
+> Redirect URL이 등록된 주소에서만 열리기 때문이다.
+>
+> **무작위 preview 주소를 막는 규칙은 그대로다.** 배포마다 바뀌는 주소를 허용하려면
+> 와일드카드가 필요하고, 그건 열린 리디렉션이 된다. `-git-develop-` 별칭은 **배포마다
+> 바뀌지 않는 고정 주소 하나**라 그 위험이 없다. 늘어나지 않으므로 목록도 세 줄에서 멈춘다.
+>
+> 앱은 콜백 주소를 `window.location.origin`으로 **실행 중에** 만든다
+> (`features/auth/presentation/view-model/use-google-sign-in.ts`). 빌드 시점에 박히는 값이
+> 아니라서 재빌드 없이 별칭에서 로그인이 된다.
+>
+> ⚠️ **이 세 줄이 목록의 전부여야 한다.** 세 줄이 아닌 것을 발견하면 지우기 전에 여기를 본다.
+>
+> ⚠️ **등록됐는지는 `curl`로 확인할 수 없다.** `/auth/v1/authorize`는 허용 목록에 **없는**
+> 주소도 그대로 통과시킨다(2026-08-25 실측). 검사는 구글에서 돌아오는 콜백 단계에서 일어난다.
+> 확인하려면 그 주소에서 **실제로 로그인해 보는 수밖에 없다.**
 
 **확인된 전제 (2026-08-18)**: Supabase Auth 사용자 **0명**, 활성 provider는 Email(기본값)뿐. → 공유 프로젝트를 aTee 전용 Auth로 써도 된다는 설계 전제가 사실로 확인됨.
 
