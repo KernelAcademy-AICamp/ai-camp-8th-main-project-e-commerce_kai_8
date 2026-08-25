@@ -178,6 +178,15 @@ function writeSessionProfile(session: SessionProfile): void {
 }
 
 /**
+ * 세션 취향을 장기로 접은 결과.
+ *
+ * - `folded` — 접을 행동이 있어 장기에 반영했다
+ * - `no_changes` — 반영할 것이 없었다 (정상)
+ * - `local_error` — 기기 저장소를 읽거나 쓰지 못했다 (고장)
+ */
+export type FoldResult = "folded" | "no_changes" | "local_error";
+
+/**
  * 지금 세션의 취향을 **즉시** 장기로 접는다 — 마이페이지 새로고침용.
  *
  * 원래 접기는 세션이 끝나야(비활성 30분 뒤 같은 탭의 다음 활동) 일어나서,
@@ -191,18 +200,21 @@ function writeSessionProfile(session: SessionProfile): void {
  * 접을 것이 없으면 아무것도 하지 않는다 — 빈 접기도 장기 앵커를 한 세션만큼
  * 감쇠시키므로, 연타가 취향을 깎게 두면 안 된다.
  *
- * @returns 실제로 접었는가 (호출부가 서버 올리기 여부를 가른다)
+ * @returns 세 갈래. 호출부가 서버 올리기 여부를 가르고, 계측이 그대로 기록한다.
  */
-export function foldSessionProfileNow(nowMs: number): boolean {
+export function foldSessionProfileNow(nowMs: number): FoldResult {
   try {
     const stored = parseSession(sessionStorage.getItem(SESSION_PROFILE_KEY));
-    if (!stored) return false;
-    if (stored.anchors.length === 0 && stored.removed.length === 0) return false;
+    if (!stored) return "no_changes";
+    if (stored.anchors.length === 0 && stored.removed.length === 0) return "no_changes";
     writeLongTermReplacing(foldSessionIntoLongTerm(readLongTerm(), stored, nowMs));
     writeSessionProfile({ ...stored, anchors: [], removed: [] });
-    return true;
+    return "folded";
   } catch {
-    return false;
+    // ⚠️ 여기를 no_changes로 뭉치면 안 된다. 기기 저장소가 막힌 것(시크릿 모드·
+    // 용량 초과·정책 차단)과 "누른 게 없다"는 전혀 다른 사건인데, 한 값으로
+    // 돌려주면 관리자 화면에서 고장이 「변화 없음」 막대에 섞여 영영 안 보인다.
+    return "local_error";
   }
 }
 

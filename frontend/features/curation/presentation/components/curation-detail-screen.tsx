@@ -81,7 +81,11 @@ export function CurationDetailScreen({
           {curation.cond.map((label) => (
             <span
               key={label}
-              className="rounded-md bg-white/80 px-2 py-1 text-[13px] leading-tight font-semibold text-(--accent)"
+              className="rounded-md bg-white px-2 py-1 text-[13px] leading-tight font-semibold text-(--accent)"
+              // 흰 칸 위에서는 accent 원색이 흐리다(라임·회색 계열이 특히). 검정을
+              // 섞어 한 단계 어둡게 깐다. color-mix를 모르는 브라우저는 이 선언을
+              // 통째로 버리므로 위 className의 원색이 그대로 남는다.
+              style={{ color: "color-mix(in oklab, var(--accent) 65%, black)" }}
             >
               {label}
             </span>

@@ -3,7 +3,9 @@ import type { MetricTable } from "../../../domain/metric";
 
 /** 그림 안의 좌표계 */
 const W = 1000;
-const H = 110;
+/** 띠 높이. viewBox 비율대로 늘어나므로 카드가 좁으면 같이 얇아진다 —
+ *  5칸 카드에서 63px까지 눌려 존재감이 없었다. 비율을 키웠다. */
+const H = 150;
 /** 각 단계에서 앞쪽 이만큼은 평평하게 두고, 나머지에서 다음 단계로 좁아진다 */
 const FLAT = 0.42;
 
@@ -42,10 +44,10 @@ export function FunnelBandChart({ table }: { table: MetricTable }) {
             className={i === 0 ? "" : "border-l border-neutral-800 pl-3"}
           >
             <div className="text-[11px] text-neutral-500">{i + 1}</div>
-            <div className="mt-0.5 text-[12.5px] font-medium text-neutral-300">
+            <div className="mt-0.5 text-[13px] font-medium text-neutral-300">
               {step.label}
             </div>
-            <div className="mt-1 text-xl font-semibold tracking-tight tabular-nums">
+            <div className="mt-1 text-2xl font-semibold tracking-tight tabular-nums">
               {fmt(step.value)}
             </div>
             <div className="text-[11px] text-neutral-500">
