@@ -74,10 +74,10 @@ const done조건 =
 export const onboardingFunnel: MetricDefinition = {
   id: "onboarding-funnel",
   title: "온보딩 퍼널",
-  order: 15,
+  order: 3,
   screen: "overview",
   chart: "funnel-band",
-  span: 5,
+  span: 7,
   sql: `
     with 단계 as (
       select * from (values
