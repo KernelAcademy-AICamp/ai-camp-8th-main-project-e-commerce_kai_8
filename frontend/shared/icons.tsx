@@ -35,6 +35,10 @@ export function PersonIcon({ size = 20 }: IconProps) {
 /**
  * 왼쪽 갈매기 — 뒤로가기. 시안의 뒤로 버튼들과 같은 굵기·꼭짓점이다
  * (`.side-close`·`.backbtn`·`.fd-back`가 모두 이 모양을 쓴다).
+ *
+ * 기본 크기 20은 홈 헤더의 `PersonIcon` 기본값과 같다(2026-08-25) — 화면마다
+ * 뒤로가기 아이콘 크기가 갈리던 것을, 앱 전체가 참조하는 이 기본값 하나로
+ * 통일한다.
  */
 export function BackIcon({ size = 20 }: IconProps) {
   return (
@@ -138,63 +142,44 @@ export function CloseIcon({ size = 13 }: IconProps) {
   );
 }
 
-/** 하트 — 저장(찜). 시안 `#heartBtn`의 SVG 그대로. `filled`면 속을 채운다 */
-export function HeartIcon({
-  size = 19,
-  filled = false,
-}: IconProps & { filled?: boolean }) {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      width={size}
-      height={size}
-      fill={filled ? "currentColor" : "none"}
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden="true"
-    >
-      <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
-    </svg>
-  );
-}
-
 /**
- * aTee 로고 심볼 — 색이 찬 원 안에 티셔츠 글립.
+ * aTee 로고 심볼 — 모자이크 조각 네 개(스펙 2026-08-25-mosaic-logo-mark).
  *
- * 원은 `currentColor`, 글립은 앱 배경색으로 뚫는다(시안 `.mark-glyph`).
- * 그래서 감싸는 요소의 text 색만 바꾸면 심볼 전체 색이 따라온다.
+ * 실제 홈 피드(2열 masonry)를 축약한 비대칭 배치. 색은 항상
+ * `--color-accent`(세이지그린) 한 가지 — 감싸는 요소의 text 색과 무관하게
+ * 고정된 브랜드 색을 쓴다(로고는 currentColor를 따르지 않는다).
  */
 export function AteeMark({ size = 26 }: IconProps) {
   return (
-    <svg viewBox="0 0 26 26" width={size} height={size} fill="none" aria-hidden="true">
-      <circle cx="13" cy="13" r="12" fill="currentColor" />
-      <path
-        d="M13 6.5C11.9 6.5 11 7.4 11 8.5C11 9.2 11.4 9.8 12 10.2V11L5.8 15.4C5.3 15.7 5.5 16.5 6.1 16.5H19.9C20.5 16.5 20.7 15.7 20.2 15.4L14 11V10.2C14.6 9.8 15 9.2 15 8.5H13.6C13.6 8.8 13.3 9.1 13 9.1C12.7 9.1 12.4 8.8 12.4 8.5C12.4 8.2 12.7 7.9 13 7.9V6.5Z"
-        fill="var(--color-app)"
+    <svg viewBox="0 0 56 56" width={size} height={size} fill="none" aria-hidden="true">
+      <rect x="8" y="8" width="20" height="26" rx="4" fill="var(--color-accent)" />
+      <rect
+        x="31"
+        y="8"
+        width="17"
+        height="14"
+        rx="4"
+        fill="var(--color-accent)"
+        fillOpacity="0.55"
       />
-    </svg>
-  );
-}
-
-/** 상자 밖 화살표 — 판매처(외부 사이트)로 이동. 시안 `#detailLink`의 SVG 그대로 */
-export function ExternalLinkIcon({ size = 18 }: IconProps) {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      width={size}
-      height={size}
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden="true"
-    >
-      <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
-      <polyline points="15 3 21 3 21 9" />
-      <line x1="10" y1="14" x2="21" y2="3" />
+      <rect
+        x="31"
+        y="25"
+        width="17"
+        height="23"
+        rx="4"
+        fill="var(--color-accent)"
+        fillOpacity="0.8"
+      />
+      <rect
+        x="8"
+        y="37"
+        width="20"
+        height="11"
+        rx="4"
+        fill="var(--color-accent)"
+        fillOpacity="0.4"
+      />
     </svg>
   );
 }
@@ -214,27 +199,6 @@ export function ArrowUpIcon({ size = 20 }: IconProps) {
       aria-hidden="true"
     >
       <polyline points="5 14.5 12 7.5 19 14.5" />
-    </svg>
-  );
-}
-
-/** 문 밖으로 나가는 화살표 — 로그아웃. 시안 `#logoutBtn`의 SVG 그대로 */
-export function LogoutIcon({ size = 15 }: IconProps) {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      width={size}
-      height={size}
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden="true"
-    >
-      <path d="M9 21H6a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h3" />
-      <polyline points="15 17 20 12 15 7" />
-      <line x1="20" y1="12" x2="9" y2="12" />
     </svg>
   );
 }

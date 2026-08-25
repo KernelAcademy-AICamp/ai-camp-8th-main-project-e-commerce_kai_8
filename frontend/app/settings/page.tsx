@@ -1,5 +1,6 @@
 import { readAuthNotice } from "@/features/auth/domain/auth-session";
 import { AccountDeleteSection } from "@/features/auth/presentation/components/account-delete-section";
+import { LogoutSection } from "@/features/auth/presentation/components/logout-section";
 import { AppVersionLine } from "@/features/settings/presentation/components/app-version-line";
 import { GenderSettings } from "@/features/settings/presentation/components/gender-settings";
 import { PrivacySettings } from "@/features/settings/presentation/components/privacy-settings";
@@ -19,6 +20,7 @@ export default async function SettingsPage({
       <SettingsHeader />
       <GenderSettings />
       <PrivacySettings />
+      <LogoutSection />
       <AccountDeleteSection notice={notice} />
       <AppVersionLine />
     </main>

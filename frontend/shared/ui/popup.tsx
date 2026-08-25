@@ -37,20 +37,20 @@ export function CenterPopup({
   return (
     <div className="fixed inset-0 z-[48] flex items-center justify-center">
       {onDismiss === undefined ? (
-        <span aria-hidden className="absolute inset-0 bg-[rgb(23_21_15/0.25)]" />
+        <span aria-hidden className="absolute inset-0 bg-dim" />
       ) : (
         <button
           type="button"
           aria-label="닫기"
           onClick={onDismiss}
-          className="absolute inset-0 cursor-pointer bg-[rgb(23_21_15/0.25)]"
+          className="absolute inset-0 cursor-pointer bg-dim"
         />
       )}
 
       <div
         role={role}
         aria-label={label}
-        className="relative w-[250px] rounded-[20px] bg-app px-[22px] pt-[26px] pb-5 text-center shadow-[0_4px_16px_rgb(30_38_55/0.24)]"
+        className="relative w-[250px] rounded-[20px] border border-line bg-app px-[22px] pt-[26px] pb-5 text-center shadow-[0_4px_16px_rgb(30_38_55/0.24)]"
       >
         {onBack !== undefined && (
           <button

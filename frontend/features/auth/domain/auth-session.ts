@@ -4,13 +4,15 @@
 /**
  * 로그인한 사용자.
  *
- * 화면에 쓰는 것은 이메일뿐이지만(설계 §3 YAGNI), `providerId`는 화면이 아니라
- * **탈퇴 안전장치**가 쓴다 — 삭제 응답이 유실됐을 때 "같은 구글 계정인가"를
- * 판정하는 유일한 기준이다(설계 §4).
+ * `name`은 구글이 준 표시 이름(2026-08-25 추가 — 인사말에 이메일 대신 쓴다).
+ * `providerId`는 화면이 아니라 **탈퇴 안전장치**가 쓴다 — 삭제 응답이 유실됐을
+ * 때 "같은 구글 계정인가"를 판정하는 유일한 기준이다(설계 §4).
  */
 export interface AuthUser {
   id: string;
   email: string | null;
+  /** 구글이 준 표시 이름. 못 받았으면 null — 그때는 이메일로 대신한다 */
+  name: string | null;
   /** 구글이 준 고유 식별자. 확보하지 못했으면 null */
   providerId: string | null;
 }
@@ -33,6 +35,21 @@ export function googleProviderId(
   const google = identities?.find((identity) => identity.provider === "google");
   if (google === undefined || google.id === "") return null;
   return google.id;
+}
+
+/**
+ * 구글이 주는 표시 이름을 `user_metadata`에서 고른다 — 보통 `full_name`, 드물게
+ * `name`만 온다. Supabase 타입이 `{ [key: string]: any }`라 `unknown`에서
+ * 시작해 직접 좁힌다(클라이언트·서버 저장소가 함께 쓴다).
+ */
+export function googleDisplayName(metadata: unknown): string | null {
+  return readStringField(metadata, "full_name") ?? readStringField(metadata, "name");
+}
+
+function readStringField(metadata: unknown, key: string): string | null {
+  if (typeof metadata !== "object" || metadata === null) return null;
+  const value = (metadata as Record<string, unknown>)[key];
+  return typeof value === "string" && value !== "" ? value : null;
 }
 
 /**
