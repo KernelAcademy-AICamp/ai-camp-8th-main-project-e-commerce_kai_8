@@ -68,3 +68,31 @@ from c_events
 group by device_id, session_id
 order by min(occurred_at) desc
 limit 20;
+
+\echo '=== 6. 큐레이션 열람 (여는가 · 몇 장까지 넘기는가 · 나가는가) ==='
+-- 자리(surface)로 가른다. null=메인 피드, curation=FOR YOU 큐레이션 상세.
+--
+-- **여는가**  = curation 노출이 있는 세션 / 노출이 하나라도 있는 세션
+-- **몇 장**   = 그 세션에서 넘긴 슬라이드 수 (한 큐레이션이 9장이다)
+-- **나가는가** = 그 노출에 귀속된 판매처 이동
+--
+-- ⚠️ 슬라이드 노출은 같은 세션에서 상품마다 한 번만 쌓인다. 앞뒤로 넘겨도 안 늘지만,
+--    그 상품을 피드에서 먼저 봤으면 그 장은 빠진다 — 장수는 **하한**으로 읽는다.
+with per_session as (
+  select
+    session_id,
+    count(*) filter (where event_type = 'impression' and surface = 'curation') as curation_slides,
+    count(*) filter (where event_type = 'impression') as all_impressions,
+    count(*) filter (where event_type = 'outbound' and surface = 'curation') as curation_outbounds
+  from c_events
+  group by session_id
+)
+select
+  count(*) filter (where all_impressions > 0)                          as sessions,
+  count(*) filter (where curation_slides > 0)                          as opened_curation,
+  round(100.0 * count(*) filter (where curation_slides > 0)
+        / greatest(count(*) filter (where all_impressions > 0), 1), 1) as open_rate_pct,
+  round(avg(curation_slides) filter (where curation_slides > 0), 1)    as avg_slides_when_opened,
+  max(curation_slides)                                                 as max_slides,
+  sum(curation_outbounds)                                              as outbounds
+from per_session;

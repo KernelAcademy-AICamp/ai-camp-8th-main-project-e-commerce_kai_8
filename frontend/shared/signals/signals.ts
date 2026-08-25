@@ -263,6 +263,15 @@ export interface ImpressionInput {
   seed?: number;
   /** 노출이 일어난 자리. 생략=메인 피드 */
   surface?: Surface;
+  /**
+   * 이 노출을 취향 프로필에도 반영할 것인가. 생략=반영한다.
+   *
+   * **계측만 하고 싶을 때 false.** 노출은 프로필의 최근 노출 목록(피드 제외 목록)과
+   * `이 스타일로 계속 탐색` 부스트 잔량을 건드린다. 무엇이 쓰이는지 재보려고 자리를
+   * 하나 더 기록했을 뿐인데 추천이 같이 바뀌면, 다음 주 숫자가 계측 때문인지 추천이
+   * 바뀌어서인지 가를 수 없다.
+   */
+  teachProfile?: boolean;
 }
 
 /**
@@ -299,7 +308,9 @@ export function logImpression(input: ImpressionInput): string | null {
   );
   enqueue(event);
   // 취향 프로필의 자기강화 보정·최근 노출 목록 갱신 (설계 §6)
-  recordProfileImpression(input.goodsNo, sessionId, Date.now());
+  if (input.teachProfile !== false) {
+    recordProfileImpression(input.goodsNo, sessionId, Date.now());
+  }
   return event.event_id;
 }
 
@@ -321,13 +332,14 @@ export type ActionType = Exclude<
 export function logAction(
   type: ActionType,
   goodsNo: number,
-  options?: { policy?: FeedPolicy },
+  options?: { policy?: FeedPolicy; surface?: Surface },
 ): void {
   if (!isBrowser() || !isSignedInNow()) return;
   const sessionId = touchSession();
   enqueue({
     ...baseEvent(type, sessionId, Date.now(), options?.policy ?? "random"),
     goods_no: goodsNo,
+    surface: options?.surface,
     impression_id: impressionIdFor(readImpressions(), goodsNo, sessionId),
   });
   // 행동은 취향 프로필의 세션 앵커에도 반영된다 (설계 §6 가중 서열).
