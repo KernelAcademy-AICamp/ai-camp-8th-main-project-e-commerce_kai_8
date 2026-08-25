@@ -103,9 +103,6 @@ export function CurationList({
                       {curation.reason}
                     </span>
                   )}
-                  <span className="mt-1.5 block text-[11px] text-white/70">
-                    {curation.items.length}개
-                  </span>
                 </span>
               </button>
             ))}
