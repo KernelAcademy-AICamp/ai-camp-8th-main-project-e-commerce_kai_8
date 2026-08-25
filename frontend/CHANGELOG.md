@@ -1,3 +1,8 @@
+## [0.1.31](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/compare/v0.1.30...v0.1.31) (2026-08-25)
+
+### Bug Fixes
+
+* 당겨서 새로고침이 iOS Safari(브라우저·PWA 모두)에서 안 되던 문제를 고친다 ([#108](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/issues/108)) ([7b877d6](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/commit/7b877d6c0f250a96600002964e9ad389da03fbbb))
 ## [0.1.30](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/compare/v0.1.29...v0.1.30) (2026-08-25)
 
 ### Features
