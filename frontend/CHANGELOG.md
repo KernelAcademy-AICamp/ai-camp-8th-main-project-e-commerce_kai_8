@@ -1,3 +1,10 @@
+## [0.1.32](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/compare/v0.1.31...v0.1.32) (2026-08-25)
+
+### Features
+
+* FOR YOU 카드에 추천 이유 한 줄을 보여준다 ([#110](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/issues/110)) ([e41cf35](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/commit/e41cf35df6e3cbbe7199c9fd4ce246510a0d7050))
+* 큐레이션에 스타일·TPO·계절 축을 더한다 ([#105](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/issues/105)) ([fdf3e0a](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/commit/fdf3e0a00a307938aae245d98af50b6a7d1ee032)), closes [#72](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/issues/72)
+* 큐레이션을 다 보면 비슷한 큐레이션으로 이어본다 ([#112](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/issues/112)) ([5087480](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/commit/5087480d81550609e5e48b8a89970a28ef1ca11f))
 ## [0.1.31](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/compare/v0.1.30...v0.1.31) (2026-08-25)
 
 ### Bug Fixes

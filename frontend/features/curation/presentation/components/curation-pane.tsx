@@ -2,8 +2,13 @@
 
 import { useRef } from "react";
 
+import similarData from "@/features/curation/data/curation-similar.json";
 import curationData from "@/features/curation/data/curations.json";
 import type { Curation } from "@/features/curation/domain/curation";
+import {
+  type CurationSimilar,
+  pickNextCuration,
+} from "@/features/curation/domain/curation-next";
 import { CurationDetailScreen } from "@/features/curation/presentation/components/curation-detail-screen";
 import { CurationList } from "@/features/curation/presentation/components/curation-list";
 import { useCurationScreen } from "@/features/curation/presentation/view-model/use-curation-screen";
@@ -12,6 +17,8 @@ import { getDisplayName, type SignedInState } from "@/shared/supabase/session-st
 import { useSignedIn } from "@/shared/supabase/use-signed-in";
 
 const curations: Curation[] = curationData;
+/** 큐레이션끼리 닮은 순서 — 미리 뽑아 둔 정적 파일(gen_curation_similar.py) */
+const similar: CurationSimilar = similarData;
 
 /**
  * 목록 위 한 줄.
@@ -46,6 +53,7 @@ export function CurationPane() {
     back,
     shownCount,
     showMore,
+    seen,
   } = useCurationScreen(rootRef);
   // 내 성별 상품만 남기고, 내가 반응한 상품이 걸리는 큐레이션을 앞으로 — 첫 화면
   // 6장이 그 사람 것이 된다. 걸린 것이 없으면(콜드스타트·비회원) 기본 순서 그대로다.
@@ -55,11 +63,22 @@ export function CurationPane() {
   const open = ranked.find((c) => c.key === openKey) ?? null;
   // 첫 화면은 앞의 몇 장만. 나머지는 바닥이 가까워질 때마다 한 묶음씩 붙는다.
   const visible = ranked.slice(0, shownCount);
+  // 다 본 뒤 이어볼 한 장. **아직 안 붙인 것까지 포함한 ranked에서** 고른다 —
+  // 목록에 얼마나 스크롤했는지와 "다음에 뭘 볼지"는 상관이 없다.
+  const next = open ? pickNextCuration(open.key, similar, ranked, seen) : null;
 
   return (
     <div ref={rootRef}>
       {open ? (
-        <CurationDetailScreen curation={open} onBack={back} />
+        /* key로 새 큐레이션마다 새로 그린다 — 안 그러면 슬라이드 자리와 열린 상품
+           정보가 앞 큐레이션 것 그대로 남아, 이어보기가 중간부터 시작한다. */
+        <CurationDetailScreen
+          key={open.key}
+          curation={open}
+          next={next}
+          onBack={back}
+          onOpenNext={openCuration}
+        />
       ) : (
         <>
           <p className="px-3 pt-4 text-[15px] font-bold tracking-[-0.02em] text-white">
