@@ -9,7 +9,10 @@ import { filterByGender } from "@/features/curation/domain/curation-gender";
 import {
   type CurationRule,
   type CurationVectors,
+  groundedKeys,
   orderByTaste,
+  scoreCurations,
+  withGroundedReasons,
 } from "@/features/curation/domain/curation-match";
 import { useGenderSetting } from "@/shared/gender/use-gender-setting";
 import {
@@ -23,6 +26,8 @@ import {
 import { getFeedProfileSummary } from "@/shared/signals/signals";
 
 const rules: Record<string, CurationRule | undefined> = curationRules;
+/** 개인화가 아예 안 걸렸을 때 이유 문구를 지우는 용도 — 매번 새로 만들 필요가 없다 */
+const NO_GROUNDED = new Set<string>();
 
 /**
  * FOR YOU 목록을 **내 성별 것만 남겨** 그 사람 취향 순으로 세운다 — BROWSE 피드와
@@ -66,7 +71,7 @@ export function useForYouOrder(
     // **옛 성별로 거른 목록**을 다시 설치할 수 있다(교차 리뷰 지적).
     let live = true;
     const showBase = () => {
-      shownRef.current = mine;
+      shownRef.current = withGroundedReasons(mine, NO_GROUNDED);
       setTasteOrdered(null);
     };
     showBase();
@@ -85,15 +90,15 @@ export function useForYouOrder(
     let vectors: CurationVectors = {};
     const reorder = () => {
       if (!live) return; // 성별·목록이 바뀐 뒤 도착한 응답은 버린다
-      const next = orderByTaste(
-        mine,
-        rules,
-        cachedAnchorTitles(anchors),
-        views,
-        vectors,
+      const anchorTitles = cachedAnchorTitles(anchors);
+      const next = orderByTaste(mine, rules, anchorTitles, views, vectors);
+      // 이유 문구는 벡터 전용 매치가 아니라 키워드 근거가 있을 때만 남긴다.
+      const grounded = groundedKeys(
+        scoreCurations(mine, rules, anchorTitles, views, vectors),
       );
-      shownRef.current = next;
-      setTasteOrdered(next);
+      const withReasons = withGroundedReasons(next, grounded);
+      shownRef.current = withReasons;
+      setTasteOrdered(withReasons);
     };
     reorder(); // 캐시에 있는 것만으로 먼저
     void fetchMissingAnchorTitles(anchors)
@@ -145,5 +150,5 @@ export function useForYouOrder(
     };
   }, [paneRef]);
 
-  return tasteOrdered ?? mine;
+  return tasteOrdered ?? withGroundedReasons(mine, NO_GROUNDED);
 }
