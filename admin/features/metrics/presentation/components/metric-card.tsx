@@ -1,9 +1,4 @@
-import {
-  asLink,
-  type MetricResult,
-  type MetricTable,
-  needsCumulativeNote,
-} from "../../domain/metric";
+import { asLink, type MetricResult, type MetricTable } from "../../domain/metric";
 import type { FlowView } from "../../domain/session-flow";
 import { BoxplotChart } from "./charts/boxplot-chart";
 import { DailyBarsChart } from "./charts/daily-bars-chart";
@@ -28,8 +23,6 @@ const FOLD_LABEL =
 
 /** 차트를 그리는 데 필요한, 카드 바깥에서 오는 것들 */
 export interface ChartContext {
-  /** 기간이나 날짜로 시간 창이 걸려 있나 */
-  windowed: boolean;
   /** 세션 흐름도가 지금 보고 있는 갈래 */
   flow: FlowView;
   /** 그 갈래를 바꾸는 주소를 만든다 */
@@ -81,9 +74,6 @@ export function MetricCard({
     <section className="rounded-lg border border-neutral-800 bg-neutral-900/60 p-5">
       <h2 className="text-base font-semibold text-neutral-100">{definition.title}</h2>
       <Why text={definition.why} />
-      {needsCumulativeNote(definition, chartContext?.windowed ?? false) && (
-        <CumulativeNote />
-      )}
       <div className="mt-4">{body}</div>
     </section>
   );
@@ -174,20 +164,6 @@ function Why({ text }: { text?: string }) {
         </p>
       ))}
     </div>
-  );
-}
-
-/**
- * 시간 창을 안 고른 누적 지표에 붙는 경고.
- *
- * **숫자가 틀린 게 아니라 뜻이 다르다.** 그래서 「실패」가 아니라 안내로 둔다.
- */
-function CumulativeNote() {
-  return (
-    <p className="mt-2 rounded border border-amber-800/60 bg-amber-950/30 px-3 py-2 text-xs text-amber-200">
-      <strong>처음부터 지금까지를 전부 합친 값</strong>입니다. 최근에 나아졌는지
-      나빠졌는지는 이 숫자로 알 수 없습니다 — 위에서 기간을 고르면 그 기간만 봅니다.
-    </p>
   );
 }
 

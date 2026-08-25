@@ -23,8 +23,6 @@ export async function Dashboard({
 }) {
   const state = await loadDashboard(filter, screen);
   const chartContext: ChartContext = {
-    // 세션으로 좁힌 것은 시간 창이 아니다 — 그 세션 하나만 남아 누적 문제가 그대로다.
-    windowed: filter.days !== null || filter.date !== null,
     flow,
     flowHref: (view) => queryHref({ screen, filter, flow: view }),
   };

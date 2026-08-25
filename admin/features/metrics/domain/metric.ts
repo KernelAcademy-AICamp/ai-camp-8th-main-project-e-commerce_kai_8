@@ -82,25 +82,6 @@ export function spanClass(span: CardSpan): string {
   return byWidth[span];
 }
 
-/**
- * 시간 창 없이 보면 뜻이 흐려지는 지표인가.
- *
- * **「전체」는 처음부터 다 합친 값이라 좋아져도 안 보인다.** 실측(2026-08-25):
- * 하루만 온 기기 비율이 앞 5일 80.9% → 뒤 5일 63.2%로 크게 좋아졌는데,
- * 누적으로 보면 74.7%다. 앞의 나쁜 값이 섞여 개선이 묻힌다.
- * 시간이 갈수록 심해진다 — 두 달 뒤에는 이번 주에 뭘 고쳐도 숫자가 안 움직인다.
- *
- * 지금은 데이터가 열흘치라 「전체」와 「최근 30일」이 같은 값이다. **31일을 넘는
- * 순간부터** 둘이 갈라지고 그때부터 보는 사람이 착각한다. 그날을 알아차릴 방법이
- * 없으므로 미리 넣는다.
- */
-export function needsCumulativeNote(
-  definition: MetricDefinition,
-  windowed: boolean,
-): boolean {
-  return definition.cumulative === true && !windowed;
-}
-
 export interface MetricDefinition {
   /** 파일마다 고유. 화면 키와 오류 표시에 쓴다 */
   id: string;
@@ -142,13 +123,6 @@ export interface MetricDefinition {
    * 화면 코드가 카드별로 예외를 두면 새 지표를 넣을 때 화면도 고쳐야 한다.
    */
   span?: CardSpan;
-  /**
-   * true면 **시간 창을 안 고른 상태에서 경고**를 띄운다.
-   *
-   * 처음부터 누적하는 지표에 붙인다. 기간(`?days=`)이나 날짜(`?date=`)를 고르면
-   * 창이 생기므로 경고가 사라진다.
-   */
-  cumulative?: boolean;
   /**
    * true면 카드를 **접힌 채로** 그린다. 제목과 설명만 보이고 표는 눌러야 펼쳐진다.
    * 대조용 낱개 기록처럼 평소엔 접어 두고 필요할 때만 여는 표에 쓴다.

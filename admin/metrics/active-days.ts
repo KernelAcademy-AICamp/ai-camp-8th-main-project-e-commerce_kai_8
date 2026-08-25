@@ -22,6 +22,12 @@ import type { MetricDefinition } from "@/features/metrics/domain/metric";
  * ⚠️ **관측 기간이 짧으면 왼쪽으로 쏠린다.** 어제 처음 온 기기는 아무리 열심히
  *    써도 1일이다. "1일"이 이탈인지 아직 시간이 안 지난 것인지 가르려면 관측
  *    기간을 봐야 한다 — 그래서 기기별 관측 일수의 중앙값을 함께 낸다.
+ *
+ * ⚠️ **기간을 안 고르면 처음부터 지금까지가 전부 합쳐진다.** 그래서 최근에
+ *    나아졌는지가 이 숫자로는 안 보인다. 실측(2026-08-25): 하루만 온 기기 비율이
+ *    앞 5일 80.9% → 뒤 5일 63.2%로 크게 좋아졌는데 전체 10일로 보면 74.7%였다.
+ *    **비교하려면 기간(`?days=`)을 골라야 한다.** 화면에 이 경고를 띄웠다가
+ *    글이 많아 뺐다(2026-08-25 결정) — 근거는 여기 남긴다.
  */
 export const activeDays: MetricDefinition = {
   id: "active-days",
@@ -31,7 +37,6 @@ export const activeDays: MetricDefinition = {
   screen: "retention",
   chart: "hbars",
   span: 5,
-  cumulative: true,
   sql: `
     with 활동일 as (
       -- 방문일. 하루에 여러 번 와도 1일.
