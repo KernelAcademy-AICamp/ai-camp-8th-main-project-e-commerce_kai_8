@@ -10,7 +10,34 @@ export type SignalEventType =
   | "style_explore"
   | "outbound"
   | "session_start"
-  | "session_end";
+  | "session_end"
+  | "taste_view"
+  | "taste_refresh";
+
+/**
+ * 취향 카드가 최종 상태에 도달했을 때의 결과.
+ *
+ * `insufficient_data`와 `error`를 뭉치면 안 된다. 앞은 **정상**(잴 앵커가 없어
+ * 안내 문구만 보였다)이고 뒤는 **고장**(서버를 부르다 실패했다)이다. 합치면
+ * "취향이 안 보인다"는 민원이 왔을 때 신규 사용자인지 장애인지 못 가른다.
+ */
+export type TasteViewOutcome = "rendered" | "insufficient_data" | "error";
+
+/**
+ * 새로고침을 눌렀을 때 일어난 일.
+ *
+ * `updated`는 "화면 결과가 바뀌었다"가 **아니다.** 반영할 세션 행동이 있었다는
+ * 뜻이다 — 바뀌었는지는 새로고침 전후를 비교해야 알 수 있고 지금은 비교하지
+ * 않는다. 이름이 주장하는 것과 코드가 아는 것을 어긋나게 두지 않는다.
+ *
+ * `ignored_duplicate`는 이미 도는 중에 또 누른 것이다. 이것도 남겨야 "누른
+ * 횟수"와 "실제로 돈 횟수"가 둘 다 나온다.
+ */
+export type TasteRefreshOutcome =
+  | "updated"
+  | "no_new_activity"
+  | "ignored_duplicate"
+  | "error";
 
 export type FeedPolicy = "random" | "personalized" | "fallback";
 
@@ -69,6 +96,13 @@ export interface SignalEvent {
   screen_y?: number;
   slot?: number;
   seed?: number;
+  /**
+   * 이벤트의 결과. 지금은 취향 카드 이벤트만 쓴다.
+   *
+   * Amplitude·Mixpanel의 **event property**에 해당한다. `event_type`이 이미
+   * 갈라 주므로 두 이벤트가 `error`를 함께 써도 섞이지 않는다.
+   */
+  outcome?: TasteViewOutcome | TasteRefreshOutcome;
 }
 
 /** 임베딩 모델 + 알고리즘 버전 태그 (O-26) — 배포 전후 지표를 분리 집계하는 키.

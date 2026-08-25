@@ -38,6 +38,8 @@ import {
   type SignalEventType,
   type SourceBucket,
   type Surface,
+  type TasteRefreshOutcome,
+  type TasteViewOutcome,
 } from "./types";
 
 const SESSION_KEY = "atee-session";
@@ -320,10 +322,20 @@ export async function flushSignalsNow(): Promise<void> {
   await getQueue().flush();
 }
 
-export type ActionType = Exclude<
-  SignalEventType,
-  "impression" | "session_start" | "session_end"
->;
+/**
+ * 상품 하나에 대한 행동 — `logAction`이 받는 것.
+ *
+ * **빼기(`Exclude`)로 정의하지 않는다.** 그렇게 두면 새 이벤트를 더할 때마다
+ * 여기가 조용히 넓어져, 상품과 무관한 이벤트(취향 카드 조회 등)도 `logAction`에
+ * 들어갈 수 있게 된다. 실제로 그런 일이 한 번 있었다.
+ */
+export type ActionType =
+  | "tap"
+  | "wish"
+  | "wish_failed"
+  | "unwish"
+  | "style_explore"
+  | "outbound";
 
 /**
  * 탭·찜·스타일 탐색·판매처 이동 — 해당 상품의 최근 노출에 귀속된다.
@@ -350,6 +362,49 @@ export function logAction(
   if (type !== "wish_failed") {
     recordProfileAction(type, goodsNo, sessionId, Date.now());
   }
+}
+
+/**
+ * 마이페이지 취향 카드가 **최종 상태에 도달했다** (계획 2026-08-25 A-3).
+ *
+ * 카드 **마운트당 한 번**만 부른다. 새로고침으로 다시 그려져도 조회를 또 세지
+ * 않는다 — 그건 `logTasteRefresh`가 따로 센다. 두 번 세면 새로고침을 많이 누른
+ * 사람일수록 조회를 많이 한 것처럼 보인다.
+ *
+ * **상품 번호도 노출 귀속도 싣지 않는다.** 취향 카드는 한 상품에 대한 것이
+ * 아니라 앵커 전체의 경향이라, 어느 노출 때문에 열렸다고 말할 수 없다.
+ *
+ * 로그인하지 않았으면 기록하지 않는다 (O-37). 취향 카드 자체가 회원 전용이라
+ * 실경로에서는 비회원이 여기까지 오지 않지만, 게이트는 한 곳에서 지킨다.
+ */
+export function logTasteView(outcome: TasteViewOutcome): void {
+  if (!isBrowser() || !isSignedInNow()) return;
+  const sessionId = touchSession();
+  enqueue({
+    ...baseEvent("taste_view", sessionId, Date.now(), "random"),
+    outcome,
+  });
+}
+
+/**
+ * 마이페이지 취향 카드의 **새로고침을 눌렀다** (계획 2026-08-25 A-3).
+ *
+ * **받아들인 클릭뿐 아니라 막힌 클릭도 부른다.** 도는 중의 재클릭은 화면상
+ * 아무 일도 안 일어나지만, 그것도 "눌렀다"는 사실이다. 빼면 연타하는 사람이
+ * 한 번만 누른 것으로 보여 새로고침이 잘 돌고 있다고 오해하게 된다.
+ *
+ * `policy`는 `"random"`을 넣는다. 취향 카드에는 피드 정책이라는 개념이 없는데
+ * 열이 not null이라 무언가는 넣어야 한다. `session_start`·`session_end`가 이미
+ * 같은 이유로 그렇게 하고 있고, 정책을 세는 지표는 모두 `event_type`으로 먼저
+ * 거르므로 섞이지 않는다.
+ */
+export function logTasteRefresh(outcome: TasteRefreshOutcome): void {
+  if (!isBrowser() || !isSignedInNow()) return;
+  const sessionId = touchSession();
+  enqueue({
+    ...baseEvent("taste_refresh", sessionId, Date.now(), "random"),
+    outcome,
+  });
 }
 
 /**
