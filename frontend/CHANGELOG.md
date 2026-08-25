@@ -1,3 +1,9 @@
+## [0.1.35](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/compare/v0.1.34...v0.1.35) (2026-08-25)
+
+### Features
+
+* 큐레이션 상세 조건을 태그 칸으로, 이어보기 멘트 수정 ([#115](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/issues/115)) ([b7067b2](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/commit/b7067b29b797bf40512087087756a6f31c49c87a))
+* 큐레이션 열람을 계측한다 ([#114](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/issues/114)) ([89cb4ad](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/commit/89cb4ad80c3294e45c1e90de02b1535e048cdfc3))
 ## [0.1.34](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/compare/v0.1.33...v0.1.34) (2026-08-25)
 
 ### Features
