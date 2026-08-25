@@ -1,5 +1,7 @@
 import type { MetricTable } from "../../../domain/metric";
 import {
+  barHeight,
+  labelBelow,
   type RetentionModel,
   THIN_COHORT,
   toRetentionModel,
@@ -75,6 +77,20 @@ export function RetentionCurveChart({ table }: { table: MetricTable }) {
           </svg>
           Cohort size — 그 Day를 물어볼 수 있는 기기 수
         </span>
+        <span className="inline-flex items-center gap-1.5">
+          <svg width="14" height="12" aria-hidden="true">
+            <rect
+              x="2"
+              y="3"
+              width="10"
+              height="9"
+              rx="1.5"
+              fill="#fab219"
+              fillOpacity={0.55}
+            />
+          </svg>
+          코호트 {THIN_COHORT}개 미만 — 비율을 결론으로 읽으면 안 된다
+        </span>
       </p>
 
       <svg
@@ -140,10 +156,15 @@ export function RetentionCurveChart({ table }: { table: MetricTable }) {
                   {point.thin ? " (표본이 얇다)" : ""}
                 </title>
               </circle>
-              {/* 값을 직접 찍는다 — 점이 열 개 남짓이라 자리가 있다 */}
+              {/* 값을 직접 찍는다 — 점이 열 개 남짓이라 자리가 있다.
+                  위가 좁으면 아래로 뒤집는다. 안 그러면 「%」 축 표시와 겹친다. */}
               <text
                 x={x(index)}
-                y={y(point.rate) - 11}
+                y={
+                  labelBelow(y(point.rate), PAD_T)
+                    ? y(point.rate) + 15
+                    : y(point.rate) - 11
+                }
                 textAnchor="middle"
                 className="fill-neutral-400 text-[10.5px] tabular-nums"
               >
@@ -157,7 +178,7 @@ export function RetentionCurveChart({ table }: { table: MetricTable }) {
           Cohort size (기기 수)
         </text>
         {points.map((point, index) => {
-          const h = maxCohort > 0 ? (point.cohort / maxCohort) * BAR_H : 0;
+          const h = barHeight(point.cohort, maxCohort, BAR_H);
           return (
             <g key={point.day}>
               <rect
@@ -166,8 +187,9 @@ export function RetentionCurveChart({ table }: { table: MetricTable }) {
                 width={barW}
                 height={h}
                 rx={2}
-                fill="#898781"
-                fillOpacity={point.thin ? 0.28 : 0.45}
+                // 흐리게 하지 않는다 — 안 보이면 0으로 읽힌다. 색으로 구분한다.
+                fill={point.thin ? "#fab219" : "#898781"}
+                fillOpacity={point.thin ? 0.55 : 0.45}
               >
                 <title>
                   {`Day ${point.day} cohort size ${point.cohort}`}
@@ -212,8 +234,8 @@ export function RetentionCurveChart({ table }: { table: MetricTable }) {
 
       {points.some((point) => point.thin) && (
         <p className="mt-2 text-center text-[11px] text-neutral-500">
-          코호트가 {THIN_COHORT}개 미만인 Day는 막대와 숫자를 흐리게 뒀다 — 비율을
-          결론으로 읽으면 안 된다.
+          코호트가 {THIN_COHORT}개 미만인 Day는 막대를 노랗게 뒀다 — 표본이 얇아서
+          비율을 결론으로 읽으면 안 된다.
         </p>
       )}
     </div>

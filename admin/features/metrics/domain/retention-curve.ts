@@ -20,6 +20,31 @@ const COLUMNS = {
  */
 export const THIN_COHORT = 10;
 
+/**
+ * 막대가 아무리 작아도 이만큼은 보인다.
+ *
+ * **안 보이면 0으로 읽힌다.** 코호트 5는 71 대비 2.7px라 밑줄처럼 보였다.
+ * 「표본이 얇다」를 알리려던 것이 「아무도 없다」로 읽히면 정반대다.
+ */
+export const MIN_BAR_H = 3;
+
+/** 값 라벨을 점 위에 찍을 자리가 있나. 없으면 아래로 뒤집는다 */
+export function labelBelow(pointY: number, plotTop: number): boolean {
+  // 라벨은 점 위 11px에 앉는다. 그게 그림 꼭대기보다 위면 축 밖으로 나간다.
+  return pointY - 11 < plotTop;
+}
+
+/**
+ * 막대 높이. 값이 0이면 0이고, 0보다 크면 **최소한 보인다.**
+ *
+ * 진짜 0과 「작아서 안 보이는 것」을 구분해야 한다. 0을 3px로 그리면
+ * 없는 것을 있다고 말하게 된다.
+ */
+export function barHeight(value: number, max: number, full: number): number {
+  if (value <= 0 || max <= 0) return 0;
+  return Math.max(MIN_BAR_H, (value / max) * full);
+}
+
 export interface RetentionPoint {
   day: number;
   cohort: number;

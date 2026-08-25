@@ -2,7 +2,13 @@ import { describe, expect, it } from "vitest";
 
 import type { MetricTable } from "./metric";
 import { toTable } from "./metric";
-import { THIN_COHORT, toRetentionModel } from "./retention-curve";
+import {
+  barHeight,
+  labelBelow,
+  MIN_BAR_H,
+  THIN_COHORT,
+  toRetentionModel,
+} from "./retention-curve";
 
 /** 실측값 (2026-08-25, 방문 기준) */
 function retention(): MetricTable {
@@ -64,6 +70,24 @@ describe("재방문 곡선", () => {
       [{ Day: 1, "Cohort size": 0, Retained: 0 }],
     );
     expect(must(table).points[0].rate).toBeNull();
+  });
+});
+
+describe("재방문 곡선 — 그려 보고 드러난 것", () => {
+  it("축 꼭대기에 붙은 점은 값을 아래에 찍는다", () => {
+    // 실측: Day 1이 19.7%면 점이 y=19.6이라 라벨(y-11=8.6)이 축 밖으로 나가
+    // 「%」 표시와 겹쳤다. 위가 좁으면 아래로 뒤집는다.
+    expect(labelBelow(19.6, 18)).toBe(true);
+    expect(labelBelow(70.0, 18)).toBe(false);
+  });
+
+  it("얇은 코호트를 흐리게 하지 않는다", () => {
+    // **흐리게 하려던 것이 아예 안 보이게 됐다.** 코호트 5는 막대가 2.7px라
+    // 밑줄처럼 보였고, 안 보이면 0으로 읽힌다 — 정확히 피하려던 오독이다.
+    // 색으로 구분하고 최소 높이를 준다.
+    expect(barHeight(5, 71, 38)).toBeGreaterThanOrEqual(MIN_BAR_H);
+    expect(barHeight(0, 71, 38)).toBe(0); // 진짜 0은 0이다
+    expect(barHeight(71, 71, 38)).toBe(38);
   });
 });
 
