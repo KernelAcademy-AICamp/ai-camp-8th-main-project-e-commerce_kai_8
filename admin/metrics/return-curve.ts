@@ -2,45 +2,57 @@ import { eventFilterSql } from "@/features/metrics/domain/filters";
 import type { MetricDefinition } from "@/features/metrics/domain/metric";
 
 /**
- * 재방문 곡선 — 「처음 온 뒤 며칠째에 돌아왔나」.
+ * 재방문 곡선 (N-Day Retention) — 「Day 0에 처음 온 뒤 Day N에 다시 왔나」.
  *
- * **각 기기의 첫 활동일부터 끊는다.** 달력 주로 끊으면 늦게 시작한 기기의 첫
- * 구간이 짧아져 같은 기준으로 비교할 수 없다.
+ * 용어는 Amplitude·Mixpanel 리텐션 리포트를 따른다.
+ * - **Starting event** = 코호트에 들어오는 사건. 여기서는 첫 방문(`session_start`).
+ *   Mixpanel은 같은 것을 birth event라 부른다.
+ * - **Return event** = 돌아온 것으로 치는 사건. starting event와 같다.
+ * - **Cohort size** = 그 Day를 물어볼 수 있는 기기 수. Mixpanel 리텐션 리포트의
+ *   `Size` 열에 해당한다.
+ * - **N-Day Retention** = Day N **당일에** 돌아온 비율. Amplitude가 Unbounded
+ *   (그날 이후 아무 때나) · Bracket(구간)과 구분해 부르는 방식이다. 당일만
+ *   세므로 곡선이 톱니처럼 오르내린다 — 고장이 아니다.
  *
- * **분모가 날짜마다 다르다.** N일차 비율을 내려면 그 기기가 N일 전에 시작했어야
- * 한다. 어제 처음 온 기기는 3일차 분모에 들어갈 수 없다 — 아직 3일이 안 지났을
- * 뿐 실패한 게 아니다. 그래서 "기준 기기" 칸을 함께 낸다.
+ * **기준은 방문이다.** 이전에는 클릭(`tap`)으로 셌으나, 리텐션의 표준 정의는
+ * "다시 왔나"지 "다시 클릭했나"가 아니다. 클릭으로 재면 코호트가 절반으로
+ * 줄어(Day 1 기준 72 → 46) 표본 부족으로 곡선이 튄다.
+ * 대신 열었다 바로 닫은 방문도 잔존으로 잡힌다는 점은 감수한다.
+ *
+ * **Cohort size가 Day마다 다르다.** Day N을 물으려면 그 기기가 N일 전에
+ * 시작했어야 한다. 오늘 처음 온 기기는 Day 1 분모에 들어갈 수 없다 — 아직
+ * 하루가 안 지났을 뿐 이탈한 게 아니다(incomplete cohort). Amplitude는 이런
+ * 칸에 별표를 찍는다. 우리는 Cohort size 열을 함께 내서 사람이 판단하게 한다.
  *
  * ⚠️ **기기 단위다.** 같은 사람이 폰과 노트북으로 보면 두 기기로 세어지고,
- *    시크릿 모드는 매번 새 기기가 된다. 그래서 **실제 사람의 재방문율보다 낮게
- *    나온다.** 얼마나 낮은지는 알 방법이 없다.
- *
- * **활동일 = 상품을 클릭한 날.** 스크롤만 한 날은 세지 않는다 — 개인화가 배울
- * 신호가 없어서, 그런 방문만 반복되면 피드가 변하지 않는다.
+ *    시크릿 모드는 매번 새 기기가 된다. 그래서 **실제 사람의 retention보다
+ *    낮게 나온다.** 얼마나 낮은지는 알 방법이 없다.
  *
  * 임계값으로 성공·실패를 가르지 않는다. 판정선을 근거 없이 정하면 그 숫자가
  * 결론처럼 읽힌다. 사실만 내고 해석은 사람이 한다.
  */
 export const returnCurve: MetricDefinition = {
   id: "return-curve",
-  title: "재방문 곡선 (기기 단위)",
-  why: "처음 클릭한 날부터 며칠째에 다시 와서 클릭했나. 분모는 그날까지 관측될 만큼 시간이 지난 기기만 센다 — 어제 처음 온 기기를 3일차 분모에 넣으면 아직 안 지난 것이 실패로 잡힌다. 기기 단위라 실제 사람의 재방문율보다 낮게 나온다",
+  title: "재방문 곡선 · N-Day Retention (기기 단위)",
+  why: "첫 방문일(Day 0)로부터 Day N 당일에 다시 왔나. Cohort size는 그 Day를 물어볼 수 있을 만큼 시간이 지난 기기만 센다 — 어제 처음 온 기기를 Day 3 분모에 넣으면 아직 안 지난 것이 이탈로 잡힌다. Day N 당일만 세므로 곡선은 톱니 모양이 된다. 기기 단위라 실제 사람의 retention보다 낮게 나온다",
   order: 60,
   screen: "retention",
   sql: `
     with 활동일 as (
+      -- 방문일 = starting event(= return event)가 있었던 날. 하루에 여러 번 와도 1일.
       select
         device_id,
         (occurred_at at time zone 'Asia/Seoul')::date as 날짜
       from c_events
-      where event_type = 'tap'
+      where event_type = 'session_start'
         and ${eventFilterSql()}
       group by 1, 2
     ),
+    -- 코호트 진입일 = Day 0
     첫날 as (
       select device_id, min(날짜) as 시작일 from 활동일 group by 1
     ),
-    -- 오늘까지 며칠이 지났는지. N일차 분모에 넣을 수 있는지를 이걸로 가른다.
+    -- 오늘까지 며칠이 지났는지. Day N 분모에 넣을 수 있는지를 이걸로 가른다.
     관측 as (
       select
         f.device_id,
@@ -52,15 +64,15 @@ export const returnCurve: MetricDefinition = {
       select generate_series(1, 14) as n
     )
     select
-      d.n                                              as "일차",
-      count(*) filter (where o.지난일수 >= d.n)::int   as "기준 기기",
+      d.n                                              as "Day",
+      count(*) filter (where o.지난일수 >= d.n)::int   as "Cohort size",
       count(*) filter (
         where o.지난일수 >= d.n
           and exists (
             select 1 from 활동일 a
             where a.device_id = o.device_id and a.날짜 = o.시작일 + d.n
           )
-      )::int                                           as "돌아온 기기",
+      )::int                                           as "Retained",
       round(
         100.0 * count(*) filter (
           where o.지난일수 >= d.n
@@ -69,7 +81,7 @@ export const returnCurve: MetricDefinition = {
               where a.device_id = o.device_id and a.날짜 = o.시작일 + d.n
             )
         ) / nullif(count(*) filter (where o.지난일수 >= d.n), 0), 1
-      )                                                as "재방문률"
+      )                                                as "Retention rate (%)"
     from 일차 d
     cross join 관측 o
     group by d.n

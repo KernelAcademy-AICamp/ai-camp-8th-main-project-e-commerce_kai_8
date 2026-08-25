@@ -35,6 +35,13 @@ export function metricsForScreen(
   return sortMetrics(definitions.filter((d) => (d.screen ?? "overview") === screen));
 }
 
+/**
+ * 그림의 종류. 카드마다 필요한 그림이 달라 **범용 차트를 만들지 않는다** —
+ * 「세션 흐름도」는 세션 퍼널 하나만을 위한 그림이고, 다른 데 쓰지 않는다.
+ * 범용으로 만들면 설정 칸이 늘어나 SQL이 아니라 설정이 정본이 된다.
+ */
+export type ChartKind = "session-flow";
+
 export interface MetricDefinition {
   /** 파일마다 고유. 화면 키와 오류 표시에 쓴다 */
   id: string;
@@ -52,6 +59,17 @@ export interface MetricDefinition {
    */
   screen?: ScreenName;
   /**
+   * 표 대신 **그림으로** 그린다. 생략하면 지금처럼 표다.
+   *
+   * **여기 있는 것은 「어떻게 그릴지」뿐이다.** 무엇을 그릴지는 여전히 SQL이 정한다 —
+   * 그리는 쪽은 결과 표(`MetricTable`)를 읽어 그린다. 그래서 새 지표를 넣는 방법은
+   * 지금과 같다: 파일 하나 만들고 명단에 한 줄. 화면 코드는 안 건드린다.
+   *
+   * 그림이 붙어도 **표는 사라지지 않는다.** 카드 아래 접어 둔다 — 마크에 `tabindex`를
+   * 붙이지 않으므로 그 표가 키보드로 값을 읽는 유일한 경로다.
+   */
+  chart?: ChartKind;
+  /**
    * true면 카드를 **접힌 채로** 그린다. 제목과 설명만 보이고 표는 눌러야 펼쳐진다.
    * 대조용 낱개 기록처럼 평소엔 접어 두고 필요할 때만 여는 표에 쓴다.
    */
@@ -68,7 +86,16 @@ export interface MetricDefinition {
 /** 표 하나. 컬럼 이름은 SQL 결과에서 그대로 가져온다 */
 export interface MetricTable {
   columns: string[];
+  /** 화면에 찍을 글자. `1457` → `"1,457"` */
   rows: string[][];
+  /**
+   * 같은 자리의 **원본 숫자**. 숫자가 아닌 칸은 `null`.
+   *
+   * 차트는 길이와 좌표를 계산해야 하므로 숫자가 필요하다. `rows`의 글자를 되돌려
+   * 읽는 방식은 쓰지 않는다 — 쉼표·단위·로케일이 섞이면 조용히 틀린다.
+   * `rows`와 **같은 모양**이라 `values[r][c]`가 `rows[r][c]`의 숫자다.
+   */
+  values: (number | null)[][];
 }
 
 /**
@@ -166,7 +193,28 @@ export function toTable(
   return {
     columns: [...columns],
     rows: rows.map((row) => columns.map((column) => formatCell(row[column]))),
+    values: rows.map((row) => columns.map((column) => toNumber(row[column]))),
   };
+}
+
+/**
+ * 차트가 쓸 숫자. 숫자가 아니면 `null`.
+ *
+ * **데이터베이스가 글자로 주는 숫자를 받아야 한다.** `pg`는 `bigint`와 `numeric`을
+ * 정밀도 손실을 피하려고 문자열로 준다 — `count(*)`도 `"260"`으로 온다. 그대로 두면
+ * 차트가 못 그린다.
+ *
+ * 반대로 **숫자로 보이지 않는 글자는 숫자로 읽지 않는다.** `Number("2026-08-25")`는
+ * `NaN`이라 괜찮지만, `Number("")`는 `0`이고 `Number("4e3")`은 `4000`이다.
+ * 빈 칸이 0으로 세어지거나 세션 번호가 지수로 읽히면 그림이 조용히 틀린다.
+ * 그래서 **모양을 먼저 확인**한다.
+ */
+const NUMERIC = /^-?\d+(\.\d+)?$/;
+
+export function toNumber(value: unknown): number | null {
+  if (typeof value === "number") return Number.isFinite(value) ? value : null;
+  if (typeof value === "string" && NUMERIC.test(value.trim())) return Number(value);
+  return null;
 }
 
 /**
