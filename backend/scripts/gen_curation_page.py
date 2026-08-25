@@ -755,6 +755,12 @@ NOTES = {
     "3182421": "링거가 아니라 래글런. 어깨에서 소매로 넘어가는 선이 곡선이라 팔이 좁아 보인다.",
 }
 
+# ── 손으로 검수한 추천 이유 한 줄 (key: 문구) ──────────────────
+# FOR YOU 카드에서, 화면이 키워드 근거로 개인화했다고 판정한 큐레이션에만 붙는다
+# (프론트 curation-match.ts의 withGroundedReasons). 배치 초안 생성:
+# scripts/gen_curation_reasons.py. 사람이 훑어보고 여기 손으로 옮겨 적은 것만 최종이다.
+# 계획: docs/superpowers/plans/2026-08-25-foryou-recommendation-reason.md
+REASONS = {}
 
 CARD_COLS = ("goods_no, title, brand_name, brand, price_final, thumbnail, "
              "review_count, review_score, purchase_total, tags, similar_no, gender")
@@ -893,6 +899,7 @@ def build(cur, curations):
             covers.add(items[0]["u"])
         out.append({**{k: c[k] for k in ("key", "title", "cond")},
                     "lede": c["lede"] or "", "n": n, "items": items,
+                    **({"reason": REASONS[c["key"]]} if REASONS.get(c["key"]) else {}),
                     "sort": "조회순" if order == NEW_ARRIVAL_ORDER else "평점순",
                     "date": c["at"].strftime("%Y.%m.%d")})
     return out
