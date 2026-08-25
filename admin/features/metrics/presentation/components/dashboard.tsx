@@ -29,37 +29,45 @@ export async function Dashboard({
     flowHref: (view) => queryHref({ screen, filter, flow: view }),
   };
   return (
-    <main className="mx-auto max-w-[1120px] px-5 py-10">
-      <header className="mb-8">
-        <h1 className="text-xl font-semibold text-neutral-100">aTee 이벤트 대시보드</h1>
-        <p className="mt-1 text-sm text-neutral-500">
-          화면을 열 때마다 데이터베이스에서 다시 계산합니다.
+    // 사이드바 + 본문. 예전에는 가운데 1,120px만 쓰고 양옆이 비었다.
+    //
+    // **본문을 무한정 넓히지는 않는다.** 차트가 SVG라 폭에 맞춰 늘어나는데
+    // 글자까지 같이 커진다. 실측(기준 11px): 본문 1,120px에서 12px · 1,500px에서
+    // 16px · 1,900px에서 21px. 16px가 한계로 보여 1,500px에서 멈춘다.
+    // 사이드바 224px를 더하면 1,772px — 1,900px 화면에서 여백이 64px씩 남는다.
+    <div className="mx-auto flex max-w-[1780px] flex-col gap-6 px-6 py-8 lg:flex-row lg:gap-8">
+      <aside className="lg:w-56 lg:shrink-0">
+        <h1 className="text-lg font-semibold text-neutral-100">aTee 이벤트 대시보드</h1>
+        <p className="mt-1 text-xs text-neutral-500">
+          열 때마다 데이터베이스에서 다시 계산합니다.
         </p>
-      </header>
+        <ScreenNav current={screen} filter={filter} />
+      </aside>
 
-      <ScreenTabs current={screen} filter={filter} />
+      {/* min-w-0이 없으면 넓은 표가 사이드바를 밀어낸다 */}
+      <main className="min-w-0 flex-1">
+        <PeriodPicker filter={filter} screen={screen} />
 
-      <PeriodPicker filter={filter} screen={screen} />
+        <FilterBar filter={filter} />
 
-      <FilterBar filter={filter} />
-
-      {state.kind === "connection-failed" ? (
-        <ConnectionFailed message={state.message} />
-      ) : (
-        // 12칸 격자. 너비는 **카드가 정한다**(`span`) — 얼마나 넓어야 읽히는지는
-        // 그림이 안다. 좁은 화면(lg 미만)에서는 전부 통칸이 된다.
-        <div className="grid grid-cols-12 items-start gap-5">
-          {state.results.map((result) => (
-            <div
-              key={result.definition.id}
-              className={spanClass(cardSpan(result.definition))}
-            >
-              <MetricCard result={result} chartContext={chartContext} />
-            </div>
-          ))}
-        </div>
-      )}
-    </main>
+        {state.kind === "connection-failed" ? (
+          <ConnectionFailed message={state.message} />
+        ) : (
+          // 12칸 격자. 너비는 **카드가 정한다**(`span`) — 얼마나 넓어야 읽히는지는
+          // 그림이 안다. 좁은 화면(lg 미만)에서는 전부 통칸이 된다.
+          <div className="grid grid-cols-12 items-start gap-5">
+            {state.results.map((result) => (
+              <div
+                key={result.definition.id}
+                className={spanClass(cardSpan(result.definition))}
+              >
+                <MetricCard result={result} chartContext={chartContext} />
+              </div>
+            ))}
+          </div>
+        )}
+      </main>
+    </div>
   );
 }
 
@@ -70,7 +78,7 @@ export async function Dashboard({
  * 좁혀 보기 값을 탭 링크에 그대로 실어 옮긴다. 안 실으면 탭을 누르는 순간
  * 날짜·세션 좁혀 보기가 조용히 풀린다.
  */
-function ScreenTabs({
+function ScreenNav({
   current,
   filter,
 }: {
@@ -79,7 +87,12 @@ function ScreenTabs({
 }) {
   const hrefFor = (next: ScreenName): string => queryHref({ screen: next, filter });
   return (
-    <nav className="mb-6 flex gap-1 border-b border-neutral-800" aria-label="화면">
+    // 좁으면 가로줄, 넓으면 세로 사이드바. **같은 표시를 두 번 적지 않는다** —
+    // 두 벌로 두면 한쪽만 고치는 실수가 난다.
+    <nav
+      className="mt-5 flex gap-1 overflow-x-auto lg:mt-7 lg:flex-col lg:gap-0.5 lg:overflow-visible"
+      aria-label="화면"
+    >
       {SCREENS.map((screen) => {
         const on = screen.name === current;
         return (
@@ -88,9 +101,10 @@ function ScreenTabs({
             href={hrefFor(screen.name)}
             aria-current={on ? "page" : undefined}
             className={
-              on
-                ? "border-b-2 border-sky-500 px-4 py-2 text-sm font-medium text-neutral-100"
-                : "border-b-2 border-transparent px-4 py-2 text-sm text-neutral-500 hover:text-neutral-300"
+              (on
+                ? "bg-neutral-800 font-medium text-neutral-100 "
+                : "text-neutral-500 hover:bg-neutral-900 hover:text-neutral-200 ") +
+              "flex min-h-11 shrink-0 items-center rounded-md px-3.5 text-sm"
             }
           >
             {screen.label}
