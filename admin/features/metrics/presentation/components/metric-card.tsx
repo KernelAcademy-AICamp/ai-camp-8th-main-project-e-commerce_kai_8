@@ -152,8 +152,10 @@ function Body({
  * 한 줄로 길게 이어 쓰면 읽는 사람이 어디까지가 한 뜻인지 못 가른다.
  * 지표 파일이 줄바꿈으로 끊으면 그대로 문단이 된다.
  */
-function Why({ text }: { text: string }) {
-  const lines = text.split("\n").filter((line) => line.trim() !== "");
+function Why({ text }: { text?: string }) {
+  const lines = (text ?? "").split("\n").filter((line) => line.trim() !== "");
+  // 설명이 없으면 아무것도 안 그린다. 빈 자리를 남기면 제목과 그림 사이가 벌어진다.
+  if (lines.length === 0) return null;
   return (
     <div className="mt-1 space-y-0.5">
       {lines.map((line) => (

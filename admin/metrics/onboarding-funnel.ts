@@ -60,11 +60,7 @@ const done조건 =
 
 export const onboardingFunnel: MetricDefinition = {
   id: "onboarding-funnel",
-  title: "온보딩 전환",
-  why:
-    DONE_TRUSTED_AFTER === null
-      ? "성별 → 옷 고르기 → 가입에서 어디가 새는가. ⚠️ 마지막 「홈 진입」 단계는 빼고 그린다 — 계측이 「온보딩을 마쳤다」가 아니라 「이미 온보딩한 사람이 앱을 켰다」를 세고 있었다(하루에 gender 10인데 done 24). 수정 배포 후 ADMIN_ONBOARDING_DONE_FROM에 배포일을 넣으면 다시 나온다. 표식이 온보딩마다 새로 생기므로 다시 시작한 사람은 새 사람으로 세어진다"
-      : `성별 → 옷 고르기 → 가입 → 홈 진입에서 어디가 새는가. 가장 중요한 칸은 마지막 줄의 직전 대비 — 가입 화면까지 온 사람 중 몇 %가 홈에 들어갔나다. 홈 진입은 계측 수정이 배포된 ${DONE_TRUSTED_AFTER} 다음 날부터만 센다. 표식이 온보딩마다 새로 생기므로 다시 시작한 사람은 새 사람으로 세어진다`,
+  title: "온보딩 퍼널",
   order: 15,
   screen: "overview",
   chart: "funnel-band",

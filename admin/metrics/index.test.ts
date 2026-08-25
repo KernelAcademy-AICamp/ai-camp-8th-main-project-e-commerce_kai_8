@@ -21,10 +21,22 @@ describe("지표 명단", () => {
   });
 
   it.each(METRICS.map((metric) => [metric.id, metric] as const))(
-    "%s — 제목과 설명이 비어 있지 않다",
+    "%s — 제목이 비어 있지 않다",
     (_id, metric) => {
       expect(metric.title.trim()).not.toBe("");
-      expect(metric.why.trim()).not.toBe("");
+    },
+  );
+
+  it.each(METRICS.map((metric) => [metric.id, metric] as const))(
+    "%s — 설명을 뒀으면 빈 값이 아니다",
+    (_id, metric) => {
+      // 설명은 **없어도 된다.** 제목만으로 뜻이 통하는 카드는 화면을 비우는 편이 낫다.
+      // 다만 빈 글자를 넣어 두면 「설명을 쓰려다 만 것」과 구분되지 않는다.
+      //
+      // ⚠️ 설명을 지웠다고 **이유까지 지우지는 않는다.** 왜 이 지표를 보는지, 무엇을
+      //    조심해야 하는지는 지표 파일 맨 위 주석에 남긴다 — 화면에서 빠져도 다음
+      //    사람이 파일을 열면 읽을 수 있어야 한다.
+      if (metric.why !== undefined) expect(metric.why.trim()).not.toBe("");
     },
   );
 

@@ -22,8 +22,7 @@ import type { MetricDefinition } from "@/features/metrics/domain/metric";
  */
 export const dailyVolume: MetricDefinition = {
   id: "daily-volume",
-  title: "일별 기록 건수",
-  why: "앱이 남긴 행동 기록의 하루 합계. 언제 끊겼는지, 언제 몰렸는지를 본다. 이 중 대부분은 노출이라 사실상 카드가 화면에 보인 횟수다 — 그래서 노출과 그 외를 따로 낸다. 기록이 없는 날도 0으로 채운다: 빼면 막대가 당겨져 그날이 없었던 것처럼 보인다",
+  title: "일별 이벤트 개수",
   order: 5,
   screen: "overview",
   chart: "daily-bars",
