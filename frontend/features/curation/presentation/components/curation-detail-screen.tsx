@@ -19,14 +19,20 @@ const DEFAULT_Y = 52;
 
 export function CurationDetailScreen({
   curation,
+  next,
   onBack,
+  onOpenNext,
 }: {
   curation: Curation;
+  /** 다 본 뒤 이어볼 큐레이션. 없으면(다 봤거나 후보가 없으면) 마지막 장에서 끝난다 */
+  next: Curation | null;
   onBack: () => void;
+  onOpenNext: (key: string) => void;
 }) {
   const { trackRef, index, openInfo, onScroll, step, toggleInfo } = useCurationSlides();
 
-  const last = curation.items.length - 1;
+  // 이어보기 자리도 슬라이드 한 장이다 — 마지막 상품에서 › 를 눌러도 그리 간다.
+  const last = curation.items.length - (next ? 0 : 1);
 
   return (
     /* 셸 헤더·탭바까지 덮는다 — 상품 상세와 같은 전체화면. 안 덮으면 로고줄과
@@ -34,7 +40,7 @@ export function CurationDetailScreen({
        z는 상품 상세(z-50)보다 아래 — 여기서 상품을 열면 그게 위로 와야 한다. */
     <div
       className="fixed inset-0 z-40 overflow-y-auto overscroll-contain bg-app"
-      style={{ "--accent": curation.accent ?? "#FAFAFA" } as CSSProperties}
+      style={{ "--accent": curation.accent ?? "#8FBF9F" } as CSSProperties}
     >
       <div className="mx-auto max-w-md pb-16">
         {/* 뒤로가기 좌표를 마이페이지와 맞춘다 — 왼쪽 16px·위 8px (전 화면 공통).
@@ -44,7 +50,7 @@ export function CurationDetailScreen({
             type="button"
             aria-label="뒤로 가기"
             onClick={onBack}
-            className="flex h-10 w-10 cursor-pointer items-center justify-center rounded-full text-ink-soft"
+            className="flex h-9 w-9 cursor-pointer items-center justify-center text-ink-soft transition-colors active:text-ink"
           >
             <BackIcon />
           </button>
@@ -59,8 +65,10 @@ export function CurationDetailScreen({
         </p>
 
         <p className="pt-4 pb-2 text-center font-mono text-xs tracking-wider text-ink-muted tabular-nums">
-          <b className="text-sm font-semibold text-(--accent)">{index + 1}</b> /{" "}
-          {curation.items.length}
+          <b className="text-sm font-semibold text-(--accent)">
+            {Math.min(index + 1, curation.items.length)}
+          </b>{" "}
+          / {curation.items.length}
         </p>
 
         <div
@@ -92,7 +100,7 @@ export function CurationDetailScreen({
                       className="h-auto w-full rounded-xl bg-skel-1"
                     />
                     <span
-                      className="absolute flex size-6 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-thumb/95 text-accent-ink shadow"
+                      className="absolute flex size-6 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-thumb/95 text-on-thumb shadow"
                       style={{ left: `${String(x)}%`, top: `${String(y)}%` }}
                     >
                       {openInfo === i ? <CloseIcon /> : <PlusIcon />}
@@ -150,10 +158,10 @@ export function CurationDetailScreen({
                       />
                       <span className="min-w-0">
                         <span className="block text-[11px] text-ink">{item.b}</span>
-                        <span className="block truncate text-[12.5px] font-medium text-accent-ink">
+                        <span className="block truncate text-[12.5px] font-medium text-on-thumb">
                           {item.t}
                         </span>
-                        <span className="block text-[13px] font-semibold text-accent-ink tabular-nums">
+                        <span className="block text-[13px] font-semibold text-on-thumb tabular-nums">
                           {formatPrice(item.p)}
                         </span>
                       </span>
@@ -188,6 +196,59 @@ export function CurationDetailScreen({
               </div>
             );
           })}
+
+          {/* 다 본 사람에게 다음 한 장. 목록으로 돌아가 뒤섞인 카드를 다시 훑지 않아도
+              방금 본 것과 닮은 큐레이션으로 곧장 넘어간다.
+              **자동으로 넘기지 않는다** — 마지막 장에서 손이 한 번 더 미끄러졌을 뿐인데
+              화면이 통째로 바뀌면 방금 보던 것을 잃는다. 눌러야 넘어간다.
+              카드 모양은 목록(curation-list)과 같게 둔다 — 같은 것을 고르는 자리다. */}
+          {next && (
+            <div className="w-full flex-none snap-center px-9">
+              <p className="pb-2 text-center text-[13px] text-ink-soft">
+                여기까지. 비슷한 걸 이어서 볼까요?
+              </p>
+              <div className="relative">
+                <button
+                  type="button"
+                  onClick={() => {
+                    onOpenNext(next.key);
+                  }}
+                  className="relative block w-full cursor-pointer overflow-hidden rounded-xl bg-surface text-left"
+                >
+                  <Image
+                    src={next.items[0].img}
+                    alt={next.title}
+                    width={next.items[0].w ?? 500}
+                    height={next.items[0].h ?? 600}
+                    sizes="100vw"
+                    className="h-auto w-full"
+                  />
+                  <span className="absolute inset-x-0 top-1/2 bottom-0 bg-gradient-to-t from-black/75 via-black/25 via-55% to-transparent" />
+                  <span className="absolute inset-x-0 bottom-0 px-4 pb-4">
+                    <span className="block text-xl leading-tight font-bold tracking-tight break-keep text-white">
+                      {next.title}
+                    </span>
+                    <span className="mt-1.5 block text-[12px] text-white/70">
+                      {next.items.length}개 · {next.cond.join(" · ")}
+                    </span>
+                  </span>
+                </button>
+
+                {index === curation.items.length && (
+                  <button
+                    type="button"
+                    aria-label="이전"
+                    onClick={() => {
+                      step(-1);
+                    }}
+                    className="absolute top-1/2 -left-8 h-11 w-8 -translate-y-1/2 cursor-pointer text-3xl leading-none text-ink-muted"
+                  >
+                    ‹
+                  </button>
+                )}
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>

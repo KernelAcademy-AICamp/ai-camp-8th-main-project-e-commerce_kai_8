@@ -20,8 +20,18 @@ import { getFeedProfileSummary } from "@/shared/signals/signals";
 vi.mock("@/features/feed/data/feed-api", () => ({ fetchFeedPage: vi.fn() }));
 vi.mock("@/features/feed/data/mix-api", () => ({ fetchMixPage: vi.fn() }));
 vi.mock("@/features/feed/data/similar-api", () => ({ fetchSimilarPage: vi.fn() }));
+// 실제 모듈처럼 regenerateSessionSeed가 바꾼 값을 getSessionSeed가 이어서
+// 돌려줘야 한다 — 훅의 seed useMemo가 새로고침 뒤 getSessionSeed를 다시 불러
+// 새 값을 읽기 때문에, 둘을 서로 무관한 고정값으로 스텁하면 이 연결이 끊긴다.
+// vi.hoisted로 빼는 이유는 아래 beforeEach에서 테스트마다 리셋해야 해서다 —
+// mock 팩토리 안 지역 변수는 파일 전체에서 한 번만 만들어져 테스트 사이에 새다.
+const sessionSeedState = vi.hoisted(() => ({ current: 1000 }));
 vi.mock("@/features/feed/data/session-seed", () => ({
-  getSessionSeed: () => 1000,
+  getSessionSeed: () => sessionSeedState.current,
+  regenerateSessionSeed: () => {
+    sessionSeedState.current = 2000;
+    return sessionSeedState.current;
+  },
 }));
 vi.mock("@/shared/signals/signals", () => ({
   getFeedProfileSummary: vi.fn(),
@@ -81,6 +91,7 @@ afterEach(cleanup);
 beforeEach(() => {
   vi.stubGlobal("IntersectionObserver", ObserverStub);
   lastCallback = null;
+  sessionSeedState.current = 1000;
   // 성별이 정해져 있어야 훅이 요청을 보낸다 — 미확정이면 멈춰 있는 것이 계약이다.
   // 그 계약 자체는 아래 "성별 미확정" describe에서 따로 검증한다.
   localStorage.clear();
@@ -330,6 +341,97 @@ describe("성별 변경 (계획 4단계 — 세대를 갈아엎는다)", () => {
     });
 
     releaseOld([product(100), product(101)]); // 옛 성별 응답이 이제 도착
+    await new Promise((r) => setTimeout(r, 30));
+    const shown = view.current.columns.flat().map((c) => c.product.goodsNo);
+    expect(shown).not.toContain(100);
+    expect(shown).not.toContain(101);
+  });
+});
+
+describe("당겨서 새로고침 (풀 투 리프레시)", () => {
+  // 두 테스트 모두 mockImplementation을 **시드 값으로** 나눈다 — 훅이 다 로드된
+  // 뒤 바닥에 닿았다는 관찰자 스텁을 다시 걸어(items.length 변화) 자동으로 다음
+  // 페이지를 더 부를 수 있어, 단순 mockReturnValueOnce(다음 호출)로는 그 자동
+  // 호출이 내가 걸어 둔 응답을 가로챌 수 있다. 시드로 가르면 어떤 호출이 오든
+  // 안전하다.
+  it("새 시드로 처음부터 받고, 기존 결과를 새 결과로 교체한다", async () => {
+    setGenderSetting("여성");
+    fetchFeedPageMock.mockResolvedValue([product(1), product(2)]);
+    const { result: view } = renderFeedViewModel();
+    await waitFor(() => {
+      expect(view.current.columns.flat().map((c) => c.product.goodsNo)).toEqual([1, 2]);
+    });
+
+    let releaseNew: (v: Product[]) => void = () => undefined;
+    const pending = new Promise<Product[]>((resolve) => {
+      releaseNew = resolve;
+    });
+    fetchFeedPageMock.mockImplementation((seed: number) =>
+      seed === 2000 ? pending : Promise.resolve([product(1), product(2)]),
+    );
+    view.current.refresh();
+    // 놓은 즉시(응답 도착 전) 새로고침 중임을 알린다 — 화살표가 계속 돈다.
+    await waitFor(() => {
+      expect(view.current.refreshing).toBe(true);
+    });
+
+    releaseNew([product(9)]);
+    await waitFor(() => {
+      // 기존 1·2는 남지 않는다 — 뒤에 이어붙는 게 아니라 통째로 바뀐다
+      expect(view.current.columns.flat().map((c) => c.product.goodsNo)).toEqual([9]);
+      expect(view.current.refreshing).toBe(false);
+    });
+  });
+
+  it("새로고침 중 화면이 비지 않는다 — 새 결과가 오기 전까지 기존 카드를 그대로 보여준다", async () => {
+    setGenderSetting("여성");
+    fetchFeedPageMock.mockResolvedValue([product(1), product(2)]);
+    const { result: view } = renderFeedViewModel();
+    await waitFor(() => {
+      expect(view.current.columns.flat().map((c) => c.product.goodsNo)).toEqual([1, 2]);
+    });
+
+    let releaseNew: (v: Product[]) => void = () => undefined;
+    const pending = new Promise<Product[]>((resolve) => {
+      releaseNew = resolve;
+    });
+    fetchFeedPageMock.mockImplementation((seed: number) =>
+      seed === 2000 ? pending : Promise.resolve([product(1), product(2)]),
+    );
+    view.current.refresh();
+    await waitFor(() => {
+      expect(fetchFeedPageMock).toHaveBeenCalledWith(2000, null, 30, "여성");
+    });
+    // 새 응답이 아직 안 왔다 — 기존 카드가 그대로 있어야 한다(스켈레톤으로 안 비어야)
+    expect(view.current.columns.flat().map((c) => c.product.goodsNo)).toEqual([1, 2]);
+    expect(view.current.showSkeleton).toBe(false);
+
+    releaseNew([product(9)]);
+    await waitFor(() => {
+      expect(view.current.columns.flat().map((c) => c.product.goodsNo)).toEqual([9]);
+    });
+  });
+
+  it("새로고침 뒤 늦게 도착한 이전 시드 응답은 목록에 섞이지 않는다", async () => {
+    setGenderSetting("여성");
+    let releaseOld: (v: Product[]) => void = () => undefined;
+    fetchFeedPageMock.mockReturnValueOnce(
+      new Promise<Product[]>((resolve) => {
+        releaseOld = resolve;
+      }),
+    );
+    const { result: view } = renderFeedViewModel();
+    await waitFor(() => {
+      expect(fetchFeedPageMock).toHaveBeenCalledWith(1000, null, 30, "여성");
+    });
+
+    fetchFeedPageMock.mockResolvedValue([product(7)]);
+    view.current.refresh();
+    await waitFor(() => {
+      expect(fetchFeedPageMock).toHaveBeenCalledWith(2000, null, 30, "여성");
+    });
+
+    releaseOld([product(100), product(101)]); // 새로고침 전 요청이 이제 도착
     await new Promise((r) => setTimeout(r, 30));
     const shown = view.current.columns.flat().map((c) => c.product.goodsNo);
     expect(shown).not.toContain(100);

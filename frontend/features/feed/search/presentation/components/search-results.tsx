@@ -4,7 +4,7 @@ import type { RefObject } from "react";
 
 import type { OriginRect } from "@/features/feed/detail/domain/detail-stack";
 import { FeedGrid } from "@/features/feed/presentation/components/feed-grid";
-import { FeedSkeleton } from "@/features/feed/presentation/components/feed-skeleton";
+import { FeedSkeletonSimple } from "@/features/feed/presentation/components/feed-skeleton-simple";
 import type {
   FeedCardViewData,
   ImpressionDomInfo,
@@ -70,7 +70,7 @@ export function SearchResults({
           &lsquo;<span className="text-ink">{query}</span>&rsquo; 결과
         </p>
       )}
-      {showSkeleton && <FeedSkeleton />}
+      {showSkeleton && <FeedSkeletonSimple />}
       {error && (
         <div className="flex flex-col items-center gap-3 py-16 text-sm text-ink-soft">
           <p>검색 결과를 불러오지 못했어요</p>
@@ -99,7 +99,7 @@ export function SearchResults({
               검색어 지우기
             </button>
           </div>
-          {replacement.showSkeleton && <FeedSkeleton />}
+          {replacement.showSkeleton && <FeedSkeletonSimple />}
           <FeedGrid
             columns={replacement.columns}
             sentinelRef={replacement.sentinelRef}
@@ -117,7 +117,7 @@ export function SearchResults({
                 &lsquo;<span className="text-ink-soft">{query}</span>&rsquo; 결과는
                 여기까지예요 — <span className="text-ink">이런 건 어때요</span>
               </p>
-              {replacement.showSkeleton && <FeedSkeleton />}
+              {replacement.showSkeleton && <FeedSkeletonSimple />}
               <FeedGrid
                 columns={replacement.columns}
                 sentinelRef={replacement.sentinelRef}

@@ -18,6 +18,8 @@ import { normalizeFolderName } from "@/features/feed/wishlist/domain/wish-folder
  */
 export function useSaveSheet(
   save: (product: Product, folderId: string | null) => void,
+  /** 담기가 실제로 성사됐을 때 — 스낵바 등 알림은 여기서 건다(2026-08-25) */
+  onSaved?: () => void,
 ) {
   /** 시트가 들고 있는 상품. null이면 닫힘. */
   const [pending, setPending] = useState<Product | null>(null);
@@ -45,8 +47,9 @@ export function useSaveSheet(
       if (pending === null) return;
       save(pending, folderId);
       setPending(null);
+      onSaved?.();
     },
-    [pending, save],
+    [pending, save, onSaved],
   );
 
   const startCreating = useCallback(() => {

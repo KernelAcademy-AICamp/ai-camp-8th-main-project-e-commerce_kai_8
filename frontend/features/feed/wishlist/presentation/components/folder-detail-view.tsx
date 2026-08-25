@@ -6,7 +6,6 @@ import { ProductDetail } from "@/features/feed/detail/presentation/components/pr
 import { FeedGrid } from "@/features/feed/presentation/components/feed-grid";
 import { MAX_FOLDER_NAME } from "@/features/feed/wishlist/domain/wish-folders";
 import { wishlistNoticeMessage } from "@/features/feed/wishlist/domain/wishlist-notice";
-import { DeleteFolderPopup } from "@/features/feed/wishlist/presentation/components/delete-folder-popup";
 import { useFolderDetail } from "@/features/feed/wishlist/presentation/view-model/use-folder-detail";
 import { BackLink } from "@/shared/history/back-link";
 import { BackIcon } from "@/shared/icons";
@@ -17,13 +16,13 @@ export function FolderDetailView({ folderParam }: { folderParam: string }) {
   const message = wishlistNoticeMessage(view.notice);
 
   return (
-    <div className="panel-in mx-auto max-w-md px-[22px] pb-[26px]">
-      {/* 시안 `.save-head` — 솟음 원버튼과 폴더 이름. 목록에서는 이 자리가 비어 있다. */}
-      <header className="flex items-center gap-3 pt-6 pb-5">
+    <div className="mx-auto max-w-md px-2 pb-10">
+      {/* 뒤로가기 좌표를 마이페이지와 맞춘다 — 왼쪽 16px·위 8px (전 화면 공통) */}
+      <header className="flex items-center gap-1 px-2 py-2">
         <BackLink
           href="/wishlist"
           label="보관함으로 돌아가기"
-          className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-app text-ink-soft neo active:neo-in"
+          className="flex h-9 w-9 shrink-0 cursor-pointer items-center justify-center text-ink-soft transition-colors active:text-ink"
         >
           <BackIcon />
         </BackLink>
@@ -44,28 +43,30 @@ export function FolderDetailView({ folderParam }: { folderParam: string }) {
               }}
               maxLength={MAX_FOLDER_NAME}
               aria-label="폴더 이름"
-              className="min-w-0 flex-1 border-b border-line bg-transparent pb-0.5 text-lg font-semibold text-ink outline-none"
+              className="min-w-0 flex-1 border-b border-neutral-600 bg-transparent pb-0.5 text-lg font-semibold text-white outline-none"
             />
             <button
               type="button"
               onClick={view.cancel}
-              className="shrink-0 cursor-pointer rounded-full border border-line px-3 py-1.5 text-sm text-ink-soft"
+              className="shrink-0 cursor-pointer rounded-full border border-neutral-700 px-3 py-1.5 text-sm text-neutral-300"
             >
               취소
             </button>
             <button
               type="submit"
               disabled={view.busy}
-              className="shrink-0 cursor-pointer rounded-full bg-slate neo-drop px-3 py-1.5 text-sm font-medium text-on-slate disabled:opacity-60"
+              className="shrink-0 cursor-pointer rounded-full bg-white px-3 py-1.5 text-sm font-medium text-[#1f1f1f] disabled:opacity-60"
             >
               저장
             </button>
           </form>
         ) : (
           <>
-            <h1 className="min-w-0 flex-1 truncate text-[17px] font-extrabold text-ink">
+            <h1 className="min-w-0 flex-1 truncate text-lg font-semibold text-white">
               {view.name}
-              {view.count > 0 && <span className="text-ink-muted"> {view.count}</span>}
+              {view.count > 0 && (
+                <span className="text-neutral-500"> {view.count}</span>
+              )}
             </h1>
             {!view.isDefault && (
               <button
@@ -73,7 +74,7 @@ export function FolderDetailView({ folderParam }: { folderParam: string }) {
                 aria-label="폴더 관리"
                 aria-expanded={view.mode === "menu"}
                 onClick={view.openMenu}
-                className="flex h-10 w-10 shrink-0 cursor-pointer items-center justify-center rounded-full text-xl text-ink-soft"
+                className="flex h-10 w-10 shrink-0 cursor-pointer items-center justify-center rounded-full text-xl text-neutral-400"
               >
                 ⋯
               </button>
@@ -87,40 +88,56 @@ export function FolderDetailView({ folderParam }: { folderParam: string }) {
           <button
             type="button"
             onClick={view.startRename}
-            className="flex-1 cursor-pointer rounded-xl bg-well neo py-2.5 text-sm font-medium text-ink"
+            className="flex-1 cursor-pointer rounded-xl bg-neutral-800 py-2.5 text-sm font-medium text-white"
           >
             이름 바꾸기
           </button>
           <button
             type="button"
             onClick={view.startDelete}
-            className="flex-1 cursor-pointer rounded-xl bg-well neo py-2.5 text-sm font-medium text-danger"
+            className="flex-1 cursor-pointer rounded-xl bg-neutral-800 py-2.5 text-sm font-medium text-red-400"
           >
             폴더 삭제
           </button>
         </div>
       )}
 
-      {/* 되돌릴 수 없는 일이라 화면 한가운데에서 묻는다 — 시안 `delPop` */}
       {view.mode === "confirmDelete" && (
-        <DeleteFolderPopup
-          count={view.originalCount}
-          busy={view.busy}
-          onConfirm={() => {
-            void view.submitDelete();
-          }}
-          onCancel={view.cancel}
-        />
+        <div className="mx-1 mb-3 space-y-3 rounded-xl bg-neutral-900 p-4">
+          <p className="text-sm text-neutral-300">
+            {/* 숨은 찜도 함께 옮겨진다 — 여기만 원본 개수를 쓴다 */}이 폴더를 지울까요?
+            담긴 찜 {view.originalCount}개는 기본 폴더로 이동해요.
+          </p>
+          <div className="flex gap-2">
+            <button
+              type="button"
+              onClick={view.cancel}
+              className="flex-1 cursor-pointer rounded-xl bg-neutral-800 py-2.5 text-sm font-medium text-white"
+            >
+              취소
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                void view.submitDelete();
+              }}
+              disabled={view.busy}
+              className="flex-1 cursor-pointer rounded-xl bg-red-900/80 py-2.5 text-sm font-medium text-white disabled:opacity-60"
+            >
+              지우기
+            </button>
+          </div>
+        </div>
       )}
 
       {view.error !== null && (
-        <p role="status" className="mx-1 mb-2 text-sm text-star">
+        <p role="status" className="mx-1 mb-2 text-sm text-amber-400">
           {view.error}
         </p>
       )}
 
       {message !== null && (
-        <p role="status" className="mx-1 mb-2 text-sm text-star">
+        <p role="status" className="mx-1 mb-2 text-sm text-amber-400">
           {message}
         </p>
       )}
@@ -131,32 +148,28 @@ export function FolderDetailView({ folderParam }: { folderParam: string }) {
       {/* 성별 설정 때문에 가린 것이 있으면 알린다 — 찜이 사라진 것이 아니다.
           전부 가려진 폴더에서는 아래 "비어 있어요" 대신 이 줄만 보인다. */}
       {view.access === "in" && view.hiddenCount > 0 && (
-        <p role="status" className="mx-1 mb-2 text-sm text-ink-muted">
+        <p role="status" className="mx-1 mb-2 text-sm text-neutral-500">
           성별 설정에 맞지 않는 {view.hiddenCount}개는 숨겼어요
         </p>
       )}
 
       {view.access === "in" && view.isEmpty && (
-        <div className="flex flex-col items-center gap-3 py-24 text-ink-soft">
+        <div className="flex flex-col items-center gap-3 py-24 text-neutral-400">
           <p>이 폴더는 아직 비어 있어요.</p>
-          <Link href="/" className="rounded-xl bg-well neo px-4 py-2 text-ink">
+          <Link href="/" className="rounded-xl bg-neutral-800 px-4 py-2 text-white">
             피드 둘러보기
           </Link>
         </div>
       )}
 
       {view.access === "in" && view.hasEntries && (
-        // 시안 2단계 — 작게 시작해 제 크기로 튕겨 퍼진다
-        <div className="grid-burst">
-          <FeedGrid
-            compact
-            columns={view.columns}
-            sentinelRef={view.sentinelRef}
-            onSelect={(card, originRect) => {
-              view.detail.open(card.product, originRect);
-            }}
-          />
-        </div>
+        <FeedGrid
+          columns={view.columns}
+          sentinelRef={view.sentinelRef}
+          onSelect={(card, originRect) => {
+            view.detail.open(card.product, originRect);
+          }}
+        />
       )}
 
       {view.detail.stack.slice(-3).map((entry, i, shown) => {

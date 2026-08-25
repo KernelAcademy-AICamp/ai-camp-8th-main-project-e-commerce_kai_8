@@ -2,24 +2,24 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useEffect, useRef } from "react";
+import { useEffect } from "react";
 
+import { MAX_FOLDER_NAME } from "@/features/feed/wishlist/domain/wish-folders";
 import { wishlistNoticeMessage } from "@/features/feed/wishlist/domain/wishlist-notice";
-import { FolderCover } from "@/features/feed/wishlist/presentation/components/folder-cover";
-import { NewFolderPopup } from "@/features/feed/wishlist/presentation/components/new-folder-popup";
+import { FolderThumbs } from "@/features/feed/wishlist/presentation/components/folder-thumbs";
 import { useFolderOpen } from "@/features/feed/wishlist/presentation/view-model/use-folder-open";
 import { useWishlistFolders } from "@/features/feed/wishlist/presentation/view-model/use-wishlist-folders";
+import { rememberAfterLogin } from "@/shared/history/after-login";
 import { BackLink } from "@/shared/history/back-link";
-import { BackIcon, PlusIcon } from "@/shared/icons";
+import { BackIcon } from "@/shared/icons";
 
 /**
  * 보관함 첫 화면 — 폴더 2열 그리드 (docs/plans/2026-08-20-wishlist-folders.md 4단계).
  *
- * 시안 `.savebar`를 따른다. 그 패널은 화면 전체를 덮는 불투명 판이라, 주소를 가진
- * 이 화면으로 두어도 보이는 결과가 같다 — 주소·뒤로가기·새로고침이 그대로 산다.
- *
- * 시안과 맞춘 것 넷: **새 폴더가 맨 앞**, 이름·개수는 표지 **위**, 뒤 장은 사진이
- * 아니라 톤 카드, 목록에서는 제목을 비운다(폴더를 열면 그 자리에 폴더 이름이 온다).
+ * 타일 = 겹쳐 쌓인 최근 찜 + 이름(사진 위 우측 하단 오버레이 — 홈 피드 가격 배지와 같은 자리).
+ * 마지막 타일은 + (그 자리 인라인 입력).
+ * 폴더를 누르면 상세(/wishlist/<id>)로 — 브라우저 View Transitions로 자연스럽게
+ * 넘어간다(`useFolderOpen`). 기본 폴더는 "default".
  */
 export function FolderGridView() {
   const router = useRouter();
@@ -29,104 +29,132 @@ export function FolderGridView() {
   // 훅을 쓰는 프로필의 통계 칸까지 로그인으로 끌고 갔다(2026-08-22).
   const { access } = view;
   useEffect(() => {
-    if (access === "out") router.replace("/login");
+    if (access !== "out") return;
+    // /login으로 넘어가기 전에 지금 자리를 적어 둔다 — signIn()이 부를 때는
+    // 이미 /login이라 "돌아올 자리"를 모른다(2026-08-25, 보관함 복귀 버그 수정).
+    rememberAfterLogin(window.location.pathname + window.location.search);
+    router.replace("/login");
   }, [access, router]);
 
   const message = wishlistNoticeMessage(view.notice);
-  // 폴더를 탭하면 표지가 헤더 아래 중앙으로 모여든 뒤 상세로 넘어간다(시안 1단계)
-  const panelRef = useRef<HTMLDivElement>(null);
-  const listRef = useRef<HTMLUListElement>(null);
-  const headRef = useRef<HTMLElement>(null);
-  const openFolder = useFolderOpen(panelRef, listRef, headRef);
+  const openFolder = useFolderOpen();
 
   return (
-    <div
-      ref={panelRef}
-      className="panel-in relative mx-auto max-w-md px-[22px] pb-[30px]"
-    >
-      {/* 시안 `.save-head` — 닫기 원버튼과 제목. 목록에서는 제목이 비어 있다. */}
-      <header ref={headRef} className="flex items-center gap-3 pt-6 pb-5">
+    <div className="mx-auto max-w-md px-4 pb-10">
+      {/* 뒤로가기 좌표를 마이페이지와 맞춘다 — 왼쪽 16px·위 8px (전 화면 공통).
+          바깥 div가 이미 px-4(16px)를 주므로 여기는 추가 여백이 없다. */}
+      <header className="flex items-center gap-1 py-2">
         <BackLink
           href="/"
-          label="저장 폴더 닫기"
-          className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-app text-ink-soft neo active:neo-in"
+          label="피드로 돌아가기"
+          className="flex h-9 w-9 cursor-pointer items-center justify-center text-ink-soft transition-colors active:text-ink"
         >
           <BackIcon />
         </BackLink>
-        <h1 className="sr-only">
-          보관함{view.totalCount > 0 && ` ${String(view.totalCount)}`}
-        </h1>
+        <h1 className="text-lg font-semibold text-white">보관함</h1>
       </header>
 
       {message !== null && (
-        <p role="status" className="mb-2 text-sm text-star">
+        <p role="status" className="mb-2 text-sm text-amber-400">
           {message}
         </p>
       )}
 
-      {/* 로그인 판정 전 — 완성 화면과 같은 배치의 뼈대로 영역을 잡는다 */}
+      {/* 로그인 판정 전 — 완성 화면과 같은 배치의 스켈레톤으로 영역을 잡는다 */}
       {view.access !== "in" && (
-        <div aria-label="불러오는 중" className="grid grid-cols-2 gap-x-4 gap-y-[22px]">
+        <div
+          aria-label="불러오는 중"
+          className="grid animate-pulse grid-cols-2 gap-x-3 gap-y-5 pt-2"
+        >
           {[0, 1, 2, 3].map((i) => (
-            <div key={i} className="skel-fill aspect-square w-full rounded-[20px]" />
+            <div
+              key={i}
+              className="relative aspect-square w-full rounded-lg bg-neutral-800"
+            >
+              <div className="absolute right-3 bottom-3 h-4 w-16 rounded-[7px] bg-neutral-700" />
+            </div>
           ))}
         </div>
       )}
 
       {view.access === "in" && (
-        <ul ref={listRef} className="grid grid-cols-2 gap-x-4 gap-y-[22px]">
-          {/* 시안은 새 폴더를 맨 앞에 둔다 — 만들기가 늘 같은 자리에 있다 */}
-          <li>
-            <button
-              type="button"
-              onClick={view.startCreating}
-              aria-label="새 폴더 만들기"
-              className="relative flex aspect-square w-full cursor-pointer flex-col items-start justify-start rounded-[18px] border-[1.6px] border-dashed border-[#B9C0CF] px-[15px] py-4 text-left"
-            >
-              <strong className="block text-[14px] font-extrabold text-ink-soft">
-                새 폴더
-              </strong>
-              <span className="mt-1 block text-[11px] font-[650] text-ink-muted">
-                탭해서 만들기
-              </span>
-              <span className="absolute top-1/2 left-1/2 flex h-10 w-10 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-slate text-on-slate shadow-[0_2px_6px_rgb(30_38_55/0.25)]">
-                <PlusIcon size={19} />
-              </span>
-            </button>
-          </li>
-
+        <ul className="grid grid-cols-2 gap-x-3 gap-y-5 pt-2">
           {view.summaries.map((folder) => (
             <li key={folder.id ?? "default"}>
               <Link
                 href={`/wishlist/${folder.id ?? "default"}`}
-                className="block"
+                className="relative block"
                 onClick={(event) => {
                   openFolder(event, `/wishlist/${folder.id ?? "default"}`);
                 }}
               >
-                <FolderCover
-                  thumb={folder.thumbs[0]}
-                  name={folder.name}
-                  count={folder.count}
-                />
+                <FolderThumbs thumbs={folder.thumbs} />
+                {/* 홈 피드 가격 배지(product-card.tsx)와 자리·모양을 맞춘다 */}
+                <span className="absolute right-3 bottom-3 max-w-[calc(100%-1.5rem)] truncate rounded-[7px] bg-[rgb(46_52_66/0.55)] px-[7px] py-[3px] text-[10.5px] font-bold tracking-[0.01em] text-on-slate backdrop-blur-[6px]">
+                  {folder.name}
+                </span>
               </Link>
             </li>
           ))}
-        </ul>
-      )}
 
-      {/* 이름은 화면 한가운데 창에서 받는다 — 시안 `nfPop` */}
-      {view.creating && (
-        <NewFolderPopup
-          name={view.draftName}
-          onNameChange={view.setDraftName}
-          onSubmit={() => {
-            void view.submitCreate();
-          }}
-          onClose={view.cancelCreating}
-          busy={view.saving}
-          error={view.createError}
-        />
+          <li>
+            {view.creating ? (
+              <form
+                onSubmit={(event) => {
+                  event.preventDefault();
+                  void view.submitCreate();
+                }}
+              >
+                <div className="flex aspect-square w-full scale-95 flex-col items-center justify-center gap-3 rounded-lg border border-dashed border-neutral-700 px-3">
+                  <input
+                    autoFocus
+                    value={view.draftName}
+                    onChange={(event) => {
+                      view.setDraftName(event.target.value);
+                    }}
+                    maxLength={MAX_FOLDER_NAME}
+                    placeholder="새 폴더 이름"
+                    aria-label="새 폴더 이름"
+                    className="w-full border-b border-neutral-600 bg-transparent pb-1 text-center text-white outline-none placeholder:text-neutral-600"
+                  />
+                  <div className="flex gap-2">
+                    <button
+                      type="button"
+                      onClick={view.cancelCreating}
+                      className="cursor-pointer rounded-full border border-neutral-700 px-3.5 py-1.5 text-sm text-neutral-300"
+                    >
+                      취소
+                    </button>
+                    <button
+                      type="submit"
+                      disabled={view.saving}
+                      className="cursor-pointer rounded-full bg-white px-3.5 py-1.5 text-sm font-medium text-[#1f1f1f] disabled:opacity-60"
+                    >
+                      만들기
+                    </button>
+                  </div>
+                </div>
+                {view.createError !== null && (
+                  <p role="status" className="mt-2 text-xs text-amber-400">
+                    {view.createError}
+                  </p>
+                )}
+              </form>
+            ) : (
+              <button
+                type="button"
+                onClick={view.startCreating}
+                aria-label="새 폴더 만들기"
+                className="block w-full cursor-pointer text-left"
+              >
+                {/* 폴더 타일과 같은 틀, 사진 대신 + */}
+                <span className="flex aspect-square w-full scale-95 items-center justify-center rounded-lg border border-dashed border-neutral-700 text-3xl font-light text-neutral-500">
+                  +
+                </span>
+              </button>
+            )}
+          </li>
+        </ul>
       )}
     </div>
   );

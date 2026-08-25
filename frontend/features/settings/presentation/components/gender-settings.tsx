@@ -62,13 +62,13 @@ export function GenderSettings() {
         </p>
       )}
       {status.kind === "syncFailed" && (
-        <p className="mt-2 text-sm text-amber-400">
+        <p className="mt-2 text-sm text-star">
           이 기기에는 저장했지만 계정에 반영됐는지 확인하지 못했습니다. 다음 접속에 다시
           맞춥니다.
         </p>
       )}
       {status.kind === "failed" && (
-        <p className="mt-2 text-sm text-red-400">
+        <p className="mt-2 text-sm text-danger">
           저장하지 못해 이전 값으로 되돌렸습니다.
         </p>
       )}

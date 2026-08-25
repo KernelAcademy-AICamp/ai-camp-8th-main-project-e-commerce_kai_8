@@ -17,8 +17,6 @@ export interface CurationItem {
   /** 이 상품을 왜 넣었는지 한마디 — 리뷰 AI 요약(sentimentSummary.positive)에서 고른 문장 (없으면 "") */
   note: string;
   /** 슬라이드 한 장의 제목. 사람이 쓴다 (없으면 안 그린다) */ head?: string;
-  /** 아쉬운 점 — 리뷰 AI 요약의 negative에서 고른 문장 (없으면 안 그린다) */ con?: string;
-  /** 아쉬운 점 줄의 라벨. 불만이 없는 상품은 "불만 요약"으로 쓴다 */ conLabel?: string;
   /** 상품 정보를 여는 버튼을 옷 위에 놓을 자리 [x%, y%] (없으면 한가운데).
    *  JSON import가 튜플로 좁혀지지 않아 number[]로 둔다 — 읽는 쪽에서 기본값을 채운다. */
   pos?: number[];
@@ -45,4 +43,7 @@ export interface Curation {
   items: CurationItem[];
   /** 작성일 YYYY.MM.DD — DB created_at */ date: string;
   /** 상황 색. 상세의 번호와 장 제목에만 쓴다 (없으면 흰색) */ accent?: string;
+  /** FOR YOU 추천 이유 한 줄 — 키워드 근거로 개인화됐을 때만 화면에 노출한다
+   *  (curation-match.ts의 withGroundedReasons). 계획 2026-08-25. */
+  reason?: string;
 }

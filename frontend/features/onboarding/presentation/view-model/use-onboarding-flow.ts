@@ -28,9 +28,6 @@ export type SaveState = "idle" | "saving" | "failed";
 
 export interface OnboardingFlowViewModel {
   screen: FlowScreen;
-  /** 진행 표시. 경로마다 화면 수가 다르다 — 없는 단계를 세지 않는다(계획 §1-0). */
-  stepIndex: number;
-  stepCount: number;
 
   gender: GenderChoice | null;
   chooseGender: (gender: GenderChoice) => void;
@@ -109,10 +106,6 @@ export function useOnboardingFlow(): OnboardingFlowViewModel {
   // 고른 순서를 그대로 들고 있는다 — `pick_seq`가 여기서 나온다.
   const [selected, setSelected] = useState<number[]>(restored.selected);
   const [saveState, setSaveState] = useState<SaveState>("idle");
-
-  // 로그인한 사람은 로그인 화면이 없다 — 없는 단계를 세지 않는다.
-  const stepCount = signedIn === "in" ? 2 : 3;
-  const stepIndex = screen === "gender" ? 1 : screen === "picks" ? 2 : 3;
 
   const chooseGender = useCallback((next: GenderChoice) => {
     // 기기에는 곧바로 적어 둔다 — 피드·후보 조회가 성별 없이는 돌지 않는다.
@@ -246,8 +239,6 @@ export function useOnboardingFlow(): OnboardingFlowViewModel {
 
   return {
     screen,
-    stepIndex,
-    stepCount,
     gender,
     chooseGender,
     candidates,

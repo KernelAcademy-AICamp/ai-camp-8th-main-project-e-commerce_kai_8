@@ -1,13 +1,13 @@
 "use client";
 
-import Image from "next/image";
-
 import type { WishFolder } from "@/features/feed/wishlist/domain/wish-folders";
 import {
   MAX_FOLDER_NAME,
   summarizeFolders,
 } from "@/features/feed/wishlist/domain/wish-folders";
 import type { WishlistEntry } from "@/features/feed/wishlist/domain/wishlist";
+import { FolderThumbs } from "@/features/feed/wishlist/presentation/components/folder-thumbs";
+import { useSheetDragClose } from "@/features/feed/wishlist/presentation/view-model/use-sheet-drag-close";
 
 /**
  * 담기 바텀시트 — 하트를 누르면 올라와 폴더를 고르게 한다.
@@ -42,6 +42,8 @@ export function SaveSheet({
   onSubmitCreate: () => void;
 }) {
   const summaries = summarizeFolders(folders, entries);
+  // 위쪽 손잡이를 눌러 아래로 끌면 닫힌다(2026-08-25)
+  const { dragY, dragging, handleProps } = useSheetDragClose(onClose);
 
   return (
     <div className="fixed inset-0 z-[60]" role="dialog" aria-label="담을 폴더 고르기">
@@ -50,15 +52,27 @@ export function SaveSheet({
         type="button"
         aria-label="닫기"
         onClick={onClose}
-        className="absolute inset-0 cursor-pointer bg-dim"
+        className="absolute inset-0 cursor-pointer bg-black/60"
       />
-      <div className="absolute right-0 bottom-0 left-0 mx-auto max-w-md rounded-t-[22px] bg-surface shadow-[0_-4px_18px_rgb(30_38_55/0.22)] pb-[max(env(safe-area-inset-bottom),1rem)]">
-        <div aria-hidden className="mx-auto mt-2.5 h-1 w-9 rounded-full bg-fill-deep" />
-        <h2 className="px-6 pt-4 pb-2.5 text-[15px] font-extrabold text-ink">
+      <div
+        className="absolute right-0 bottom-0 left-0 mx-auto max-w-md rounded-t-2xl bg-neutral-900 pb-[max(env(safe-area-inset-bottom),1rem)]"
+        style={{
+          transform: dragY > 0 ? `translateY(${String(dragY)}px)` : undefined,
+          transition: dragging ? "none" : "transform 200ms ease",
+        }}
+      >
+        {/* 손잡이 — 누르고 끌면 닫힌다. touch-none으로 브라우저의 세로 스크롤·
+            바운스가 끼어들지 않게 한다(손잡이 자체는 스크롤할 내용이 없다) */}
+        <div
+          aria-hidden
+          className="mx-auto mt-2.5 h-1 w-9 cursor-grab touch-none rounded-full bg-neutral-700 active:cursor-grabbing"
+          {...handleProps}
+        />
+        <h2 className="px-5 pt-4 pb-1 text-base font-semibold text-white">
           어디에 담을까요
         </h2>
 
-        <ul className="max-h-[50vh] overflow-y-auto px-3.5 pb-4">
+        <ul className="max-h-[50vh] overflow-y-auto px-2">
           {summaries.map((folder) => (
             <li key={folder.id ?? "default"}>
               <button
@@ -66,27 +80,14 @@ export function SaveSheet({
                 onClick={() => {
                   onPick(folder.id);
                 }}
-                className="flex h-[72px] w-full cursor-pointer items-center gap-3.5 rounded-[14px] px-2.5 text-left active:bg-fill-soft"
+                className="flex w-full cursor-pointer items-center gap-3.5 rounded-xl px-3 py-2.5 text-left active:bg-neutral-800"
               >
-                <span
-                  aria-hidden
-                  className="relative h-[52px] w-[52px] shrink-0 overflow-hidden rounded-full bg-fill-soft neo-sm"
-                >
-                  {folder.thumbs.length > 0 && (
-                    <Image
-                      src={folder.thumbs[0]}
-                      alt=""
-                      fill
-                      sizes="52px"
-                      className="object-cover"
-                    />
-                  )}
-                </span>
+                <FolderThumbs thumbs={folder.thumbs} sizePx={52} />
                 <span className="min-w-0 flex-1">
-                  <span className="block truncate text-[15px] font-[750] text-ink">
+                  <span className="block truncate font-medium text-white">
                     {folder.name}
                   </span>
-                  <span className="mt-[3px] block text-xs font-semibold text-ink-muted">
+                  <span className="block text-sm text-neutral-500">
                     {folder.count}개
                   </span>
                 </span>
@@ -106,7 +107,7 @@ export function SaveSheet({
                 {/* + 타일과 같은 틀 — 새 폴더가 이 자리에 생긴다는 예고 */}
                 <span
                   aria-hidden
-                  className="flex h-[52px] w-[52px] shrink-0 items-center justify-center rounded-full border border-dashed border-line text-xl text-ink-muted"
+                  className="flex h-[52px] w-[52px] shrink-0 items-center justify-center rounded-lg border border-dashed border-neutral-700 text-xl text-neutral-500"
                 >
                   +
                 </span>
@@ -120,10 +121,10 @@ export function SaveSheet({
                     maxLength={MAX_FOLDER_NAME}
                     placeholder="새 폴더 이름"
                     aria-label="새 폴더 이름"
-                    className="w-full border-b border-line bg-transparent pb-1 text-ink outline-none placeholder:text-ink-muted"
+                    className="w-full border-b border-neutral-600 bg-transparent pb-1 text-white outline-none placeholder:text-neutral-600"
                   />
                   {createError !== null && (
-                    <span role="status" className="mt-1 block text-xs text-star">
+                    <span role="status" className="mt-1 block text-xs text-amber-400">
                       {createError}
                     </span>
                   )}
@@ -131,7 +132,7 @@ export function SaveSheet({
                 <button
                   type="submit"
                   disabled={saving}
-                  className="shrink-0 cursor-pointer rounded-full bg-slate neo-drop px-4 py-2 text-sm font-medium text-on-slate disabled:opacity-60"
+                  className="shrink-0 cursor-pointer rounded-full bg-white px-4 py-2 text-sm font-medium text-[#1f1f1f] disabled:opacity-60"
                 >
                   담기
                 </button>
@@ -140,15 +141,15 @@ export function SaveSheet({
               <button
                 type="button"
                 onClick={onStartCreating}
-                className="flex w-full cursor-pointer items-center gap-3.5 rounded-xl px-3 py-2.5 text-left active:bg-fill-soft"
+                className="flex w-full cursor-pointer items-center gap-3.5 rounded-xl px-3 py-2.5 text-left active:bg-neutral-800"
               >
                 <span
                   aria-hidden
-                  className="flex h-[52px] w-[52px] shrink-0 items-center justify-center rounded-lg border border-dashed border-line text-xl text-ink-muted"
+                  className="flex h-[52px] w-[52px] shrink-0 items-center justify-center rounded-lg border border-dashed border-neutral-700 text-xl text-neutral-500"
                 >
                   +
                 </span>
-                <span className="font-medium text-ink-soft">새 폴더</span>
+                <span className="font-medium text-neutral-300">새 폴더</span>
               </button>
             )}
           </li>

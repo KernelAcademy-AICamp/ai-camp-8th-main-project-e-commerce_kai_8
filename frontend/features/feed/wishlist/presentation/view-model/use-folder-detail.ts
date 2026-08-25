@@ -19,6 +19,7 @@ import {
 } from "@/features/feed/wishlist/domain/wish-folders";
 import { useVisibleWishes } from "@/features/feed/wishlist/presentation/view-model/use-visible-wishes";
 import { useWishlist } from "@/features/feed/wishlist/presentation/view-model/use-wishlist";
+import { rememberAfterLogin } from "@/shared/history/after-login";
 
 /**
  * 폴더 상세의 상태·동작. 라우트 조각 "default"가 기본 폴더다.
@@ -33,7 +34,11 @@ export function useFolderDetail(folderParam: string) {
   const isDefault = folderId === null;
 
   useEffect(() => {
-    if (access === "out") router.replace("/login");
+    if (access !== "out") return;
+    // /login으로 넘어가기 전에 지금 자리를 적어 둔다 — signIn()이 부를 때는
+    // 이미 /login이라 "돌아올 자리"를 모른다(2026-08-25, 보관함 복귀 버그 수정).
+    rememberAfterLogin(window.location.pathname + window.location.search);
+    router.replace("/login");
   }, [access, router]);
 
   const folder = isDefault ? null : folders.find((f) => f.id === folderId);

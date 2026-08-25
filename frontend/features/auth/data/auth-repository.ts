@@ -5,12 +5,17 @@ import type { User } from "@supabase/supabase-js";
 
 import { getBrowserSupabase } from "@/shared/supabase/browser-client";
 
-import { type AuthUser, googleProviderId } from "../domain/auth-session";
+import {
+  type AuthUser,
+  googleDisplayName,
+  googleProviderId,
+} from "../domain/auth-session";
 
 function toAuthUser(user: User): AuthUser {
   return {
     id: user.id,
     email: user.email ?? null,
+    name: googleDisplayName(user.user_metadata),
     providerId: googleProviderId(user.identities),
   };
 }

@@ -39,7 +39,12 @@ CAND_N = 150
 MIN_BUY = 100      # 구매 100개 미만은 검증 안 된 것으로 본다 (12만 건 중 10만이 구매 0개)
 MIN_REVIEW = 30    # 리뷰 30개 미만의 평점 100점은 표본이 작아서 못 믿는다
 ORDER = "review_score desc nulls last, goods_no desc"
-MAX_APPEAR = 2    # 한 상품이 나갈 수 있는 큐레이션 수. 앞선 큐레이션이 우선권을 갖는다
+# 한 상품이 나갈 수 있는 큐레이션 수. 앞선 큐레이션이 우선권을 갖는다.
+# 예전엔 2였다("링거이면서 크롭인 티는 둘 다 맞다"). 그런데 실제로 걸린 사례는 취향이
+# 겹치는 게 아니라 색상 변형이 similar_no 없이 흩어져 다른 상품으로 오인된 것이었다
+# (워크웨어·아메카지에 디키즈 트리로고가 둘 다 실림, 2026-08-24 실측). 진짜 취향 중복보다
+# 카드가 겹쳐 보이는 문제가 더 눈에 띄어서 1로 낮췄다 — 사람 결정 2026-08-24.
+MAX_APPEAR = 1
 
 # 화면의 "N건"을 **하한 통과분**으로 세는 게시물 (사람 결정 2026-08-18).
 # 기본은 하한 전 숫자인데, 반팔 카탈로그의 8할이 구매 0건이라 체형 게시물은
@@ -755,6 +760,81 @@ NOTES = {
     "3182421": "링거가 아니라 래글런. 어깨에서 소매로 넘어가는 선이 곡선이라 팔이 좁아 보인다.",
 }
 
+# ── 손으로 쓴 추천 이유 한 줄 (key: 문구) ──────────────────
+# FOR YOU 카드에서, 화면이 키워드 근거로 개인화했다고 판정한 큐레이션에만 붙는다
+# (프론트 curation-match.ts의 withGroundedReasons). 64장 전부 손으로 썼다 —
+# 한 번만 쓰는 문구라 배치 API 호출은 걷어냈다(계획의 결정 경위 참고).
+# 계획: docs/superpowers/plans/2026-08-25-foryou-recommendation-reason.md
+#
+# curation-rules.json에 키워드 규칙이 없는 큐레이션(색상·리뷰 조건만 있는 것)은
+# 절대 키워드 근거로 안 걸려 이 문구가 화면에 못 뜬다 — 지금 20장이 그렇다.
+# 지워도 되지만, 나중에 규칙이 생기면 바로 쓰려고 남겨 둔다.
+REASONS = {
+    "baseball_raglan": "최근 본 래글런 소매 스타일과 비슷해서예요",
+    "running": "최근 관심 보인 러닝·기능성 원단과 잘 맞아요",
+    "blokecore": "최근 본 축구 저지 스타일과 비슷해서예요",
+    "dog_print": "최근 관심 보인 강아지 그래픽과 잘 맞아요",
+    "cat_print": "최근 본 고양이 그래픽과 비슷해서 골랐어요",
+    "tropical": "최근 관심 보인 트로피컬 무드와 잘 맞아요",
+    "campus_daily": "최근 본 가성비 무지 티와 비슷해서예요",
+    "date_neat": "최근 관심 보인 단정한 슬림핏과 잘 맞아요",
+    "quiet_detail": "최근 본 꾸안꾸 디테일과 비슷해서예요",
+    "ringer": "최근 관심 보인 링거 티와 잘 맞아요",
+    "stripe": "최근 본 스트라이프 무늬와 비슷해서예요",
+    "washed": "최근 관심 보인 빈티지 워시드 감성과 잘 맞아요",
+    "character": "최근 본 캐릭터 그래픽과 비슷해서예요",
+    "white_opaque": "최근 관심 보인 화이트 반팔과 잘 맞아요",
+    "summer_thin": "최근 본 얇은 여름 반팔과 비슷해서예요",
+    "oversized_thin": "최근 관심 보인 얇은 오버핏과 잘 맞아요",
+    "new_graphic": "최근 본 신상 그래픽 티와 비슷해서예요",
+    "crop": "최근 관심 보인 크롭 기장과 잘 맞아요",
+    "no_stretch": "최근 본 탄탄한 원단과 비슷해서예요",
+    "not_hot": "최근 관심 보인 안 더운 여름 반팔과 잘 맞아요",
+    "no_complaint": "최근 본 만족도 높은 반팔과 비슷해서예요",
+    "true_to_size": "최근 관심 보인 정사이즈 반팔과 잘 맞아요",
+    "coquette": "최근 본 리본·레이스 디테일과 비슷해서예요",
+    "flower": "최근 관심 보인 큼직한 플로럴과 잘 맞아요",
+    "gorpcore": "최근 본 고프코어 무드와 비슷해서예요",
+    "body_straight": "최근 관심 보인 기본 핏과 잘 맞아요",
+    "body_wave_w": "최근 본 짧고 슬림한 핏과 비슷해서예요",
+    "body_natural": "최근 관심 보인 볼륨 있는 실루엣과 잘 맞아요",
+    "muscle_fit": "최근 본 머슬핏 반팔과 비슷해서예요",
+    "rollup_sleeve": "최근 관심 보인 롤업 소매와 잘 맞아요",
+    "off_shoulder": "최근 본 오프숄더 실루엣과 비슷해서예요",
+    "slim_fit": "최근 관심 보인 슬림핏과 잘 맞아요",
+    "black_only": "최근 본 블랙 단독 반팔과 비슷해서예요",
+    "premium_yarn": "최근 관심 보인 고급 원단과 잘 맞아요",
+    "knit_tee": "최근 본 니트 반팔과 비슷해서예요",
+    "layered_tee": "최근 관심 보인 레이어드 디자인과 잘 맞아요",
+    "y2k_motif": "최근 본 Y2K 무늬와 비슷해서예요",
+    "square_neck": "최근 관심 보인 스퀘어넥과 잘 맞아요",
+    "v_neck": "최근 본 브이넥과 비슷해서예요",
+    "embroidery": "최근 관심 보인 자수 디테일과 잘 맞아요",
+    "rib_knit": "최근 본 골지 반팔과 비슷해서예요",
+    "pastel_tone": "최근 관심 보인 파스텔 컬러와 잘 맞아요",
+    "lettering": "최근 본 레터링 티와 비슷해서예요",
+    "pocket_tee": "최근 관심 보인 포켓 디테일과 잘 맞아요",
+    "cooling_fabric": "최근 본 냉감 원단과 비슷해서예요",
+    "mesh_sheer": "최근 관심 보인 메쉬 소재와 잘 맞아요",
+    "color_block": "최근 본 컬러블록 디자인과 비슷해서예요",
+    "art_print": "최근 관심 보인 아트 프린트와 잘 맞아요",
+    "red_only": "최근 본 레드 단독 반팔과 비슷해서예요",
+    "bear_bunny": "최근 관심 보인 동물 그래픽과 잘 맞아요",
+    "outdoor_brand": "최근 본 아웃도어 브랜드와 비슷해서예요",
+    "sports_brand": "최근 관심 보인 스포츠 브랜드와 잘 맞아요",
+    "spa_brand": "최근 본 SPA 브랜드와 비슷해서예요",
+    "women_online_brand": "최근 관심 보인 온라인 여성 브랜드와 잘 맞아요",
+    "yoga_brand": "최근 본 요가·필라테스 브랜드와 비슷해서예요",
+    "workwear": "최근 관심 보인 워크웨어 스타일과 잘 맞아요",
+    "camping_graphic": "최근 본 캠핑 그래픽과 비슷해서예요",
+    "amekaji": "최근 관심 보인 아메카지 스타일과 잘 맞아요",
+    "retro_graphic": "최근 본 레트로 그래픽과 비슷해서예요",
+    "sporty": "최근 관심 보인 스포티 무드와 잘 맞아요",
+    "all_season": "최근 본 사계절 반팔과 비슷해서예요",
+    "new_arrival_watch": "최근 관심 보인 신상 반팔과 잘 맞아요",
+    "outdoor_new": "최근 본 아웃도어 신상과 비슷해서예요",
+    "women_online_new": "최근 관심 보인 온라인 여성 브랜드 신상과 잘 맞아요",
+}
 
 CARD_COLS = ("goods_no, title, brand_name, brand, price_final, thumbnail, "
              "review_count, review_score, purchase_total, tags, similar_no, gender")
@@ -787,11 +867,29 @@ def load(cur):
     return rows
 
 
+# 대괄호·괄호 안 색상은 위에서 지워지지만, similar_no 없는 상품은 색 이름이 괄호 없이
+# 끝에 그냥 붙는다("... White", "... 1% Melange"). 그 트레일링 색 토큰(최대 2개)도 지운다
+# — 안 지우면 같은 옷의 색상 변형이 서로 다른 상품으로 갈려 큐레이션이 "디키즈 색깔 3장"
+# 처럼 보인다 (워크웨어 실측 2026-08-24). 사람 결정 2026-08-24.
+_COLOR_SUFFIX = re.compile(
+    r"^(?:" + "|".join(re.escape(w) for w in sorted(
+        set(COLOR) | {
+            "white", "black", "grey", "gray", "brown", "beige", "green", "blue",
+            "purple", "yellow", "pink", "red", "orange", "silver", "gold", "denim",
+            "ivory", "camel", "sand", "khaki", "mint", "navy", "lavender", "burgundy",
+            "brick", "peach", "oatmeal", "mustard", "lime", "melange", "charcoal",
+            "camo", "camouflage", "ecru", "wine", "indigo", "stone", "cream", "olive",
+        }, key=len, reverse=True)) + r"|\d+%)$", re.I)
+
+
 def strip_variant(title):
     """상품명에서 색상·팩 수 같은 옵션 표기를 지운다. 색만 다른 옷을 한 옷으로 묶는 열쇠."""
     t = re.sub(r"\[[^\]]*\]|\([^)]*\)", " ", title)
     t = re.sub(r"[_\-]\s*\d*\s*(color|컬러|colors)\b", " ", t, flags=re.I)
-    return re.sub(r"\s+", " ", t).strip().lower()
+    words = re.sub(r"\s+", " ", t).strip().split(" ")
+    while words and _COLOR_SUFFIX.match(words[-1]):
+        words.pop()
+    return " ".join(words).strip().lower()
 
 
 def dedupe_variants(rows, limit, appear=None, seen=None):
@@ -801,10 +899,9 @@ def dedupe_variants(rows, limit, appear=None, seen=None):
     상품명으로 묶는다 ("... 티셔츠 [블랙]" 과 "... 티셔츠 (화이트)" 는 한 옷이다).
     rows 는 CARD_COLS 순서(0=goods_no, 10=similar_no)를 전제한다.
 
-    appear 를 넘기면 큐레이션을 가로질러 같은 상품이 MAX_APPEAR 개를 넘게
-    나오지 않도록 막는다. 겹침 자체는 정상이다 — 링거이면서 크롭인 티는 둘 다
-    맞다. 다만 리뷰 조건만 있는 큐레이션("안 덥다", "정사이즈")은 생김새를 안 봐서
-    좋은 상품을 전부 빨아들인다. 그래서 상한만 둔다.
+    appear 를 넘기면 큐레이션을 가로질러 같은 상품이 MAX_APPEAR(=1) 개를 넘게
+    나오지 않도록 막는다 — 한 상품은 먼저 실린 큐레이션 하나에만 남는다
+    (사람 결정 2026-08-24, MAX_APPEAR 정의 참고).
 
     seen 을 넘기면 **이어서** 고른다. 한 큐레이션에서 상위컷을 뽑은 뒤 모자란 성별만
     더 채울 때(fill_gender), 두 번째 호출이 첫 호출과 같은 옷의 다른 색을 집지
@@ -893,6 +990,7 @@ def build(cur, curations):
             covers.add(items[0]["u"])
         out.append({**{k: c[k] for k in ("key", "title", "cond")},
                     "lede": c["lede"] or "", "n": n, "items": items,
+                    **({"reason": REASONS[c["key"]]} if REASONS.get(c["key"]) else {}),
                     "sort": "조회순" if order == NEW_ARRIVAL_ORDER else "평점순",
                     "date": c["at"].strftime("%Y.%m.%d")})
     return out

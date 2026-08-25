@@ -18,20 +18,12 @@ export function OnboardingFlow() {
   const signIn = useGoogleSignIn();
 
   if (flow.screen === "gender") {
-    return (
-      <OnboardingGenderScreen
-        stepIndex={flow.stepIndex}
-        stepCount={flow.stepCount}
-        onChoose={flow.chooseGender}
-      />
-    );
+    return <OnboardingGenderScreen onChoose={flow.chooseGender} />;
   }
 
   if (flow.screen === "picks") {
     return (
       <OnboardingPickScreen
-        stepIndex={flow.stepIndex}
-        stepCount={flow.stepCount}
         candidates={flow.candidates}
         onDead={flow.markDead}
         loading={flow.loadingCandidates}
@@ -52,8 +44,6 @@ export function OnboardingFlow() {
 
   return (
     <OnboardingSignupScreen
-      stepIndex={flow.stepIndex}
-      stepCount={flow.stepCount}
       busy={signIn.busy}
       failed={signIn.failed}
       onSignIn={signIn.signIn}

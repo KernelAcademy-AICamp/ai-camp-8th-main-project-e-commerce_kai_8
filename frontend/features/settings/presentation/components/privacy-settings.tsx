@@ -13,7 +13,9 @@ export function PrivacySettings() {
     usePrivacySettings();
 
   return (
-    <div>
+    // 위 성별 선택(GenderSettings)과의 간격 — 그쪽 첫 여백(mt-8)과 같은 값으로
+    // 맞춘다. 전엔 여백이 아예 없어 두 구역이 거의 붙어 보였다(2026-08-25).
+    <div className="mt-8">
       {/* 평소엔 접어둔다 — 긴 고지가 화면을 덮지 않게 (제목을 누르면 펼침) */}
       <details className="group">
         <summary className="flex cursor-pointer list-none items-center justify-between text-base font-semibold text-ink [&::-webkit-details-marker]:hidden">
