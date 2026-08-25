@@ -93,8 +93,3 @@ export function MyPageShell({
 export function GreetingSkeleton() {
   return <span aria-label="확인 중" className="block h-4 w-40 rounded bg-skel-1" />;
 }
-
-/** 머리줄 오른쪽 끝의 뼈대 — 원버튼과 같은 크기를 잡는다 */
-export function AccountSkeleton() {
-  return <span aria-hidden className="h-[30px] w-[30px] rounded-full bg-skel-1" />;
-}

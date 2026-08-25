@@ -4,7 +4,6 @@ import Link from "next/link";
 
 import type { AuthNotice, AuthUser } from "@/features/auth/domain/auth-session";
 import {
-  AccountSkeleton,
   GreetingSkeleton,
   MyPageShell,
   SIDE_BTN,
@@ -63,7 +62,11 @@ export function MyPage({
       }
       account={
         <>
-          {state.kind === "loading" && <AccountSkeleton />}
+          {/* 판정 전(loading)에도 비워 둔다 — 대다수인 로그인 상태의 실제
+              모습(빈 자리)과 맞춘다. 뼈대를 그렸다가 로그인으로 판명 나면
+              그 자리가 사라지며 mr-auto로 밀려 있던 톱니(설정) 위치까지
+              같이 튀었다(2026-08-25 버그 수정, `app/my/loading.tsx` 주석
+              참고). */}
           {state.kind === "signedOut" && (
             <Link href="/login" aria-label="로그인" className={SIDE_BTN}>
               <PersonIcon size={15} />
