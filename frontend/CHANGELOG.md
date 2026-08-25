@@ -1,3 +1,9 @@
+## [0.1.38](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/compare/v0.1.37...v0.1.38) (2026-08-25)
+
+### Features
+
+* 마이페이지 취향 분석 계측과 어드민 취향 탭 ([#118](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/issues/118)) ([4e65e45](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/commit/4e65e453a0873f9a05576bc198977c049d94f69b))
+* 온보딩 퍼널을 키우고 마지막 단계를 「회원가입 완료」로 바꾼다 ([#116](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/issues/116)) ([dcae6ed](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/commit/dcae6edd8ecc4b9f79adf21abf5f6d4cdbc5cf90))
 ## [0.1.37](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/compare/v0.1.36...v0.1.37) (2026-08-25)
 ## [0.1.36](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/compare/v0.1.35...v0.1.36) (2026-08-25)
 ## [0.1.35](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/compare/v0.1.34...v0.1.35) (2026-08-25)
