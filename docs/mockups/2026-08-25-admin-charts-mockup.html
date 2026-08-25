@@ -1,0 +1,871 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>어드민 카드 시각화 목업</title>
+<style>
+  :root {
+    color-scheme: dark;
+    --page:#0a0a0a; --surface:#121212; --sunken:#1a1a1a; --border:rgba(255,255,255,.10);
+    --ink:#ffffff; --ink-2:#c3c2b7; --muted:#898781;
+    --grid:#2c2c2a; --baseline:#4a4a46;
+    --series:#3987e5;
+    --ord-1:#b7d3f6; --ord-2:#86b6ef; --ord-3:#5598e7; --ord-4:#2a78d6;
+    --warning:#fab219; --good:#0ca30c;
+  }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--page); color:var(--ink);
+    font-family:system-ui,-apple-system,"Segoe UI",sans-serif; font-size:14px; line-height:1.55; }
+  .wrap { max-width:1120px; margin:0 auto; padding:32px 20px 80px; }
+  h1 { font-size:20px; font-weight:600; margin:0; }
+  .sub { color:var(--muted); font-size:13px; margin-top:4px; }
+
+  .tabs { display:flex; gap:4px; border-bottom:1px solid var(--border); margin:22px 0 20px; }
+  .tab { padding:10px 16px; font-size:14px; color:var(--muted); border-bottom:2px solid transparent; }
+  .tab.on { color:var(--ink); border-bottom-color:var(--series); font-weight:500; }
+
+  .grid { display:grid; grid-template-columns:repeat(12,1fr); gap:16px; align-items:start; }
+  .c12{grid-column:span 12} .c8{grid-column:span 8} .c7{grid-column:span 7}
+  .c5{grid-column:span 5} .c4{grid-column:span 4}
+  @media (max-width:900px){ .c8,.c7,.c5,.c4{grid-column:span 12} }
+
+  .card { background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:18px; }
+  .card > h2 { font-size:15px; font-weight:600; margin:0; }
+  .card > h2 .en { color:var(--muted); font-weight:400; font-size:12.5px; }
+  .card > .def { font-size:12px; color:var(--muted); margin:5px 0 0; }
+  .card > .key { font-size:11.5px; color:var(--muted); margin:8px 0 0;
+    display:flex; flex-wrap:wrap; gap:14px; align-items:center; }
+  .key .k { display:inline-flex; align-items:center; gap:5px; }
+  .em { color:var(--ink-2); font-weight:500; }
+  .body { margin-top:14px; }
+
+  .kpi { display:grid; grid-template-columns:repeat(4,1fr); gap:2px; }
+  @media (max-width:620px){ .kpi{grid-template-columns:repeat(2,1fr)} }
+  .kpi .t { background:var(--page); padding:14px 16px; border-radius:6px; }
+  .kpi .lb { font-size:11.5px; color:var(--muted); }
+  .kpi .vv { font-size:26px; font-weight:600; margin-top:2px; letter-spacing:-.02em; }
+  .kpi .nt { font-size:11.5px; color:var(--muted); margin-top:1px; }
+  .ok { display:inline-flex; align-items:center; gap:5px; color:var(--good); font-size:12px; font-weight:500; }
+  .ok i { width:8px; height:8px; border-radius:999px; background:var(--good); display:inline-block; }
+
+  /* ── 퍼널: 단계 머리 + 좁아지는 띠 (레퍼런스) ── */
+  .steps { display:grid; }
+  .steps .st { padding:0 14px; border-left:1px solid var(--grid); }
+  .steps .st:first-child { border-left:0; padding-left:0; }
+  .st .no { font-size:11.5px; color:var(--muted); }
+  .st .nm { font-size:12.5px; color:var(--ink-2); font-weight:500; margin-top:1px; }
+  .st .nm .en { color:var(--muted); font-weight:400; font-size:11px; }
+  .st .vv { font-size:24px; font-weight:600; letter-spacing:-.02em; margin-top:5px; }
+  .st .pc { font-size:11.5px; color:var(--muted); }
+  .chips { display:flex; flex-wrap:wrap; gap:8px; margin-top:12px; }
+  .chip { background:var(--sunken); border:1px solid var(--border); border-radius:999px;
+    padding:4px 11px; font-size:11.5px; color:var(--ink-2); font-variant-numeric:tabular-nums; }
+  .chip b { font-weight:600; }
+  .chip .sw { display:inline-block; width:8px; height:8px; border-radius:2px; margin-right:6px;
+    vertical-align:baseline; }
+  .foot { display:grid; grid-template-columns:repeat(3,1fr); gap:2px; margin-top:14px; }
+  @media (max-width:620px){ .foot{grid-template-columns:1fr} }
+  .foot .f { background:var(--sunken); border-radius:6px; padding:10px 13px; }
+  .foot .fl { font-size:11px; color:var(--muted); }
+  .foot .fv { font-size:15px; font-weight:600; margin-top:1px; font-variant-numeric:tabular-nums; }
+  .foot .fv small { font-size:11.5px; color:var(--muted); font-weight:400; }
+
+
+  /* ── 필터 (세션 퍼널) ── */
+  .row { display:flex; align-items:center; justify-content:space-between; gap:12px;
+    flex-wrap:wrap; margin-bottom:14px; }
+  .seg { display:inline-flex; background:var(--sunken); border:1px solid var(--border);
+    border-radius:8px; padding:2px; gap:2px; }
+  /* 최소 44x44 CSS px — WCAG 2.2 SC 2.5.5(AAA)·Apple HIG 44pt 기준.
+     이전 값(padding 5px, 12.5px)은 높이가 29.4px였다. AA(24px)는 통과했지만
+     손가락으로 누르기엔 작다. 올리는 비용이 거의 없어서 올렸다. */
+  .seg button { background:none; border:0; color:var(--muted); font:inherit; font-size:13px;
+    min-height:44px; min-width:44px; padding:12px 18px; border-radius:6px; cursor:pointer; }
+  .seg button[aria-pressed="true"] { background:var(--series); color:#fff; font-weight:500; }
+  .seg button:focus-visible { outline:2px solid var(--series); outline-offset:2px; }
+  .segnote { font-size:11.5px; color:var(--muted); }
+  .nlab { fill:var(--ink-2); font-size:11.5px; font-variant-numeric:tabular-nums; }
+  .nsub { fill:var(--muted); font-size:10.5px; }
+
+  svg { display:block; overflow:visible; }
+  .axis { fill:var(--muted); font-size:11px; }
+  .axis.month { fill:var(--ink-2); font-weight:600; }
+  .unit { fill:var(--muted); font-size:11px; }
+  .val  { fill:var(--ink-2); font-size:11.5px; font-variant-numeric:tabular-nums; }
+
+  table { width:100%; border-collapse:collapse; font-size:12.5px; }
+  th { text-align:left; font-weight:500; color:var(--muted);
+       border-bottom:1px solid var(--baseline); padding:7px 8px; white-space:nowrap; font-size:11.5px; }
+  td { padding:7px 8px; border-bottom:1px solid var(--grid); color:var(--ink-2);
+       white-space:nowrap; font-variant-numeric:tabular-nums; }
+  th.n, td.n { text-align:right; }
+  .scroll { overflow-x:auto; }
+
+  .axlab { font-size:11px; color:var(--muted); text-align:center; margin-top:6px; }
+
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <h1>어드민 카드 시각화 목업</h1>
+  <p class="sub">실제 프로덕션 데이터 (2026-08-16 ~ 08-25 11:08 KST) · 12칸 격자 · 추천 탭 제외</p>
+
+  <div class="tabs">
+    <div class="tab on">개요</div><div class="tab">리텐션</div>
+    <div class="tab">추천</div><div class="tab">원본</div>
+  </div>
+
+  <div class="grid">
+
+    <section class="card c12">
+      <div class="kpi">
+        <div class="t"><div class="lb">최근 24시간</div><div class="vv">7,697</div>
+          <div class="nt"><span class="ok"><i></i>기록 들어오는 중</span></div></div>
+        <div class="t"><div class="lb">최근 7일</div><div class="vv">23,296</div>
+          <div class="nt">전체 27,856건</div></div>
+        <div class="t"><div class="lb">기기 수 <span style="opacity:.7">devices</span></div><div class="vv">78</div>
+          <div class="nt">누적 (중복 제외)</div></div>
+        <div class="t"><div class="lb">마지막 기록</div><div class="vv">11:08</div>
+          <div class="nt">08-25 KST</div></div>
+      </div>
+    </section>
+
+    <section class="card c7">
+      <h2>일별 기록 건수 <span class="en">Daily event volume</span></h2>
+      <p class="def">앱이 남긴 행동 기록의 하루 합계. impression · tap · wish · outbound · session 시작/끝을 모두 센다.
+        이 중 <span class="em">94.9%가 impression</span>이라 사실상 카드가 화면에 보인 횟수다.</p>
+      <div class="body">
+        <div class="row" style="margin-bottom:10px">
+          <div class="seg" id="dailyseg" role="group" aria-label="기간"></div>
+        </div>
+        <div id="daily"></div>
+      </div>
+    </section>
+
+    <section class="card c5">
+      <h2>온보딩 퍼널 <span class="en">Onboarding funnel</span></h2>
+      <p class="def">가입 전 화면을 몇 명이 통과했나. %는 <span class="em">바로 앞 단계 대비</span>다.</p>
+      <div class="body"><div id="onboarding"></div></div>
+    </section>
+
+    <section class="card c12">
+      <h2>세션 요약 <span class="en">Per-session distribution</span></h2>
+      <p class="def">세션 하나(= 한 번 들어와서 나갈 때까지)에서 각 행동을 몇 번 했나. 세션 290개를 크기순으로 줄 세워 그렸다.</p>
+      <p class="key">
+        <span class="k"><svg width="26" height="12" aria-hidden="true"><rect x="0" y="1" width="26" height="10" rx="2"
+          fill="var(--series)" fill-opacity=".28" stroke="var(--series)" stroke-opacity=".5"/></svg>
+          IQR (사분위 범위, 가운데 50%)</span>
+        <span class="k"><svg width="4" height="14" aria-hidden="true"><rect width="2.5" height="14" fill="var(--ink)"/></svg>
+          Median (중앙값)</span>
+        <span class="k"><svg width="12" height="12" aria-hidden="true"><circle cx="6" cy="6" r="4.5" fill="var(--surface)"
+          stroke="var(--warning)" stroke-width="2"/></svg> Mean (평균)</span>
+        <span class="k">가로축은 줄마다 범위가 다르다</span>
+      </p>
+      <div class="body"><div id="box"></div></div>
+    </section>
+
+    <section class="card c12">
+      <h2>세션 퍼널 <span class="en">Session flow</span></h2>
+      <p class="def">한 세션이 어디까지 갔나. 분모는 상품 수가 아니라 <span class="em">세션 수</span>다.
+        찜과 판매처 이동은 한 세션이 둘 다 할 수 있어서, <span class="em">「둘 다」를 독립된 갈래</span>로 뒀다.
+        그래서 모든 세션이 정확히 한 갈래에만 속하고 합이 맞는다. 띠 두께가 세션 수다.</p>
+      <div class="body">
+        <div class="row">
+          <div class="seg" id="seg" role="group" aria-label="마지막 단계 필터"></div>
+          <div class="segnote" id="segnote"></div>
+        </div>
+        <div id="flow"></div>
+      </div>
+    </section>
+  </div>
+
+  <div class="tabs" style="margin-top:36px">
+    <div class="tab">개요</div><div class="tab on">리텐션</div>
+    <div class="tab">추천</div><div class="tab">원본</div>
+  </div>
+
+  <div class="grid">
+    <section class="card c8">
+      <h2>재방문 곡선 <span class="en">N-Day Retention</span></h2>
+      <p class="def">첫 방문일이 Day 0. <span class="em">Day N 당일에</span> 다시 왔나를 본다
+        (Amplitude의 N-Day 방식. Unbounded가 아니라 당일만 세므로 곡선이 톱니 모양이 된다).
+        기준 사건은 방문(session_start)이다.</p>
+      <p class="key">
+        <span class="k"><svg width="26" height="12" aria-hidden="true"><line x1="0" y1="6" x2="26" y2="6"
+          stroke="var(--series)" stroke-width="2"/><circle cx="13" cy="6" r="4"
+          fill="var(--series)" stroke="var(--surface)" stroke-width="2"/></svg> Retention rate (%)</span>
+        <span class="k"><svg width="14" height="12" aria-hidden="true"><rect x="2" y="3" width="10" height="9" rx="1.5"
+          fill="var(--muted)" fill-opacity=".45"/></svg> Cohort size — 그 Day를 물어볼 수 있는 기기 수</span>
+      </p>
+      <div class="body"><div id="retention"></div></div>
+    </section>
+
+    <section class="card c4">
+      <h2>활동 일수 분포 <span class="en">Active days</span></h2>
+      <p class="def">기기 하나가 며칠에 걸쳐 방문했나. 같은 날 여러 번 와도 1일.
+        방문한 적 있는 <span class="em">기기 76개</span> 기준.</p>
+      <div class="body"><div id="active"></div></div>
+    </section>
+  </div>
+
+  <div class="tabs" style="margin-top:36px">
+    <div class="tab">개요</div><div class="tab">리텐션</div>
+    <div class="tab">추천</div><div class="tab on">원본</div>
+  </div>
+
+  <div class="grid">
+    <section class="card c12">
+      <h2>세션 <span class="en">Sessions</span> (최근 30개)</h2>
+      <p class="def">한 번 들어와서 나갈 때까지가 한 행.</p>
+      <div class="body"><div class="scroll"><table id="sessions"></table></div></div>
+    </section>
+
+    <section class="card c12">
+      <h2>이벤트 <span class="en">Raw events</span> (최근 40줄)
+        <span style="font-size:11px;color:var(--muted);font-weight:400">— 눌러서 펼치기</span></h2>
+      <p class="def">행동이 일어날 때마다 한 줄씩 쌓인 낱개 기록. 평소엔 접어 둔다.</p>
+    </section>
+  </div>
+
+</div>
+
+<script>
+/* ── 실제 프로덕션 데이터 (2026-08-25 11:08 KST 조회) ── */
+/* 날짜를 연도까지 들고 있는다. 「MM-DD」만 두면 두 달을 넘길 때 캡션이 어느 해·어느 달인지
+   말할 방법이 없다 — 실제로 캡션에 "8월"이 박혀 있어 6~8월 데이터를 8월이라고 말했다. */
+const DAILY = [["2026-08-16",2481],["2026-08-17",1222],["2026-08-18",3550],["2026-08-19",1501],
+               ["2026-08-20",1425],["2026-08-21",992],["2026-08-22",4966],["2026-08-23",2784],
+               ["2026-08-24",6724],["2026-08-25",2211]];
+
+/** 일 단위로 그릴 수 있는 최대 일수. 넘으면 주 단위로 묶는다.
+ *  실측(모바일 390px 기준 막대 폭): 28일 6.6px · 30일 6.0px · 31일 5.7px · 60일 1.3px.
+ *  6px 아래로 떨어지면 손으로 집을 수 없다. 주 단위로 묶으면 며칠이든 13.5px가 나온다. */
+const DAILY_MAX_DAYS = 31;
+
+const BOXES = [
+  { ko:"상품 노출", en:"impressions", q1:6.0, med:24.0, q3:92.0, mean:91.1, max:1457 },
+  { ko:"상품 클릭",  en:"tap",         q1:0.0, med:0.0,  q3:2.75, mean:2.6,  max:38 },
+  { ko:"찜",         en:"wish",        q1:0.0, med:0.0,  q3:0.0,  mean:0.4,  max:13 },
+  { ko:"판매처 이동", en:"outbound",   q1:0.0, med:0.0,  q3:0.0,  mean:0.1,  max:5 },
+];
+
+/* 세션 퍼널 — 겹치지 않는 갈래. 합이 260이 된다. */
+const IMP = 260, TAP = 139;
+const PARTS = { noTap: 121, both: 6, wishOnly: 36, outbOnly: 8, tapOnly: 89 };
+const WISH = PARTS.wishOnly + PARTS.both;
+const OUTB = PARTS.outbOnly + PARTS.both;
+const ACTED = PARTS.wishOnly + PARTS.outbOnly + PARTS.both;
+
+/* 온보딩 퍼널 — 화면 도달 기록. done 단계는 오염돼 있어 제외했다(아래 리포트 참고) */
+const ONBOARDING = {
+  steps: [
+    { ko:"성별", en:"gender", n:8 },
+    { ko:"옷",   en:"picks",  n:6 },
+    { ko:"가입", en:"signup", n:5 },
+  ],
+  breakdown: [],
+};
+
+const RETENTION = [
+  {d:1,base:72,back:14},{d:2,base:62,back:11},{d:3,base:61,back:5},
+  {d:4,base:53,back:5}, {d:5,base:48,back:3}, {d:6,base:44,back:3},
+  {d:7,base:36,back:2}, {d:8,base:5,back:0},  {d:9,base:4,back:0},
+];
+const ACTIVE = [
+  {days:1,n:55,pct:72.4,obs:8},{days:2,n:11,pct:14.5,obs:4},
+  {days:3,n:4,pct:5.3,obs:6}, {days:4,n:4,pct:5.3,obs:7},
+  {days:7,n:2,pct:2.6,obs:8},
+];
+const SESSIONS = [
+  ["4eb3aac8","ca1abad8","08-25 05:47","0:00:00","-",6,0,0,0,0],
+  ["88c5f510","6ae6ab7a","08-25 04:44","1:12:57","-",705,18,4,1,0],
+  ["1e794da6","3790407c","08-25 05:47","0:00:04","-",6,0,0,0,0],
+];
+
+const SVG = "http://www.w3.org/2000/svg";
+const mk = (n, a) => { const e = document.createElementNS(SVG, n); for (const k in a) e.setAttribute(k, a[k]); return e; };
+const fmt = n => n.toLocaleString("ko-KR");
+/**
+ * 값 설명을 붙인다.
+ *
+ * **tabindex를 붙이지 않는다.** 마크마다 붙이면 전체 기간에서 탭 정지점이 102개가 된다
+ * (일별 60 + 흐름도 7 + 상자수염 12 + 재방문 18 + 활동 5). 키보드로 화면을 지나가려면
+ * 102번을 눌러야 한다. **키보드로 값을 읽는 경로는 차트 아래 표다** — 그래서 그 표는
+ * 편의 기능이 아니라 필수다(WCAG 2.2 SC 2.5.8의 「Equivalent」 예외도 이걸 근거로 삼는다).
+ *
+ * SVG는 <title> 자식, HTML은 title 속성. 둘 다 브라우저가 마우스 툴팁으로 띄운다.
+ * 스크립트가 없어도 뜬다.
+ */
+function bind(el, text, sub) {
+  const full = sub ? text + " — " + sub : text;
+  if (el.namespaceURI === SVG) {
+    const t = mk("title", {});
+    t.textContent = full;
+    el.appendChild(t);
+  } else {
+    el.setAttribute("title", full);
+  }
+}
+
+/** 차트 하나가 그림 하나로 읽히게 한다. 안에 있는 마크는 각자 이름을 갖지 않는다 */
+function describeChart(svg, label) {
+  svg.setAttribute("role", "img");
+  svg.setAttribute("aria-label", label);
+}
+
+/**
+ * 축의 최대값과 눈금을 데이터에서 계산한다.
+ *
+ * **고정값을 쓰면 조용히 틀린 그림이 된다.** 실제로 그럴 뻔했다 — 재방문 곡선의
+ * 세로축이 20%로 박혀 있었는데 Day 1이 19.4%였다. 21%만 돼도 점이 그래프 밖으로
+ * 나간다. 상자수염은 더 위험했다. 축이 120에 고정인데 상위 25%가 92였고,
+ * 넘어가면 그리는 쪽에서 잘라내(min(v/axis, 1)) **상자가 오른쪽 끝에 붙는다.**
+ * 잘렸다는 표시도 없이 틀린 그림이 된다.
+ *
+ * 눈금은 1 · 2 · 2.5 · 5 · 10 의 배수로만 잡는다. 3,700 같은 값이 눈금에 오면
+ * 읽는 사람이 매번 계산해야 한다.
+ */
+function niceScale(maxValue, targetTicks) {
+  const want = targetTicks || 4;
+  if (!(maxValue > 0)) return { max: 1, ticks: [0, 1] };
+  const raw = maxValue / want;
+  const mag = Math.pow(10, Math.floor(Math.log10(raw)));
+  const norm = raw / mag;
+  const step = (norm <= 1 ? 1 : norm <= 2 ? 2 : norm <= 2.5 ? 2.5 : norm <= 5 ? 5 : 10) * mag;
+  const max = Number((Math.ceil(maxValue / step) * step).toPrecision(12));
+  const ticks = [];
+  for (let v = 0; v <= max + step / 2; v += step) ticks.push(Number(v.toPrecision(12)));
+  return { max: max, ticks: ticks };
+}
+
+/* ── 일별 세로 막대 ── */
+
+/** `2026-08-16` → `8/16`. 두 달을 넘기면 일자만으로는 같은 숫자가 반복된다 */
+function monthDay(iso) {
+  const parts = iso.split("-");
+  return Number(parts[1]) + "/" + Number(parts[2]);
+}
+
+/**
+ * 7일씩 묶는다. **앞에서부터 묶어서 마지막 묶음만 짧을 수 있다.**
+ * 뒤에서부터 묶으면 맨 앞 묶음이 짧아지는데, 그러면 "옛날에는 한산했다"로 읽힌다.
+ * 마지막이 짧은 건 "이번 주가 아직 안 끝났다"로 읽혀서 오해가 적다.
+ */
+function rollupWeekly(data) {
+  const out = [];
+  for (let i = 0; i < data.length; i += 7) {
+    const chunk = data.slice(i, i + 7);
+    out.push({
+      iso: chunk[0][0],
+      value: chunk.reduce((sum, d) => sum + d[1], 0),
+      days: chunk.length,
+      last: chunk[chunk.length - 1][0],
+    });
+  }
+  return out;
+}
+
+/**
+ * 기간을 고를 수 있다. **안 고르면 63일째에 막대가 사라진다.**
+ * 그리고 31일을 넘으면 손으로 집을 수 없을 만큼 얇아져서 주 단위로 묶는다.
+ */
+function drawDaily(days) {
+  const host = document.getElementById("daily");
+  host.innerHTML = "";
+  const data = days === null ? DAILY : DAILY.slice(-days);
+  if (data.length === 0) return;
+
+  const weekly = data.length > DAILY_MAX_DAYS;
+  const items = weekly
+    ? rollupWeekly(data)
+    : data.map(d => ({ iso: d[0], value: d[1], days: 1, last: d[0] }));
+
+  const W = 560, H = 200, padL = 52, padB = 46, padT = 18;
+  const sc = niceScale(Math.max.apply(null, items.map(it => it.value)), 4);
+  const ph = H - padB - padT, pw = W - padL - 8;
+  const svg = mk("svg", { viewBox: "0 0 " + W + " " + H, width: "100%", height: H });
+  describeChart(svg, "일별 기록 건수. " + monthDay(data[0][0]) + "부터 "
+    + monthDay(data[data.length - 1][0]) + "까지 " + data.length + "일, "
+    + (weekly ? "주 단위로 묶어" : "하루씩") + " 막대 " + items.length + "개. 값은 아래 표에 있다.");
+
+  const u = mk("text", { x: padL - 8, y: padT - 6, "text-anchor": "end", class: "unit" });
+  u.textContent = "건"; svg.appendChild(u);
+  sc.ticks.forEach(v => {
+    const y = padT + ph - (v / sc.max) * ph;
+    svg.appendChild(mk("line", { x1: padL, x2: W - 8, y1: y, y2: y,
+      stroke: v === 0 ? "var(--baseline)" : "var(--grid)" }));
+    const t = mk("text", { x: padL - 8, y: y + 4, "text-anchor": "end", class: "axis" });
+    t.textContent = fmt(v); svg.appendChild(t);
+  });
+
+  const step = pw / items.length;
+  const bw = Math.max(2, Math.min(24, step - 6));
+  /* 이름표 하나가 32px쯤 되니, 칸이 그보다 좁으면 건너뛰며 찍는다 */
+  const every = Math.max(1, Math.ceil(32 / step));
+
+  items.forEach((it, i) => {
+    const x = padL + i * step + (step - bw) / 2, base = padT + ph;
+    const h = (it.value / sc.max) * ph, y = base - h, r0 = Math.min(4, bw / 2);
+    const r = mk("path", { d: "M" + x + "," + base + " L" + x + "," + (y + r0)
+      + " Q" + x + "," + y + " " + (x + r0) + "," + y
+      + " L" + (x + bw - r0) + "," + y + " Q" + (x + bw) + "," + y + " " + (x + bw) + "," + (y + r0)
+      + " L" + (x + bw) + "," + base + " Z", fill: "var(--series)" });
+    bind(r, weekly ? monthDay(it.iso) + " ~ " + monthDay(it.last) + " · " + fmt(it.value) + "건"
+                   : it.iso + " · " + fmt(it.value) + "건",
+         weekly && it.days < 7 ? it.days + "일치만 (아직 안 끝난 주)" : "");
+    svg.appendChild(r);
+
+    /* 달이 바뀌는 칸은 솎기와 무관하게 반드시 찍는다. 안 찍으면 어디서 달이
+       바뀌었는지 알 방법이 없고, 같은 일자가 반복돼 보인다. */
+    const monthChanged = i > 0 && it.iso.slice(0, 7) !== items[i - 1].iso.slice(0, 7);
+    if (monthChanged || i % every === 0 || i === items.length - 1) {
+      const t = mk("text", { x: x + bw / 2, y: base + 16, "text-anchor": "middle",
+        class: monthChanged ? "axis month" : "axis" });
+      t.textContent = monthDay(it.iso); svg.appendChild(t);
+    }
+  });
+
+  const xl = mk("text", { x: padL + pw / 2, y: H - 6, "text-anchor": "middle", class: "unit" });
+  xl.textContent = data[0][0] + " ~ " + data[data.length - 1][0]
+    + " · " + data.length + "일 · " + (weekly ? "주 단위 묶음" : "일 단위") + " (KST)";
+  svg.appendChild(xl);
+  host.appendChild(svg);
+}
+
+(function () {
+  const seg = document.getElementById("dailyseg");
+  const OPTS = [{ d: 7, l: "7일" }, { d: 14, l: "14일" }, { d: 30, l: "30일" }, { d: null, l: "전체" }];
+  seg.innerHTML = OPTS.map(o =>
+    '<button type="button" data-d="' + (o.d === null ? "" : o.d) + '" aria-pressed="false">'
+    + o.l + "</button>").join("");
+  function pick(d) {
+    seg.querySelectorAll("button").forEach(b => {
+      b.setAttribute("aria-pressed", String((b.dataset.d === "" ? null : Number(b.dataset.d)) === d));
+    });
+    drawDaily(d);
+  }
+  seg.querySelectorAll("button").forEach(b => {
+    b.addEventListener("click", () => { pick(b.dataset.d === "" ? null : Number(b.dataset.d)); });
+  });
+  /* 기본값을 전체가 아니라 30일로 둔다. 지금은 데이터가 10일치뿐이라 결과가
+     같지만, 두 달이 쌓이면 전체는 주 단위로 묶여 성긴 그림이 된다. */
+  pick(30);
+})();
+
+/* ── 세션 요약: 줄마다 자기 가로축을 갖는 상자수염 ── */
+(function () {
+  const W = 1020, rowH = 62, padL = 128, padR = 116, padT = 12;
+  const H = padT + BOXES.length * rowH + 8, pw = W - padL - padR;
+  const svg = mk("svg", { viewBox: "0 0 " + W + " " + H, width: "100%", height: H });
+  describeChart(svg, "세션 요약 상자수염. " + BOXES.length + "줄: "
+    + BOXES.map(b => b.ko).join(", ") + ". 줄마다 사분위·중앙값·평균·최대를 보인다. 값은 아래 표에 있다.");
+  BOXES.forEach((b, i) => {
+    const top = padT + i * rowH, cy = top + 21, ay = top + 40;
+    /* 상위 25%와 평균이 둘 다 들어가야 한다. 15% 여유를 둬 축 끝에 딱 붙지 않게 한다 */
+    const sc = niceScale(Math.max(b.q3, b.mean) * 1.05, 4);
+    const X = v => padL + Math.min(v / sc.max, 1) * pw;
+    const nm = mk("text", { x: padL - 14, y: cy + 1, "text-anchor": "end", class: "val" });
+    nm.textContent = b.ko; svg.appendChild(nm);
+    const en = mk("text", { x: padL - 14, y: cy + 14, "text-anchor": "end", class: "axis" });
+    en.textContent = b.en; svg.appendChild(en);
+    svg.appendChild(mk("line", { x1: padL, x2: padL + pw, y1: ay, y2: ay, stroke: "var(--baseline)" }));
+    sc.ticks.forEach(v => {
+      svg.appendChild(mk("line", { x1: X(v), x2: X(v), y1: ay, y2: ay + 4, stroke: "var(--baseline)" }));
+      const t = mk("text", { x: X(v), y: ay + 16, "text-anchor": "middle", class: "axis" });
+      t.textContent = v; svg.appendChild(t);
+    });
+    const box = mk("rect", { x: X(b.q1), y: cy - 11, width: Math.max(X(b.q3) - X(b.q1), 3), height: 22, rx: 3,
+      fill: "var(--series)", "fill-opacity": .28, stroke: "var(--series)", "stroke-opacity": .5 });
+    bind(box, "IQR " + b.q1 + " ~ " + b.q3 + "개", "세션을 크기순으로 줄 세웠을 때 가운데 50%");
+    svg.appendChild(box);
+    const med = mk("line", { x1: X(b.med), x2: X(b.med), y1: cy - 13, y2: cy + 13, stroke: "var(--ink)", "stroke-width": 2.5 });
+    bind(med, "Median " + b.med + "개", "딱 가운데 세션의 값"); svg.appendChild(med);
+    const mean = mk("circle", { cx: X(b.mean), cy: cy, r: 5, fill: "var(--surface)", stroke: "var(--warning)", "stroke-width": 2 });
+    bind(mean, "Mean " + b.mean + "개", "전체를 더해 세션 수로 나눈 값"); svg.appendChild(mean);
+    if (b.max > sc.max) {
+      const c = mk("text", { x: padL + pw + 5, y: cy + 4, class: "axis" });
+      c.textContent = "›"; svg.appendChild(c);
+    }
+    const mx = mk("text", { x: padL + pw + 16, y: cy + 4, class: "axis" });
+    mx.textContent = "Max " + fmt(b.max); svg.appendChild(mx);
+  });
+  const host = document.getElementById("box");
+  host.appendChild(svg);
+  const l = document.createElement("div");
+  l.className = "axlab"; l.textContent = "한 세션당 횟수 (개)"; host.appendChild(l);
+})();
+
+/* ── 퍼널: 단계 머리줄 + 좁아지는 띠 (레퍼런스 반영) ── */
+function drawFunnel(hostId, model, opts) {
+  const host = document.getElementById(hostId);
+  const steps = model.steps, n = steps.length, top = steps[0].n;
+  const shades = ["var(--ord-1)", "var(--ord-2)", "var(--ord-3)", "var(--ord-4)"];
+
+  /* 1) 단계 머리줄 */
+  const head = document.createElement("div");
+  head.className = "steps";
+  head.style.gridTemplateColumns = "repeat(" + n + ",1fr)";
+  head.innerHTML = steps.map((s, i) => {
+    const rate = i === 0 ? "100%" : pct(s.n, steps[i - 1].n);
+    const of = i === 0 ? "전체" : "앞 단계 " + fmt(steps[i - 1].n) + " 대비";
+    return '<div class="st">'
+      + '<div class="no">' + (i + 1) + "</div>"
+      + '<div class="nm">' + s.ko + ' <span class="en">' + s.en + "</span></div>"
+      + '<div class="vv">' + fmt(s.n) + "</div>"
+      + '<div class="pc">' + rate + " · " + of + "</div></div>";
+  }).join("");
+  host.appendChild(head);
+
+  /* 2) 좁아지는 띠 — 세로 두께가 그 단계의 세션 수에 비례한다 */
+  const W = 1000, H = opts.bandHeight, cy = H / 2, colW = W / n;
+  const svg = mk("svg", { viewBox: "0 0 " + W + " " + H, width: "100%", height: H,
+    preserveAspectRatio: "none", style: "margin-top:10px" });
+  describeChart(svg, "퍼널. " + steps.map(st => st.ko + " " + fmt(st.n)).join(" 다음 ")
+    + ". 띠 두께가 그 단계의 수다. 값은 아래 표에 있다.");
+  const half = v => (v / top) * (H / 2 - 4);
+  // 단계마다 앞쪽 절반은 평평하게, 뒤쪽 절반에서 다음 단계로 좁아진다.
+  const flatEnd = i => i * colW + colW * 0.42;
+  const nextStart = i => (i + 1) * colW;
+  for (let i = 0; i < n; i += 1) {
+    const x0 = i === 0 ? 0 : nextStart(i - 1);
+    const x1 = flatEnd(i);
+    const h = half(steps[i].n);
+    let d = "M" + x0 + "," + (cy - h) + " L" + x1 + "," + (cy - h);
+    if (i < n - 1) {
+      const x2 = nextStart(i), h2 = half(steps[i + 1].n), cxa = x1 + (x2 - x1) * 0.5;
+      d += " C" + cxa + "," + (cy - h) + " " + cxa + "," + (cy - h2) + " " + x2 + "," + (cy - h2)
+         + " L" + x2 + "," + (cy + h2)
+         + " C" + cxa + "," + (cy + h2) + " " + cxa + "," + (cy + h) + " " + x1 + "," + (cy + h);
+    } else {
+      d += " L" + x1 + "," + (cy + h);
+    }
+    d += " L" + x0 + "," + (cy + h) + " Z";
+    const seg = mk("path", { d: d, fill: shades[Math.min(i, shades.length - 1)], "fill-opacity": .92 });
+    const rate = i === 0 ? "100%" : pct(steps[i].n, steps[i - 1].n);
+    bind(seg, steps[i].ko + " " + fmt(steps[i].n) + " · " + rate,
+      i === 0 ? "맨 앞 단계 (분모)" : "앞 단계 " + fmt(steps[i - 1].n) + " 대비");
+    svg.appendChild(seg);
+  }
+  host.appendChild(svg);
+
+  /* 3) 마지막 단계의 내역 */
+  if (model.breakdown.length > 0) {
+    const chips = document.createElement("div");
+    chips.className = "chips";
+    chips.innerHTML = '<span style="font-size:11.5px;color:var(--muted);align-self:center">'
+      + "마지막 단계 내역 &rsaquo;</span>"
+      + model.breakdown.map(b => '<span class="chip"><span class="sw" style="background:' + b.shade
+        + '"></span>' + b.ko + ' <span style="color:var(--muted)">' + b.en + "</span> <b>"
+        + fmt(b.n) + "</b></span>").join("");
+    host.appendChild(chips);
+  }
+
+  /* 4) 요약 띠 */
+  const worst = steps.slice(1).reduce((acc, s, i) => {
+    const lost = steps[i].n - s.n;
+    return lost > acc.lost ? { lost: lost, from: steps[i], to: s } : acc;
+  }, { lost: -1, from: steps[0], to: steps[1] });
+  const foot = document.createElement("div");
+  foot.className = "foot";
+  foot.innerHTML =
+    '<div class="f"><div class="fl">전체 전환율 <span style="opacity:.75">overall conversion</span></div>'
+      + '<div class="fv">' + (100 * steps[n - 1].n / top).toFixed(1) + "%"
+      + " <small>" + fmt(steps[n - 1].n) + " / " + fmt(top) + "</small></div></div>"
+    + '<div class="f"><div class="fl">총 이탈 <span style="opacity:.75">drop-off</span></div>'
+      + '<div class="fv">' + fmt(top - steps[n - 1].n) + "</div></div>"
+    + '<div class="f"><div class="fl">가장 큰 이탈 구간 <span style="opacity:.75">biggest drop</span></div>'
+      + '<div class="fv" style="font-size:13.5px">' + worst.from.ko + " &rarr; " + worst.to.ko
+      + " <small>" + fmt(worst.lost) + "명 이탈</small></div></div>";
+  host.appendChild(foot);
+}
+const pct = (a, b) => (100 * a / b).toFixed(1) + "%";
+
+/**
+ * 이름표가 겹치지 않게 아래로 민다.
+ *
+ * 「둘 다 6」처럼 갈래가 얇으면 마디 높이가 7px도 안 되는데 이름표는 두 줄이라
+ * 26px가 필요하다. 마디는 제자리에 두고 **이름표만** 최소 간격을 지키게 민 뒤,
+ * 밀린 만큼 잇는 선을 그린다. Sankey 라이브러리들이 쓰는 방식이다.
+ */
+function spreadLabels(centers, minGap, lo, hi) {
+  const out = centers.slice();
+  for (let i = 1; i < out.length; i += 1) {
+    if (out[i] - out[i - 1] < minGap) out[i] = out[i - 1] + minGap;
+  }
+  if (out.length > 0 && out[out.length - 1] > hi) {
+    out[out.length - 1] = hi;
+    for (let i = out.length - 2; i >= 0; i -= 1) {
+      if (out[i + 1] - out[i] < minGap) out[i] = out[i + 1] - minGap;
+    }
+  }
+  if (out.length > 0 && out[0] < lo) out[0] = lo;
+  return out;
+}
+
+/* ── 필터 ── */
+const FILTERS = [
+  {
+    id: "all", label: "전체",
+    note: "「둘 다」를 갈래로 뽑아 겹침을 없앴다 — 121 + 36 + 6 + 8 + 89 = 260",
+    lastKo: "찜 또는 판매처", lastEn: "wish / outbound", lastN: ACTED,
+    leaves: [
+      { ko: "찜만",      en: "wish only",       n: PARTS.wishOnly, fill: "var(--ord-2)" },
+      { ko: "둘 다",     en: "wish + outbound", n: PARTS.both,     fill: "var(--warning)" },
+      { ko: "판매처만",  en: "outbound only",   n: PARTS.outbOnly, fill: "var(--ord-4)" },
+      { ko: "행동 없음", en: "drop-off",        n: PARTS.tapOnly,  fill: "var(--drop)" },
+    ],
+  },
+  {
+    id: "wish", label: "찜",
+    note: "찜한 세션 42개 중 6개는 판매처 이동도 했다",
+    lastKo: "찜", lastEn: "wish", lastN: WISH,
+    leaves: [
+      { ko: "찜함",    en: "wish",     n: WISH,       fill: "var(--ord-2)" },
+      { ko: "안 함",   en: "drop-off", n: TAP - WISH, fill: "var(--drop)" },
+    ],
+  },
+  {
+    id: "outb", label: "판매처 이동",
+    note: "판매처로 간 세션 14개 중 6개는 찜도 했다",
+    lastKo: "판매처 이동", lastEn: "outbound", lastN: OUTB,
+    leaves: [
+      { ko: "이동함",  en: "outbound", n: OUTB,       fill: "var(--ord-4)" },
+      { ko: "안 함",   en: "drop-off", n: TAP - OUTB, fill: "var(--drop)" },
+    ],
+  },
+];
+
+function render(f) {
+  const host = document.getElementById("flow");
+  host.innerHTML = "";
+
+  /* 1) 단계 머리줄 — Pathfinder가 흐름도 위에 퍼널을 두는 것과 같다 */
+  const head = document.createElement("div");
+  head.className = "steps";
+  head.style.gridTemplateColumns = "1fr 1fr 1fr";
+  head.innerHTML = [
+    { no: 1, ko: "상품 노출", en: "impression", n: IMP, of: null },
+    { no: 2, ko: "상품 클릭", en: "tap", n: TAP, of: IMP },
+    { no: 3, ko: f.lastKo, en: f.lastEn, n: f.lastN, of: TAP },
+  ].map(s => '<div class="st"><div class="no">' + s.no + "</div>"
+    + '<div class="nm">' + s.ko + ' <span class="en">' + s.en + "</span></div>"
+    + '<div class="vv">' + fmt(s.n) + "</div>"
+    + '<div class="pc">' + (s.of === null ? "100% · 전체" : pct(s.n, s.of) + " · 앞 단계 " + fmt(s.of) + " 대비")
+    + "</div></div>").join("");
+  host.appendChild(head);
+
+  /* 2) 흐름도 */
+  const W = 1000, H = 330, nodeW = 13, gap = 8, padT = 10, padB = 10;
+  const plotH = H - padT - padB;
+  const sc = (plotH - gap * (f.leaves.length - 1)) / IMP;
+  const colX = [0, W * 0.34, W * 0.665];
+  const svg = mk("svg", { viewBox: "0 0 " + W + " " + H, width: "100%", height: H,
+    style: "margin-top:12px" });
+  describeChart(svg, "세션 흐름도. 상품 노출 " + fmt(IMP) + "개 세션에서 상품 클릭 " + fmt(TAP)
+    + "개로 이어지고, 거기서 " + f.leaves.map(l => l.ko + " " + fmt(l.n)).join(", ")
+    + "으로 갈라진다. 한 세션은 정확히 한 갈래에만 속한다. 값은 아래 표에 있다.");
+
+  const nodes = [
+    { key: "imp",   x: colX[0], y: padT, n: IMP, ko: "상품 노출", en: "impression",
+      fill: "var(--ord-1)", base: null, col: 0 },
+    { key: "tap",   x: colX[1], y: padT, n: TAP, ko: "상품 클릭", en: "tap",
+      fill: "var(--ord-3)", base: IMP, col: 1 },
+    { key: "noTap", x: colX[1], y: padT + TAP * sc + gap, n: PARTS.noTap, ko: "클릭 없음",
+      en: "drop-off", fill: "var(--drop)", base: IMP, col: 1 },
+  ];
+  let y = padT;
+  f.leaves.forEach((l, i) => {
+    nodes.push({ key: "leaf" + i, x: colX[2], y: y, n: l.n, ko: l.ko, en: l.en,
+      fill: l.fill, base: TAP, col: 2 });
+    y += l.n * sc + gap;
+  });
+
+  /* 링크를 먼저 (마디가 위로 오도록) */
+  function link(from, to, offFrom, size, fill) {
+    const x0 = from.x + nodeW, x1 = to.x;
+    const y0 = from.y + offFrom, y1 = to.y, h = size * sc, cx = x0 + (x1 - x0) * 0.5;
+    svg.appendChild(mk("path", {
+      d: "M" + x0 + "," + y0
+        + " C" + cx + "," + y0 + " " + cx + "," + y1 + " " + x1 + "," + y1
+        + " L" + x1 + "," + (y1 + h)
+        + " C" + cx + "," + (y1 + h) + " " + cx + "," + (y0 + h) + " " + x0 + "," + (y0 + h) + " Z",
+      fill: fill, "fill-opacity": .30,
+    }));
+  }
+  const N = k => nodes.find(nd => nd.key === k);
+  link(N("imp"), N("tap"), 0, TAP, "var(--ord-3)");
+  link(N("imp"), N("noTap"), TAP * sc, PARTS.noTap, "var(--drop)");
+  let off = 0;
+  f.leaves.forEach((l, i) => { link(N("tap"), N("leaf" + i), off, l.n, l.fill); off += l.n * sc; });
+
+  /* 마디 */
+  nodes.forEach(nd => {
+    const h = Math.max(nd.n * sc, 2.5);
+    const r = mk("rect", { x: nd.x, y: nd.y, width: nodeW, height: h, rx: 2, fill: nd.fill });
+    bind(r, nd.ko + " " + fmt(nd.n) + "개 세션",
+      nd.base === null ? "전체" : pct(nd.n, nd.base) + " · " + fmt(nd.base) + " 대비");
+    svg.appendChild(r);
+  });
+
+  /* 이름표 — 열마다 겹치지 않게 민다 */
+  [0, 1, 2].forEach(col => {
+    const inCol = nodes.filter(nd => nd.col === col);
+    const centers = inCol.map(nd => nd.y + Math.max(nd.n * sc, 2.5) / 2);
+    const placed = spreadLabels(centers, 30, padT + 8, H - padB - 8);
+    inCol.forEach((nd, i) => {
+      const cyNode = centers[i], cyLab = placed[i];
+      const lx = nd.x + nodeW + 9;
+      if (Math.abs(cyLab - cyNode) > 2) {
+        /* 밀린 만큼 마디와 이름표를 잇는다 */
+        svg.appendChild(mk("polyline", {
+          points: [nd.x + nodeW + 1, cyNode, nd.x + nodeW + 5, cyNode,
+                   nd.x + nodeW + 5, cyLab, nd.x + nodeW + 7, cyLab].join(" "),
+          fill: "none", stroke: "var(--baseline)", "stroke-width": 1,
+        }));
+      }
+      const t1 = mk("text", { x: lx, y: cyLab - 1, class: "nlab" });
+      t1.textContent = nd.ko + "  " + fmt(nd.n);
+      svg.appendChild(t1);
+      const t2 = mk("text", { x: lx, y: cyLab + 12, class: "nsub" });
+      t2.textContent = nd.en + (nd.base === null ? "" : " · " + pct(nd.n, nd.base));
+      svg.appendChild(t2);
+    });
+  });
+  host.appendChild(svg);
+
+  /* 3) 요약 띠 */
+  const dropTap = IMP - TAP, dropAct = TAP - f.lastN;
+  const worst = dropTap >= dropAct
+    ? { from: "상품 노출", to: "상품 클릭", lost: dropTap }
+    : { from: "상품 클릭", to: f.lastKo, lost: dropAct };
+  const foot = document.createElement("div");
+  foot.className = "foot";
+  foot.innerHTML =
+    '<div class="f"><div class="fl">전체 전환율 <span style="opacity:.75">overall conversion</span></div>'
+      + '<div class="fv">' + pct(f.lastN, IMP)
+      + " <small>" + fmt(f.lastN) + " / " + fmt(IMP) + "</small></div></div>"
+    + '<div class="f"><div class="fl">총 이탈 <span style="opacity:.75">drop-off</span></div>'
+      + '<div class="fv">' + fmt(IMP - f.lastN) + " <small>개 세션</small></div></div>"
+    + '<div class="f"><div class="fl">가장 큰 이탈 구간 <span style="opacity:.75">biggest drop</span></div>'
+      + '<div class="fv" style="font-size:13.5px">' + worst.from + " &rarr; " + worst.to
+      + " <small>" + fmt(worst.lost) + "개</small></div></div>";
+  host.appendChild(foot);
+
+  const note = document.createElement("p");
+  note.className = "axlab";
+  note.textContent = "띠 두께 = 세션 수. 한 세션은 정확히 한 갈래에만 속한다.";
+  host.appendChild(note);
+}
+
+/* ── 필터 버튼 ── */
+(function () {
+  const seg = document.getElementById("seg");
+  const segnote = document.getElementById("segnote");
+  seg.innerHTML = FILTERS.map(f =>
+    '<button type="button" data-id="' + f.id + '" aria-pressed="false">' + f.label + "</button>").join("");
+  function pick(id) {
+    const f = FILTERS.find(x => x.id === id);
+    seg.querySelectorAll("button").forEach(b => {
+      b.setAttribute("aria-pressed", String(b.dataset.id === id));
+    });
+    segnote.textContent = f.note;
+    render(f);
+  }
+  seg.querySelectorAll("button").forEach(b => {
+    b.addEventListener("click", () => { pick(b.dataset.id); });
+  });
+  pick("all");
+})();
+drawFunnel("onboarding", ONBOARDING, { bandHeight: 96 });
+
+/* ── 재방문 곡선 ── */
+(function () {
+  const W = 640, H = 252, padL = 46, padR = 10, padT = 18, lineH = 104, capH = 30, barH = 38;
+  const pw = W - padL - padR, X = i => padL + (i / (RETENTION.length - 1)) * pw;
+  const rates = RETENTION.map(r => 100 * r.back / r.base);
+  /* 여유를 곱하지 않는다 — niceScale이 이미 다음 눈금까지 올려 준다.
+     1.1을 곱했더니 19.4%가 축 30까지 밀려 그래프 절반이 비었다 */
+  const rs = niceScale(Math.max.apply(null, rates), 4);
+  const maxRate = rs.max, maxBase = Math.max(...RETENTION.map(r => r.base));
+  const svg = mk("svg", { viewBox: "0 0 " + W + " " + H, width: "100%", height: H });
+  describeChart(svg, "재방문 곡선. Day 1부터 Day " + RETENTION[RETENTION.length - 1].d
+    + "까지, 각 Day 당일에 다시 온 기기의 비율. 아래 막대는 그 Day를 물어볼 수 있는 기기 수. 값은 아래 표에 있다.");
+  const u = mk("text", { x: padL - 8, y: padT - 6, "text-anchor": "end", class: "unit" });
+  u.textContent = "%"; svg.appendChild(u);
+  rs.ticks.forEach(v => {
+    const y = padT + lineH - (v / maxRate) * lineH;
+    svg.appendChild(mk("line", { x1: padL, x2: W - padR, y1: y, y2: y, stroke: v === 0 ? "var(--baseline)" : "var(--grid)" }));
+    const t = mk("text", { x: padL - 8, y: y + 4, "text-anchor": "end", class: "axis" });
+    t.textContent = v; svg.appendChild(t);
+  });
+  const pts = RETENTION.map((r, i) => [X(i), padT + lineH - ((100 * r.back / r.base) / maxRate) * lineH]);
+  svg.appendChild(mk("polyline", { points: pts.map(p => p.join(",")).join(" "), fill: "none",
+    stroke: "var(--series)", "stroke-width": 2, "stroke-linejoin": "round", "stroke-linecap": "round" }));
+  RETENTION.forEach((r, i) => {
+    const c = mk("circle", { cx: pts[i][0], cy: pts[i][1], r: 5, fill: "var(--series)", stroke: "var(--surface)", "stroke-width": 2 });
+    bind(c, "Day " + r.d + " retention " + (100 * r.back / r.base).toFixed(1) + "%",
+      "Retained " + r.back + " / cohort size " + r.base);
+    svg.appendChild(c);
+  });
+  /* 캡션을 막대 위에 따로 둔다 — 축 옆에 두면 첫 막대와 겹친다 */
+  const by = padT + lineH + capH + 14;
+  const cap = mk("text", { x: padL, y: by - 26, class: "axis" });
+  cap.textContent = "Cohort size (기기 수)"; svg.appendChild(cap);
+  RETENTION.forEach((r, i) => {
+    const bw = Math.min(24, pw / RETENTION.length - 8), h = (r.base / maxBase) * barH;
+    const rect = mk("rect", { x: X(i) - bw / 2, y: by + barH - h, width: bw, height: h, rx: 2,
+      fill: "var(--muted)", "fill-opacity": .45 });
+    bind(rect, "Day " + r.d + " cohort size " + r.base, r.base < 10 ? "표본이 얇다" : "");
+    svg.appendChild(rect);
+    const t = mk("text", { x: X(i), y: by + barH + 16, "text-anchor": "middle", class: "axis" });
+    t.textContent = r.d; svg.appendChild(t);
+    const nn = mk("text", { x: X(i), y: by + barH - h - 4, "text-anchor": "middle", class: "axis" });
+    nn.textContent = r.base; svg.appendChild(nn);
+  });
+  const xl = mk("text", { x: padL + pw / 2, y: H - 4, "text-anchor": "middle", class: "unit" });
+  xl.textContent = "Day (첫 방문일 = Day 0)"; svg.appendChild(xl);
+  document.getElementById("retention").appendChild(svg);
+})();
+
+/* ── 활동 일수 분포 ── */
+(function () {
+  const host = document.getElementById("active");
+  const as = niceScale(Math.max.apply(null, ACTIVE.map(a => a.n)), 3);
+  const ticks = as.ticks, max = as.max;
+  const tbl = document.createElement("table");
+  tbl.innerHTML = "<thead><tr><th>활동 일수</th><th>분포</th><th class='n'>기기 수</th>"
+    + "<th class='n'>관측 일수</th></tr></thead><tbody>"
+    + ACTIVE.map(a =>
+        "<tr><td>" + a.days + "일</td>"
+        + '<td style="width:100%;padding-right:14px"><div class="bar" style="height:14px;border-radius:0 3px 3px 0;'
+          + "width:" + (100 * a.n / max) + '%;background:var(--series)"></div></td>'
+        + "<td class='n'>" + a.n + " <span style='color:var(--muted)'>" + a.pct + "%</span></td>"
+        + "<td class='n' style='color:var(--muted)'>" + a.obs + "일</td></tr>").join("")
+    + "</tbody>";
+  host.appendChild(tbl);
+  ACTIVE.forEach((a, i) => {
+    bind(tbl.querySelectorAll(".bar")[i], a.days + "일 방문 · 기기 " + a.n + "개 (" + a.pct + "%)",
+      "이 줄 기기들의 관측 기간 중앙값 " + a.obs + "일");
+  });
+  const note = document.createElement("div");
+  note.style.cssText = "font-size:11px;color:var(--muted);margin-top:10px";
+  note.textContent = "관측 일수 = 첫 방문부터 오늘까지의 중앙값. 짧으면 «안 왔다»가 아니라 «아직 시간이 안 지났다»일 수 있다.";
+  host.appendChild(note);
+  const l = document.createElement("div");
+  l.className = "axlab"; l.style.textAlign = "left"; l.textContent = "가로축 최대 " + fmt(max) + "개";
+  host.appendChild(l);
+})();
+
+/* ── 세션 표 ── */
+(function () {
+  const cols = ["기기", "세션", "시작(KST)", "전체 길이", "실제 탐색", "impression", "tap", "wish", "unwish", "outbound"];
+  document.getElementById("sessions").innerHTML =
+    "<thead><tr>" + cols.map(c => "<th>" + c + "</th>").join("") + "</tr></thead><tbody>"
+    + SESSIONS.map(r => "<tr>" + r.map(v => "<td>" + v + "</td>").join("") + "</tr>").join("")
+    + "</tbody>";
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,347 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>세션 퍼널 — 분기 흐름도 + 필터</title>
+<style>
+  :root {
+    color-scheme: dark;
+    --page:#0a0a0a; --surface:#121212; --sunken:#1a1a1a; --border:rgba(255,255,255,.10);
+    --ink:#ffffff; --ink-2:#c3c2b7; --muted:#898781;
+    --grid:#2c2c2a; --baseline:#4a4a46;
+    --series:#3987e5;
+    --ord-1:#b7d3f6; --ord-2:#86b6ef; --ord-3:#5598e7; --ord-4:#2a78d6;
+    --drop:#5a5a56;
+    --warning:#fab219;
+  }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--page); color:var(--ink);
+    font-family:system-ui,-apple-system,"Segoe UI",sans-serif; font-size:14px; line-height:1.55; }
+  .wrap { max-width:1120px; margin:0 auto; padding:32px 20px 90px; }
+  h1 { font-size:20px; font-weight:600; margin:0; }
+  .sub { color:var(--muted); font-size:13px; margin-top:4px; }
+
+  .card { background:var(--surface); border:1px solid var(--border); border-radius:10px;
+    padding:20px; margin-top:20px; }
+  .card > h2 { font-size:16px; font-weight:600; margin:0; }
+  .card > h2 .en { color:var(--muted); font-weight:400; font-size:12.5px; }
+  .card > .def { font-size:12.5px; color:var(--muted); margin:6px 0 0; }
+  .card > .src { font-size:11.5px; color:var(--muted); margin:6px 0 0; }
+  .em { color:var(--ink-2); font-weight:500; }
+  .body { margin-top:16px; }
+
+  .row { display:flex; align-items:center; justify-content:space-between; gap:12px;
+    flex-wrap:wrap; margin-bottom:14px; }
+  .seg { display:inline-flex; background:var(--sunken); border:1px solid var(--border);
+    border-radius:8px; padding:2px; gap:2px; }
+  .seg button { background:none; border:0; color:var(--muted); font:inherit; font-size:12.5px;
+    padding:5px 14px; border-radius:6px; cursor:pointer; }
+  .seg button[aria-pressed="true"] { background:var(--series); color:#fff; font-weight:500; }
+  .seg button:focus-visible { outline:2px solid var(--series); outline-offset:2px; }
+  .segnote { font-size:11.5px; color:var(--muted); }
+
+  .steps { display:grid; }
+  .steps .st { padding:0 14px; border-left:1px solid var(--grid); }
+  .steps .st:first-child { border-left:0; padding-left:0; }
+  .st .no { font-size:11px; color:var(--muted); }
+  .st .nm { font-size:12.5px; color:var(--ink-2); font-weight:500; margin-top:1px; }
+  .st .nm .en { color:var(--muted); font-weight:400; font-size:11px; }
+  .st .vv { font-size:23px; font-weight:600; letter-spacing:-.02em; margin-top:4px; }
+  .st .pc { font-size:11px; color:var(--muted); }
+
+  .foot { display:grid; grid-template-columns:repeat(3,1fr); gap:2px; margin-top:16px; }
+  @media (max-width:620px){ .foot{grid-template-columns:1fr} }
+  .foot .f { background:var(--sunken); border-radius:6px; padding:10px 13px; }
+  .foot .fl { font-size:11px; color:var(--muted); }
+  .foot .fv { font-size:15px; font-weight:600; margin-top:1px; font-variant-numeric:tabular-nums; }
+  .foot .fv small { font-size:11.5px; color:var(--muted); font-weight:400; }
+
+  svg { display:block; overflow:visible; }
+  .nlab { fill:var(--ink-2); font-size:11.5px; font-variant-numeric:tabular-nums; }
+  .nsub { fill:var(--muted); font-size:10.5px; }
+  .axlab { font-size:11.5px; color:var(--muted); margin-top:12px; }
+
+  .verdict { display:grid; grid-template-columns:1fr 1fr; gap:2px; margin-top:16px; }
+  @media (max-width:700px){ .verdict{grid-template-columns:1fr} }
+  .verdict div { background:var(--sunken); border-radius:6px; padding:11px 14px; font-size:12.5px; }
+  .verdict .h { font-size:11px; color:var(--muted); margin-bottom:2px; }
+  .verdict .good .h { color:#5aa85a; }
+  .verdict .bad .h  { color:#c98b3e; }
+
+  #tip { position:fixed; pointer-events:none; opacity:0; transition:opacity .08s;
+    background:#242424; border:1px solid var(--border); border-radius:6px; padding:7px 10px;
+    font-size:12.5px; color:var(--ink); white-space:nowrap;
+    box-shadow:0 6px 20px rgba(0,0,0,.5); z-index:50; }
+  #tip .s { color:var(--muted); font-size:11.5px; }
+  [tabindex]:focus-visible { outline:2px solid var(--series); outline-offset:2px; }
+</style>
+</head>
+<body>
+<div id="tip" role="status" aria-live="polite"></div>
+<div class="wrap">
+
+  <h1>세션 퍼널 — 분기 흐름도 + 필터</h1>
+  <p class="sub">
+    실제 프로덕션 데이터 (2026-08-25 11:20 KST). 찜과 판매처 이동은 서로 다른 행동인데
+    <span class="em">한 세션이 둘 다 할 수 있다.</span> 일렬 퍼널의 마지막 칸에 둘을 넣으면 합이 맞지 않는다.
+  </p>
+
+  <section class="card">
+    <h2>세션 퍼널 <span class="en">Session flow</span></h2>
+    <p class="def">
+      갈래를 <span class="em">겹치지 않게</span> 나눈다. 「둘 다」를 독립된 갈래로 두면 모든 세션이
+      정확히 한 곳에만 속해서 합이 맞는다. 띠 두께가 세션 수다. 이탈도 갈래로 그려서
+      어디서 얼마나 빠지는지 같이 보인다.
+    </p>
+    <p class="src">Mixpanel <b>Flows</b>와 Amplitude <b>Pathfinder</b>의 방식.
+      Pathfinder처럼 위에 단계별 숫자를, 아래에 흐름도를 둔다.</p>
+    <div class="body">
+      <div class="row">
+        <div class="seg" id="seg" role="group" aria-label="마지막 단계 필터"></div>
+        <div class="segnote" id="segnote"></div>
+      </div>
+      <div id="flow"></div>
+    </div>
+    <div class="verdict">
+      <div class="good"><div class="h">이 방식을 고른 이유</div>
+        겹침을 <b>그림 안에서</b> 해결한다. 각주나 설명으로 밀어내지 않는다.
+        이탈이 어느 구간에서 나는지 같이 보이고, 필터를 걸면 갈래가 둘로 줄어 더 단순해진다.</div>
+      <div class="bad"><div class="h">감수하는 것</div>
+        처음 보면 읽는 법을 배워야 한다. 갈래가 더 늘면(장바구니 등) 띠가 얇아져 못 읽는다 —
+        그때는 필터를 기본값으로 켜야 한다.</div>
+    </div>
+  </section>
+
+</div>
+
+<script>
+/* ── 실제 프로덕션 데이터 (2026-08-25 11:20 KST) ── */
+const IMP = 260, TAP = 139;
+/* 겹치지 않는 갈래 — 합이 260이 된다 */
+const PARTS = { noTap: 121, both: 6, wishOnly: 36, outbOnly: 8, tapOnly: 89 };
+const WISH = PARTS.wishOnly + PARTS.both;                       // 42
+const OUTB = PARTS.outbOnly + PARTS.both;                       // 14
+const ACTED = PARTS.wishOnly + PARTS.outbOnly + PARTS.both;     // 50
+
+const SVG = "http://www.w3.org/2000/svg";
+const mk = (n, a) => { const e = document.createElementNS(SVG, n); for (const k in a) e.setAttribute(k, a[k]); return e; };
+const fmt = n => n.toLocaleString("ko-KR");
+const pct = (a, b) => (100 * a / b).toFixed(1) + "%";
+const tip = document.getElementById("tip");
+
+function bind(el, text, sub) {
+  el.setAttribute("tabindex", "0");
+  el.setAttribute("role", "img");
+  el.setAttribute("aria-label", sub ? text + ". " + sub : text);
+  const show = (x, y) => {
+    tip.innerHTML = text + (sub ? '<div class="s">' + sub + "</div>" : "");
+    tip.style.opacity = "1";
+    const r = tip.getBoundingClientRect();
+    let L = x + 14, T = y + 14;
+    if (L + r.width > innerWidth - 8) L = x - r.width - 14;
+    if (T + r.height > innerHeight - 8) T = y - r.height - 14;
+    tip.style.left = L + "px"; tip.style.top = T + "px";
+  };
+  el.addEventListener("mousemove", e => show(e.clientX, e.clientY));
+  el.addEventListener("mouseleave", () => { tip.style.opacity = "0"; });
+  el.addEventListener("focus", () => { const b = el.getBoundingClientRect(); show(b.left + b.width / 2, b.bottom); });
+  el.addEventListener("blur", () => { tip.style.opacity = "0"; });
+}
+
+/**
+ * 이름표가 겹치지 않게 아래로 민다.
+ *
+ * 「둘 다 6」처럼 갈래가 얇으면 마디 높이가 7px도 안 되는데 이름표는 두 줄이라
+ * 26px가 필요하다. 마디는 제자리에 두고 **이름표만** 최소 간격을 지키게 민 뒤,
+ * 밀린 만큼 잇는 선을 그린다. Sankey 라이브러리들이 쓰는 방식이다.
+ */
+function spreadLabels(centers, minGap, lo, hi) {
+  const out = centers.slice();
+  for (let i = 1; i < out.length; i += 1) {
+    if (out[i] - out[i - 1] < minGap) out[i] = out[i - 1] + minGap;
+  }
+  if (out.length > 0 && out[out.length - 1] > hi) {
+    out[out.length - 1] = hi;
+    for (let i = out.length - 2; i >= 0; i -= 1) {
+      if (out[i + 1] - out[i] < minGap) out[i] = out[i + 1] - minGap;
+    }
+  }
+  if (out.length > 0 && out[0] < lo) out[0] = lo;
+  return out;
+}
+
+/* ── 필터 ── */
+const FILTERS = [
+  {
+    id: "all", label: "전체",
+    note: "「둘 다」를 갈래로 뽑아 겹침을 없앴다 — 121 + 36 + 6 + 8 + 89 = 260",
+    lastKo: "찜 또는 판매처", lastEn: "wish / outbound", lastN: ACTED,
+    leaves: [
+      { ko: "찜만",      en: "wish only",       n: PARTS.wishOnly, fill: "var(--ord-2)" },
+      { ko: "둘 다",     en: "wish + outbound", n: PARTS.both,     fill: "var(--warning)" },
+      { ko: "판매처만",  en: "outbound only",   n: PARTS.outbOnly, fill: "var(--ord-4)" },
+      { ko: "행동 없음", en: "drop-off",        n: PARTS.tapOnly,  fill: "var(--drop)" },
+    ],
+  },
+  {
+    id: "wish", label: "찜",
+    note: "찜한 세션 42개 중 6개는 판매처 이동도 했다",
+    lastKo: "찜", lastEn: "wish", lastN: WISH,
+    leaves: [
+      { ko: "찜함",    en: "wish",     n: WISH,       fill: "var(--ord-2)" },
+      { ko: "안 함",   en: "drop-off", n: TAP - WISH, fill: "var(--drop)" },
+    ],
+  },
+  {
+    id: "outb", label: "판매처 이동",
+    note: "판매처로 간 세션 14개 중 6개는 찜도 했다",
+    lastKo: "판매처 이동", lastEn: "outbound", lastN: OUTB,
+    leaves: [
+      { ko: "이동함",  en: "outbound", n: OUTB,       fill: "var(--ord-4)" },
+      { ko: "안 함",   en: "drop-off", n: TAP - OUTB, fill: "var(--drop)" },
+    ],
+  },
+];
+
+function render(f) {
+  const host = document.getElementById("flow");
+  host.innerHTML = "";
+
+  /* 1) 단계 머리줄 — Pathfinder가 흐름도 위에 퍼널을 두는 것과 같다 */
+  const head = document.createElement("div");
+  head.className = "steps";
+  head.style.gridTemplateColumns = "1fr 1fr 1fr";
+  head.innerHTML = [
+    { no: 1, ko: "상품 노출", en: "impression", n: IMP, of: null },
+    { no: 2, ko: "상품 클릭", en: "tap", n: TAP, of: IMP },
+    { no: 3, ko: f.lastKo, en: f.lastEn, n: f.lastN, of: TAP },
+  ].map(s => '<div class="st"><div class="no">' + s.no + "</div>"
+    + '<div class="nm">' + s.ko + ' <span class="en">' + s.en + "</span></div>"
+    + '<div class="vv">' + fmt(s.n) + "</div>"
+    + '<div class="pc">' + (s.of === null ? "100% · 전체" : pct(s.n, s.of) + " · 앞 단계 " + fmt(s.of) + " 대비")
+    + "</div></div>").join("");
+  host.appendChild(head);
+
+  /* 2) 흐름도 */
+  const W = 1000, H = 330, nodeW = 13, gap = 8, padT = 10, padB = 10;
+  const plotH = H - padT - padB;
+  const sc = (plotH - gap * (f.leaves.length - 1)) / IMP;
+  const colX = [0, W * 0.34, W * 0.665];
+  const svg = mk("svg", { viewBox: "0 0 " + W + " " + H, width: "100%", height: H,
+    style: "margin-top:12px" });
+
+  const nodes = [
+    { key: "imp",   x: colX[0], y: padT, n: IMP, ko: "상품 노출", en: "impression",
+      fill: "var(--ord-1)", base: null, col: 0 },
+    { key: "tap",   x: colX[1], y: padT, n: TAP, ko: "상품 클릭", en: "tap",
+      fill: "var(--ord-3)", base: IMP, col: 1 },
+    { key: "noTap", x: colX[1], y: padT + TAP * sc + gap, n: PARTS.noTap, ko: "클릭 없음",
+      en: "drop-off", fill: "var(--drop)", base: IMP, col: 1 },
+  ];
+  let y = padT;
+  f.leaves.forEach((l, i) => {
+    nodes.push({ key: "leaf" + i, x: colX[2], y: y, n: l.n, ko: l.ko, en: l.en,
+      fill: l.fill, base: TAP, col: 2 });
+    y += l.n * sc + gap;
+  });
+
+  /* 링크를 먼저 (마디가 위로 오도록) */
+  function link(from, to, offFrom, size, fill) {
+    const x0 = from.x + nodeW, x1 = to.x;
+    const y0 = from.y + offFrom, y1 = to.y, h = size * sc, cx = x0 + (x1 - x0) * 0.5;
+    svg.appendChild(mk("path", {
+      d: "M" + x0 + "," + y0
+        + " C" + cx + "," + y0 + " " + cx + "," + y1 + " " + x1 + "," + y1
+        + " L" + x1 + "," + (y1 + h)
+        + " C" + cx + "," + (y1 + h) + " " + cx + "," + (y0 + h) + " " + x0 + "," + (y0 + h) + " Z",
+      fill: fill, "fill-opacity": .30,
+    }));
+  }
+  const N = k => nodes.find(nd => nd.key === k);
+  link(N("imp"), N("tap"), 0, TAP, "var(--ord-3)");
+  link(N("imp"), N("noTap"), TAP * sc, PARTS.noTap, "var(--drop)");
+  let off = 0;
+  f.leaves.forEach((l, i) => { link(N("tap"), N("leaf" + i), off, l.n, l.fill); off += l.n * sc; });
+
+  /* 마디 */
+  nodes.forEach(nd => {
+    const h = Math.max(nd.n * sc, 2.5);
+    const r = mk("rect", { x: nd.x, y: nd.y, width: nodeW, height: h, rx: 2, fill: nd.fill });
+    bind(r, nd.ko + " " + fmt(nd.n) + "개 세션",
+      nd.base === null ? "전체" : pct(nd.n, nd.base) + " · " + fmt(nd.base) + " 대비");
+    svg.appendChild(r);
+  });
+
+  /* 이름표 — 열마다 겹치지 않게 민다 */
+  [0, 1, 2].forEach(col => {
+    const inCol = nodes.filter(nd => nd.col === col);
+    const centers = inCol.map(nd => nd.y + Math.max(nd.n * sc, 2.5) / 2);
+    const placed = spreadLabels(centers, 30, padT + 8, H - padB - 8);
+    inCol.forEach((nd, i) => {
+      const cyNode = centers[i], cyLab = placed[i];
+      const lx = nd.x + nodeW + 9;
+      if (Math.abs(cyLab - cyNode) > 2) {
+        /* 밀린 만큼 마디와 이름표를 잇는다 */
+        svg.appendChild(mk("polyline", {
+          points: [nd.x + nodeW + 1, cyNode, nd.x + nodeW + 5, cyNode,
+                   nd.x + nodeW + 5, cyLab, nd.x + nodeW + 7, cyLab].join(" "),
+          fill: "none", stroke: "var(--baseline)", "stroke-width": 1,
+        }));
+      }
+      const t1 = mk("text", { x: lx, y: cyLab - 1, class: "nlab" });
+      t1.textContent = nd.ko + "  " + fmt(nd.n);
+      svg.appendChild(t1);
+      const t2 = mk("text", { x: lx, y: cyLab + 12, class: "nsub" });
+      t2.textContent = nd.en + (nd.base === null ? "" : " · " + pct(nd.n, nd.base));
+      svg.appendChild(t2);
+    });
+  });
+  host.appendChild(svg);
+
+  /* 3) 요약 띠 */
+  const dropTap = IMP - TAP, dropAct = TAP - f.lastN;
+  const worst = dropTap >= dropAct
+    ? { from: "상품 노출", to: "상품 클릭", lost: dropTap }
+    : { from: "상품 클릭", to: f.lastKo, lost: dropAct };
+  const foot = document.createElement("div");
+  foot.className = "foot";
+  foot.innerHTML =
+    '<div class="f"><div class="fl">전체 전환율 <span style="opacity:.75">overall conversion</span></div>'
+      + '<div class="fv">' + pct(f.lastN, IMP)
+      + " <small>" + fmt(f.lastN) + " / " + fmt(IMP) + "</small></div></div>"
+    + '<div class="f"><div class="fl">총 이탈 <span style="opacity:.75">drop-off</span></div>'
+      + '<div class="fv">' + fmt(IMP - f.lastN) + " <small>개 세션</small></div></div>"
+    + '<div class="f"><div class="fl">가장 큰 이탈 구간 <span style="opacity:.75">biggest drop</span></div>'
+      + '<div class="fv" style="font-size:13.5px">' + worst.from + " &rarr; " + worst.to
+      + " <small>" + fmt(worst.lost) + "개</small></div></div>";
+  host.appendChild(foot);
+
+  const note = document.createElement("p");
+  note.className = "axlab";
+  note.textContent = "띠 두께 = 세션 수. 한 세션은 정확히 한 갈래에만 속한다.";
+  host.appendChild(note);
+}
+
+/* ── 필터 버튼 ── */
+(function () {
+  const seg = document.getElementById("seg");
+  const segnote = document.getElementById("segnote");
+  seg.innerHTML = FILTERS.map(f =>
+    '<button type="button" data-id="' + f.id + '" aria-pressed="false">' + f.label + "</button>").join("");
+  function pick(id) {
+    const f = FILTERS.find(x => x.id === id);
+    seg.querySelectorAll("button").forEach(b => {
+      b.setAttribute("aria-pressed", String(b.dataset.id === id));
+    });
+    segnote.textContent = f.note;
+    render(f);
+  }
+  seg.querySelectorAll("button").forEach(b => {
+    b.addEventListener("click", () => { pick(b.dataset.id); });
+  });
+  pick("all");
+})();
+</script>
+</body>
+</html>
