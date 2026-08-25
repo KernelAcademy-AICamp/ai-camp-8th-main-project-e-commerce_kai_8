@@ -40,7 +40,8 @@ export function metricsForScreen(
  * 「세션 흐름도」는 세션 퍼널 하나만을 위한 그림이고, 다른 데 쓰지 않는다.
  * 범용으로 만들면 설정 칸이 늘어나 SQL이 아니라 설정이 정본이 된다.
  */
-export type ChartKind = "session-flow";
+export type ChartKind =
+  "kpi-strip" | "daily-bars" | "funnel-band" | "boxplot" | "session-flow";
 
 export interface MetricDefinition {
   /** 파일마다 고유. 화면 키와 오류 표시에 쓴다 */

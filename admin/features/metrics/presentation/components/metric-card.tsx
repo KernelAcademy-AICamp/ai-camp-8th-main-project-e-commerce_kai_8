@@ -1,6 +1,23 @@
 import { asLink, type MetricResult, type MetricTable } from "../../domain/metric";
 import type { FlowView } from "../../domain/session-flow";
+import { BoxplotChart } from "./charts/boxplot-chart";
+import { DailyBarsChart } from "./charts/daily-bars-chart";
+import { FunnelBandChart } from "./charts/funnel-band-chart";
+import { KpiStripChart } from "./charts/kpi-strip-chart";
 import { SessionFlowChart } from "./charts/session-flow-chart";
+
+/**
+ * 이 줄 수를 넘으면 뒷부분을 접는다.
+ *
+ * 날짜·활동 일수처럼 **시간이 갈수록 행이 느는** 표가 있다. 30일 기간이면 30줄이고,
+ * 두 달이면 더 는다. 다 펴 두면 카드 하나가 화면을 통째로 먹는다.
+ */
+const ROWS_BEFORE_FOLD = 8;
+
+/** 접기 이름표. 누를 수 있으므로 44px 이상 */
+const FOLD_LABEL =
+  "mt-2 inline-flex min-h-11 cursor-pointer items-center text-xs text-neutral-400 " +
+  "underline underline-offset-2 hover:text-neutral-200";
 
 /** 차트를 그리는 데 필요한, 카드 바깥에서 오는 것들 */
 export interface ChartContext {
@@ -77,7 +94,15 @@ function Body({
   chartContext?: ChartContext;
 }) {
   const chart =
-    definition.chart === "session-flow" && chartContext !== undefined ? (
+    definition.chart === "kpi-strip" ? (
+      <KpiStripChart table={table} />
+    ) : definition.chart === "daily-bars" ? (
+      <DailyBarsChart table={table} />
+    ) : definition.chart === "funnel-band" ? (
+      <FunnelBandChart table={table} />
+    ) : definition.chart === "boxplot" ? (
+      <BoxplotChart table={table} />
+    ) : definition.chart === "session-flow" && chartContext !== undefined ? (
       <SessionFlowChart
         table={table}
         view={chartContext.flow}
@@ -87,7 +112,14 @@ function Body({
 
   // 그릴 수 없으면(모양이 안 맞거나 값이 전부 0) 조용히 표로 떨어진다.
   // 빈 그림을 그리는 것보다 표를 보여주는 편이 낫다.
-  if (chart === null) return <Table columns={table.columns} rows={table.rows} />;
+  if (chart === null)
+    return (
+      <Table
+        columns={table.columns}
+        rows={table.rows}
+        foldId={`fold-${definition.id}`}
+      />
+    );
 
   return (
     <>
@@ -97,7 +129,11 @@ function Body({
           숫자로 보기 ({table.rows.length}줄)
         </summary>
         <div className="mt-3">
-          <Table columns={table.columns} rows={table.rows} />
+          <Table
+            columns={table.columns}
+            rows={table.rows}
+            foldId={`fold-${definition.id}`}
+          />
         </div>
       </details>
     </>
@@ -127,9 +163,33 @@ function Empty({ columns }: { columns: string[] }) {
   );
 }
 
-function Table({ columns, rows }: { columns: string[]; rows: string[][] }) {
+/**
+ * 표. 줄이 많으면 뒷부분을 접는다.
+ *
+ * **자바스크립트를 쓰지 않는다.** 숨은 체크상자를 켜고 끄는 것으로 CSS가 뒷줄을
+ * 보였다 감췄다 한다. 표 하나를 그대로 두므로 칸 너비가 어긋나지 않는다 —
+ * 표를 둘로 쪼개 하나를 `<details>`에 넣으면 두 표의 칸 폭이 따로 놀아 어긋난다.
+ *
+ * ⚠️ `peer-checked`는 **형제** 선택자라 표 안의 `<tr>`에는 안 먹는다. 체크상자는
+ *    바깥 `<div>`에 있고 행은 `<table><tbody>` 안이라 형제가 아니다. 그래서
+ *    `group-has-[:checked]`(자손 선택)를 쓴다.
+ *
+ * **접힌 줄이 몇 개인지 보여준다.** 안 보이면 전체를 보고 있다고 착각한다.
+ */
+function Table({
+  columns,
+  rows,
+  foldId,
+}: {
+  columns: string[];
+  rows: string[][];
+  foldId?: string;
+}) {
+  const folded = foldId !== undefined && rows.length > ROWS_BEFORE_FOLD;
+  const hiddenCount = folded ? rows.length - ROWS_BEFORE_FOLD : 0;
   return (
-    <div className="overflow-x-auto">
+    <div className="group overflow-x-auto">
+      {folded && <input type="checkbox" id={foldId} className="sr-only" />}
       <table className="w-full border-collapse text-sm">
         <thead>
           <tr>
@@ -147,7 +207,14 @@ function Table({ columns, rows }: { columns: string[]; rows: string[][] }) {
           {rows.map((row, rowIndex) => (
             // 행에 고유 키가 없다 — 조회 결과라 식별자를 보장할 수 없다.
             // 정적 표라 순서가 바뀌지 않으므로 인덱스로 충분하다.
-            <tr key={rowIndex} className="odd:bg-neutral-900/40">
+            <tr
+              key={rowIndex}
+              className={
+                folded && rowIndex >= ROWS_BEFORE_FOLD
+                  ? "hidden odd:bg-neutral-900/40 group-has-[:checked]:table-row"
+                  : "odd:bg-neutral-900/40"
+              }
+            >
               {row.map((cell, cellIndex) => (
                 <td
                   key={columns[cellIndex] ?? cellIndex}
@@ -160,6 +227,24 @@ function Table({ columns, rows }: { columns: string[]; rows: string[][] }) {
           ))}
         </tbody>
       </table>
+      {folded && (
+        <>
+          {/* 두 이름표를 겹쳐 두고 상태에 따라 하나만 보인다. 한 이름표 안의
+              글자를 바꾸려면 그 글자가 체크상자의 형제여야 하는데 아니라서다. */}
+          <label
+            htmlFor={foldId}
+            className={FOLD_LABEL + " group-has-[:checked]:hidden"}
+          >
+            {hiddenCount}줄 더 보기
+          </label>
+          <label
+            htmlFor={foldId}
+            className={FOLD_LABEL + " hidden group-has-[:checked]:inline-flex"}
+          >
+            뒤 {hiddenCount}줄 접기
+          </label>
+        </>
+      )}
     </div>
   );
 }
