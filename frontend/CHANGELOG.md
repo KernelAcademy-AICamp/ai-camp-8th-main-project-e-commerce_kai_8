@@ -1,3 +1,8 @@
+## [0.1.30](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/compare/v0.1.29...v0.1.30) (2026-08-25)
+
+### Features
+
+* 검은 테마 전환 및 홈·프로필·설정·상세 화면 전면 개편 ([#107](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/issues/107)) ([d7dbb79](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/commit/d7dbb795a2d8d379135da1955f9b48aeaed67ae6)), closes [#88](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/issues/88) [1a1a1a/#242424](https://github.com/1a1a1a/ai-camp-8th-main-project-e-commerce_kai_8/issues/242424) [#88](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/issues/88) [#2](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/issues/2) [#1](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/issues/1) [#2](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/issues/2)
 ## [0.1.29](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/compare/v0.1.28...v0.1.29) (2026-08-24)
 
 ### Features
