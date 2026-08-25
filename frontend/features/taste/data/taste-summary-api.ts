@@ -23,10 +23,14 @@ export async function fetchTasteSummary(): Promise<TasteSummary> {
  * 행동은 세션이 끝나야(비활성 30분) 장기로 접히기 때문이다. 그래서 순서가
  * 접기 → 올리기 → 조회다.
  *
- * 접은 게 없으면 올리기를 건너뛴다 — 서버에 이미 같은 것이 있다.
+ * 접은 게 없으면 올리기를 건너뛴다 — 서버에 이미 같은 것이 있다. 기기 저장소가
+ * 막혀 접지 못한 경우도 마찬가지로 건너뛴다: 올릴 새 내용이 없다.
+ *
+ * ⚠️ `foldSessionProfileNow`는 **문자열을 돌려준다.** 참·거짓으로 쓰면
+ * `"no_changes"`도 참이라 접은 게 없는데 매번 올리게 된다.
  */
 export async function refreshTasteSummary(): Promise<TasteSummary> {
-  if (foldSessionProfileNow(Date.now())) {
+  if (foldSessionProfileNow(Date.now()) === "folded") {
     await saveAccountProfile(readLongTerm());
   }
   return fetchTasteSummary();
