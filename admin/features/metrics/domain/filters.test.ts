@@ -1,6 +1,12 @@
 import { describe, expect, it } from "vitest";
 
-import { isNarrowed, NO_FILTER, parseFilter, toParams } from "./filters";
+import {
+  eventFilterSql,
+  isNarrowed,
+  NO_FILTER,
+  parseFilter,
+  toParams,
+} from "./filters";
 
 describe("좁혀 보기 파라미터", () => {
   it("아무것도 없으면 전체", () => {
@@ -39,5 +45,29 @@ describe("좁혀 보기 파라미터", () => {
       "abcd1234",
       null,
     ]);
+  });
+});
+
+describe("eventFilterSql — 테이블이 여럿일 때", () => {
+  it("별칭을 주면 컬럼에 붙인다", () => {
+    // 조인 안에서 별칭 없이 쓰면 데이터베이스가 어느 테이블인지 못 정한다
+    // (실제로 「오가며 탐색률」이 session_id is ambiguous로 죽었다)
+    const sql = eventFilterSql("e");
+    expect(sql).toContain("e.session_id");
+    expect(sql).toContain("e.occurred_at");
+    expect(sql).not.toMatch(/[^.]\bsession_id/);
+  });
+
+  it("별칭이 없으면 컬럼 이름만 쓴다", () => {
+    const sql = eventFilterSql();
+    expect(sql).toContain("session_id");
+    expect(sql).not.toContain(".session_id");
+  });
+
+  it("자리표시자 번호는 별칭과 무관하게 그대로다", () => {
+    for (const sql of [eventFilterSql(), eventFilterSql("e")]) {
+      expect(sql).toContain("($1)");
+      expect(sql).toContain("($2)");
+    }
   });
 });

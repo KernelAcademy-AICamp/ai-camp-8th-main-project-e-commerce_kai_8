@@ -56,7 +56,7 @@ export function RecentStrip() {
   const rest = items.length - shown.length;
 
   return (
-    <section className="mt-[30px]">
+    <section>
       <div className="mb-[11px] flex items-baseline justify-between">
         <strong className="text-[13.5px] font-extrabold text-ink">최근 본 제품</strong>
       </div>

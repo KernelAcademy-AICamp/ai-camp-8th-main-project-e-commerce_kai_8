@@ -77,14 +77,24 @@ export function toParams(filter: DashboardFilter): (string | null)[] {
 }
 
 /**
- * 지표 SQL의 `where`에 넣는 조각. `c_events`의 컬럼이 보이는 자리에 쓴다.
+ * 지표 SQL의 `where`에 넣는 조각.
+ *
+ * **테이블이 둘 이상 보이는 자리에서는 별칭을 넘겨야 한다.** 별칭 없이 쓰면
+ * 조인한 두 테이블에 같은 이름의 컬럼이 있을 때 데이터베이스가 어느 쪽인지
+ * 정하지 못하고 죽는다. 실제로 「오가며 탐색률」이 `session_id is ambiguous`로
+ * 실패했다 — 그 지표만 `c_events`와 유효세션 CTE를 함께 놓고 이 조각을 썼다.
  *
  * **세션은 앞 8자리로 맞춘다.** 표가 8자리만 보여주므로 주소도 8자리라야 짧고,
  * 눌렀을 때 보이던 것과 같은 값이 주소에 남는다.
- * ponytail: 8자리 앞맞춤이라 이론상 다른 세션과 겹칠 수 있다. 세션이 수만 개가
- * 되면 전체 uuid로 바꾼다 — 그때 고칠 곳은 이 조각과 링크를 내는 SQL뿐이다.
+ * 8자리 앞맞춤이라 이론상 다른 세션과 겹칠 수 있다. 세션이 수만 개가 되면
+ * 전체 uuid로 바꾼다 — 그때 고칠 곳은 이 조각과 링크를 내는 SQL뿐이다.
+ *
+ * @param alias 컬럼 앞에 붙일 테이블 별칭. 테이블이 하나뿐이면 생략한다.
  */
-export const EVENT_FILTER_SQL = `
-      (($1)::text is null or left(session_id::text, 8) = ($1)::text)
+export function eventFilterSql(alias = ""): string {
+  const q = alias === "" ? "" : `${alias}.`;
+  return `
+      (($1)::text is null or left(${q}session_id::text, 8) = ($1)::text)
       and (($2)::text is null
-           or (occurred_at at time zone 'Asia/Seoul')::date = ($2)::date)`;
+           or (${q}occurred_at at time zone 'Asia/Seoul')::date = ($2)::date)`;
+}

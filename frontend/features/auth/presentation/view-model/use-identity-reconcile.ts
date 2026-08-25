@@ -8,7 +8,11 @@ import {
 } from "@/features/auth/data/auth-repository";
 import { carryGender, shouldCarryGender } from "@/shared/identity/gender-carry";
 import { takeIdentityLanding } from "@/shared/identity/identity-landing";
-import { isIdentityTransition, markerFor } from "@/shared/identity/identity-marker";
+import {
+  ANONYMOUS,
+  isIdentityTransition,
+  markerFor,
+} from "@/shared/identity/identity-marker";
 import { clearIdentityScopedData } from "@/shared/identity/identity-reset";
 import {
   carryOnboarding,
@@ -88,7 +92,11 @@ export function useIdentityReconcile(): void {
           // 여기서 끝내지 않으면 직전 세션은 종료 줄 없이 사라진다 — 그 세션의
           // 끝을 알 수 없어 길이도, 로그인 전 구간의 경계도 못 잡는다.
           // 종료 줄은 미전송 큐에 들어가고, 그 큐는 전환 정리에서 살아남는다.
-          endSessionNow();
+          //
+          // **끝나는 세션이 어떤 상태였는지를 넘긴다.** 여기가 도는 시점의 상태는
+          // 이미 바뀐 뒤라, 그걸 읽으면 로그아웃 때 회원 세션의 마지막 줄만 혼자
+          // 비회원으로 찍힌다. 직전 신원은 `previous`가 알고 있다.
+          endSessionNow({ signedIn: previous !== ANONYMOUS });
 
           // 순서: 지우고 → 표식을 확정하고 → 다시 불러온다.
           // 표식을 먼저 쓰면 다시 불러오기 전에 탭이 죽었을 때 정리가 끝난

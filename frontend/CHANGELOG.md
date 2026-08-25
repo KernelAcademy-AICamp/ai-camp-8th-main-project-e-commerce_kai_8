@@ -1,3 +1,29 @@
+## [0.1.31](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/compare/v0.1.30...v0.1.31) (2026-08-25)
+
+### Bug Fixes
+
+* 당겨서 새로고침이 iOS Safari(브라우저·PWA 모두)에서 안 되던 문제를 고친다 ([#108](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/issues/108)) ([7b877d6](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/commit/7b877d6c0f250a96600002964e9ad389da03fbbb))
+## [0.1.30](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/compare/v0.1.29...v0.1.30) (2026-08-25)
+
+### Features
+
+* 검은 테마 전환 및 홈·프로필·설정·상세 화면 전면 개편 ([#107](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/issues/107)) ([d7dbb79](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/commit/d7dbb795a2d8d379135da1955f9b48aeaed67ae6)), closes [#88](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/issues/88) [1a1a1a/#242424](https://github.com/1a1a1a/ai-camp-8th-main-project-e-commerce_kai_8/issues/242424) [#88](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/issues/88) [#2](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/issues/2) [#1](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/issues/1) [#2](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/issues/2)
+## [0.1.29](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/compare/v0.1.28...v0.1.29) (2026-08-24)
+
+### Features
+
+* 어드민 분석 2단계 — 지표 정의 교정·리텐션·화면 분리·온보딩 전환 ([#106](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/issues/106)) ([ca28509](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/commit/ca285092a66a8902f80ccc76f04bab9ce7ba56ea))
+## [0.1.28](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/compare/v0.1.27...v0.1.28) (2026-08-24)
+
+### Features
+
+* 모자란 성별만 채워 큐레이션을 두 배로 늘린다 ([#101](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/issues/101)) ([6bf52cc](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/commit/6bf52ccbb86e55a1cec78f2e7db0bce4ddae910f))
+* 스타일·TPO·계절 큐레이션 추가 ([#103](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/issues/103)) ([902d78e](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/commit/902d78e79286e5f45d5eb2ccdec9bdc83e3962b4))
+* 큐레이션 더보기 버튼을 무한 스크롤로 바꾼다 ([#102](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/issues/102)) ([b1bf4b1](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/commit/b1bf4b1628b61617086b2aa930aab2958a770003))
+
+### Bug Fixes
+
+* 큐레이션 카드·상세 그라데이션 옅게 하고 글자 키움 ([#104](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/issues/104)) ([b918e9b](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/commit/b918e9bf66c2b6f03f3ae8f911a960a6edcb6c43))
 ## [0.1.27](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/compare/v0.1.26...v0.1.27) (2026-08-24)
 
 ### Features

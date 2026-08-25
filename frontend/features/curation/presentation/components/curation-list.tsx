@@ -89,8 +89,9 @@ export function CurationList({
                   sizes="50vw"
                   className="h-auto w-full"
                 />
-                {/* 어두워지는 건 카드 아래 1/3까지만 — 위 2/3는 사진 그대로 둔다. */}
-                <span className="absolute inset-x-0 top-2/3 bottom-0 bg-gradient-to-t from-black/95 from-30% via-black/80 via-65% to-transparent" />
+                {/* 카드 아래 절반만 어둡게 깐다. 짧고 진한 그라데이션은 끝나는 자리에
+                    띠처럼 선이 보이므로, 길게 늘이고 옅게 깔아 경계를 지운다. */}
+                <span className="absolute inset-x-0 top-1/2 bottom-0 bg-gradient-to-t from-black/70 via-black/20 via-55% to-transparent" />
                 <span className="absolute inset-x-0 bottom-0 px-3 pb-3">
                   {/* 칸이 좁아 24자짜리 제목은 세 줄까지 늘어진다. 두 줄에서 자른다 —
                     사진을 덮는 것보다 뒤가 잘리는 게 낫고, 앞 두 줄이면 무슨 축인지는 읽힌다. */}

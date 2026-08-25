@@ -28,7 +28,15 @@ export function useGoogleSignIn(): GoogleSignInViewModel {
     setFailed(false);
     // 떠나기 전에 돌아올 자리를 적어 둔다. 콜백 주소에는 못 싣는다 — 그 주소는
     // 허용 목록에 등록된 것과 **정확히 같아야** 한다.
-    rememberAfterLogin(window.location.pathname + window.location.search);
+    //
+    // **`/login`에서는 다시 적지 않는다**(2026-08-25). `/login`은 그 자체가
+    // "돌아올 자리"로 보내지는 화면이라, 보관함·상품상세가 로그인이 필요해
+    // `/login`으로 옮기기 **직전에** 진짜 원래 자리를 이미 적어 뒀다(예:
+    // `folder-grid-view.tsx`). 여기서 또 적으면 그 값이 `"/login"`으로
+    // 덮어써져, 로그인 뒤 원래 보던 폴더·상품이 아니라 `/my`로 떨어진다.
+    if (!window.location.pathname.startsWith("/login")) {
+      rememberAfterLogin(window.location.pathname + window.location.search);
+    }
     // 허용 목록에 등록된 주소와 정확히 같아야 한다 (구글 로그인 설계 §3)
     const callbackUrl = `${window.location.origin}/auth/callback`;
     void startGoogleSignIn(callbackUrl).catch(() => {

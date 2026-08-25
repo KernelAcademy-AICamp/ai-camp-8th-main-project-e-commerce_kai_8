@@ -2,21 +2,21 @@
 
 import Link from "next/link";
 
-import type { AuthNotice } from "@/features/auth/domain/auth-session";
+import type { AuthNotice, AuthUser } from "@/features/auth/domain/auth-session";
 import {
-  AccountSkeleton,
   GreetingSkeleton,
   MyPageShell,
   SIDE_BTN,
 } from "@/features/auth/presentation/components/my-page-shell";
 import { useAuthSession } from "@/features/auth/presentation/view-model/use-auth-session";
 import { SettingsMenuButton } from "@/features/settings/presentation/components/settings-menu-button";
-import { LogoutIcon, PersonIcon } from "@/shared/icons";
+import { PersonIcon } from "@/shared/icons";
 
-/** 인사말에 쓸 이름 — 이메일에서 계정 부분만 딴다(시안은 이름을 쓴다) */
-function displayName(email: string | null | undefined) {
-  if (email == null || email === "") return "회원";
-  return email.split("@")[0];
+/** 인사말에 쓸 이름 — 구글 표시 이름을 먼저 쓰고, 없으면 이메일 계정 부분 */
+function displayName(user: Pick<AuthUser, "email" | "name">) {
+  if (user.name !== null && user.name !== "") return user.name;
+  if (user.email == null || user.email === "") return "회원";
+  return user.email.split("@")[0];
 }
 
 /**
@@ -42,7 +42,7 @@ export function MyPage({
   notice: AuthNotice | null;
   children?: React.ReactNode;
 }) {
-  const { state, busy, failed, signOut } = useAuthSession();
+  const { state, failed } = useAuthSession();
 
   return (
     <MyPageShell
@@ -55,31 +55,25 @@ export function MyPage({
           {state.kind === "signedIn" && (
             <>
               환영합니다,{" "}
-              <b className="font-extrabold text-ink">{displayName(state.user.email)}</b>{" "}
-              님
+              <b className="font-extrabold text-ink">{displayName(state.user)}</b> 님
             </>
           )}
         </>
       }
       account={
         <>
-          {state.kind === "loading" && <AccountSkeleton />}
+          {/* 판정 전(loading)에도 비워 둔다 — 대다수인 로그인 상태의 실제
+              모습(빈 자리)과 맞춘다. 뼈대를 그렸다가 로그인으로 판명 나면
+              그 자리가 사라지며 mr-auto로 밀려 있던 톱니(설정) 위치까지
+              같이 튀었다(2026-08-25 버그 수정, `app/my/loading.tsx` 주석
+              참고). */}
           {state.kind === "signedOut" && (
             <Link href="/login" aria-label="로그인" className={SIDE_BTN}>
               <PersonIcon size={15} />
             </Link>
           )}
-          {state.kind === "signedIn" && (
-            <button
-              type="button"
-              aria-label="로그아웃"
-              onClick={signOut}
-              disabled={busy}
-              className={`${SIDE_BTN} disabled:opacity-60`}
-            >
-              <LogoutIcon />
-            </button>
-          )}
+          {/* 로그인 상태에서는 여기 자리가 비어 있다 — 로그아웃은 설정
+              화면(`/settings`) 안으로 옮겼다(2026-08-25). */}
         </>
       }
     >

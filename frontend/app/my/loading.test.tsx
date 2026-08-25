@@ -3,6 +3,7 @@ import { cleanup, render } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 
 import { MyPage } from "@/features/auth/presentation/components/my-page";
+import { ProfileActivityCard } from "@/features/feed/presentation/components/profile-activity-card";
 import { TasteCard } from "@/features/taste/presentation/components/taste-card";
 
 import MyLoading from "./loading";
@@ -33,6 +34,7 @@ describe("마이페이지 로딩 화면", () => {
     const onArrival = render(
       <MyPage notice={null}>
         <TasteCard />
+        <ProfileActivityCard />
       </MyPage>,
     ).container.innerHTML;
     cleanup();
