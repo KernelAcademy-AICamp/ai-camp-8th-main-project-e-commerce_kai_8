@@ -121,6 +121,11 @@ export function toParams(filter: DashboardFilter): (string | number | null)[] {
  * 경계는 **시작 이상 · 다음 날 미만**이다. `between`이나 `<=`을 쓰면 자정 정각의
  * 기록이 이틀 모두에 들어간다.
  *
+ * **기간도 날짜 경계로 자른다.** `now() - interval 'N days'`로 자르면 첫날이 반쪽만
+ * 들어온다 — 지금이 13시면 그날 0~13시 기록이 빠져 일별 막대에서 그 막대만 낮게
+ * 보인다. "그날은 한산했다"로 읽히는데 사실이 아니다. 그리고 「최근 7일」인데
+ * 달력으로는 8일이 걸린다. 그래서 **오늘을 포함해 N일**이 되도록 `N - 1`을 뺀다.
+ *
  * @param alias 컬럼 앞에 붙일 테이블 별칭. 테이블이 하나뿐이면 생략한다.
  */
 export function eventFilterSql(alias = ""): string {
@@ -131,5 +136,7 @@ export function eventFilterSql(alias = ""): string {
            or (${q}occurred_at >= (($2)::date + time '00:00') at time zone 'Asia/Seoul'
                and ${q}occurred_at < (($2)::date + 1 + time '00:00') at time zone 'Asia/Seoul'))
       and (($3)::int is null
-           or ${q}occurred_at >= now() - make_interval(days => ($3)::int))`;
+           or ${q}occurred_at >=
+              (((now() at time zone 'Asia/Seoul')::date - (($3)::int - 1))::timestamp
+               at time zone 'Asia/Seoul'))`;
 }
