@@ -2,10 +2,12 @@ import { describe, expect, it } from "vitest";
 
 import {
   type CurationRule,
+  groundedKeys,
   orderByTaste,
   rarityBonus,
   scoreCurations,
   viewDamping,
+  withGroundedReasons,
 } from "@/features/curation/domain/curation-match";
 
 const CURATIONS = [
@@ -123,5 +125,36 @@ describe("orderByTaste", () => {
   it("목록 전체를 돌려준다 — 뒤 묶음이 같은 배열을 쓴다", () => {
     const ordered = orderByTaste(CURATIONS, RULES, [{ title: "고양이 티", weight: 4 }]);
     expect(ordered).toHaveLength(CURATIONS.length);
+  });
+});
+
+describe("groundedKeys / withGroundedReasons", () => {
+  it("키워드로 걸린 것만 근거 있음으로 잡는다", () => {
+    const scored = scoreCurations(CURATIONS, RULES, [
+      { title: "고양이 티", weight: 4 },
+    ]);
+    expect(groundedKeys(scored)).toEqual(new Set(["cat"]));
+  });
+
+  it("벡터로만 걸린 것은 근거 없음이다", () => {
+    const scored = scoreCurations(CURATIONS, RULES, [], {}, { summer: 0.8, cat: 0.6 });
+    expect(scored.map((s) => s.key)).toEqual(["summer"]);
+    expect(groundedKeys(scored)).toEqual(new Set());
+  });
+
+  it("근거 없는 큐레이션의 reason은 지워진다", () => {
+    const withReasons = [
+      { key: "cat", n: 1151, reason: "고양이라서" },
+      { key: "summer", n: 8180, reason: "여름이라서" },
+    ];
+    const stripped = withGroundedReasons(withReasons, new Set(["cat"]));
+    expect(stripped.find((c) => c.key === "cat")?.reason).toBe("고양이라서");
+    expect(stripped.find((c) => c.key === "summer")?.reason).toBeUndefined();
+  });
+
+  it("근거 있는 큐레이션은 원래 객체를 그대로 돌려준다(불필요한 복사 없음)", () => {
+    const withReasons = [{ key: "cat", n: 1151, reason: "고양이라서" }];
+    const [result] = withGroundedReasons(withReasons, new Set(["cat"]));
+    expect(result).toBe(withReasons[0]);
   });
 });

@@ -55,6 +55,8 @@ export function viewDamping(seen: number): number {
 export interface ScoredCuration {
   key: string;
   score: number;
+  /** 키워드 근거로 걸렸는가 — 화면에서 추천 이유 문구를 보여줄지의 기준 */
+  grounded: boolean;
 }
 
 /** 큐레이션 키 → 앵커와의 코사인 (c_curation_rank). 없는 키는 벡터 몫이 0이다. */
@@ -114,6 +116,7 @@ export function scoreCurations(
     .map((r) => ({
       key: r.key,
       index: r.index,
+      grounded: r.kw > 0,
       score:
         ((maxKw > 0 ? (r.kw / maxKw) * (1 - VECTOR_WEIGHT) : 0) +
           (maxVec > 0 ? (r.vec / maxVec) * VECTOR_WEIGHT : 0)) *
@@ -121,7 +124,7 @@ export function scoreCurations(
     }))
     .filter((c) => c.score > 0)
     .sort((a, b) => b.score - a.score || a.index - b.index)
-    .map(({ key, score }) => ({ key, score }));
+    .map(({ key, score, grounded }) => ({ key, score, grounded }));
 }
 
 /**
@@ -147,4 +150,23 @@ export function orderByTaste<T extends { key: string; n: number }>(
     ...scored.map((s) => byKey.get(s.key)).filter((c): c is T => c !== undefined),
     ...curations.filter((c) => !picked.has(c.key)),
   ];
+}
+
+/** 점수를 받은 것 중 키워드 근거로 걸린 키만 모은다(벡터 전용은 제외). */
+export function groundedKeys(scored: ScoredCuration[]): Set<string> {
+  return new Set(scored.filter((s) => s.grounded).map((s) => s.key));
+}
+
+/**
+ * 추천 이유 문구는 키워드 근거가 있을 때만 보여준다 — 벡터 유사도만으로는 "왜"를
+ * 구체적으로 설명할 수 없다(VECTOR_WEIGHT 주석 참고). 근거가 없는 큐레이션은
+ * reason이 지워진 사본을 돌려준다. 근거가 있거나 reason이 원래 없으면 원본을
+ * 그대로 돌려준다(불필요한 복사를 피한다).
+ */
+export function withGroundedReasons<T extends { key: string; reason?: string }>(
+  curations: T[],
+  grounded: Set<string>,
+): T[] {
+  return curations.map((c) =>
+    grounded.has(c.key) || !c.reason ? c : { ...c, reason: undefined });
 }
