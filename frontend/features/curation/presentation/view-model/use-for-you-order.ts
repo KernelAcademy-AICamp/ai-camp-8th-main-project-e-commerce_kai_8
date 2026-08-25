@@ -93,7 +93,9 @@ export function useForYouOrder(
       const anchorTitles = cachedAnchorTitles(anchors);
       const next = orderByTaste(mine, rules, anchorTitles, views, vectors);
       // 이유 문구는 벡터 전용 매치가 아니라 키워드 근거가 있을 때만 남긴다.
-      const grounded = groundedKeys(scoreCurations(mine, rules, anchorTitles, views, vectors));
+      const grounded = groundedKeys(
+        scoreCurations(mine, rules, anchorTitles, views, vectors),
+      );
       const withReasons = withGroundedReasons(next, grounded);
       shownRef.current = withReasons;
       setTasteOrdered(withReasons);

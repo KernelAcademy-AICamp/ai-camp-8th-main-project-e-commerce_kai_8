@@ -755,11 +755,15 @@ NOTES = {
     "3182421": "링거가 아니라 래글런. 어깨에서 소매로 넘어가는 선이 곡선이라 팔이 좁아 보인다.",
 }
 
-# ── 손으로 검수한 추천 이유 한 줄 (key: 문구) ──────────────────
+# ── 손으로 쓴 추천 이유 한 줄 (key: 문구) ──────────────────
 # FOR YOU 카드에서, 화면이 키워드 근거로 개인화했다고 판정한 큐레이션에만 붙는다
-# (프론트 curation-match.ts의 withGroundedReasons). 배치 초안 생성:
-# scripts/gen_curation_reasons.py. 사람이 훑어보고 여기 손으로 옮겨 적은 것만 최종이다.
+# (프론트 curation-match.ts의 withGroundedReasons). 64장 전부 손으로 썼다 —
+# 한 번만 쓰는 문구라 배치 API 호출은 걷어냈다(계획의 결정 경위 참고).
 # 계획: docs/superpowers/plans/2026-08-25-foryou-recommendation-reason.md
+#
+# curation-rules.json에 키워드 규칙이 없는 큐레이션(색상·리뷰 조건만 있는 것)은
+# 절대 키워드 근거로 안 걸려 이 문구가 화면에 못 뜬다 — 지금 20장이 그렇다.
+# 지워도 되지만, 나중에 규칙이 생기면 바로 쓰려고 남겨 둔다.
 REASONS = {
     "baseball_raglan": "최근 본 래글런 소매 스타일과 비슷해서예요",
     "running": "최근 관심 보인 러닝·기능성 원단과 잘 맞아요",

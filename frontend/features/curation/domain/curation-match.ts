@@ -168,5 +168,6 @@ export function withGroundedReasons<T extends { key: string; reason?: string }>(
   grounded: Set<string>,
 ): T[] {
   return curations.map((c) =>
-    grounded.has(c.key) || !c.reason ? c : { ...c, reason: undefined });
+    grounded.has(c.key) || !c.reason ? c : { ...c, reason: undefined },
+  );
 }
