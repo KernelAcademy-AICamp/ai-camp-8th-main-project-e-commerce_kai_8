@@ -33,8 +33,8 @@ import { useVisibleWishes } from "@/features/feed/wishlist/presentation/view-mod
 import { useWishlist } from "@/features/feed/wishlist/presentation/view-model/use-wishlist";
 import { rememberAfterLogin } from "@/shared/history/after-login";
 import { recordRecentProduct } from "@/shared/history/recent-products";
-import { ArrowUpIcon, BackIcon } from "@/shared/icons";
-import { logAction } from "@/shared/signals/signals";
+import { ArrowUpIcon, BackIcon, OutboundIcon } from "@/shared/icons";
+import { logAction, recordDetailView } from "@/shared/signals/signals";
 import { Snackbar } from "@/shared/ui/snackbar";
 import { useSnackbar } from "@/shared/ui/use-snackbar";
 
@@ -131,6 +131,15 @@ export function ProductDetail({
   useEffect(() => {
     recordRecentProduct(product);
   }, [product]);
+
+  // 취향에도 곧바로 반영한다 — 피드 카드의 노출 관찰기는 스크롤·클릭과 비동기라,
+  // 보자마자 다른 화면으로 넘어가면 그 상품의 노출이 기록되기 전에 카드가
+  // 사라져 놓친다(2026-08-26, 마이페이지 취향이 방금 본 것을 안 담던 문제).
+  // 아래층(active=false)은 노출 계측을 멈춘다는 원칙과 같은 이유로 최상단일 때만.
+  useEffect(() => {
+    if (!active) return;
+    recordDetailView(product.goodsNo);
+  }, [product, active]);
 
   return (
     <div
@@ -235,7 +244,9 @@ export function ProductDetail({
               가격 옆에 찜·판매처 이동 — Rajinwoo 이전 형태로 되돌린다
               (2026-08-25). 저장은 더는 하단 dock이 아니라 여기 하트가 맡는다:
               채워진 하트는 곧바로 해제, 빈 하트는 requestSave()(비회원이면
-              로그인, 회원이면 폴더 시트)로 이어진다.
+              로그인, 회원이면 폴더 시트)로 이어진다. 판매처 이동은 글자
+              `↗` 대신 OutboundIcon(SVG)을 쓴다 — 그 글리프는 폰트 폴백에
+              따라 하트와 크기·정렬이 어긋나 보였다(2026-08-26).
             */}
             <div className="mt-3 flex items-center justify-between gap-3">
               <p className="text-[18px] font-extrabold text-ink tabular-nums">
@@ -265,15 +276,12 @@ export function ProductDetail({
                   rel="noopener noreferrer"
                   aria-label="판매처로 이동"
                   title="판매처로 이동"
-                  // text-3xl — "↗" 글자는 "♡"와 같은 24px에서 훨씬 작고 위쪽으로
-                  // 치우쳐 그려져(폰트 자체의 글리프 비례), 크기를 30px로 올려야
-                  // 두 버튼의 잉크량이 비슷해 보인다(2026-08-25 실측 비교).
-                  className="flex h-11 w-11 items-center justify-center text-3xl font-semibold text-ink"
+                  className="flex h-11 w-11 items-center justify-center text-ink"
                   onClick={() => {
                     logAction("outbound", product.goodsNo);
                   }}
                 >
-                  ↗
+                  <OutboundIcon size={30} />
                 </a>
               </div>
             </div>
