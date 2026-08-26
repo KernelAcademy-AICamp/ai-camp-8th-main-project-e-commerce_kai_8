@@ -45,6 +45,8 @@ import {
 const SESSION_KEY = "atee-session";
 const QUEUE_KEY = "atee-signal-queue";
 const IMPRESSIONS_KEY = "atee-impressions";
+/** 이 세션에서 취향 조회를 이미 셌는지 — 값은 그 세션 ID다 */
+const TASTE_VIEW_KEY = "atee-taste-viewed";
 // 15초. 5초였을 때 자잘한 요청이 잦았다 — 묶어 보내면 그만큼 줄어든다.
 const FLUSH_INTERVAL_MS = 15_000;
 
@@ -316,6 +318,30 @@ export function logImpression(input: ImpressionInput): string | null {
   return event.event_id;
 }
 
+/**
+ * 상세를 열람했다 — 노출과 같은 무게로 취향에 반영하되, 분석 이벤트는 보내지
+ * 않는다.
+ *
+ * **왜 이벤트를 안 보내나.** `surface` 값은 서버 제약(`c_events_surface_check`)이
+ * `'search_replacement'` 하나만 허용한다. 새 값을 쓰려면 그 제약과 이를 재검사하는
+ * RPC 다섯 곳을 함께 고쳐야 해서(운영 중인 공용 DB 마이그레이션, ecommerce와 공용)
+ * 지금은 기기 쪽 취향 가중치만 갱신한다 — 이 걸음으로 본 상품에 대한 이후 행동은
+ * 노출 귀속이 남지 않는다(2026-08-26 결정, 범위를 좁혀 프론트만 바꾸기로 함).
+ *
+ * **로그인하지 않았으면 아무것도 하지 않는다** (O-37과 같은 규칙).
+ * **같은 세션에서 이미(피드에서) 노출됐으면 다시 반영하지 않는다** — 가중치가
+ * 두 번 실리는 것을 막는다.
+ */
+export function recordDetailView(goodsNo: number): void {
+  if (!isBrowser() || !isSignedInNow()) return;
+  const sessionId = touchSession();
+  if (impressionIdFor(readImpressions(), goodsNo, sessionId) !== undefined) return;
+  writeImpressions(
+    rememberImpression(readImpressions(), goodsNo, crypto.randomUUID(), sessionId),
+  );
+  recordProfileImpression(goodsNo, sessionId, Date.now());
+}
+
 /** 큐에 쌓인 것을 지금 보낸다. 주기 전송을 기다리지 않는 경로(테스트·이탈 직전). */
 export async function flushSignalsNow(): Promise<void> {
   if (!isBrowser()) return;
@@ -375,6 +401,20 @@ export function logAction(
 export function logTasteView(outcome: TasteViewOutcome): void {
   if (!isBrowser() || !isSignedInNow()) return;
   const sessionId = touchSession();
+
+  // **한 세션에 한 번만 센다.** 마이페이지를 나갔다 들어오면 카드가 다시
+  // 마운트되는데, 그때마다 세면 13초 동안 오간 것이 「조회 5번」이 되어 열람
+  // 횟수가 부풀어 오른다(2026-08-25 실측: 2번 방문이 7건으로 기록됐다).
+  // 노출(`logImpression`)이 같은 세션의 같은 상품을 걸러내는 것과 같은 규칙이다.
+  //
+  // 컴포넌트 안의 ref로는 못 막는다 — 다시 마운트되면 ref가 함께 초기화된다.
+  try {
+    if (localStorage.getItem(TASTE_VIEW_KEY) === sessionId) return;
+    localStorage.setItem(TASTE_VIEW_KEY, sessionId);
+  } catch {
+    // 저장 불가 — 걸러내지 못하고 매번 센다. 기록이 없는 것보다는 낫다.
+  }
+
   enqueue({
     ...baseEvent("taste_view", sessionId, Date.now(), "random"),
     outcome,
@@ -498,6 +538,7 @@ export async function clearSignals(): Promise<number | null> {
     localStorage.removeItem(SESSION_KEY);
     localStorage.removeItem(QUEUE_KEY);
     localStorage.removeItem(IMPRESSIONS_KEY);
+    localStorage.removeItem(TASTE_VIEW_KEY);
   } catch {
     // 저장소 접근 불가면 지울 것도 없다
   }

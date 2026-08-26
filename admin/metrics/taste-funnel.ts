@@ -6,7 +6,7 @@ import type { MetricDefinition } from "@/features/metrics/domain/metric";
  * 취향을 실제로 봤고, 몇 대가 새로고침까지 눌렀나」.
  *
  * 용어는 Amplitude·Mixpanel 퍼널 리포트를 따른다.
- * - **Step** = 퍼널의 한 칸. 카드 열림 → 조회됨 → 새로고침.
+ * - **Step** = 퍼널의 한 칸. 페이지 방문 → 조회됨 → 새로고침.
  * - **Uniques** = 중복을 뺀 기기 수. Amplitude가 Totals(발생 횟수)와 구분해
  *   세는 방식이다. 이 퍼널은 **전부 uniques**다.
  * - **Conversion rate** = 바로 앞 단계 대비 넘어간 비율. 그림이 계산한다.
@@ -27,8 +27,7 @@ import type { MetricDefinition } from "@/features/metrics/domain/metric";
  */
 export const tasteFunnel: MetricDefinition = {
   id: "taste-funnel",
-  title: "취향 분석 퍼널 · Taste analysis funnel (기기 단위)",
-  why: "취향 카드가 뜬 기기 중 몇 대가 취향을 실제로 봤고, 그중 몇 대가 새로고침까지 눌렀나. 조회 안 된 기기는 아래 「조회 안 된 이유」에서 본다",
+  title: "취향 분석 퍼널 (기기 단위)",
   order: 10,
   screen: "taste",
   chart: "funnel-band",
@@ -47,13 +46,13 @@ export const tasteFunnel: MetricDefinition = {
     ),
     집계 as (
       select
-        count(*) filter (where 조회건수 > 0)              as 카드열림,
+        count(*) filter (where 조회건수 > 0)              as 방문,
         count(*) filter (where 봤다)                       as 조회됨,
         count(*) filter (where 봤다 and 새로고침건수 > 0)  as 새로고침
       from 기기
     ),
     단계 as (
-      select '카드 열림' as 단계, 1 as 순서, 카드열림 as 도달 from 집계
+      select '페이지 방문' as 단계, 1 as 순서, 방문 as 도달 from 집계
       union all
       select '조회됨',   2, 조회됨   from 집계
       union all

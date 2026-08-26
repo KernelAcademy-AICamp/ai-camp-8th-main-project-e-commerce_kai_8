@@ -24,7 +24,6 @@ export function AccountDeleteSection({ notice }: { notice: AuthNotice | null }) 
 
   const deleting = deletion.status.kind === "working";
   const hasNotice =
-    notice === "deleted" ||
     notice === "delete-unverified" ||
     followUp.kind !== "none" ||
     deletion.status.kind === "markerFailed" ||
@@ -94,10 +93,6 @@ export function AccountDeleteSection({ notice }: { notice: AuthNotice | null }) 
           구글 계정 정보를 확인하지 못해 삭제를 시작하지 않았습니다. 로그아웃한 뒤 다시
           로그인해 주세요.
         </p>
-      )}
-
-      {notice === "deleted" && (
-        <p className="mt-3 text-sm text-ink-soft">계정을 삭제했습니다.</p>
       )}
 
       {/* 확인되지 않은 것을 "완료"로 쓰지 않는다 (설계 §4) */}

@@ -6,8 +6,17 @@ import { logTasteRefresh, logTasteView } from "@/shared/signals/signals";
 import type { TasteViewOutcome } from "@/shared/signals/types";
 import { useSignedIn } from "@/shared/supabase/use-signed-in";
 
-import { fetchTasteSummary, refreshTasteSummary } from "../../data/taste-summary-api";
+import { refreshTasteSummary } from "../../data/taste-summary-api";
 import { isStillCollecting, type TasteSummary } from "../../domain/taste-summary";
+
+/**
+ * 이만큼 안에 다시 누르면 연타로 본다.
+ *
+ * 사람이 뜻을 갖고 두 번 누르기에는 너무 짧고, 반응이 없어 보여 손이 먼저
+ * 나가는 구간은 덮는 길이다. 실측에서 연타는 1초 안에 몰렸고 진짜 두 번째
+ * 시도는 5초 이상 떨어져 있었다.
+ */
+const DUPLICATE_WINDOW_MS = 2_000;
 
 export type TasteCardState =
   /** 로그인 여부를 아직 모르거나 불러오는 중 */
@@ -28,6 +37,10 @@ type Loaded =
  *
  * 로그인 여부는 **상태로 복사하지 않고** 그때그때 파생한다 — 두 벌로 두면
  * 로그아웃한 뒤에도 남의 취향이 잠깐 남는다.
+ *
+ * **열 때마다 접기까지 한다**(`refreshTasteSummary`, 2026-08-26). 그냥 조회만
+ * 하면 이번 세션에 방금 본 것이 비활성 30분이 지나야 장기로 접혀, 카드를 열어도
+ * 옛 취향이 보인다. 접을 게 없으면 업로드는 건너뛰므로 평소엔 비용이 그대로다.
  */
 export interface TasteCardViewModel {
   state: TasteCardState;
@@ -55,8 +68,8 @@ export function useTasteSummary(): TasteCardViewModel {
     if (signedIn !== "in") return;
 
     let alive = true;
-    void fetchTasteSummary().then(
-      (summary) => {
+    void refreshTasteSummary().then(
+      ({ summary }) => {
         if (!alive) return;
         setLoaded({ kind: "ready", summary });
         logViewOnce(isStillCollecting(summary) ? "insufficient_data" : "rendered");
@@ -78,13 +91,22 @@ export function useTasteSummary(): TasteCardViewModel {
 
   // 도는 중의 재클릭은 무시 — 접기는 한 번이면 충분하고, 겹치면 올리기 순서가 섞인다
   const busyRef = useRef(false);
+  const lastAttemptRef = useRef(0);
   const refresh = useCallback(() => {
+    // **도는 중인지만 보면 연타를 못 막는다.** 접을 것이 없으면 서버 왕복 한
+    // 번이라 수십 밀리초에 끝나서, 다음 클릭이 올 때 이미 잠금이 풀려 있다.
+    // 실측(2026-08-25)에서 같은 초에 다섯 번이 전부 정상 시도로 통과했고,
+    // 그 결과 「변화 없음」 11건 중 9건이 연타였다. 그러면 이 지표가 재려던
+    // "눌렀는데 헛탕" 횟수를 다섯 배로 부풀려 읽게 된다.
+    //
     // **막힌 클릭도 기록한다.** 화면상 아무 일도 안 일어나지만 누른 것은 누른
-    // 것이라, 빼면 연타하는 사람이 한 번만 누른 것으로 보인다.
-    if (busyRef.current) {
+    // 것이고, 연타가 잦다는 것 자체가 "반응이 안 보인다"는 신호다.
+    const now = Date.now();
+    if (busyRef.current || now - lastAttemptRef.current < DUPLICATE_WINDOW_MS) {
       logTasteRefresh("ignored_duplicate");
       return;
     }
+    lastAttemptRef.current = now;
     busyRef.current = true;
     setRefreshing(true);
     void refreshTasteSummary()

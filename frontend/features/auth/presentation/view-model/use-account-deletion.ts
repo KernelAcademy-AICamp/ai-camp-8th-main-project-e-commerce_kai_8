@@ -11,14 +11,15 @@ import {
   savePendingDeletion,
 } from "@/features/auth/data/pending-deletion-store";
 import type { AuthUser } from "@/features/auth/domain/auth-session";
+import { clearDone } from "@/shared/onboarding/onboarding-store";
 import { clearSignals } from "@/shared/signals/signals";
 
 /**
  * 탈퇴 흐름의 상태.
  *
  * 성공 상태가 없는 이유: 계정을 지우면 세션이 사라지며 페이지가 다시 로드된다.
- * 그 너머로 결과를 전달할 방법이 주소뿐이라, 성공·응답불명은 표시값을 붙여
- * 설정 화면으로 다시 들어간다.
+ * 그 너머로 결과를 전달할 방법이 주소뿐이라, 응답불명은 표시값을 붙여 설정
+ * 화면으로 다시 들어간다. 성공은 표시할 화면 자체가 없어졌으므로 홈으로 보낸다.
  */
 export type DeletionStatus =
   | { kind: "idle" }
@@ -88,10 +89,13 @@ export function useAccountDeletion(user: AuthUser | null): AccountDeletionViewMo
           .catch(() => undefined)
           .then(() => {
             clearPendingDeletion(localStorage);
+            // 계정이 없어졌다 — 이 기기도 처음 접하는 사람처럼 온보딩부터 다시 시작한다.
+            // 로그아웃만으로는 지워지지 않는 표식이라 여기서 따로 지운다.
+            clearDone();
             return signOutThisDevice().catch(() => undefined);
           })
           .finally(() => {
-            window.location.replace("/settings?auth=deleted");
+            window.location.replace("/");
           });
       },
       () => {

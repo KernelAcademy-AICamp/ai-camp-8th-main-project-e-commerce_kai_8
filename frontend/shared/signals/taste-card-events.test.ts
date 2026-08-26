@@ -58,8 +58,10 @@ describe("logTasteView — 취향 카드가 최종 상태에 도달했다", () =
 
   it("아직 모으는 중과 불러오기 실패를 서로 다르게 남긴다", async () => {
     // 둘을 뭉치면 "신규 사용자라 잴 게 없다"와 "고장났다"를 구분할 수 없다.
+    // 세션당 한 번만 세므로 세션을 갈아 각각을 확인한다.
     const signals = await import("@/shared/signals/signals");
     signals.logTasteView("insufficient_data");
+    localStorage.removeItem("atee-session");
     signals.logTasteView("error");
 
     expect(tasteEvents().map((e) => e.outcome)).toEqual(["insufficient_data", "error"]);
@@ -110,6 +112,37 @@ describe("logTasteRefresh — 새로고침을 눌렀다", () => {
     const signals = await import("@/shared/signals/signals");
     signals.logTasteRefresh("updated");
     expect(queued()).toHaveLength(0);
+  });
+});
+
+describe("세션당 한 번만 센다", () => {
+  it("같은 세션에서 여러 번 불러도 한 건만 남는다", async () => {
+    // 마이페이지를 나갔다 들어오면 카드가 다시 마운트된다. 그때마다 세면
+    // 13초 동안 오간 것이 「조회 5번」이 되어 열람 횟수가 부풀어 오른다.
+    const signals = await import("@/shared/signals/signals");
+    signals.logTasteView("rendered");
+    signals.logTasteView("rendered");
+    signals.logTasteView("rendered");
+
+    expect(tasteEvents()).toHaveLength(1);
+  });
+
+  it("결과가 달라져도 세션 안에서는 첫 것만 남는다", async () => {
+    const signals = await import("@/shared/signals/signals");
+    signals.logTasteView("insufficient_data");
+    signals.logTasteView("rendered");
+
+    expect(tasteEvents().map((e) => e.outcome)).toEqual(["insufficient_data"]);
+  });
+
+  it("새 세션이 열리면 다시 센다", async () => {
+    const signals = await import("@/shared/signals/signals");
+    signals.logTasteView("rendered");
+    // 세션 기억을 지우면 다음 활동이 새 세션을 연다
+    localStorage.removeItem("atee-session");
+    signals.logTasteView("rendered");
+
+    expect(tasteEvents()).toHaveLength(2);
   });
 });
 

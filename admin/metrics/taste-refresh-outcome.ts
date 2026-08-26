@@ -32,7 +32,7 @@ import type { MetricDefinition } from "@/features/metrics/domain/metric";
  */
 export const tasteRefreshOutcome: MetricDefinition = {
   id: "taste-refresh-outcome",
-  title: "새로고침 결과 · Refresh outcomes (시도 단위)",
+  title: "새로고침 결과 (시도 단위)",
   why: "한 시도에 결과가 하나씩 붙으므로 더하면 전체 시도와 맞는다. 「변화 없음」이 높으면 사용자가 기대하고 눌렀는데 아무것도 안 바뀐 것이라 기능을 다시 볼 신호다",
   order: 30,
   screen: "taste",
