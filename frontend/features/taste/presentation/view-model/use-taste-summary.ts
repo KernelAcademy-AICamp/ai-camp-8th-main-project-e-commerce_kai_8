@@ -6,7 +6,7 @@ import { logTasteRefresh, logTasteView } from "@/shared/signals/signals";
 import type { TasteViewOutcome } from "@/shared/signals/types";
 import { useSignedIn } from "@/shared/supabase/use-signed-in";
 
-import { fetchTasteSummary, refreshTasteSummary } from "../../data/taste-summary-api";
+import { refreshTasteSummary } from "../../data/taste-summary-api";
 import { isStillCollecting, type TasteSummary } from "../../domain/taste-summary";
 
 /**
@@ -37,6 +37,10 @@ type Loaded =
  *
  * 로그인 여부는 **상태로 복사하지 않고** 그때그때 파생한다 — 두 벌로 두면
  * 로그아웃한 뒤에도 남의 취향이 잠깐 남는다.
+ *
+ * **열 때마다 접기까지 한다**(`refreshTasteSummary`, 2026-08-26). 그냥 조회만
+ * 하면 이번 세션에 방금 본 것이 비활성 30분이 지나야 장기로 접혀, 카드를 열어도
+ * 옛 취향이 보인다. 접을 게 없으면 업로드는 건너뛰므로 평소엔 비용이 그대로다.
  */
 export interface TasteCardViewModel {
   state: TasteCardState;
@@ -64,8 +68,8 @@ export function useTasteSummary(): TasteCardViewModel {
     if (signedIn !== "in") return;
 
     let alive = true;
-    void fetchTasteSummary().then(
-      (summary) => {
+    void refreshTasteSummary().then(
+      ({ summary }) => {
         if (!alive) return;
         setLoaded({ kind: "ready", summary });
         logViewOnce(isStillCollecting(summary) ? "insufficient_data" : "rendered");

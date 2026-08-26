@@ -1,38 +1,30 @@
 "use client";
 
+import { AFTER_LOGIN_COOKIE } from "./after-login-path";
+
 /**
- * 로그인을 마치고 **돌아갈 자리**.
+ * 로그인을 마치고 **돌아갈 자리**를 떠나기 전에 적어 둔다.
  *
  * 구글 로그인은 외부 사이트로 완전히 나갔다 오는 이동이라, 화면 상태가 통째로
- * 사라진다. 콜백 주소에 값을 덧붙일 수도 없다 — 그 주소는 허용 목록에 등록된
- * 것과 **정확히 같아야** 한다(구글 로그인 설계 §3). 그래서 떠나기 전에 이 탭에
- * 적어 두고, 돌아온 뒤 그 자리로 옮긴다.
+ * 사라진다. 콜백 주소(`/auth/callback`) 자체는 바꿀 수 없다 — 그 주소는 구글
+ * 허용 목록에 등록된 것과 **정확히 같아야** 한다(구글 로그인 설계 §3). 하지만
+ * 콜백이 그 *다음에* 어디로 보낼지는 우리 마음이다 — 그래서 서버가 읽을 수
+ * 있게 **쿠키**에 적는다.
  *
- * 탭을 닫으면 사라진다(sessionStorage). 다른 탭에는 영향이 없다.
+ * sessionStorage였을 때는 서버(`/auth/callback`)가 못 읽어 일단 `/my`로
+ * 내려앉힌 뒤 클라이언트가 다시 옮겨야 했다. 그 사이에 `/my`가 먼저 그려져
+ * 잠깐 프로필 화면이 보였다 홈으로 튕기는 깜빡임이 있었다(2026-08-26).
+ * 콜백이 직접 옮기면 `/my`를 그릴 필요 자체가 없다.
+ *
+ * 5분이면 로그인 왕복에 충분하고, 그 뒤로 남아 있어도 다음 로그인 때 새로
+ * 덮어써지므로 해가 없다.
  */
-const KEY = "atee.after-login";
-
-/** 로그인을 시작하기 전에 부른다 */
 export function rememberAfterLogin(path: string): void {
   try {
     if (path.startsWith("/") && !path.startsWith("//")) {
-      sessionStorage.setItem(KEY, path);
+      document.cookie = `${AFTER_LOGIN_COOKIE}=${encodeURIComponent(path)}; path=/; max-age=300; SameSite=Lax`;
     }
   } catch {
-    // 저장소를 못 쓰면 기본 자리로 돌아간다
-  }
-}
-
-/** 돌아온 뒤 한 번만 읽는다 — 읽으면 지운다 */
-export function takeAfterLogin(): string | null {
-  try {
-    const path = sessionStorage.getItem(KEY);
-    sessionStorage.removeItem(KEY);
-    // 로그인 화면 자신으로 되돌아가지 않는다
-    return path !== null && path.startsWith("/") && !path.startsWith("/login")
-      ? path
-      : null;
-  } catch {
-    return null;
+    // 쿠키를 못 쓰면 기본 자리(/my)로 돌아간다
   }
 }

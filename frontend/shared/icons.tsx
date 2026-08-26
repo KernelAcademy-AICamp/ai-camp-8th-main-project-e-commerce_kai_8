@@ -184,6 +184,33 @@ export function AteeMark({ size = 26 }: IconProps) {
   );
 }
 
+/**
+ * 오른쪽 위 화살표 — 판매처(외부 링크)로 이동.
+ *
+ * 글자 `↗`(U+2197)를 쓰지 않는 이유: 이 글리프는 폰트 폴백에 따라 em 상자 안에서
+ * 작고 위·오른쪽으로 치우쳐 그려진다(2026-08-26 확인) — 옆의 `♡` 하트와 크기를
+ * 맞춰도 정렬이 안 맞는다. 대각선·꺾쇠 좌표를 24 뷰박스 정중앙(12,12)에 대칭으로
+ * 둬 상자 어느 크기에서도 하트와 나란히 정렬되게 한다.
+ */
+export function OutboundIcon({ size = 20 }: IconProps) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      width={size}
+      height={size}
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2.2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      <path d="M8 7h9v9" />
+      <path d="M7 17 17 7" />
+    </svg>
+  );
+}
+
 /** 위 갈매기 — 맨 위로. 시안 `.ddock-fab`의 SVG 그대로 */
 export function ArrowUpIcon({ size = 20 }: IconProps) {
   return (

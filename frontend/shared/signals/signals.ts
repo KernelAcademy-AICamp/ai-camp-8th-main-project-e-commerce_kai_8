@@ -318,6 +318,30 @@ export function logImpression(input: ImpressionInput): string | null {
   return event.event_id;
 }
 
+/**
+ * 상세를 열람했다 — 노출과 같은 무게로 취향에 반영하되, 분석 이벤트는 보내지
+ * 않는다.
+ *
+ * **왜 이벤트를 안 보내나.** `surface` 값은 서버 제약(`c_events_surface_check`)이
+ * `'search_replacement'` 하나만 허용한다. 새 값을 쓰려면 그 제약과 이를 재검사하는
+ * RPC 다섯 곳을 함께 고쳐야 해서(운영 중인 공용 DB 마이그레이션, ecommerce와 공용)
+ * 지금은 기기 쪽 취향 가중치만 갱신한다 — 이 걸음으로 본 상품에 대한 이후 행동은
+ * 노출 귀속이 남지 않는다(2026-08-26 결정, 범위를 좁혀 프론트만 바꾸기로 함).
+ *
+ * **로그인하지 않았으면 아무것도 하지 않는다** (O-37과 같은 규칙).
+ * **같은 세션에서 이미(피드에서) 노출됐으면 다시 반영하지 않는다** — 가중치가
+ * 두 번 실리는 것을 막는다.
+ */
+export function recordDetailView(goodsNo: number): void {
+  if (!isBrowser() || !isSignedInNow()) return;
+  const sessionId = touchSession();
+  if (impressionIdFor(readImpressions(), goodsNo, sessionId) !== undefined) return;
+  writeImpressions(
+    rememberImpression(readImpressions(), goodsNo, crypto.randomUUID(), sessionId),
+  );
+  recordProfileImpression(goodsNo, sessionId, Date.now());
+}
+
 /** 큐에 쌓인 것을 지금 보낸다. 주기 전송을 기다리지 않는 경로(테스트·이탈 직전). */
 export async function flushSignalsNow(): Promise<void> {
   if (!isBrowser()) return;
