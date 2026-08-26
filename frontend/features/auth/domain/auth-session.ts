@@ -82,12 +82,13 @@ export function readCallbackParams(search: URLSearchParams): CallbackParams {
 /**
  * 설정 화면에 남길 표시. 취소는 조용히 돌아간다 — 아무 표시도 남기지 않는다.
  *
- * `deleted`는 탈퇴가 **확인된** 경우에만 붙인다. 응답이 불명확했으면 붙이지
- * 않는다 — 지워지지 않았는데 지워진 줄 아는 것이 가장 나쁜 결과다(설계 §4).
+ * 탈퇴가 **확인된** 경우는 표시가 없다 — 성공하면 홈으로 돌아가 표시할 화면
+ * 자체가 없어진다. `delete-unverified`는 응답이 불명확했던 경우에만 붙인다 —
+ * 지워지지 않았는데 지워진 줄 아는 것이 가장 나쁜 결과다(설계 §4).
  */
-export type AuthNotice = "failed" | "deleted" | "delete-unverified";
+export type AuthNotice = "failed" | "delete-unverified";
 
-const NOTICES: readonly AuthNotice[] = ["failed", "deleted", "delete-unverified"];
+const NOTICES: readonly AuthNotice[] = ["failed", "delete-unverified"];
 
 /** 질의 문자열의 표시값을 읽는다. 모르는 값은 표시 없음으로 본다. */
 export function readAuthNotice(value: string | null | undefined): AuthNotice | null {

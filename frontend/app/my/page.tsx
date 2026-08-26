@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 
 import { readAuthNotice } from "@/features/auth/domain/auth-session";
-import { AfterLoginReturn } from "@/features/auth/presentation/components/after-login-return";
 import { GuestLoginPopup } from "@/features/auth/presentation/components/guest-login-popup";
 import { MyPage } from "@/features/auth/presentation/components/my-page";
 import { ProfileActivityCard } from "@/features/feed/presentation/components/profile-activity-card";
@@ -21,7 +20,6 @@ export default async function MyPageRoute({
   return (
     <>
       <MyPage notice={readAuthNotice(typeof auth === "string" ? auth : null)}>
-        <AfterLoginReturn />
         <TasteCard />
         <ProfileActivityCard />
       </MyPage>

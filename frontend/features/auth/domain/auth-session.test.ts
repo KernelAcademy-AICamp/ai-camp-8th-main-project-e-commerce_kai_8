@@ -52,10 +52,9 @@ describe("readAuthNotice", () => {
 });
 
 describe("readAuthNotice — 탈퇴", () => {
-  it("탈퇴 완료 표시를 읽는다", () => {
-    // 탈퇴하면 세션이 사라지며 페이지가 다시 로드된다. 그 너머로 결과를
-    // 전달할 방법이 주소뿐이다.
-    expect(readAuthNotice("deleted")).toBe("deleted");
+  it("탈퇴 완료는 표시가 없다", () => {
+    // 탈퇴가 확인되면 홈으로 돌아간다 — 표시할 화면 자체가 없어진다.
+    expect(readAuthNotice("deleted")).toBeNull();
   });
 
   it("지워졌는지 확인하지 못한 경우를 따로 읽는다", () => {
