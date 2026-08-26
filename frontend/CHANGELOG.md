@@ -1,3 +1,9 @@
+## [0.1.39](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/compare/v0.1.38...v0.1.39) (2026-08-26)
+
+### Bug Fixes
+
+* 로그인 복귀·온보딩 재진입·취향 즉시 반영 세 가지 고침 ([#124](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/issues/124)) ([b7cfaa9](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/commit/b7cfaa952681d28d81f486f49a86d457012b60b1))
+* 취향 계측이 한 번 한 것을 여러 번 세던 것을 고친다 ([#122](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/issues/122)) ([2aa71ed](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/commit/2aa71ed5d42dcc14e4a05cfcd3eec26746c1400f))
 ## [0.1.38](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/compare/v0.1.37...v0.1.38) (2026-08-25)
 
 ### Features
