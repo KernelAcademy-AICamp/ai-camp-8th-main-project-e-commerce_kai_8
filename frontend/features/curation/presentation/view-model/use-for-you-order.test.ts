@@ -276,4 +276,50 @@ describe("useForYouOrder", () => {
     });
     expect(readCurationViews()).toEqual({});
   });
+
+  it("키워드 근거로 걸린 큐레이션엔 이유 문구가 남는다", async () => {
+    const withReason = curations.map((c) =>
+      c.key === "cat_print" ? { ...c, reason: "고양이를 좋아해서" } : c,
+    );
+    summary.mockReturnValue({
+      longAnchors: [{ goodsNo: 111, weight: 4 }],
+      sessionAnchors: [],
+    });
+    restSelect.mockResolvedValue([{ goods_no: 111, title: "고양이 티셔츠" }]);
+    const { result } = render(withReason);
+    await waitFor(() => {
+      expect(result.current[0].key).toBe("cat_print");
+    });
+    expect(result.current[0].reason).toBe("고양이를 좋아해서");
+  });
+
+  it("벡터로만 걸리면 이유 문구가 없어진다 — 근거를 지어내지 않는다", async () => {
+    const withReason = curations.map((c) =>
+      c.key === "embroidery" ? { ...c, reason: "자수라서" } : c,
+    );
+    summary.mockReturnValue({
+      longAnchors: [{ goodsNo: 111, weight: 4 }],
+      sessionAnchors: [],
+    });
+    restSelect.mockRejectedValue(new Error("제목 조회 실패"));
+    rpcPost.mockResolvedValue([
+      { key: "embroidery", score: 0.9 },
+      { key: "surf", score: 0.8 },
+      { key: "running", score: 0.5 },
+    ]);
+    const { result } = render(withReason);
+    await waitFor(() => {
+      expect(result.current[0].key).toBe("embroidery");
+    });
+    expect(result.current[0].reason).toBeUndefined();
+  });
+
+  it("개인화가 안 걸리면(콜드스타트) 이유 문구도 없다", () => {
+    const withReason = curations.map((c) =>
+      c.key === "cat_print" ? { ...c, reason: "고양이를 좋아해서" } : c,
+    );
+    summary.mockReturnValue({ longAnchors: [], sessionAnchors: [] });
+    const { result } = render(withReason);
+    expect(result.current.find((c) => c.key === "cat_print")?.reason).toBeUndefined();
+  });
 });

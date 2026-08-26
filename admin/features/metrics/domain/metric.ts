@@ -17,7 +17,8 @@ export const SCREENS = [
   { name: "overview", label: "개요" },
   { name: "retention", label: "리텐션" },
   { name: "recommendation", label: "추천" },
-  { name: "raw", label: "원본" },
+  { name: "taste", label: "취향" },
+  { name: "raw", label: "로그" },
 ] as const;
 
 export type ScreenName = (typeof SCREENS)[number]["name"];
@@ -35,13 +36,66 @@ export function metricsForScreen(
   return sortMetrics(definitions.filter((d) => (d.screen ?? "overview") === screen));
 }
 
+/**
+ * 그림의 종류. 카드마다 필요한 그림이 달라 **범용 차트를 만들지 않는다** —
+ * 「세션 흐름도」는 세션 퍼널 하나만을 위한 그림이고, 다른 데 쓰지 않는다.
+ * 범용으로 만들면 설정 칸이 늘어나 SQL이 아니라 설정이 정본이 된다.
+ */
+export type ChartKind =
+  | "kpi-strip"
+  | "daily-bars"
+  | "funnel-band"
+  | "boxplot"
+  | "retention-curve"
+  | "hbars"
+  | "session-flow";
+
+/**
+ * 카드가 12칸 격자에서 차지하는 너비.
+ *
+ * **쓸 수 있는 값을 미리 정해 둔다.** Tailwind는 글자를 이어붙여 만든 클래스를
+ * 못 알아본다 — `col-span-${n}`처럼 쓰면 그 클래스가 CSS에 안 나온다.
+ * 그러면 격자가 조용히 무너져 전부 통칸이 된다.
+ */
+export const CARD_SPANS = [4, 5, 7, 8, 12] as const;
+
+export type CardSpan = (typeof CARD_SPANS)[number];
+
+/** 정하지 않았으면 통칸. 지금까지 모든 카드가 통칸이었다 */
+export function cardSpan(definition: MetricDefinition): CardSpan {
+  return definition.span ?? 12;
+}
+
+/**
+ * 너비에 해당하는 클래스.
+ *
+ * **좁은 화면에서는 전부 통칸이 된다.** 상자수염과 흐름도는 좁으면 못 읽는다 —
+ * 나란히 두느니 세로로 쌓는 편이 낫다. 기준은 `lg`(1024px)다.
+ */
+export function spanClass(span: CardSpan): string {
+  const byWidth: Record<CardSpan, string> = {
+    4: "col-span-12 lg:col-span-4",
+    5: "col-span-12 lg:col-span-5",
+    7: "col-span-12 lg:col-span-7",
+    8: "col-span-12 lg:col-span-8",
+    12: "col-span-12",
+  };
+  return byWidth[span];
+}
+
 export interface MetricDefinition {
   /** 파일마다 고유. 화면 키와 오류 표시에 쓴다 */
   id: string;
   /** 카드 제목 */
   title: string;
-  /** 왜 보는지 한 줄. 숫자만 있으면 나중에 왜 봤는지 모른다 */
-  why: string;
+  /**
+   * 화면에 띄울 설명. **없어도 된다** — 제목만으로 뜻이 통하면 비우는 편이 낫다.
+   * 줄바꿈으로 끊으면 문단이 나뉜다.
+   *
+   * ⚠️ 여기를 비운다고 **이유까지 지우는 것은 아니다.** 왜 이 지표를 보는지,
+   *    무엇을 조심해야 하는지는 지표 파일 맨 위 주석에 남긴다.
+   */
+  why?: string;
   /** 대시보드에서의 순서. 작을수록 위 */
   order: number;
   /**
@@ -51,6 +105,25 @@ export interface MetricDefinition {
    * 아홉 개가 전부 데이터베이스에 나간다.
    */
   screen?: ScreenName;
+  /**
+   * 표 대신 **그림으로** 그린다. 생략하면 지금처럼 표다.
+   *
+   * **여기 있는 것은 「어떻게 그릴지」뿐이다.** 무엇을 그릴지는 여전히 SQL이 정한다 —
+   * 그리는 쪽은 결과 표(`MetricTable`)를 읽어 그린다. 그래서 새 지표를 넣는 방법은
+   * 지금과 같다: 파일 하나 만들고 명단에 한 줄. 화면 코드는 안 건드린다.
+   *
+   * 그림이 붙어도 **표는 사라지지 않는다.** 카드 아래 접어 둔다 — 마크에 `tabindex`를
+   * 붙이지 않으므로 그 표가 키보드로 값을 읽는 유일한 경로다.
+   */
+  chart?: ChartKind;
+  /**
+   * 12칸 격자에서 차지하는 너비. 안 정하면 통칸(12).
+   *
+   * **왜 카드가 정하나** — 얼마나 넓어야 읽히는지는 그림이 안다. 상자수염은
+   * 줄마다 축이 있어 넓어야 하고, 온보딩 퍼널은 단계가 셋이라 좁아도 된다.
+   * 화면 코드가 카드별로 예외를 두면 새 지표를 넣을 때 화면도 고쳐야 한다.
+   */
+  span?: CardSpan;
   /**
    * true면 카드를 **접힌 채로** 그린다. 제목과 설명만 보이고 표는 눌러야 펼쳐진다.
    * 대조용 낱개 기록처럼 평소엔 접어 두고 필요할 때만 여는 표에 쓴다.
@@ -68,7 +141,16 @@ export interface MetricDefinition {
 /** 표 하나. 컬럼 이름은 SQL 결과에서 그대로 가져온다 */
 export interface MetricTable {
   columns: string[];
+  /** 화면에 찍을 글자. `1457` → `"1,457"` */
   rows: string[][];
+  /**
+   * 같은 자리의 **원본 숫자**. 숫자가 아닌 칸은 `null`.
+   *
+   * 차트는 길이와 좌표를 계산해야 하므로 숫자가 필요하다. `rows`의 글자를 되돌려
+   * 읽는 방식은 쓰지 않는다 — 쉼표·단위·로케일이 섞이면 조용히 틀린다.
+   * `rows`와 **같은 모양**이라 `values[r][c]`가 `rows[r][c]`의 숫자다.
+   */
+  values: (number | null)[][];
 }
 
 /**
@@ -166,7 +248,28 @@ export function toTable(
   return {
     columns: [...columns],
     rows: rows.map((row) => columns.map((column) => formatCell(row[column]))),
+    values: rows.map((row) => columns.map((column) => toNumber(row[column]))),
   };
+}
+
+/**
+ * 차트가 쓸 숫자. 숫자가 아니면 `null`.
+ *
+ * **데이터베이스가 글자로 주는 숫자를 받아야 한다.** `pg`는 `bigint`와 `numeric`을
+ * 정밀도 손실을 피하려고 문자열로 준다 — `count(*)`도 `"260"`으로 온다. 그대로 두면
+ * 차트가 못 그린다.
+ *
+ * 반대로 **숫자로 보이지 않는 글자는 숫자로 읽지 않는다.** `Number("2026-08-25")`는
+ * `NaN`이라 괜찮지만, `Number("")`는 `0`이고 `Number("4e3")`은 `4000`이다.
+ * 빈 칸이 0으로 세어지거나 세션 번호가 지수로 읽히면 그림이 조용히 틀린다.
+ * 그래서 **모양을 먼저 확인**한다.
+ */
+const NUMERIC = /^-?\d+(\.\d+)?$/;
+
+export function toNumber(value: unknown): number | null {
+  if (typeof value === "number") return Number.isFinite(value) ? value : null;
+  if (typeof value === "string" && NUMERIC.test(value.trim())) return Number(value);
+  return null;
 }
 
 /**

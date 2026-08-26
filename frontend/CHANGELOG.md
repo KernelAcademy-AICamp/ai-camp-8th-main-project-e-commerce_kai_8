@@ -1,3 +1,30 @@
+## [0.1.38](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/compare/v0.1.37...v0.1.38) (2026-08-25)
+
+### Features
+
+* 마이페이지 취향 분석 계측과 어드민 취향 탭 ([#118](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/issues/118)) ([4e65e45](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/commit/4e65e453a0873f9a05576bc198977c049d94f69b))
+* 온보딩 퍼널을 키우고 마지막 단계를 「회원가입 완료」로 바꾼다 ([#116](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/issues/116)) ([dcae6ed](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/commit/dcae6edd8ecc4b9f79adf21abf5f6d4cdbc5cf90))
+## [0.1.37](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/compare/v0.1.36...v0.1.37) (2026-08-25)
+## [0.1.36](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/compare/v0.1.35...v0.1.36) (2026-08-25)
+## [0.1.35](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/compare/v0.1.34...v0.1.35) (2026-08-25)
+
+### Features
+
+* 큐레이션 상세 조건을 태그 칸으로, 이어보기 멘트 수정 ([#115](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/issues/115)) ([b7067b2](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/commit/b7067b29b797bf40512087087756a6f31c49c87a))
+* 큐레이션 열람을 계측한다 ([#114](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/issues/114)) ([89cb4ad](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/commit/89cb4ad80c3294e45c1e90de02b1535e048cdfc3))
+## [0.1.34](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/compare/v0.1.33...v0.1.34) (2026-08-25)
+
+### Features
+
+* 어드민 대시보드 차트화 · 기간 필터 · 조회 색인 · 90일 보존 ([#113](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/issues/113)) ([e4c5972](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/commit/e4c5972604787a98b9748783d531466d8440b753))
+## [0.1.33](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/compare/v0.1.32...v0.1.33) (2026-08-25)
+## [0.1.32](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/compare/v0.1.31...v0.1.32) (2026-08-25)
+
+### Features
+
+* FOR YOU 카드에 추천 이유 한 줄을 보여준다 ([#110](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/issues/110)) ([e41cf35](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/commit/e41cf35df6e3cbbe7199c9fd4ce246510a0d7050))
+* 큐레이션에 스타일·TPO·계절 축을 더한다 ([#105](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/issues/105)) ([fdf3e0a](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/commit/fdf3e0a00a307938aae245d98af50b6a7d1ee032)), closes [#72](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/issues/72)
+* 큐레이션을 다 보면 비슷한 큐레이션으로 이어본다 ([#112](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/issues/112)) ([5087480](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/commit/5087480d81550609e5e48b8a89970a28ef1ca11f))
 ## [0.1.31](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/compare/v0.1.30...v0.1.31) (2026-08-25)
 
 ### Bug Fixes

@@ -4,14 +4,14 @@
 // 세로로 쌓으면 훑고 지나가서 한마디를 안 읽는다. 한 장씩이어야 한 개씩 본다.
 // 상품 정보(브랜드·상품명·가격)는 사진 위 버튼을 눌러야 나온다 — 감추는 게 아니라 순서를 정하는 것이다.
 import Image from "next/image";
-import type { CSSProperties } from "react";
+import { type CSSProperties, useEffect } from "react";
 
 import type { Curation } from "@/features/curation/domain/curation";
 import { curationGoodsNo } from "@/features/curation/domain/curation-product";
 import { useCurationSlides } from "@/features/curation/presentation/view-model/use-curation-slides";
 import { formatPrice } from "@/features/feed/domain/format-price";
 import { BackIcon, CloseIcon, PlusIcon } from "@/shared/icons";
-import { logAction } from "@/shared/signals/signals";
+import { logAction, logImpression } from "@/shared/signals/signals";
 
 /** pos가 없거나 짝이 안 맞는 상품의 버튼 자리 */
 const DEFAULT_X = 50;
@@ -19,14 +19,36 @@ const DEFAULT_Y = 52;
 
 export function CurationDetailScreen({
   curation,
+  next,
   onBack,
+  onOpenNext,
 }: {
   curation: Curation;
+  /** 다 본 뒤 이어볼 큐레이션. 없으면(다 봤거나 후보가 없으면) 마지막 장에서 끝난다 */
+  next: Curation | null;
   onBack: () => void;
+  onOpenNext: (key: string) => void;
 }) {
   const { trackRef, index, openInfo, onScroll, step, toggleInfo } = useCurationSlides();
 
-  const last = curation.items.length - 1;
+  // 이어보기 자리도 슬라이드 한 장이다 — 마지막 상품에서 › 를 눌러도 그리 간다.
+  const last = curation.items.length - (next ? 0 : 1);
+
+  // 지금 보이는 한 장을 자리 표식과 함께 기록한다. 첫 장(index 0)이 곧 **이 큐레이션을
+  // 열었다**는 뜻이고, 쌓인 장수가 **몇 장까지 넘겼나**다 — 두 질문에 이벤트 하나로 답한다.
+  //
+  // **취향은 가르치지 않는다**(teachProfile: false) — 여긴 무엇이 쓰이는지 재는 자리다.
+  // 여기서 프로필을 건드리면 다음 주 숫자가 계측 때문인지 추천이 바뀐 탓인지 못 가른다.
+  //
+  // 같은 세션에서 이미 본 상품은 logImpression이 한 번만 보낸다. 앞뒤로 넘겨도 안 늘지만,
+  // 그 상품을 피드에서 먼저 봤다면 그 장은 안 세어진다(9장 중 한 장은 대개 새것이라 열람
+  // 자체는 남는다).
+  const currentUrl = curation.items[index]?.u;
+  useEffect(() => {
+    const goodsNo = curationGoodsNo(currentUrl);
+    if (goodsNo === null) return;
+    logImpression({ goodsNo, surface: "curation", teachProfile: false, rank: index });
+  }, [currentUrl, index]);
 
   return (
     /* 셸 헤더·탭바까지 덮는다 — 상품 상세와 같은 전체화면. 안 덮으면 로고줄과
@@ -54,13 +76,27 @@ export function CurationDetailScreen({
         </h2>
 
         <p className="px-4 pt-4 text-base leading-relaxed text-ink">{curation.lede}</p>
-        <p className="mx-4 mt-3 border-t border-line pt-3 text-sm leading-relaxed text-ink-soft">
-          {curation.cond.join(" · ")}
-        </p>
+        {/* 선별 조건 — 사진 위 제목과 같은 accent 글씨를 흰 칸에 담는다 */}
+        <div className="mx-4 mt-3 flex flex-wrap gap-1.5 border-t border-line pt-3">
+          {curation.cond.map((label) => (
+            <span
+              key={label}
+              className="rounded-md bg-white px-2 py-1 text-[13px] leading-tight font-semibold text-(--accent)"
+              // 흰 칸 위에서는 accent 원색이 흐리다(라임·회색 계열이 특히). 검정을
+              // 섞어 한 단계 어둡게 깐다. color-mix를 모르는 브라우저는 이 선언을
+              // 통째로 버리므로 위 className의 원색이 그대로 남는다.
+              style={{ color: "color-mix(in oklab, var(--accent) 65%, black)" }}
+            >
+              {label}
+            </span>
+          ))}
+        </div>
 
         <p className="pt-4 pb-2 text-center font-mono text-xs tracking-wider text-ink-muted tabular-nums">
-          <b className="text-sm font-semibold text-(--accent)">{index + 1}</b> /{" "}
-          {curation.items.length}
+          <b className="text-sm font-semibold text-(--accent)">
+            {Math.min(index + 1, curation.items.length)}
+          </b>{" "}
+          / {curation.items.length}
         </p>
 
         <div
@@ -136,7 +172,10 @@ export function CurationDetailScreen({
                         // 나가는 것도 취향 신호다. 앱 안 상세를 거치지 않게 되면서
                         // 여기가 큐레이션에서 상품에 대한 행동을 잡는 유일한 지점이다.
                         const goodsNo = curationGoodsNo(item.u);
-                        if (goodsNo !== null) logAction("outbound", goodsNo);
+                        // 자리를 달지 않으면 메인 피드에서 나간 것과 섞여 큐레이션의
+                        // 성적을 따로 볼 수 없다.
+                        if (goodsNo !== null)
+                          logAction("outbound", goodsNo, { surface: "curation" });
                       }}
                     >
                       {/* size-auto 계열을 쓰면 next/image의 width·height 속성이 무시돼
@@ -188,6 +227,59 @@ export function CurationDetailScreen({
               </div>
             );
           })}
+
+          {/* 다 본 사람에게 다음 한 장. 목록으로 돌아가 뒤섞인 카드를 다시 훑지 않아도
+              방금 본 것과 닮은 큐레이션으로 곧장 넘어간다.
+              **자동으로 넘기지 않는다** — 마지막 장에서 손이 한 번 더 미끄러졌을 뿐인데
+              화면이 통째로 바뀌면 방금 보던 것을 잃는다. 눌러야 넘어간다.
+              카드 모양은 목록(curation-list)과 같게 둔다 — 같은 것을 고르는 자리다. */}
+          {next && (
+            <div className="w-full flex-none snap-center px-9">
+              <p className="pb-2 text-center text-[13px] text-ink-soft">
+                여기까지. 다른 추천도 볼까요?
+              </p>
+              <div className="relative">
+                <button
+                  type="button"
+                  onClick={() => {
+                    onOpenNext(next.key);
+                  }}
+                  className="relative block w-full cursor-pointer overflow-hidden rounded-xl bg-surface text-left"
+                >
+                  <Image
+                    src={next.items[0].img}
+                    alt={next.title}
+                    width={next.items[0].w ?? 500}
+                    height={next.items[0].h ?? 600}
+                    sizes="100vw"
+                    className="h-auto w-full"
+                  />
+                  <span className="absolute inset-x-0 top-1/2 bottom-0 bg-gradient-to-t from-black/75 via-black/25 via-55% to-transparent" />
+                  <span className="absolute inset-x-0 bottom-0 px-4 pb-4">
+                    <span className="block text-xl leading-tight font-bold tracking-tight break-keep text-white">
+                      {next.title}
+                    </span>
+                    <span className="mt-1.5 block text-[12px] text-white/70">
+                      {next.cond.join(" · ")}
+                    </span>
+                  </span>
+                </button>
+
+                {index === curation.items.length && (
+                  <button
+                    type="button"
+                    aria-label="이전"
+                    onClick={() => {
+                      step(-1);
+                    }}
+                    className="absolute top-1/2 -left-8 h-11 w-8 -translate-y-1/2 cursor-pointer text-3xl leading-none text-ink-muted"
+                  >
+                    ‹
+                  </button>
+                )}
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>

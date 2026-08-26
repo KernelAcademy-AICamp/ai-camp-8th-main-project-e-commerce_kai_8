@@ -38,11 +38,15 @@ import {
   type SignalEventType,
   type SourceBucket,
   type Surface,
+  type TasteRefreshOutcome,
+  type TasteViewOutcome,
 } from "./types";
 
 const SESSION_KEY = "atee-session";
 const QUEUE_KEY = "atee-signal-queue";
 const IMPRESSIONS_KEY = "atee-impressions";
+/** 이 세션에서 취향 조회를 이미 셌는지 — 값은 그 세션 ID다 */
+const TASTE_VIEW_KEY = "atee-taste-viewed";
 // 15초. 5초였을 때 자잘한 요청이 잦았다 — 묶어 보내면 그만큼 줄어든다.
 const FLUSH_INTERVAL_MS = 15_000;
 
@@ -263,6 +267,15 @@ export interface ImpressionInput {
   seed?: number;
   /** 노출이 일어난 자리. 생략=메인 피드 */
   surface?: Surface;
+  /**
+   * 이 노출을 취향 프로필에도 반영할 것인가. 생략=반영한다.
+   *
+   * **계측만 하고 싶을 때 false.** 노출은 프로필의 최근 노출 목록(피드 제외 목록)과
+   * `이 스타일로 계속 탐색` 부스트 잔량을 건드린다. 무엇이 쓰이는지 재보려고 자리를
+   * 하나 더 기록했을 뿐인데 추천이 같이 바뀌면, 다음 주 숫자가 계측 때문인지 추천이
+   * 바뀌어서인지 가를 수 없다.
+   */
+  teachProfile?: boolean;
 }
 
 /**
@@ -299,7 +312,9 @@ export function logImpression(input: ImpressionInput): string | null {
   );
   enqueue(event);
   // 취향 프로필의 자기강화 보정·최근 노출 목록 갱신 (설계 §6)
-  recordProfileImpression(input.goodsNo, sessionId, Date.now());
+  if (input.teachProfile !== false) {
+    recordProfileImpression(input.goodsNo, sessionId, Date.now());
+  }
   return event.event_id;
 }
 
@@ -333,10 +348,15 @@ export async function flushSignalsNow(): Promise<void> {
   await getQueue().flush();
 }
 
-export type ActionType = Exclude<
-  SignalEventType,
-  "impression" | "session_start" | "session_end"
->;
+/**
+ * 상품 하나에 대한 행동 — `logAction`이 받는 것.
+ *
+ * **빼기(`Exclude`)로 정의하지 않는다.** 그렇게 두면 새 이벤트를 더할 때마다
+ * 여기가 조용히 넓어져, 상품과 무관한 이벤트(취향 카드 조회 등)도 `logAction`에
+ * 들어갈 수 있게 된다. 실제로 그런 일이 한 번 있었다.
+ */
+export type ActionType =
+  "tap" | "wish" | "wish_failed" | "unwish" | "style_explore" | "outbound";
 
 /**
  * 탭·찜·스타일 탐색·판매처 이동 — 해당 상품의 최근 노출에 귀속된다.
@@ -345,13 +365,14 @@ export type ActionType = Exclude<
 export function logAction(
   type: ActionType,
   goodsNo: number,
-  options?: { policy?: FeedPolicy },
+  options?: { policy?: FeedPolicy; surface?: Surface },
 ): void {
   if (!isBrowser() || !isSignedInNow()) return;
   const sessionId = touchSession();
   enqueue({
     ...baseEvent(type, sessionId, Date.now(), options?.policy ?? "random"),
     goods_no: goodsNo,
+    surface: options?.surface,
     impression_id: impressionIdFor(readImpressions(), goodsNo, sessionId),
   });
   // 행동은 취향 프로필의 세션 앵커에도 반영된다 (설계 §6 가중 서열).
@@ -362,6 +383,63 @@ export function logAction(
   if (type !== "wish_failed") {
     recordProfileAction(type, goodsNo, sessionId, Date.now());
   }
+}
+
+/**
+ * 마이페이지 취향 카드가 **최종 상태에 도달했다** (계획 2026-08-25 A-3).
+ *
+ * 카드 **마운트당 한 번**만 부른다. 새로고침으로 다시 그려져도 조회를 또 세지
+ * 않는다 — 그건 `logTasteRefresh`가 따로 센다. 두 번 세면 새로고침을 많이 누른
+ * 사람일수록 조회를 많이 한 것처럼 보인다.
+ *
+ * **상품 번호도 노출 귀속도 싣지 않는다.** 취향 카드는 한 상품에 대한 것이
+ * 아니라 앵커 전체의 경향이라, 어느 노출 때문에 열렸다고 말할 수 없다.
+ *
+ * 로그인하지 않았으면 기록하지 않는다 (O-37). 취향 카드 자체가 회원 전용이라
+ * 실경로에서는 비회원이 여기까지 오지 않지만, 게이트는 한 곳에서 지킨다.
+ */
+export function logTasteView(outcome: TasteViewOutcome): void {
+  if (!isBrowser() || !isSignedInNow()) return;
+  const sessionId = touchSession();
+
+  // **한 세션에 한 번만 센다.** 마이페이지를 나갔다 들어오면 카드가 다시
+  // 마운트되는데, 그때마다 세면 13초 동안 오간 것이 「조회 5번」이 되어 열람
+  // 횟수가 부풀어 오른다(2026-08-25 실측: 2번 방문이 7건으로 기록됐다).
+  // 노출(`logImpression`)이 같은 세션의 같은 상품을 걸러내는 것과 같은 규칙이다.
+  //
+  // 컴포넌트 안의 ref로는 못 막는다 — 다시 마운트되면 ref가 함께 초기화된다.
+  try {
+    if (localStorage.getItem(TASTE_VIEW_KEY) === sessionId) return;
+    localStorage.setItem(TASTE_VIEW_KEY, sessionId);
+  } catch {
+    // 저장 불가 — 걸러내지 못하고 매번 센다. 기록이 없는 것보다는 낫다.
+  }
+
+  enqueue({
+    ...baseEvent("taste_view", sessionId, Date.now(), "random"),
+    outcome,
+  });
+}
+
+/**
+ * 마이페이지 취향 카드의 **새로고침을 눌렀다** (계획 2026-08-25 A-3).
+ *
+ * **받아들인 클릭뿐 아니라 막힌 클릭도 부른다.** 도는 중의 재클릭은 화면상
+ * 아무 일도 안 일어나지만, 그것도 "눌렀다"는 사실이다. 빼면 연타하는 사람이
+ * 한 번만 누른 것으로 보여 새로고침이 잘 돌고 있다고 오해하게 된다.
+ *
+ * `policy`는 `"random"`을 넣는다. 취향 카드에는 피드 정책이라는 개념이 없는데
+ * 열이 not null이라 무언가는 넣어야 한다. `session_start`·`session_end`가 이미
+ * 같은 이유로 그렇게 하고 있고, 정책을 세는 지표는 모두 `event_type`으로 먼저
+ * 거르므로 섞이지 않는다.
+ */
+export function logTasteRefresh(outcome: TasteRefreshOutcome): void {
+  if (!isBrowser() || !isSignedInNow()) return;
+  const sessionId = touchSession();
+  enqueue({
+    ...baseEvent("taste_refresh", sessionId, Date.now(), "random"),
+    outcome,
+  });
 }
 
 /**
@@ -460,6 +538,7 @@ export async function clearSignals(): Promise<number | null> {
     localStorage.removeItem(SESSION_KEY);
     localStorage.removeItem(QUEUE_KEY);
     localStorage.removeItem(IMPRESSIONS_KEY);
+    localStorage.removeItem(TASTE_VIEW_KEY);
   } catch {
     // 저장소 접근 불가면 지울 것도 없다
   }

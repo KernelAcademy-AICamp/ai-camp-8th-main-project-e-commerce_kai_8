@@ -16,8 +16,13 @@ describe("좁혀 보기 파라미터", () => {
 
   it("세션 8자리와 날짜를 받는다", () => {
     const filter = parseFilter({ session: "711ce185", date: "2026-08-23" });
-    expect(filter).toEqual({ session: "711ce185", date: "2026-08-23", ignored: [] });
-    expect(toParams(filter)).toEqual(["711ce185", "2026-08-23"]);
+    expect(filter).toEqual({
+      session: "711ce185",
+      date: "2026-08-23",
+      days: null,
+      ignored: [],
+    });
+    expect(toParams(filter)).toEqual(["711ce185", "2026-08-23", null]);
   });
 
   it("형식이 틀리면 버리되 버렸다고 남긴다", () => {
@@ -40,11 +45,94 @@ describe("좁혀 보기 파라미터", () => {
     expect(parseFilter({ session: ["711ce185", "deadbeef"] }).session).toBe("711ce185");
   });
 
-  it("값 순서는 $1=세션 · $2=날짜로 고정", () => {
-    expect(toParams({ session: "abcd1234", date: null, ignored: [] })).toEqual([
-      "abcd1234",
-      null,
-    ]);
+  it("값 순서는 $1=세션 · $2=날짜 · $3=기간으로 고정", () => {
+    expect(
+      toParams({ session: "abcd1234", date: null, days: null, ignored: [] }),
+    ).toEqual(["abcd1234", null, null]);
+  });
+});
+
+describe("기간 선택 (최근 N일)", () => {
+  it("허용한 기간만 받는다", () => {
+    // 아무 숫자나 받으면 days=99999가 전체 스캔이 되고, 화면은 좁혀진 줄 안다
+    expect(parseFilter({ days: "7" }).days).toBe(7);
+    expect(parseFilter({ days: "14" }).days).toBe(14);
+    expect(parseFilter({ days: "30" }).days).toBe(30);
+  });
+
+  it("허용 목록에 없으면 버리되 버렸다고 남긴다", () => {
+    const filter = parseFilter({ days: "9999" });
+    expect(filter.days).toBeNull();
+    expect(filter.ignored).toEqual(["days"]);
+  });
+
+  it("숫자가 아니면 버린다", () => {
+    expect(parseFilter({ days: "일주일" }).days).toBeNull();
+    expect(parseFilter({ days: "7; drop table c_events" }).days).toBeNull();
+  });
+
+  it("없으면 전체 기간이다", () => {
+    expect(parseFilter({}).days).toBeNull();
+    expect(NO_FILTER.days).toBeNull();
+  });
+
+  it("기간만 골라도 좁혀 보는 중이다", () => {
+    expect(isNarrowed({ session: null, date: null, days: 7, ignored: [] })).toBe(true);
+  });
+
+  it("SQL이 $3으로 기간을 받는다", () => {
+    expect(eventFilterSql()).toContain("($3)");
+  });
+});
+
+describe("기간은 날짜 경계로 자른다", () => {
+  it("시각이 아니라 한국 시간 날짜로 자른다", () => {
+    // `now() - interval '7 days'`로 자르면 **첫날이 반쪽만** 들어온다.
+    // 지금이 13시면 7일 전 13시부터라 그날 0~13시 기록이 빠지고, 일별 막대에서
+    // 그 막대만 낮게 보인다. "그날은 한산했다"로 읽히는데 사실이 아니다.
+    // 그리고 「최근 7일」인데 달력으로는 8일이 걸린다.
+    const sql = eventFilterSql();
+    expect(sql).toContain("Asia/Seoul");
+    expect(sql).not.toMatch(/now\(\)\s*-\s*make_interval/);
+  });
+
+  it("오늘을 포함해 N일이 되게 센다", () => {
+    // 7일이면 오늘 + 앞의 6일. `- 7`로 빼면 8일이 된다.
+    expect(eventFilterSql()).toMatch(/\(\$3\)::int\s*-\s*1/);
+  });
+});
+
+describe("값 순서 계약 — 늘어나면 조용히 틀린다", () => {
+  it("toParams는 정확히 세 값만 낸다", () => {
+    // `$1`=세션 `$2`=날짜 `$3`=기간. 여기에 **화면 전용 값을 섞으면 안 된다** —
+    // 세션 흐름도의 좁혀 보기(`flow`)는 SQL을 안 바꾸고 그림만 바꾸므로 여기 오면 안 된다.
+    // 순서가 밀리면 세션 자리에 다른 값이 들어가 조용히 0건이 된다.
+    expect(
+      toParams(parseFilter({ session: "abcd1234", date: "2026-08-24", days: "7" })),
+    ).toHaveLength(3);
+  });
+});
+
+describe("날짜 조건은 색인이 먹는 형태여야 한다", () => {
+  it("컬럼에 함수를 씌우지 않는다", () => {
+    // `(occurred_at at time zone 'Asia/Seoul')::date = $2` 형태는 컬럼을 가공하므로
+    // occurred_at 색인을 못 탄다. 실측 17.07ms 대 범위 형태 1.71ms — 10배 차이인데
+    // 답은 같았다(둘 다 6,724건). 두 달 뒤 행이 7배가 되면 이 차이도 7배가 된다.
+    const sql = eventFilterSql();
+    expect(sql).not.toMatch(/\(\s*occurred_at at time zone[^)]*\)\s*::date\s*=/);
+  });
+
+  it("범위로 자른다 (시작 이상, 다음 날 미만)", () => {
+    const sql = eventFilterSql();
+    expect(sql).toContain("occurred_at >=");
+    expect(sql).toContain("occurred_at <");
+  });
+
+  it("별칭을 주면 범위 조건에도 붙는다", () => {
+    const sql = eventFilterSql("e");
+    expect(sql).toContain("e.occurred_at >=");
+    expect(sql).toContain("e.occurred_at <");
+    expect(sql).not.toMatch(/[^.]\boccurred_at/);
   });
 });
 

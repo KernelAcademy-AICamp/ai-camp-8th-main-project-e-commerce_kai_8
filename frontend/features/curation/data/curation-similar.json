@@ -1,0 +1,642 @@
+{
+  "all_season": [
+    "black_only",
+    "premium_yarn",
+    "muscle_fit",
+    "campus_daily",
+    "quiet_detail",
+    "mesh_sheer",
+    "sporty",
+    "yoga_brand"
+  ],
+  "amekaji": [
+    "workwear",
+    "outdoor_new",
+    "sports_brand",
+    "spa_brand",
+    "tropical",
+    "outdoor_brand",
+    "camping_graphic",
+    "baseball_raglan"
+  ],
+  "art_print": [
+    "retro_graphic",
+    "tropical",
+    "camping_graphic",
+    "dog_print",
+    "cat_print",
+    "character",
+    "lettering",
+    "women_online_brand"
+  ],
+  "baseball_raglan": [
+    "workwear",
+    "blokecore",
+    "amekaji",
+    "color_block",
+    "sports_brand",
+    "retro_graphic",
+    "sporty",
+    "mesh_sheer"
+  ],
+  "bear_bunny": [
+    "dog_print",
+    "character",
+    "cat_print",
+    "y2k_motif",
+    "tropical",
+    "women_online_new",
+    "retro_graphic",
+    "body_natural"
+  ],
+  "black_only": [
+    "sports_brand",
+    "outdoor_new",
+    "muscle_fit",
+    "running",
+    "sporty",
+    "mesh_sheer",
+    "blokecore",
+    "workwear"
+  ],
+  "blokecore": [
+    "sports_brand",
+    "sporty",
+    "mesh_sheer",
+    "color_block",
+    "baseball_raglan",
+    "gorpcore",
+    "v_neck",
+    "workwear"
+  ],
+  "body_natural": [
+    "women_online_new",
+    "dog_print",
+    "cat_print",
+    "y2k_motif",
+    "off_shoulder",
+    "women_online_brand",
+    "character",
+    "new_graphic"
+  ],
+  "body_straight": [
+    "square_neck",
+    "body_wave_w",
+    "off_shoulder",
+    "white_opaque",
+    "premium_yarn",
+    "slim_fit",
+    "yoga_brand",
+    "date_neat"
+  ],
+  "body_wave_w": [
+    "off_shoulder",
+    "square_neck",
+    "body_straight",
+    "women_online_new",
+    "yoga_brand",
+    "coquette",
+    "layered_tee",
+    "rib_knit"
+  ],
+  "camping_graphic": [
+    "tropical",
+    "gorpcore",
+    "workwear",
+    "outdoor_new",
+    "dog_print",
+    "outdoor_brand",
+    "amekaji",
+    "retro_graphic"
+  ],
+  "campus_daily": [
+    "yoga_brand",
+    "white_opaque",
+    "date_neat",
+    "cooling_fabric",
+    "muscle_fit",
+    "spa_brand",
+    "running",
+    "slim_fit"
+  ],
+  "cat_print": [
+    "dog_print",
+    "women_online_new",
+    "retro_graphic",
+    "tropical",
+    "character",
+    "y2k_motif",
+    "camping_graphic",
+    "bear_bunny"
+  ],
+  "character": [
+    "dog_print",
+    "tropical",
+    "true_to_size",
+    "cat_print",
+    "bear_bunny",
+    "women_online_new",
+    "women_online_brand",
+    "camping_graphic"
+  ],
+  "color_block": [
+    "blokecore",
+    "sporty",
+    "baseball_raglan",
+    "sports_brand",
+    "mesh_sheer",
+    "v_neck",
+    "ringer",
+    "gorpcore"
+  ],
+  "cooling_fabric": [
+    "yoga_brand",
+    "campus_daily",
+    "muscle_fit",
+    "date_neat",
+    "premium_yarn",
+    "pocket_tee",
+    "white_opaque",
+    "rib_knit"
+  ],
+  "coquette": [
+    "women_online_new",
+    "square_neck",
+    "body_wave_w",
+    "off_shoulder",
+    "red_only",
+    "body_straight",
+    "rib_knit",
+    "embroidery"
+  ],
+  "crop": [
+    "rib_knit",
+    "square_neck",
+    "rollup_sleeve",
+    "premium_yarn",
+    "quiet_detail",
+    "off_shoulder",
+    "muscle_fit",
+    "slim_fit"
+  ],
+  "date_neat": [
+    "yoga_brand",
+    "campus_daily",
+    "white_opaque",
+    "cooling_fabric",
+    "premium_yarn",
+    "slim_fit",
+    "muscle_fit",
+    "rib_knit"
+  ],
+  "dog_print": [
+    "character",
+    "tropical",
+    "cat_print",
+    "women_online_new",
+    "camping_graphic",
+    "bear_bunny",
+    "retro_graphic",
+    "women_online_brand"
+  ],
+  "embroidery": [
+    "off_shoulder",
+    "y2k_motif",
+    "art_print",
+    "body_natural",
+    "retro_graphic",
+    "washed",
+    "women_online_new",
+    "no_stretch"
+  ],
+  "flower": [
+    "dog_print",
+    "tropical",
+    "cat_print",
+    "character",
+    "women_online_brand",
+    "y2k_motif",
+    "body_natural",
+    "retro_graphic"
+  ],
+  "gorpcore": [
+    "camping_graphic",
+    "sporty",
+    "blokecore",
+    "tropical",
+    "mesh_sheer",
+    "outdoor_brand",
+    "color_block",
+    "running"
+  ],
+  "knit_tee": [
+    "rib_knit",
+    "quiet_detail",
+    "rollup_sleeve",
+    "square_neck",
+    "layered_tee",
+    "off_shoulder",
+    "stripe",
+    "body_wave_w"
+  ],
+  "layered_tee": [
+    "rib_knit",
+    "square_neck",
+    "rollup_sleeve",
+    "knit_tee",
+    "quiet_detail",
+    "body_wave_w",
+    "stripe",
+    "off_shoulder"
+  ],
+  "lettering": [
+    "tropical",
+    "camping_graphic",
+    "outdoor_new",
+    "art_print",
+    "women_online_brand",
+    "retro_graphic",
+    "dog_print",
+    "outdoor_brand"
+  ],
+  "mesh_sheer": [
+    "sporty",
+    "blokecore",
+    "muscle_fit",
+    "gorpcore",
+    "v_neck",
+    "color_block",
+    "black_only",
+    "running"
+  ],
+  "muscle_fit": [
+    "yoga_brand",
+    "running",
+    "rollup_sleeve",
+    "sporty",
+    "mesh_sheer",
+    "cooling_fabric",
+    "slim_fit",
+    "campus_daily"
+  ],
+  "new_arrival_watch": [
+    "off_shoulder",
+    "women_online_new",
+    "new_graphic",
+    "rollup_sleeve",
+    "body_wave_w",
+    "ringer",
+    "flower",
+    "square_neck"
+  ],
+  "new_graphic": [
+    "women_online_new",
+    "art_print",
+    "body_natural",
+    "retro_graphic",
+    "dog_print",
+    "women_online_brand",
+    "cat_print",
+    "flower"
+  ],
+  "no_complaint": [
+    "lettering",
+    "women_online_brand",
+    "tropical",
+    "y2k_motif",
+    "camping_graphic",
+    "retro_graphic",
+    "black_only",
+    "flower"
+  ],
+  "no_stretch": [
+    "workwear",
+    "lettering",
+    "embroidery",
+    "black_only",
+    "camping_graphic",
+    "amekaji",
+    "baseball_raglan",
+    "washed"
+  ],
+  "not_hot": [
+    "y2k_motif",
+    "new_graphic",
+    "art_print",
+    "body_natural",
+    "sporty",
+    "mesh_sheer",
+    "off_shoulder",
+    "women_online_new"
+  ],
+  "off_shoulder": [
+    "square_neck",
+    "body_wave_w",
+    "women_online_new",
+    "body_straight",
+    "knit_tee",
+    "coquette",
+    "rollup_sleeve",
+    "rib_knit"
+  ],
+  "outdoor_brand": [
+    "outdoor_new",
+    "workwear",
+    "tropical",
+    "amekaji",
+    "camping_graphic",
+    "sports_brand",
+    "character",
+    "running"
+  ],
+  "outdoor_new": [
+    "outdoor_brand",
+    "sports_brand",
+    "amekaji",
+    "workwear",
+    "camping_graphic",
+    "spa_brand",
+    "tropical",
+    "running"
+  ],
+  "oversized_thin": [
+    "cat_print",
+    "character",
+    "washed",
+    "true_to_size",
+    "tropical",
+    "camping_graphic",
+    "y2k_motif",
+    "flower"
+  ],
+  "pastel_tone": [
+    "flower",
+    "dog_print",
+    "y2k_motif",
+    "body_natural",
+    "cat_print",
+    "lettering",
+    "premium_yarn",
+    "tropical"
+  ],
+  "pocket_tee": [
+    "stripe",
+    "rollup_sleeve",
+    "rib_knit",
+    "layered_tee",
+    "quiet_detail",
+    "premium_yarn",
+    "cooling_fabric",
+    "knit_tee"
+  ],
+  "premium_yarn": [
+    "rib_knit",
+    "yoga_brand",
+    "square_neck",
+    "quiet_detail",
+    "date_neat",
+    "pocket_tee",
+    "campus_daily",
+    "cooling_fabric"
+  ],
+  "quiet_detail": [
+    "rib_knit",
+    "knit_tee",
+    "layered_tee",
+    "square_neck",
+    "premium_yarn",
+    "rollup_sleeve",
+    "yoga_brand",
+    "stripe"
+  ],
+  "red_only": [
+    "square_neck",
+    "ringer",
+    "off_shoulder",
+    "body_wave_w",
+    "rib_knit",
+    "rollup_sleeve",
+    "coquette",
+    "layered_tee"
+  ],
+  "retro_graphic": [
+    "tropical",
+    "art_print",
+    "cat_print",
+    "dog_print",
+    "camping_graphic",
+    "workwear",
+    "bear_bunny",
+    "baseball_raglan"
+  ],
+  "rib_knit": [
+    "quiet_detail",
+    "square_neck",
+    "knit_tee",
+    "rollup_sleeve",
+    "layered_tee",
+    "premium_yarn",
+    "stripe",
+    "pocket_tee"
+  ],
+  "ringer": [
+    "rollup_sleeve",
+    "red_only",
+    "off_shoulder",
+    "layered_tee",
+    "square_neck",
+    "knit_tee",
+    "rib_knit",
+    "stripe"
+  ],
+  "rollup_sleeve": [
+    "rib_knit",
+    "knit_tee",
+    "layered_tee",
+    "muscle_fit",
+    "ringer",
+    "pocket_tee",
+    "off_shoulder",
+    "quiet_detail"
+  ],
+  "running": [
+    "yoga_brand",
+    "muscle_fit",
+    "outdoor_new",
+    "sports_brand",
+    "campus_daily",
+    "black_only",
+    "sporty",
+    "cooling_fabric"
+  ],
+  "slim_fit": [
+    "yoga_brand",
+    "square_neck",
+    "muscle_fit",
+    "rib_knit",
+    "campus_daily",
+    "date_neat",
+    "body_wave_w",
+    "premium_yarn"
+  ],
+  "spa_brand": [
+    "amekaji",
+    "outdoor_new",
+    "workwear",
+    "campus_daily",
+    "sports_brand",
+    "white_opaque",
+    "stripe",
+    "outdoor_brand"
+  ],
+  "sports_brand": [
+    "workwear",
+    "blokecore",
+    "outdoor_new",
+    "amekaji",
+    "black_only",
+    "outdoor_brand",
+    "running",
+    "spa_brand"
+  ],
+  "sporty": [
+    "blokecore",
+    "mesh_sheer",
+    "muscle_fit",
+    "color_block",
+    "gorpcore",
+    "running",
+    "black_only",
+    "v_neck"
+  ],
+  "square_neck": [
+    "off_shoulder",
+    "body_wave_w",
+    "rib_knit",
+    "body_straight",
+    "layered_tee",
+    "knit_tee",
+    "women_online_new",
+    "red_only"
+  ],
+  "stripe": [
+    "rib_knit",
+    "pocket_tee",
+    "layered_tee",
+    "knit_tee",
+    "rollup_sleeve",
+    "quiet_detail",
+    "premium_yarn",
+    "square_neck"
+  ],
+  "summer_thin": [
+    "outdoor_new",
+    "cat_print",
+    "flower",
+    "retro_graphic",
+    "art_print",
+    "character",
+    "black_only",
+    "lettering"
+  ],
+  "tropical": [
+    "camping_graphic",
+    "retro_graphic",
+    "dog_print",
+    "character",
+    "workwear",
+    "amekaji",
+    "outdoor_brand",
+    "outdoor_new"
+  ],
+  "true_to_size": [
+    "character",
+    "tropical",
+    "dog_print",
+    "women_online_brand",
+    "cat_print",
+    "camping_graphic",
+    "flower",
+    "workwear"
+  ],
+  "v_neck": [
+    "blokecore",
+    "sports_brand",
+    "mesh_sheer",
+    "sporty",
+    "campus_daily",
+    "yoga_brand",
+    "color_block",
+    "knit_tee"
+  ],
+  "washed": [
+    "off_shoulder",
+    "y2k_motif",
+    "cat_print",
+    "pocket_tee",
+    "rollup_sleeve",
+    "ringer",
+    "embroidery",
+    "oversized_thin"
+  ],
+  "white_opaque": [
+    "campus_daily",
+    "date_neat",
+    "body_straight",
+    "cooling_fabric",
+    "yoga_brand",
+    "slim_fit",
+    "premium_yarn",
+    "square_neck"
+  ],
+  "women_online_brand": [
+    "dog_print",
+    "character",
+    "camping_graphic",
+    "tropical",
+    "women_online_new",
+    "cat_print",
+    "true_to_size",
+    "body_natural"
+  ],
+  "women_online_new": [
+    "off_shoulder",
+    "body_natural",
+    "cat_print",
+    "dog_print",
+    "square_neck",
+    "body_wave_w",
+    "character",
+    "coquette"
+  ],
+  "workwear": [
+    "amekaji",
+    "sports_brand",
+    "outdoor_new",
+    "tropical",
+    "camping_graphic",
+    "outdoor_brand",
+    "baseball_raglan",
+    "spa_brand"
+  ],
+  "y2k_motif": [
+    "cat_print",
+    "women_online_new",
+    "body_natural",
+    "bear_bunny",
+    "dog_print",
+    "character",
+    "women_online_brand",
+    "flower"
+  ],
+  "yoga_brand": [
+    "muscle_fit",
+    "running",
+    "campus_daily",
+    "cooling_fabric",
+    "slim_fit",
+    "date_neat",
+    "square_neck",
+    "premium_yarn"
+  ]
+}

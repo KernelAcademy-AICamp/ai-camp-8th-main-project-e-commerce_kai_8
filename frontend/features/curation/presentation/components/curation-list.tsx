@@ -98,9 +98,11 @@ export function CurationList({
                   <span className="line-clamp-2 block text-[16px] leading-[1.25] font-bold tracking-[-0.03em] break-keep text-white">
                     {curation.title}
                   </span>
-                  <span className="mt-1.5 block text-[11px] text-white/70">
-                    {curation.items.length}개
-                  </span>
+                  {curation.reason && (
+                    <span className="mt-1 block line-clamp-1 text-[11px] font-medium text-accent">
+                      {curation.reason}
+                    </span>
+                  )}
                 </span>
               </button>
             ))}

@@ -13,6 +13,7 @@ import type { MetricDefinition } from "@/features/metrics/domain/metric";
 
 import { activeDays } from "./active-days";
 import { bucketConversion } from "./bucket-conversion";
+import { dailyVolume } from "./daily-volume";
 import { eventVolume } from "./event-volume";
 import { onboardingFunnel } from "./onboarding-funnel";
 import { rawEvents } from "./raw-events";
@@ -20,16 +21,23 @@ import { returnCurve } from "./return-curve";
 import { sessionFunnel } from "./session-funnel";
 import { sessionList } from "./session-list";
 import { sessionSummary } from "./session-summary";
+import { tasteFunnel } from "./taste-funnel";
 import { tasteOscillation } from "./taste-oscillation";
+import { tasteRefreshOutcome } from "./taste-refresh-outcome";
+import { tasteViewBlocked } from "./taste-view-blocked";
 
 export const METRICS: readonly MetricDefinition[] = [
   eventVolume,
+  dailyVolume,
   onboardingFunnel,
   sessionSummary,
   sessionFunnel,
   sessionList,
   bucketConversion,
   tasteOscillation,
+  tasteFunnel,
+  tasteViewBlocked,
+  tasteRefreshOutcome,
   returnCurve,
   activeDays,
   rawEvents,
