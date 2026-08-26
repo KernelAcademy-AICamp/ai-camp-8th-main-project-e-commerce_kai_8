@@ -150,6 +150,21 @@ export function markDone(): void {
   notify();
 }
 
+/**
+ * 계정 삭제가 부른다. 다른 신원 전환(로그아웃·계정 전환)에서는 이 표식을
+ * 일부러 남겨 두지만(identity-scoped-keys.ts §KEEP_EXACT), 계정 자체가
+ * 없어졌으니 이 기기도 "처음 접하는 사람처럼" 온보딩부터 다시 시작한다.
+ */
+export function clearDone(): void {
+  done = false;
+  try {
+    localStorage.removeItem(DONE_KEY);
+  } catch {
+    // 못 지워도 다음 판정은 메모리 값(false)을 따른다 — 이번 세션 동안은 맞게 동작한다.
+  }
+  notify();
+}
+
 /** 테스트용 — 모듈 상태를 처음으로 되돌린다. */
 export function resetOnboardingStore(): void {
   stored = EMPTY_STORED;
