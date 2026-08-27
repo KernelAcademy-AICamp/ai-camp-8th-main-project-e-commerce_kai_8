@@ -36,8 +36,10 @@ export function PrivacySettings() {
           </p>
           <p>
             로그인하면 그 행동이 기록되어 <b className="text-ink">취향 피드</b>와 추천
-            품질 평가에 쓰입니다. 기록은 계정이 아니라 이 브라우저의{" "}
-            <b className="text-ink">익명 ID</b>에 붙습니다.
+            품질 평가에 쓰입니다. 행동 기록 자체는 계정이 아니라 이 브라우저의{" "}
+            <b className="text-ink">익명 ID</b>에 붙지만,{" "}
+            <b className="text-ink">서버가 계정과 익명 ID의 쌍을 따로 기록합니다</b> —
+            얼마나 많은 사람이 쓰는지 세기 위해서입니다.
           </p>
           <p>
             <b className="text-ink">검색어</b>는 검색 품질을 개선하고 평가하기 위해
@@ -51,8 +53,9 @@ export function PrivacySettings() {
             받아 계정으로 저장하고, <b className="text-ink">찜한 상품 번호</b>를 계정에
             담아 다른 기기에서도 보이게 합니다. 구글에서{" "}
             <b className="text-ink">프로필 사진·연락처·성별·생년월일</b>을 받아오지는
-            않습니다. 서버에는 계정과 익명 ID를 잇는 기록을 만들지 않습니다 — 다만 이
-            기기에는 둘이 함께 남으므로, 기기를 들여다보면 이을 수 있습니다.
+            않습니다.{" "}
+            <b className="text-ink">서버가 계정과 익명 ID의 쌍을 기록합니다</b> — 담기는
+            것은 그 쌍과 이은 시각뿐이고, 탈퇴하거나 아래 초기화를 하면 함께 지워집니다.
           </p>
           <p>
             <b className="text-ink">보여줄 상품의 성별</b>은 위에서 직접 고른 값입니다.
