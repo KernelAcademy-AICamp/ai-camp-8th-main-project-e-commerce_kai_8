@@ -24,14 +24,7 @@ import type { MetricDefinition } from "@/features/metrics/domain/metric";
  *    시크릿 모드는 매번 새 기기가 된다. 그래서 **실제 사람 수보다 많게 나온다.**
  *
  * ⚠️ **회원만 보인다** (결정 O-37). 취향 카드 자체가 회원 전용이다.
- *
- * ⚠️ **「계정」 칸은 소급되지 않는다** (2026-08-27, O-43). 기기와 계정을 잇기
- *    시작한 뒤 로그인한 기기만 세어진다. 잇기 전의 기록은 계정 칸에서 빠지므로,
- *    처음에는 계정 칸이 0이고 기기 칸만 값이 있다. **둘을 나란히 두는 이유가
- *    이것이다** — 계정으로 갈아타면서 지금 보이는 값을 잃지 않는다.
- *
- * ⚠️ 기기 칸은 실제 사람 수보다 **많게**, 계정 칸은 아직 **적게** 나온다. 같은
- *    줄의 두 값을 더하거나 비교하지 않는다.
+
  */
 export const tasteFunnel: MetricDefinition = {
   id: "taste-funnel",
@@ -44,8 +37,7 @@ export const tasteFunnel: MetricDefinition = {
     with 기기 as (
       select
         e.device_id,
-        -- 계정 단위 칸을 위해 함께 들고 온다 (O-43). 이은 적 없는 기기는 null이라
-        -- 계정 칸에서 빠진다 — 잇기 전의 기록은 소급되지 않는다.
+        -- 이은 적 없는 기기는 null이다 (O-43).
         max(l.account_id::text) as account_id,
         count(*) filter (where e.event_type = 'taste_view')    as 조회건수,
         count(*) filter (where e.event_type = 'taste_refresh') as 새로고침건수,
