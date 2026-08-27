@@ -1,3 +1,12 @@
+## [0.1.40](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/compare/v0.1.39...v0.1.40) (2026-08-27)
+
+### Features
+
+* 어드민 지표를 계정 단위로 센다 (O-43) ([#126](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/issues/126)) ([73c6699](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/commit/73c6699f04c57d7c4098b5d12dd1738134f3b707))
+
+### Bug Fixes
+
+* 온보딩 퍼널의 가입·완료를 계정 단위로 센다 ([#125](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/issues/125)) ([a051d26](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/commit/a051d26e57a4873d5d5060b9935d5616f52b94c8))
 ## [0.1.39](https://github.com/KernelAcademy-AICamp/ai-camp-8th-main-project-e-commerce_kai_8/compare/v0.1.38...v0.1.39) (2026-08-26)
 
 ### Bug Fixes

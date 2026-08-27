@@ -36,7 +36,8 @@ export const rawEvents: MetricDefinition = {
   sql: `
     select
       to_char(e.occurred_at at time zone 'Asia/Seoul', 'MM-DD HH24:MI:SS') as "발생(KST)",
-      left(e.device_id::text, 8)  as "기기",
+      -- 로그는 줄을 버리지 않는다. 이은 적 없는 기기는 계정만 비운다 (O-43).
+      coalesce(left(l.account_id::text, 8), '—') as "계정",
       '?session=' || left(e.session_id::text, 8) as "세션",
       case
         when e.signed_in is null then '알 수 없음'
@@ -62,6 +63,7 @@ export const rawEvents: MetricDefinition = {
     -- (계획 A-1) 이 조인이 끊기지 않고 유지되는지로 확인한다.
     left join c_events src
       on src.event_id = e.impression_id and src.event_type = 'impression'
+    left join c_device_accounts l on l.device_id = e.device_id
     where ${eventFilterSql("e")}
     order by e.occurred_at desc
     limit 40

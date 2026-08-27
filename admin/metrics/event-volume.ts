@@ -23,13 +23,16 @@ export const eventVolume: MetricDefinition = {
   sql: `
     select
       count(*)::int as "전체",
-      count(*) filter (where received_at >= now() - interval '24 hours')::int
+      count(*) filter (where e.received_at >= now() - interval '24 hours')::int
         as "최근 24시간",
-      count(*) filter (where received_at >= now() - interval '7 days')::int
+      count(*) filter (where e.received_at >= now() - interval '7 days')::int
         as "최근 7일",
-      count(distinct device_id)::int as "기기 수",
-      to_char(max(received_at) at time zone 'Asia/Seoul', 'YYYY-MM-DD HH24:MI')
+      count(distinct e.device_id)::int as "기기 수",
+      -- 이은 적 없는 기기는 null이다 (O-43).
+      count(distinct l.account_id)::int as "계정 수",
+      to_char(max(e.received_at) at time zone 'Asia/Seoul', 'YYYY-MM-DD HH24:MI')
         as "마지막 기록 (KST)"
-    from c_events
+    from c_events e
+    left join c_device_accounts l on l.device_id = e.device_id
   `,
 };

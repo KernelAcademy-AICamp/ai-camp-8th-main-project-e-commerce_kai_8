@@ -9,6 +9,7 @@ import {
   readCarriedOnboarding,
   shouldDiscardCarried,
 } from "@/shared/identity/onboarding-carry";
+import { linkDeviceToAccount } from "@/shared/signals/device-link";
 import {
   getSignedInServerSnapshot,
   getSignedInSnapshot,
@@ -89,6 +90,9 @@ export function OnboardingAccountGuard() {
     void fetchLocalUserId().then(
       (userId) => {
         if (!active || userId === null) return;
+        // 이 기기를 계정과 잇는다 (O-43). 지표를 계정 단위로 세기 위한 것이고,
+        // 온보딩 승계와는 무관하므로 **기다리지 않는다** — 실패해도 아래가 돈다.
+        void linkDeviceToAccount();
         void forgetThenSync(userId);
       },
       () => {

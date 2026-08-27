@@ -24,32 +24,34 @@ import type { MetricDefinition } from "@/features/metrics/domain/metric";
  *    시크릿 모드는 매번 새 기기가 된다. 그래서 **실제 사람 수보다 많게 나온다.**
  *
  * ⚠️ **회원만 보인다** (결정 O-37). 취향 카드 자체가 회원 전용이다.
+
  */
 export const tasteFunnel: MetricDefinition = {
   id: "taste-funnel",
-  title: "취향 분석 퍼널 (기기 단위)",
+  title: "취향 분석 퍼널 (계정 단위)",
   order: 10,
   screen: "taste",
   chart: "funnel-band",
   span: 7,
   sql: `
-    with 기기 as (
+    with 계정 as (
       select
-        device_id,
-        count(*) filter (where event_type = 'taste_view')    as 조회건수,
-        count(*) filter (where event_type = 'taste_refresh') as 새로고침건수,
-        bool_or(event_type = 'taste_view' and outcome = 'rendered') as 봤다
-      from c_events
-      where event_type in ('taste_view', 'taste_refresh')
+        l.account_id,
+        count(*) filter (where e.event_type = 'taste_view')    as 조회건수,
+        count(*) filter (where e.event_type = 'taste_refresh') as 새로고침건수,
+        bool_or(e.event_type = 'taste_view' and e.outcome = 'rendered') as 봤다
+      from c_events e
+      join c_device_accounts l on l.device_id = e.device_id
+      where e.event_type in ('taste_view', 'taste_refresh')
         and ${eventFilterSql()}
-      group by device_id
+      group by l.account_id
     ),
     집계 as (
       select
         count(*) filter (where 조회건수 > 0)              as 방문,
         count(*) filter (where 봤다)                       as 조회됨,
         count(*) filter (where 봤다 and 새로고침건수 > 0)  as 새로고침
-      from 기기
+      from 계정
     ),
     단계 as (
       select '페이지 방문' as 단계, 1 as 순서, 방문 as 도달 from 집계

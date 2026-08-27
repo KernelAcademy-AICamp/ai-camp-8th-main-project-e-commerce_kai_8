@@ -19,40 +19,42 @@ import type { MetricDefinition } from "@/features/metrics/domain/metric";
  * 여기 두 줄과 퍼널의 「조회됨」을 더하면 **페이지 방문과 정확히 맞는다.**
  *
  * ⚠️ **기기 단위다.** 실제 사람 수보다 많게 나온다.
+
  */
 export const tasteViewBlocked: MetricDefinition = {
   id: "taste-view-blocked",
-  title: "조회 안 된 이유 (기기 단위)",
+  title: "조회 안 된 이유 (계정 단위)",
   why: "취향 부족은 정상이고 로딩 실패는 고장이다. 이 두 줄과 퍼널의 「조회됨」을 더하면 페이지 방문과 맞는다",
   order: 20,
   screen: "taste",
   chart: "hbars",
   span: 5,
   sql: `
-    with 기기 as (
+    with 계정 as (
       select
-        device_id,
-        bool_or(outcome = 'rendered')          as 봤다,
-        bool_or(outcome = 'insufficient_data') as 모으는중이었다,
-        bool_or(outcome = 'error')             as 실패했다
-      from c_events
-      where event_type = 'taste_view'
+        l.account_id,
+        bool_or(e.outcome = 'rendered')          as 봤다,
+        bool_or(e.outcome = 'insufficient_data') as 모으는중이었다,
+        bool_or(e.outcome = 'error')             as 실패했다
+      from c_events e
+      join c_device_accounts l on l.device_id = e.device_id
+      where e.event_type = 'taste_view'
         and ${eventFilterSql()}
-      group by device_id
+      group by l.account_id
     ),
     집계 as (
       select
         count(*) filter (where not 봤다 and 모으는중이었다) as 취향부족,
         count(*) filter (where not 봤다 and not 모으는중이었다 and 실패했다)
           as 로딩실패
-      from 기기
+      from 계정
     ),
     이유 as (
-      select '취향 부족' as 이유, 1 as 순서, 취향부족 as 기기 from 집계
+      select '취향 부족' as 이유, 1 as 순서, 취향부족 as 계정 from 집계
       union all
       select '로딩 실패', 2, 로딩실패 from 집계
     )
-    select 이유 as "이유", 기기 as "기기"
+    select 이유 as "이유", 계정 as "계정"
     from 이유
     order by 순서
   `,
