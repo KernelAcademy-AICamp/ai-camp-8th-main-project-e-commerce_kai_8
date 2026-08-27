@@ -29,6 +29,14 @@ import type { MetricDefinition } from "@/features/metrics/domain/metric";
  *
  * ⚠️ **기기 칸에는 비율을 내지 않는다.** 한 기기가 여러 결과를 겪을 수 있어
  *    더하면 전체 기기 수보다 커진다. 참고 값이다.
+ *
+ * ⚠️ **「계정」 칸은 소급되지 않는다** (2026-08-27, O-43). 기기와 계정을 잇기
+ *    시작한 뒤 로그인한 기기만 세어진다. 잇기 전의 기록은 계정 칸에서 빠지므로,
+ *    처음에는 계정 칸이 0이고 기기 칸만 값이 있다. **둘을 나란히 두는 이유가
+ *    이것이다** — 계정으로 갈아타면서 지금 보이는 값을 잃지 않는다.
+ *
+ * ⚠️ 기기 칸은 실제 사람 수보다 **많게**, 계정 칸은 아직 **적게** 나온다. 같은
+ *    줄의 두 값을 더하거나 비교하지 않는다.
  */
 export const tasteRefreshOutcome: MetricDefinition = {
   id: "taste-refresh-outcome",
@@ -40,9 +48,12 @@ export const tasteRefreshOutcome: MetricDefinition = {
   span: 12,
   sql: `
     with 시도 as (
-      select outcome, device_id
-      from c_events
-      where event_type = 'taste_refresh'
+      -- 계정 단위 칸을 위해 쌍을 이어 붙인다 (O-43). 이은 적 없는 기기는 null이라
+      -- 계정 칸에서 빠진다 — 잇기 전의 기록은 소급되지 않는다.
+      select e.outcome, e.device_id, l.account_id
+      from c_events e
+      left join c_device_accounts l on l.device_id = e.device_id
+      where e.event_type = 'taste_refresh'
         and ${eventFilterSql()}
     ),
     -- 한 번도 안 나온 결과도 줄로 남긴다. 빠지면 "그런 일이 없었다"와
@@ -56,9 +67,10 @@ export const tasteRefreshOutcome: MetricDefinition = {
       ) as t(값, 이름, 순서)
     )
     select
-      l.이름                      as "결과",
-      count(s.outcome)            as "시도",
-      count(distinct s.device_id) as "기기"
+      l.이름                       as "결과",
+      count(s.outcome)             as "시도",
+      count(distinct s.device_id)  as "기기",
+      count(distinct s.account_id) as "계정"
     from 라벨 l
     left join 시도 s on s.outcome = l.값
     group by l.이름, l.순서

@@ -30,6 +30,14 @@ import type { MetricDefinition } from "@/features/metrics/domain/metric";
  *
  * 임계값으로 성공·실패를 가르지 않는다. 판정선을 근거 없이 정하면 그 숫자가
  * 결론처럼 읽힌다. 사실만 내고 해석은 사람이 한다.
+ *
+ * ⚠️ **「계정」 칸은 소급되지 않는다** (2026-08-27, O-43). 기기와 계정을 잇기
+ *    시작한 뒤 로그인한 기기만 세어진다. 잇기 전의 기록은 계정 칸에서 빠지므로,
+ *    처음에는 계정 칸이 0이고 기기 칸만 값이 있다. **둘을 나란히 두는 이유가
+ *    이것이다** — 계정으로 갈아타면서 지금 보이는 값을 잃지 않는다.
+ *
+ * ⚠️ 기기 칸은 실제 사람 수보다 **많게**, 계정 칸은 아직 **적게** 나온다. 같은
+ *    줄의 두 값을 더하거나 비교하지 않는다.
  */
 export const returnCurve: MetricDefinition = {
   id: "return-curve",
@@ -58,9 +66,13 @@ export const returnCurve: MetricDefinition = {
     관측 as (
       select
         f.device_id,
+        -- 계정 단위 칸을 위해 쌍을 이어 붙인다 (O-43). 이은 적 없는 기기는 null이라
+        -- 계정 칸에서 빠진다 — 잇기 전의 기록은 소급되지 않는다.
+        l.account_id,
         f.시작일,
         ((now() at time zone 'Asia/Seoul')::date - f.시작일) as 지난일수
       from 첫날 f
+      left join c_device_accounts l on l.device_id = f.device_id
     ),
     일차 as (
       select generate_series(1, 14) as n
@@ -68,6 +80,8 @@ export const returnCurve: MetricDefinition = {
     select
       d.n                                              as "Day",
       count(*) filter (where o.지난일수 >= d.n)::int   as "Cohort size",
+      count(distinct o.account_id) filter (where o.지난일수 >= d.n)::int
+                                                       as "계정 수",
       count(*) filter (
         where o.지난일수 >= d.n
           and exists (
