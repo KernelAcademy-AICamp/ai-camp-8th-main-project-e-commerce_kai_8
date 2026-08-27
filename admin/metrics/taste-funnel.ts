@@ -28,46 +28,39 @@ import type { MetricDefinition } from "@/features/metrics/domain/metric";
  */
 export const tasteFunnel: MetricDefinition = {
   id: "taste-funnel",
-  title: "취향 분석 퍼널 (기기 단위)",
+  title: "취향 분석 퍼널 (계정 단위)",
   order: 10,
   screen: "taste",
   chart: "funnel-band",
   span: 7,
   sql: `
-    with 기기 as (
+    with 계정 as (
       select
-        e.device_id,
-        -- 이은 적 없는 기기는 null이다 (O-43).
-        max(l.account_id::text) as account_id,
+        l.account_id,
         count(*) filter (where e.event_type = 'taste_view')    as 조회건수,
         count(*) filter (where e.event_type = 'taste_refresh') as 새로고침건수,
         bool_or(e.event_type = 'taste_view' and e.outcome = 'rendered') as 봤다
       from c_events e
-      left join c_device_accounts l on l.device_id = e.device_id
+      join c_device_accounts l on l.device_id = e.device_id
       where e.event_type in ('taste_view', 'taste_refresh')
         and ${eventFilterSql()}
-      group by e.device_id
+      group by l.account_id
     ),
     집계 as (
       select
         count(*) filter (where 조회건수 > 0)              as 방문,
-        count(distinct account_id) filter (where 조회건수 > 0) as 방문계정,
         count(*) filter (where 봤다)                       as 조회됨,
-        count(distinct account_id) filter (where 봤다)     as 조회됨계정,
-        count(*) filter (where 봤다 and 새로고침건수 > 0)  as 새로고침,
-        count(distinct account_id) filter (where 봤다 and 새로고침건수 > 0)
-          as 새로고침계정
-      from 기기
+        count(*) filter (where 봤다 and 새로고침건수 > 0)  as 새로고침
+      from 계정
     ),
     단계 as (
-      select '페이지 방문' as 단계, 1 as 순서, 방문 as 도달, 방문계정 as 계정
-      from 집계
+      select '페이지 방문' as 단계, 1 as 순서, 방문 as 도달 from 집계
       union all
-      select '조회됨',   2, 조회됨,   조회됨계정   from 집계
+      select '조회됨',   2, 조회됨   from 집계
       union all
-      select '새로고침', 3, 새로고침, 새로고침계정 from 집계
+      select '새로고침', 3, 새로고침 from 집계
     )
-    select 단계 as "단계", 도달 as "도달", 계정 as "계정"
+    select 단계 as "단계", 도달 as "도달"
     from 단계
     order by 순서
   `,

@@ -41,10 +41,9 @@ export const tasteRefreshOutcome: MetricDefinition = {
   span: 12,
   sql: `
     with 시도 as (
-      -- 이은 적 없는 기기는 null이다 (O-43).
-      select e.outcome, e.device_id, l.account_id
+      select e.outcome, l.account_id
       from c_events e
-      left join c_device_accounts l on l.device_id = e.device_id
+      join c_device_accounts l on l.device_id = e.device_id
       where e.event_type = 'taste_refresh'
         and ${eventFilterSql()}
     ),
@@ -61,7 +60,6 @@ export const tasteRefreshOutcome: MetricDefinition = {
     select
       l.이름                       as "결과",
       count(s.outcome)             as "시도",
-      count(distinct s.device_id)  as "기기",
       count(distinct s.account_id) as "계정"
     from 라벨 l
     left join 시도 s on s.outcome = l.값

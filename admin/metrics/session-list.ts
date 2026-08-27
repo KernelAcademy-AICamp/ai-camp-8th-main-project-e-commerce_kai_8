@@ -18,7 +18,7 @@ import type { MetricDefinition } from "@/features/metrics/domain/metric";
  * 누적값이 **없으면 "—"로 둔다.** 0으로 채우면 "나가 있던 적이 없다"로 읽히는데,
  * 실제로는 이 계약 이전에 쌓인 줄이라 모르는 것이다.
  *
- * 시각은 발생 시각(occurred_at) 기준이다. 서버 도착 시각이 아니라 사용자 기기에서
+ * 시각은 발생 시각(e.occurred_at) 기준이다. 서버 도착 시각이 아니라 사용자 기기에서
  * 일어난 순간이라야 세션의 시간 흐름이 맞는다.
  */
 export const sessionList: MetricDefinition = {
@@ -29,29 +29,32 @@ export const sessionList: MetricDefinition = {
   screen: "raw",
   sql: `
     select
-      left(device_id::text, 8)  as "기기",
+      -- 로그는 **줄을 버리지 않는다.** 이은 적 없는 기기도 남기고 계정만 비운다 —
+      -- 집계와 달리 여기서 줄이 사라지면 대조할 증거가 없어진다 (O-43).
+      coalesce(left(l.account_id::text, 8), '—') as "계정",
       -- 누르면 이 세션만 남는다. 보이는 글자는 앞 8자리 그대로다(asLink).
-      '?session=' || left(session_id::text, 8) as "세션",
-      '?date=' || to_char(min(occurred_at) at time zone 'Asia/Seoul', 'YYYY-MM-DD')
+      '?session=' || left(e.session_id::text, 8) as "세션",
+      '?date=' || to_char(min(e.occurred_at) at time zone 'Asia/Seoul', 'YYYY-MM-DD')
         as "날짜",
-      to_char(min(occurred_at) at time zone 'Asia/Seoul', 'MM-DD HH24:MI') as "시작(KST)",
-      (max(occurred_at) - min(occurred_at))::text as "전체 길이",
+      to_char(min(e.occurred_at) at time zone 'Asia/Seoul', 'MM-DD HH24:MI') as "시작(KST)",
+      (max(e.occurred_at) - min(e.occurred_at))::text as "전체 길이",
       -- 누적값을 모르면 빼지 않고 값 없음으로 둔다. 0으로 채우면 거짓말이 된다.
-      case when max(away_ms) is null then null else
+      case when max(e.away_ms) is null then null else
         greatest(
           interval '0',
-          (max(occurred_at) - min(occurred_at)) - make_interval(secs => max(away_ms) / 1000.0)
+          (max(e.occurred_at) - min(e.occurred_at)) - make_interval(secs => max(e.away_ms) / 1000.0)
         )::text
       end                       as "실제 탐색",
-      count(distinct goods_no) filter (where event_type = 'impression')::int as "본 상품",
-      count(distinct goods_no) filter (where event_type = 'tap')::int        as "상품 클릭",
+      count(distinct e.goods_no) filter (where event_type = 'impression')::int as "본 상품",
+      count(distinct e.goods_no) filter (where event_type = 'tap')::int        as "상품 클릭",
       count(*)                 filter (where event_type = 'wish')::int       as "찜",
       count(*)                 filter (where event_type = 'unwish')::int     as "찜 해제",
       count(*)                 filter (where event_type = 'outbound')::int   as "판매처 이동"
-    from c_events
+    from c_events e
+    left join c_device_accounts l on l.device_id = e.device_id
     where ${eventFilterSql()}
-    group by device_id, session_id
-    order by min(occurred_at) desc
+    group by l.account_id, e.device_id, e.session_id
+    order by min(e.occurred_at) desc
     limit 30
   `,
 };
