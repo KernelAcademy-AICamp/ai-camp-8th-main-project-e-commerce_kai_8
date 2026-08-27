@@ -17,7 +17,7 @@ export const metadata: Metadata = {
   description: "aTee가 무엇을 수집하고, 얼마나 보관하고, 어떻게 지우는지.",
 };
 
-const UPDATED_AT = "2026년 8월 24일";
+const UPDATED_AT = "2026년 8월 27일";
 
 /** 구글 OAuth 심사가 처리방침에 연락 수단을 요구한다 (2026-08-18 제품 책임자 결정). */
 const CONTACT_EMAIL = "likefry98@gmail.com";
@@ -132,13 +132,19 @@ export default function PrivacyPolicyPage() {
       <section className="mt-8 space-y-4 text-[15px] leading-relaxed">
         <h2 className="text-base font-semibold text-ink">계정과 익명 ID의 관계</h2>
         <p>
-          서버에는 계정과 익명 ID를 잇는 기록을 만들지 않습니다. 탐색 행동은 익명 ID로만
-          기록되며 계정 식별자를 함께 담지 않습니다.
+          <b className="text-ink">서버가 계정과 익명 ID의 쌍을 기록합니다.</b> 로그인한
+          상태로 앱을 열 때 한 번 기록되며, 담기는 것은 그 쌍과 이은 시각뿐입니다. 탐색
+          행동 자체에는 여전히 계정 식별자를 담지 않습니다.
         </p>
         <p>
-          다만 <b className="text-ink">연결이 전혀 없다는 뜻은 아닙니다.</b> 이 기기에는
-          익명 ID와 신원 표시자가 함께 남고, 로그인한 상태로 보내는 요청에는 세션 쿠키와
-          익명 ID가 함께 실립니다.
+          이렇게 하는 이유는{" "}
+          <b className="text-ink">얼마나 많은 사람이 쓰는지를 세기 위해서</b>입니다.
+          기기만으로 세면 같은 분이 기기를 바꾸거나 시크릿 창을 쓸 때 다른 사람으로
+          세어져, 이용 현황을 실제보다 부풀려 보게 됩니다.
+        </p>
+        <p>
+          쌍은 <b className="text-ink">탈퇴하면 함께 지워집니다.</b> 설정에서 개인화
+          데이터를 지워도 이 기기의 쌍이 함께 지워집니다.
         </p>
       </section>
 

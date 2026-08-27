@@ -28,6 +28,14 @@ import type { MetricDefinition } from "@/features/metrics/domain/metric";
  *    앞 5일 80.9% → 뒤 5일 63.2%로 크게 좋아졌는데 전체 10일로 보면 74.7%였다.
  *    **비교하려면 기간(`?days=`)을 골라야 한다.** 화면에 이 경고를 띄웠다가
  *    글이 많아 뺐다(2026-08-25 결정) — 근거는 여기 남긴다.
+ *
+ * ⚠️ **「계정」 칸은 소급되지 않는다** (2026-08-27, O-43). 기기와 계정을 잇기
+ *    시작한 뒤 로그인한 기기만 세어진다. 잇기 전의 기록은 계정 칸에서 빠지므로,
+ *    처음에는 계정 칸이 0이고 기기 칸만 값이 있다. **둘을 나란히 두는 이유가
+ *    이것이다** — 계정으로 갈아타면서 지금 보이는 값을 잃지 않는다.
+ *
+ * ⚠️ 기기 칸은 실제 사람 수보다 **많게**, 계정 칸은 아직 **적게** 나온다. 같은
+ *    줄의 두 값을 더하거나 비교하지 않는다.
  */
 export const activeDays: MetricDefinition = {
   id: "active-days",
@@ -50,16 +58,21 @@ export const activeDays: MetricDefinition = {
     ),
     기기별 as (
       select
-        device_id,
+        a.device_id,
+        -- 계정 단위 칸을 위해 쌍을 이어 붙인다 (O-43). 이은 적 없는 기기는 null이라
+        -- 계정 칸에서 빠진다 — 잇기 전의 기록은 소급되지 않는다.
+        max(l.account_id::text) as account_id,
         count(*) as 활동일수,
         -- 첫 방문일부터 오늘까지. 이만큼의 기회가 있었다는 뜻이다.
-        ((now() at time zone 'Asia/Seoul')::date - min(날짜)) + 1 as 관측일수
-      from 활동일
-      group by 1
+        ((now() at time zone 'Asia/Seoul')::date - min(a.날짜)) + 1 as 관측일수
+      from 활동일 a
+      left join c_device_accounts l on l.device_id = a.device_id
+      group by a.device_id
     )
     select
       활동일수                        as "활동 일수",
       count(*)::int                   as "기기 수",
+      count(distinct account_id)::int as "계정 수",
       round(100.0 * count(*) / sum(count(*)) over (), 1) as "비율 (%)",
       -- 이 줄의 기기들이 얼마나 오래 관측됐는지. 작으면 "적게 왔다"가 아니라
       -- "아직 시간이 안 지났다"일 수 있다.

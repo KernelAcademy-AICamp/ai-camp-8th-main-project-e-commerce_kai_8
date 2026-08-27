@@ -19,6 +19,14 @@ import type { MetricDefinition } from "@/features/metrics/domain/metric";
  * 여기 두 줄과 퍼널의 「조회됨」을 더하면 **페이지 방문과 정확히 맞는다.**
  *
  * ⚠️ **기기 단위다.** 실제 사람 수보다 많게 나온다.
+ *
+ * ⚠️ **「계정」 칸은 소급되지 않는다** (2026-08-27, O-43). 기기와 계정을 잇기
+ *    시작한 뒤 로그인한 기기만 세어진다. 잇기 전의 기록은 계정 칸에서 빠지므로,
+ *    처음에는 계정 칸이 0이고 기기 칸만 값이 있다. **둘을 나란히 두는 이유가
+ *    이것이다** — 계정으로 갈아타면서 지금 보이는 값을 잃지 않는다.
+ *
+ * ⚠️ 기기 칸은 실제 사람 수보다 **많게**, 계정 칸은 아직 **적게** 나온다. 같은
+ *    줄의 두 값을 더하거나 비교하지 않는다.
  */
 export const tasteViewBlocked: MetricDefinition = {
   id: "taste-view-blocked",
@@ -31,28 +39,38 @@ export const tasteViewBlocked: MetricDefinition = {
   sql: `
     with 기기 as (
       select
-        device_id,
-        bool_or(outcome = 'rendered')          as 봤다,
-        bool_or(outcome = 'insufficient_data') as 모으는중이었다,
-        bool_or(outcome = 'error')             as 실패했다
-      from c_events
-      where event_type = 'taste_view'
+        e.device_id,
+        -- 계정 단위 칸을 위해 함께 들고 온다 (O-43). 이은 적 없는 기기는 null이라
+        -- 계정 칸에서 빠진다 — 잇기 전의 기록은 소급되지 않는다.
+        max(l.account_id::text) as account_id,
+        bool_or(e.outcome = 'rendered')          as 봤다,
+        bool_or(e.outcome = 'insufficient_data') as 모으는중이었다,
+        bool_or(e.outcome = 'error')             as 실패했다
+      from c_events e
+      left join c_device_accounts l on l.device_id = e.device_id
+      where e.event_type = 'taste_view'
         and ${eventFilterSql()}
-      group by device_id
+      group by e.device_id
     ),
     집계 as (
       select
         count(*) filter (where not 봤다 and 모으는중이었다) as 취향부족,
+        count(distinct account_id) filter (where not 봤다 and 모으는중이었다)
+          as 취향부족계정,
         count(*) filter (where not 봤다 and not 모으는중이었다 and 실패했다)
-          as 로딩실패
+          as 로딩실패,
+        count(distinct account_id)
+          filter (where not 봤다 and not 모으는중이었다 and 실패했다)
+          as 로딩실패계정
       from 기기
     ),
     이유 as (
-      select '취향 부족' as 이유, 1 as 순서, 취향부족 as 기기 from 집계
+      select '취향 부족' as 이유, 1 as 순서, 취향부족 as 기기, 취향부족계정 as 계정
+      from 집계
       union all
-      select '로딩 실패', 2, 로딩실패 from 집계
+      select '로딩 실패', 2, 로딩실패, 로딩실패계정 from 집계
     )
-    select 이유 as "이유", 기기 as "기기"
+    select 이유 as "이유", 기기 as "기기", 계정 as "계정"
     from 이유
     order by 순서
   `,

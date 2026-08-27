@@ -1,11 +1,6 @@
 import { beforeEach, describe, expect, it } from "vitest";
 
-import {
-  clearReachMark,
-  finishReach,
-  ONBOARDING_STEPS,
-  readReachMark,
-} from "./reach-mark";
+import { clearReachMark, ONBOARDING_STEPS, readReachMark } from "./reach-mark";
 
 /** 브라우저 저장소를 흉내 낸다 — 도메인은 진짜 저장소를 몰라야 한다 */
 function fakeStorage(): Storage {
@@ -73,57 +68,19 @@ describe("온보딩 진행 표식", () => {
     expect(() => readReachMark(brokenStorage(), () => "값")).not.toThrow();
   });
 
-  it("단계 목록은 화면 순서와 같다", () => {
-    expect(ONBOARDING_STEPS).toEqual(["gender", "picks", "signup", "done"]);
-  });
-});
-
-describe("온보딩 완료 처리", () => {
-  it("done을 보고한 뒤 표식을 지운다", () => {
-    // 지우고 보내면 표식이 없어 중복 거르기가 안 된다
-    const 보낸것: string[] = [];
-    readReachMark(storage, () => "표식-1");
-    finishReach(storage, (mark, step) => {
-      보낸것.push(`${mark}/${step}`);
-    });
-    expect(보낸것).toEqual(["표식-1/done"]);
-    // 지워졌으므로 다음에 부르면 새 값이다
-    expect(readReachMark(storage, () => "표식-2")).toBe("표식-2");
-  });
-
-  it("표식이 없으면 done을 보내지 않는다", () => {
-    // 표식이 없다는 건 이 브라우저에서 온보딩 화면을 지나온 적이 없다는 뜻이다.
-    // 계정 승계 경로(onboarding-account-sync)는 **앱을 켤 때마다** 돌기 때문에,
-    // 여기서 표식을 새로 만들어 보고하면 done이 "이미 온보딩한 사람이 앱을 켰다"를
-    // 세게 된다. 실제로 그 일이 있었다 — done(8)이 picks(6)보다 컸다.
-    const 보낸것: string[] = [];
-    finishReach(storage, (mark, step) => {
-      보낸것.push(`${mark}/${step}`);
-    });
-    expect(보낸것).toEqual([]);
-  });
-
-  it("한 번 마치면 두 번째 호출은 아무것도 보내지 않는다", () => {
-    // 완료 지점이 둘이라(화면 경로, 계정 승계 경로) 같은 완료에 두 번 불릴 수 있다.
-    // 첫 호출이 표식을 지우므로 두 번째는 조용히 넘어간다.
-    const 보낸것: string[] = [];
-    readReachMark(storage, () => "표식-1");
-    const 보고 = (mark: string, step: string): void => {
-      보낸것.push(`${mark}/${step}`);
-    };
-    finishReach(storage, 보고);
-    finishReach(storage, 보고);
-    expect(보낸것).toEqual(["표식-1/done"]);
-  });
-
-  it("저장소를 못 쓰면 조용히 넘어간다", () => {
-    // 프라이빗 모드. 세는 것보다 온보딩이 먼저다.
-    const 보낸것: string[] = [];
+  it("지우기가 터져도 넘어간다", () => {
     expect(() => {
-      finishReach(brokenStorage(), (mark, step) => {
-        보낸것.push(`${mark}/${step}`);
-      });
+      clearReachMark(brokenStorage());
     }).not.toThrow();
-    expect(보낸것).toEqual([]);
+  });
+
+  it("단계 목록은 화면 순서와 같고 완료는 없다", () => {
+    // **완료(done)를 이 표식으로 세지 않는다** (2026-08-27). 이 키는 로그인 순간
+    // 신원 전환 정리가 지우기 때문에, 완료를 여기서 세려던 시도가 두 번 다 틀렸다 —
+    // 표식을 새로 만들어 보고하던 때는 페이지를 열 때마다 세어졌고(08-25 39건·
+    // 08-26 68건, 같은 기간 실제 가입 1건·0건), 만들지 않게 고친 뒤에는 0이 됐다.
+    // 가입과 온보딩 확정은 서버(`c_signup_daily`)에 이미 정확히 남는다.
+    expect(ONBOARDING_STEPS).toEqual(["gender", "picks", "signup"]);
+    expect(ONBOARDING_STEPS).not.toContain("done");
   });
 });

@@ -5,7 +5,7 @@ import { useCallback, useEffect, useState } from "react";
 import { fetchOnboardingCandidates } from "@/features/onboarding/data/candidates-api";
 import { reportReach } from "@/features/onboarding/data/reach-api";
 import type { OnboardingCandidate } from "@/features/onboarding/domain/candidate";
-import { finishReach, readReachMark } from "@/features/onboarding/domain/reach-mark";
+import { clearReachMark, readReachMark } from "@/features/onboarding/domain/reach-mark";
 import { type GenderChoice, setGenderSetting } from "@/shared/gender/gender-setting";
 import { putAccountOnboarding } from "@/shared/onboarding/account-onboarding-api";
 import {
@@ -214,10 +214,10 @@ export function useOnboardingFlow(): OnboardingFlowViewModel {
         setPicks(confirmed.candidatesVersion, confirmed.picks);
         // 계정에 담긴 것을 확인한 뒤에만 기기 표식을 남긴다.
         markDone();
-        // 마쳤다고 알리고 진행 표식을 지운다 (O-42).
-        finishReach(window.localStorage, (mark, step) => {
-          void reportReach(mark, step);
-        });
+        // 진행 표식을 지운다 (O-42). **완료를 보고하지는 않는다** — 이 경로엔 신원
+        // 전환이 없어 표식이 그대로 남는데, 남기면 나중에 다시 온보딩을 열었을 때
+        // 옛 표식이 재사용돼 도달이 안 세어진다.
+        clearReachMark(window.localStorage);
         // 마쳤으므로 진행 기록을 지운다 — 남기면 다음 방문이 중간 화면에서 열린다.
         clearFlowProgress();
         setSaveState("idle");
